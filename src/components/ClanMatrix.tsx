@@ -49,10 +49,11 @@ function ProfessionCard({ stats, showDependencies }: { stats: ProfessionStats; s
   const profession = PROFESSION_BY_ID.get(stats.professionId)!;
   const dependencies = getFullDependencyChain(stats.professionId);
 
-  // Determine visual state
+  // Determine visual state based on highest rank
   const hasGrandmaster = stats.byRank[4].length > 0;
-  const hasMaster = stats.byRank[3].length > 0 || hasGrandmaster;
-  const hasCoverage = stats.totalCoverage > 0;
+  const hasMaster = stats.byRank[3].length > 0;
+  const hasJourneyman = stats.byRank[2].length > 0;
+  const hasApprentice = stats.byRank[1].length > 0;
 
   let statusClass = 'border-slate-700 opacity-60'; // No coverage
   let statusGlow = '';
@@ -62,8 +63,10 @@ function ProfessionCard({ stats, showDependencies }: { stats: ProfessionStats; s
     statusGlow = `shadow-lg ${RANK_COLORS[4].glow}`;
   } else if (hasMaster) {
     statusClass = `${RANK_COLORS[3].border} ${RANK_COLORS[3].bg}`;
-  } else if (hasCoverage) {
-    statusClass = 'border-slate-600';
+  } else if (hasJourneyman) {
+    statusClass = `${RANK_COLORS[2].border} ${RANK_COLORS[2].bg}`;
+  } else if (hasApprentice) {
+    statusClass = `${RANK_COLORS[1].border} ${RANK_COLORS[1].bg}`;
   }
 
   return (
@@ -87,6 +90,16 @@ function ProfessionCard({ stats, showDependencies }: { stats: ProfessionStats; s
               {stats.byRank[3].length > 0 && (
                 <span className={`${RANK_COLORS[3].text} ${RANK_COLORS[3].bg} px-1.5 py-0.5 rounded`}>
                   {stats.byRank[3].length} M
+                </span>
+              )}
+              {stats.byRank[2].length > 0 && (
+                <span className={`${RANK_COLORS[2].text} ${RANK_COLORS[2].bg} px-1.5 py-0.5 rounded`}>
+                  {stats.byRank[2].length} J
+                </span>
+              )}
+              {stats.byRank[1].length > 0 && (
+                <span className={`${RANK_COLORS[1].text} ${RANK_COLORS[1].bg} px-1.5 py-0.5 rounded`}>
+                  {stats.byRank[1].length} A
                 </span>
               )}
             </div>
