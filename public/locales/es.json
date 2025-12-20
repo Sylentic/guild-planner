@@ -33,7 +33,12 @@
     "none": "Ninguno",
     "or": "o",
     "and": "y",
-    "optional": "opcional"
+    "optional": "opcional",
+    "login": "Iniciar sesión",
+    "enter": "Entrar",
+    "returnHome": "Volver al Inicio",
+    "retryConnection": "Reintentar Conexión",
+    "continueWithDiscord": "Continuar con Discord"
   },
   "nav": {
     "characters": "Personajes",
@@ -53,18 +58,28 @@
   },
   "clan": {
     "create": "Crear Clan",
+    "createNew": "Crear Nuevo Clan",
     "createDescription": "El clan {{name}} no existe todavía. ¿Te gustaría crearlo?",
     "youWillBeAdmin": "Serás el Administrador del clan",
     "applyToJoin": "Solicitar unirse",
-    "applicationPending": "Solicitud pendiente",
-    "pendingApproval": "Tu solicitud está pendiente de aprobación por los oficiales del clan.",
+    "applicationPending": "Solicitud Pendiente",
+    "pendingApproval": "Tu solicitud para unirte a {{name}} está pendiente de revisión por un admin u oficial.",
+    "accessAfterApproval": "Podrás acceder a los datos del clan una vez aprobado.",
     "charactersCount": "{{count}} personajes",
     "noCharacters": "Aún no hay personajes. ¡Añade tu primer personaje arriba!",
     "noCharactersMatch": "Ningún personaje coincide con tus filtros.",
     "viewPublicPage": "Ver Página Pública",
     "admin": "admin",
     "officer": "oficial",
-    "member": "miembro"
+    "member": "miembro",
+    "loginRequired": "Inicio de Sesión Requerido",
+    "signInToAccess": "Inicia sesión con Discord para acceder a {{name}}",
+    "connectionError": "Error de Conexión",
+    "connectionErrorMessage": "No se pudo conectar al servicio del clan. Esto puede deberse a una conexión lenta o un problema del servidor.",
+    "joinClan": "Unirse al Clan",
+    "applyDescription": "Solicita unirte a {{name}}. Un admin revisará tu solicitud.",
+    "errorLoading": "Error Cargando el Clan",
+    "creator": "creador"
   },
   "character": {
     "addCharacter": "Añadir Personaje",
@@ -272,5 +287,24 @@
     "dunir": "Dünir",
     "nikua": "Niküa",
     "tulnar": "Tulnar"
+  },
+  "footer": {
+    "madeBy": "Hecho con ❤️ por",
+    "allRightsReserved": "Todos los derechos reservados"
+  },
+  "home": {
+    "title": "AoC Profession Planner",
+    "subtitle": "Planifica y gestiona las profesiones artesanales de tu guild para Ashes of Creation",
+    "enterClanPlaceholder": "Introduce el nombre de tu clan...",
+    "loggedInHint": "Podrás crear o unirte a este clan",
+    "notLoggedInHint": "Inicia sesión con Discord para crear o unirte a clanes",
+    "yourClans": "Tus Clanes",
+    "noClans": "Aún no te has unido a ningún clan. ¡Introduce un nombre de clan arriba para empezar!",
+    "feature1Title": "Seguimiento de las 22 Profesiones",
+    "feature1Desc": "Recolección, Procesamiento y Fabricación con cadenas de dependencia completas",
+    "feature2Title": "Gestiona los Miembros del Guild",
+    "feature2Desc": "Asigna rangos desde Aprendiz hasta Gran Maestro",
+    "feature3Title": "Matriz de Cobertura del Guild",
+    "feature3Desc": "Visualiza la capacidad productiva de tu guild de un vistazo"
   }
 }

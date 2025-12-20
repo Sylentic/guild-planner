@@ -33,7 +33,12 @@
     "none": "None",
     "or": "or",
     "and": "and",
-    "optional": "optional"
+    "optional": "optional",
+    "login": "Login",
+    "enter": "Enter",
+    "returnHome": "Return Home",
+    "retryConnection": "Retry Connection",
+    "continueWithDiscord": "Continue with Discord"
   },
   "nav": {
     "characters": "Characters",
@@ -53,18 +58,28 @@
   },
   "clan": {
     "create": "Create Clan",
+    "createNew": "Create New Clan",
     "createDescription": "The clan {{name}} doesn't exist yet. Would you like to create it?",
     "youWillBeAdmin": "You will become the clan Admin",
     "applyToJoin": "Apply to Join",
     "applicationPending": "Application Pending",
-    "pendingApproval": "Your application is pending approval from clan officers.",
+    "pendingApproval": "Your application to join {{name}} is pending review by an admin or officer.",
+    "accessAfterApproval": "You'll be able to access clan data once approved.",
     "charactersCount": "{{count}} characters",
     "noCharacters": "No characters yet. Add your first guild character above!",
     "noCharactersMatch": "No characters match your filters.",
     "viewPublicPage": "View Public Page",
     "admin": "admin",
     "officer": "officer",
-    "member": "member"
+    "member": "member",
+    "loginRequired": "Login Required",
+    "signInToAccess": "Sign in with Discord to access {{name}}",
+    "connectionError": "Connection Error",
+    "connectionErrorMessage": "Unable to connect to the clan service. This might be due to a slow connection or server issue.",
+    "joinClan": "Join Clan",
+    "applyDescription": "Apply to join {{name}}. An admin will review your application.",
+    "errorLoading": "Error Loading Clan",
+    "creator": "creator"
   },
   "character": {
     "addCharacter": "Add Character",
@@ -272,5 +287,24 @@
     "dunir": "Dünir",
     "nikua": "Niküa",
     "tulnar": "Tulnar"
+  },
+  "footer": {
+    "madeBy": "Made with ❤️ by",
+    "allRightsReserved": "All Rights Reserved"
+  },
+  "home": {
+    "title": "AoC Profession Planner",
+    "subtitle": "Plan and manage your guild's artisan professions for Ashes of Creation",
+    "enterClanPlaceholder": "Enter your clan name...",
+    "loggedInHint": "You'll be able to create or join this clan",
+    "notLoggedInHint": "Login with Discord to create or join clans",
+    "yourClans": "Your Clans",
+    "noClans": "You haven't joined any clans yet. Enter a clan name above to get started!",
+    "feature1Title": "Track All 22 Professions",
+    "feature1Desc": "Gathering, Processing, and Crafting with full dependency chains",
+    "feature2Title": "Manage Guild Members",
+    "feature2Desc": "Assign ranks from Apprentice to Grandmaster",
+    "feature3Title": "Guild Coverage Matrix",
+    "feature3Desc": "See your guild's productive strength at a glance"
   }
 }

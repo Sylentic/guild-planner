@@ -4,6 +4,7 @@ import { useState, use, useEffect } from 'react';
 import Link from 'next/link';
 import { Users, Grid3X3, Home, Loader2, AlertCircle, LogOut, Shield, Clock, UserPlus, Settings, Swords, Calendar } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useClanData } from '@/hooks/useClanData';
 import { useClanMembership } from '@/hooks/useClanMembership';
 import { useEvents } from '@/hooks/useEvents';
@@ -18,6 +19,7 @@ import { CharacterFiltersBar, CharacterFilters, DEFAULT_FILTERS, filterCharacter
 import { ClanSettings } from '@/components/ClanSettings';
 import { RecruitmentSettings } from '@/components/RecruitmentSettings';
 import { BottomNav } from '@/components/BottomNav';
+import { InlineFooter } from '@/components/Footer';
 import { createClan, getClanBySlug } from '@/lib/auth';
 import { CharacterWithProfessions } from '@/lib/types';
 
@@ -34,6 +36,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [editingCharacter, setEditingCharacter] = useState<CharacterWithProfessions | null>(null);
   const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
   const [checkError, setCheckError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   // Fetch clan ID first
   useEffect(() => {
@@ -177,7 +180,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-orange-400 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading...</p>
+          <p className="text-slate-400">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -189,9 +192,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Connection Error</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.connectionError')}</h2>
           <p className="text-slate-400 mb-6">
-            Unable to connect to the clan service. This might be due to a slow connection or server issue.
+            {t('clan.connectionErrorMessage')}
           </p>
           <div className="bg-slate-800/50 rounded p-4 mb-6 font-mono text-xs text-red-300 text-left overflow-auto max-h-32">
             {checkError}
@@ -200,13 +203,13 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
             onClick={() => window.location.reload()}
             className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
           >
-            Retry Connection
+            {t('common.retryConnection')}
           </button>
           <Link
             href="/"
             className="block mt-4 text-slate-400 hover:text-white transition-colors"
           >
-            Return Home
+            {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -219,9 +222,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <Shield className="w-12 h-12 text-orange-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Login Required</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.loginRequired')}</h2>
           <p className="text-slate-400 mb-6">
-            Sign in with Discord to access <span className="text-white font-medium">{clanSlug}</span>
+            {t('clan.signInToAccess', { name: clanSlug })}
           </p>
           <button
             onClick={() => {
@@ -233,13 +236,13 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
             </svg>
-            Continue with Discord
+            {t('common.continueWithDiscord')}
           </button>
           <Link
             href="/"
             className="inline-block mt-4 text-slate-400 hover:text-white transition-colors"
           >
-            ← Return Home
+            ← {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -252,10 +255,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <UserPlus className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Create New Clan</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.createNew')}</h2>
           <p className="text-slate-400 mb-6">
-            The clan <span className="text-white font-medium">{clanSlug}</span> doesn&apos;t exist yet.
-            Would you like to create it?
+            {t('clan.createDescription', { name: clanSlug })}
           </p>
           <button
             onClick={handleCreateClan}
@@ -267,16 +269,16 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
             ) : (
               <Shield className="w-5 h-5" />
             )}
-            Create Clan
+            {t('clan.create')}
           </button>
           <p className="text-slate-500 text-sm mt-3">
-            You will become the clan Admin
+            {t('clan.youWillBeAdmin')}
           </p>
           <Link
             href="/"
             className="inline-block mt-4 text-slate-400 hover:text-white transition-colors"
           >
-            ← Return Home
+            ← {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -289,10 +291,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <Users className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Join Clan</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.joinClan')}</h2>
           <p className="text-slate-400 mb-6">
-            Apply to join <span className="text-white font-medium">{clan?.name || clanSlug}</span>.
-            An admin will review your application.
+            {t('clan.applyDescription', { name: clan?.name || clanSlug })}
           </p>
           <button
             onClick={handleApply}
@@ -304,13 +305,13 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
             ) : (
               <UserPlus className="w-5 h-5" />
             )}
-            Apply to Join
+            {t('clan.applyToJoin')}
           </button>
           <Link
             href="/"
             className="inline-block mt-4 text-slate-400 hover:text-white transition-colors"
           >
-            ← Return Home
+            ← {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -323,18 +324,18 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <Clock className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Application Pending</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.applicationPending')}</h2>
           <p className="text-slate-400 mb-6">
-            Your application to join <span className="text-white font-medium">{clan?.name || clanSlug}</span> is pending review by an admin or officer.
+            {t('clan.pendingApproval', { name: clan?.name || clanSlug })}
           </p>
           <div className="bg-slate-800/50 rounded-lg p-4 text-sm text-slate-400">
-            You&apos;ll be able to access clan data once approved.
+            {t('clan.accessAfterApproval')}
           </div>
           <Link
             href="/"
             className="inline-block mt-6 text-slate-400 hover:text-white transition-colors"
           >
-            ← Return Home
+            ← {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -347,13 +348,13 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Error Loading Clan</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.errorLoading')}</h2>
           <p className="text-slate-400 mb-4">{error}</p>
           <Link
             href="/"
             className="inline-block mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-colors cursor-pointer"
           >
-            Return Home
+            {t('common.returnHome')}
           </Link>
         </div>
       </div>
@@ -362,25 +363,25 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
 
   // Full clan dashboard
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Header - fixed at top */}
+      <header className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 shrink-0 z-50">
+        <div className="max-w-7xl mx-auto px-3 md:px-4 py-2 md:py-4">
           <div className="flex items-center justify-between">
             {/* Left: Navigation */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Link
                 href="/"
-                className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 md:p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
                 title="Home"
               >
-                <Home size={20} />
+                <Home className="w-5 h-5 md:w-5 md:h-5" />
               </Link>
               <div>
-                <h1 className="font-display text-xl font-semibold text-white">
+                <h1 className="font-display text-base md:text-xl font-semibold text-white">
                   {clan?.name || clanSlug}
                 </h1>
-                <p className="text-slate-500 text-sm">
+                <p className="text-slate-500 text-xs md:text-sm hidden sm:block">
                   {characters.length} characters • 
                   <span className={`ml-1 ${
                     membership.role === 'admin' ? 'text-orange-400' :
@@ -393,167 +394,147 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
               </div>
             </div>
 
-            {/* Center: Tab navigation - hidden on mobile, shown on desktop */}
-            <div className="hidden md:flex gap-1 bg-slate-800/50 rounded-lg p-1">
-              <TabButton
-                icon={<Swords size={18} />}
-                label="Characters"
-                isActive={activeTab === 'characters'}
-                onClick={() => setActiveTab('characters')}
-              />
-              <TabButton
-                icon={<Calendar size={18} />}
-                label="Events"
-                isActive={activeTab === 'events'}
-                onClick={() => setActiveTab('events')}
-                badge={events.filter(e => !e.is_cancelled && new Date(e.starts_at) > new Date()).length || undefined}
-              />
-              <TabButton
-                icon={<Grid3X3 size={18} />}
-                label="Professions"
-                isActive={activeTab === 'matrix'}
-                onClick={() => setActiveTab('matrix')}
-              />
-              <TabButton
-                icon={<Users size={18} />}
-                label="Parties"
-                isActive={activeTab === 'parties'}
-                onClick={() => setActiveTab('parties')}
-                badge={parties.length || undefined}
-              />
-              {canManageMembers && (
-                <TabButton
-                  icon={<Settings size={18} />}
-                  label="Manage"
-                  isActive={activeTab === 'manage'}
-                  onClick={() => setActiveTab('manage')}
-                  badge={pendingMembers.length > 0 ? pendingMembers.length : undefined}
-                />
-              )}
-            </div>
-
             {/* Right: User info */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 md:gap-3">
               <span className="text-slate-300 text-sm hidden sm:inline">{displayName}</span>
+              <Link
+                href="/settings"
+                className="p-1.5 md:p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                title="Settings"
+              >
+                <Settings className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+              </Link>
               <button
                 onClick={() => signOut()}
-                className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 md:p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
                 title="Sign out"
               >
-                <LogOut size={18} />
+                <LogOut className="w-4 h-4 md:w-[18px] md:h-[18px]" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main content - add bottom padding for mobile nav */}
-      <main className="max-w-7xl mx-auto px-4 py-6 has-bottom-nav">
-        {activeTab === 'characters' ? (
-          <div className="space-y-4">
-            {canEdit && <AddCharacterButton onAdd={addCharacter} />}
-            
-            {/* Character Filters */}
-            {characters.length > 0 && (
-              <CharacterFiltersBar
-                filters={characterFilters}
-                onChange={setCharacterFilters}
-                characterCount={characters.length}
-                filteredCount={filterCharacters(characters, characterFilters).length}
-              />
-            )}
-            
-            {characters.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No characters yet. Add your first guild character above!</p>
-              </div>
-            ) : filterCharacters(characters, characterFilters).length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No characters match your filters.</p>
-              </div>
-            ) : (
-              filterCharacters(characters, characterFilters).map((character) => (
-                <CharacterCard
-                  key={character.id}
-                  character={character}
-                  onUpdate={canEdit ? async (id, name) => updateCharacter(id, { name }) : async () => {}}
-                  onDelete={canEdit ? deleteCharacter : async () => {}}
-                  onSetProfessionRank={setProfessionRank}
-                  onEdit={canEdit ? setEditingCharacter : undefined}
-                  readOnly={!canEdit}
+      {/* Main content - scrollable area */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
+          {activeTab === 'characters' ? (
+            <div className="space-y-4">
+              {canEdit && <AddCharacterButton onAdd={addCharacter} />}
+              
+              {/* Character Filters */}
+              {characters.length > 0 && (
+                <CharacterFiltersBar
+                  filters={characterFilters}
+                  onChange={setCharacterFilters}
+                  characterCount={characters.length}
+                  filteredCount={filterCharacters(characters, characterFilters).length}
                 />
-              ))
-            )}
-          </div>
-        ) : activeTab === 'events' ? (
-          <EventsList
-            events={events}
-            announcements={announcements}
-            timezone={profile?.timezone || 'UTC'}
-            clanId={clanId!}
-            userId={user.id}
-            canManage={canManageMembers}
-            onCreateEvent={async (eventData) => {
-              await createEvent(eventData);
-            }}
-            onUpdateEvent={updateEvent}
-            onCancelEvent={cancelEvent}
-            onRsvp={setRsvp}
-            onCreateAnnouncement={createAnnouncement}
-            onUpdateAnnouncement={updateAnnouncement}
-            onDeleteAnnouncement={deleteAnnouncement}
-          />
-        ) : activeTab === 'parties' ? (
-          <PartiesList
-            parties={parties}
-            characters={characters}
-            clanId={clanId!}
-            userId={user.id}
-            canManage={canManageMembers}
-            onCreateParty={createParty}
-            onUpdateParty={updateParty}
-            onDeleteParty={deleteParty}
-            onAssignCharacter={assignCharacter}
-            onRemoveFromRoster={removeFromRoster}
-            onToggleConfirmed={toggleConfirmed}
-          />
-        ) : activeTab === 'matrix' ? (
-          <ClanMatrix members={characters} />
-        ) : activeTab === 'manage' && canManageMembers ? (
-          <div className="space-y-6">
-            {/* Member Management */}
-            <ManageTab
-              members={clanMembers}
-              pendingMembers={pendingMembers}
-              onAccept={acceptMember}
-              onReject={rejectMember}
-              onUpdateRole={canManageRoles ? updateRole : undefined}
-              onRemove={canManageRoles ? removeMember : undefined}
-              currentUserId={user.id}
+              )}
+              
+              {characters.length === 0 ? (
+                <div className="text-center py-12 text-slate-500">
+                  <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No characters yet. Add your first guild character above!</p>
+                </div>
+              ) : filterCharacters(characters, characterFilters).length === 0 ? (
+                <div className="text-center py-12 text-slate-500">
+                  <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No characters match your filters.</p>
+                </div>
+              ) : (
+                filterCharacters(characters, characterFilters).map((character) => (
+                  <CharacterCard
+                    key={character.id}
+                    character={character}
+                    onUpdate={canEdit ? async (id, name) => updateCharacter(id, { name }) : async () => {}}
+                    onDelete={canEdit ? deleteCharacter : async () => {}}
+                    onSetProfessionRank={setProfessionRank}
+                    onEdit={canEdit ? setEditingCharacter : undefined}
+                    readOnly={!canEdit}
+                  />
+                ))
+              )}
+            </div>
+          ) : activeTab === 'events' ? (
+            <EventsList
+              events={events}
+              announcements={announcements}
+              timezone={profile?.timezone || 'UTC'}
+              clanId={clanId!}
+              userId={user.id}
+              canManage={canManageMembers}
+              onCreateEvent={async (eventData) => {
+                await createEvent(eventData);
+              }}
+              onUpdateEvent={updateEvent}
+              onCancelEvent={cancelEvent}
+              onRsvp={setRsvp}
+              onCreateAnnouncement={createAnnouncement}
+              onUpdateAnnouncement={updateAnnouncement}
+              onDeleteAnnouncement={deleteAnnouncement}
             />
-            
-            {/* Clan Settings (Admin only) */}
-            {membership?.role === 'admin' && clan && (
-              <ClanSettings
-                clanId={clan.id}
-                currentWebhookUrl={clan.discord_webhook_url || ''}
-                notifyOnEvents={clan.notify_on_events ?? true}
-                notifyOnAnnouncements={clan.notify_on_announcements ?? true}
+          ) : activeTab === 'parties' ? (
+            <PartiesList
+              parties={parties}
+              characters={characters}
+              clanId={clanId!}
+              userId={user.id}
+              canManage={canManageMembers}
+              onCreateParty={createParty}
+              onUpdateParty={updateParty}
+              onDeleteParty={deleteParty}
+              onAssignCharacter={assignCharacter}
+              onRemoveFromRoster={removeFromRoster}
+              onToggleConfirmed={toggleConfirmed}
+            />
+          ) : activeTab === 'matrix' ? (
+            <ClanMatrix members={characters} />
+          ) : activeTab === 'manage' && canManageMembers ? (
+            <div className="space-y-6">
+              {/* Member Management */}
+              <ManageTab
+                members={clanMembers}
+                pendingMembers={pendingMembers}
+                onAccept={acceptMember}
+                onReject={rejectMember}
+                onUpdateRole={canManageRoles ? updateRole : undefined}
+                onRemove={canManageRoles ? removeMember : undefined}
+                currentUserId={user.id}
               />
-            )}
-            
-            {/* Recruitment Settings (Admin only) */}
-            {membership?.role === 'admin' && clan && (
-              <RecruitmentSettings
-                clanId={clan.id}
-                clanSlug={clanSlug}
-              />
-            )}
-          </div>
-        ) : null}
+              
+              {/* Clan Settings (Admin only) */}
+              {membership?.role === 'admin' && clan && (
+                <ClanSettings
+                  clanId={clan.id}
+                  currentWebhookUrl={clan.discord_webhook_url || ''}
+                  notifyOnEvents={clan.notify_on_events ?? true}
+                  notifyOnAnnouncements={clan.notify_on_announcements ?? true}
+                />
+              )}
+              
+              {/* Recruitment Settings (Admin only) */}
+              {membership?.role === 'admin' && clan && (
+                <RecruitmentSettings
+                  clanId={clan.id}
+                  clanSlug={clanSlug}
+                />
+              )}
+            </div>
+          ) : null}
+        </div>
       </main>
+
+      {/* Bottom navigation and Footer - fixed at bottom */}
+      <div className="shrink-0">
+        <BottomNav
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          canManage={canManageMembers}
+        />
+        <InlineFooter variant="matching" />
+      </div>
 
       {editingCharacter && (
         <CharacterForm
@@ -573,13 +554,6 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
           isEditing
         />
       )}
-
-      {/* Bottom navigation for mobile */}
-      <BottomNav
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        canManage={canManageMembers}
-      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { COMMON_TIMEZONES } from '@/lib/events';
+import { InlineFooter } from '@/components/Footer';
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuthContext();
@@ -96,9 +97,9 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="h-screen flex flex-col overflow-hidden bg-slate-950">
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="shrink-0 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm z-10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link 
             href="/"
@@ -110,7 +111,8 @@ export default function SettingsPage() {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
         {/* Profile Section */}
         <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -179,11 +181,17 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               {t('settings.yourTimezone')}
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+                className="flex-1 pl-3 pr-10 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                  backgroundPosition: 'right 0.75rem center',
+                  backgroundSize: '1.25rem',
+                  backgroundRepeat: 'no-repeat',
+                }}
               >
                 {COMMON_TIMEZONES.map(tz => (
                   <option key={tz.value} value={tz.value}>
@@ -193,7 +201,7 @@ export default function SettingsPage() {
               </select>
               <button
                 onClick={detectTimezone}
-                className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer text-sm"
+                className="shrink-0 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer text-sm"
                 title={t('settings.autoDetect')}
               >
                 {t('settings.autoDetect')}
@@ -243,7 +251,13 @@ export default function SettingsPage() {
             )}
           </button>
         </div>
+        </div>
       </main>
+      
+      {/* Footer */}
+      <div className="shrink-0">
+        <InlineFooter />
+      </div>
     </div>
   );
 }

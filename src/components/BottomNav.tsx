@@ -26,10 +26,10 @@ export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps)
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      className="z-50"
       style={{ 
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        background: 'linear-gradient(to top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.95))',
+        background: 'rgba(15, 23, 42, 0.98)',
         backdropFilter: 'blur(12px)',
         borderTop: '1px solid rgba(71, 85, 105, 0.5)',
       }}
