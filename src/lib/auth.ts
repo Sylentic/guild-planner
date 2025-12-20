@@ -22,13 +22,10 @@ export interface ClanMembership {
  * Sign in with Discord OAuth
  */
 export async function signInWithDiscord(redirectTo?: string) {
-  const redirectUrl = redirectTo || `${window.location.origin}/auth/callback`;
-  console.log('Initiating Discord login with redirect to:', redirectUrl);
-
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
     options: {
-      redirectTo: redirectUrl,
+      redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
       scopes: 'identify',
     },
   });
