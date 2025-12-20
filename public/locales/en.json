@@ -306,5 +306,81 @@
     "feature2Desc": "Assign ranks from Apprentice to Grandmaster",
     "feature3Title": "Guild Coverage Matrix",
     "feature3Desc": "See your guild's productive strength at a glance"
+  },
+  "nodes": {
+    "title": "Node Citizenship",
+    "setCitizenship": "Set Citizenship",
+    "editCitizenship": "Edit Citizenship",
+    "removeCitizenship": "Remove Citizenship",
+    "forCharacter": "For character",
+    "nodeName": "Node Name",
+    "nodeNamePlaceholder": "Enter the name of your node...",
+    "nodeNameRequired": "Node name is required",
+    "nodeType": "Node Type",
+    "nodeStage": "Node Stage",
+    "region": "Region",
+    "regionPlaceholder": "e.g. Northern Mountains",
+    "mayor": "Mayor",
+    "councilMember": "Council Member",
+    "hasMayor": "Has guild mayor",
+    "noCitizenships": "No Citizenships Set",
+    "noCitizenshipsDesc": "Add citizenship information to characters to see the guild's node distribution.",
+    "unassignedMembers": "{{count}} members don't have citizenship assigned",
+    "totalNodes": "{{count}} nodes",
+    "membersAssigned": "members assigned",
+    "types": {
+      "divine": "Divine",
+      "economic": "Economic",
+      "military": "Military",
+      "scientific": "Scientific"
+    }
+  },
+  "siege": {
+    "createSiege": "Create Siege Event",
+    "editSiege": "Edit Siege Event",
+    "title": "Event Title",
+    "titlePlaceholder": "e.g. Castle Siege - Saturday Night",
+    "titleRequired": "Event title is required",
+    "description": "Description",
+    "descriptionPlaceholder": "Strategy notes, meeting point, etc.",
+    "siegeType": "Siege Type",
+    "targetName": "Target",
+    "targetPlaceholder": "Castle or Node name",
+    "targetRequired": "Target name is required",
+    "startsAt": "Start Time",
+    "signupDeadline": "Signup Deadline",
+    "roleRequirements": "Role Requirements",
+    "totalSlots": "Total",
+    "roster": "Roster",
+    "confirmed": "confirmed",
+    "cancelled": "Cancelled",
+    "signUp": "Sign Up",
+    "selectCharacter": "Select character...",
+    "selectRole": "Select role...",
+    "joinSiege": "Join Siege",
+    "withdraw": "Withdraw",
+    "confirm": "Confirm",
+    "checkIn": "Check In",
+    "noSignups": "No signups yet",
+    "unknown": "Unknown",
+    "types": {
+      "castle_attack": "Castle Attack",
+      "castle_defense": "Castle Defense",
+      "node_attack": "Node Attack",
+      "node_defense": "Node Defense"
+    },
+    "roles": {
+      "frontline": "Frontline",
+      "ranged": "Ranged",
+      "healer": "Healer",
+      "siege_operator": "Siege Operator",
+      "scout": "Scout",
+      "reserve": "Reserve"
+    },
+    "result": {
+      "victory": "Victory",
+      "defeat": "Defeat",
+      "draw": "Draw"
+    }
   }
 }

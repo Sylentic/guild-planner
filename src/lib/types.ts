@@ -155,7 +155,6 @@ export const PARTY_ROLES: Record<PartyRole, { name: string; icon: string; color:
   support: { name: 'Support', icon: '✨', color: 'text-yellow-400' },
 };
 
-// Recruitment types
 export interface RecruitmentApplication {
   id: string;
   clan_id: string;
@@ -171,4 +170,156 @@ export interface RecruitmentApplication {
   reviewed_at?: string;
   reviewed_by?: string;
   review_notes?: string;
+}
+
+// ============================================================
+// NODE CITIZENSHIP TYPES
+// ============================================================
+
+// Node types in AoC (4 types)
+export type NodeType = 'divine' | 'economic' | 'military' | 'scientific';
+
+// Node stages (0-6)
+export type NodeStage = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+// Node stage names
+export const NODE_STAGE_NAMES: Record<NodeStage, string> = {
+  0: 'Wilderness',
+  1: 'Expedition',
+  2: 'Encampment',
+  3: 'Village',
+  4: 'Town',
+  5: 'City',
+  6: 'Metropolis',
+};
+
+// Node type configuration
+export const NODE_TYPE_CONFIG: Record<NodeType, { label: string; icon: string; color: string }> = {
+  divine: { label: 'Divine', icon: '✨', color: 'text-yellow-400' },
+  economic: { label: 'Economic', icon: '💰', color: 'text-green-400' },
+  military: { label: 'Military', icon: '⚔️', color: 'text-red-400' },
+  scientific: { label: 'Scientific', icon: '🔬', color: 'text-blue-400' },
+};
+
+// Node citizenship interface
+export interface NodeCitizenship {
+  id: string;
+  character_id: string;
+  node_name: string;
+  node_type: NodeType;
+  node_stage: NodeStage;
+  region?: string;
+  is_mayor: boolean;
+  is_council_member: boolean;
+  became_citizen_at: string;
+  updated_at: string;
+}
+
+// Character with citizenship
+export interface CharacterWithCitizenship extends CharacterWithProfessions {
+  citizenship?: NodeCitizenship;
+}
+
+// Node distribution stats (from the SQL view)
+export interface NodeDistribution {
+  clan_id: string;
+  node_name: string;
+  node_type: NodeType;
+  node_stage: NodeStage;
+  citizen_count: number;
+  has_mayor: boolean;
+  citizen_names: string[];
+}
+
+// ============================================================
+// SIEGE TYPES
+// ============================================================
+
+// Siege event types
+export type SiegeType = 'castle_attack' | 'castle_defense' | 'node_attack' | 'node_defense';
+
+// Siege roles (different from party roles - more specialized for large battles)
+export type SiegeRole = 'frontline' | 'ranged' | 'healer' | 'siege_operator' | 'scout' | 'reserve';
+
+// Roster status
+export type RosterStatus = 'signed_up' | 'confirmed' | 'checked_in' | 'no_show';
+
+// Siege result
+export type SiegeResult = 'victory' | 'defeat' | 'draw' | null;
+
+// Siege type configuration
+export const SIEGE_TYPE_CONFIG: Record<SiegeType, { label: string; icon: string; color: string; isDefense: boolean }> = {
+  castle_attack: { label: 'Castle Attack', icon: '🏰', color: 'text-red-400', isDefense: false },
+  castle_defense: { label: 'Castle Defense', icon: '🛡️', color: 'text-blue-400', isDefense: true },
+  node_attack: { label: 'Node Attack', icon: '⚔️', color: 'text-orange-400', isDefense: false },
+  node_defense: { label: 'Node Defense', icon: '🏛️', color: 'text-green-400', isDefense: true },
+};
+
+// Siege role configuration
+export const SIEGE_ROLE_CONFIG: Record<SiegeRole, { label: string; icon: string; color: string; description: string }> = {
+  frontline: { label: 'Frontline', icon: '🗡️', color: 'text-red-400', description: 'Melee fighters and tanks' },
+  ranged: { label: 'Ranged', icon: '🏹', color: 'text-orange-400', description: 'Archers and mages' },
+  healer: { label: 'Healer', icon: '💚', color: 'text-green-400', description: 'Healers and support' },
+  siege_operator: { label: 'Siege Operator', icon: '🎯', color: 'text-purple-400', description: 'Trebuchets, rams' },
+  scout: { label: 'Scout', icon: '👁️', color: 'text-cyan-400', description: 'Reconnaissance' },
+  reserve: { label: 'Reserve', icon: '⏳', color: 'text-slate-400', description: 'Backup players' },
+};
+
+// Siege event interface
+export interface SiegeEvent {
+  id: string;
+  clan_id: string;
+  title: string;
+  description?: string;
+  siege_type: SiegeType;
+  target_name: string;
+  starts_at: string;
+  declaration_ends_at?: string;
+  max_participants: number;
+  frontline_needed: number;
+  ranged_needed: number;
+  healer_needed: number;
+  siege_operator_needed: number;
+  scout_needed: number;
+  reserve_needed: number;
+  is_cancelled: boolean;
+  result: SiegeResult;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Siege roster entry
+export interface SiegeRoster {
+  id: string;
+  siege_id: string;
+  character_id: string;
+  user_id?: string;
+  role: SiegeRole;
+  is_leader: boolean;
+  priority: number;
+  status: RosterStatus;
+  signed_up_at: string;
+  confirmed_at?: string;
+  checked_in_at?: string;
+  note?: string;
+}
+
+// Roster with character data
+export interface SiegeRosterWithCharacter extends SiegeRoster {
+  character?: CharacterWithProfessions;
+}
+
+// Siege event with roster
+export interface SiegeEventWithRoster extends SiegeEvent {
+  roster: SiegeRosterWithCharacter[];
+}
+
+// Roster counts by role (from view)
+export interface SiegeRosterCounts {
+  siege_id: string;
+  role: SiegeRole;
+  total_count: number;
+  confirmed_count: number;
+  checked_in_count: number;
 }

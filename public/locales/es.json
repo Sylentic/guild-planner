@@ -306,5 +306,81 @@
     "feature2Desc": "Asigna rangos desde Aprendiz hasta Gran Maestro",
     "feature3Title": "Matriz de Cobertura del Guild",
     "feature3Desc": "Visualiza la capacidad productiva de tu guild de un vistazo"
+  },
+  "nodes": {
+    "title": "Ciudadanía de Nodo",
+    "setCitizenship": "Establecer Ciudadanía",
+    "editCitizenship": "Editar Ciudadanía",
+    "removeCitizenship": "Eliminar Ciudadanía",
+    "forCharacter": "Para el personaje",
+    "nodeName": "Nombre del Nodo",
+    "nodeNamePlaceholder": "Introduce el nombre de tu nodo...",
+    "nodeNameRequired": "El nombre del nodo es obligatorio",
+    "nodeType": "Tipo de Nodo",
+    "nodeStage": "Etapa del Nodo",
+    "region": "Región",
+    "regionPlaceholder": "ej. Montañas del Norte",
+    "mayor": "Alcalde",
+    "councilMember": "Miembro del Consejo",
+    "hasMayor": "Tiene alcalde de la guild",
+    "noCitizenships": "Sin Ciudadanías Asignadas",
+    "noCitizenshipsDesc": "Añade información de ciudadanía a los personajes para ver la distribución de nodos de la guild.",
+    "unassignedMembers": "{{count}} miembros no tienen ciudadanía asignada",
+    "totalNodes": "{{count}} nodos",
+    "membersAssigned": "miembros asignados",
+    "types": {
+      "divine": "Divino",
+      "economic": "Económico",
+      "military": "Militar",
+      "scientific": "Científico"
+    }
+  },
+  "siege": {
+    "createSiege": "Crear Evento de Siege",
+    "editSiege": "Editar Evento de Siege",
+    "title": "Título del Evento",
+    "titlePlaceholder": "ej. Siege de Castillo - Sábado Noche",
+    "titleRequired": "El título del evento es obligatorio",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Notas de estrategia, punto de encuentro, etc.",
+    "siegeType": "Tipo de Siege",
+    "targetName": "Objetivo",
+    "targetPlaceholder": "Nombre del Castillo o Nodo",
+    "targetRequired": "El nombre del objetivo es obligatorio",
+    "startsAt": "Hora de Inicio",
+    "signupDeadline": "Fecha Límite de Inscripción",
+    "roleRequirements": "Requisitos por Rol",
+    "totalSlots": "Total",
+    "roster": "Lista",
+    "confirmed": "confirmados",
+    "cancelled": "Cancelado",
+    "signUp": "Inscribirse",
+    "selectCharacter": "Seleccionar personaje...",
+    "selectRole": "Seleccionar rol...",
+    "joinSiege": "Unirse al Siege",
+    "withdraw": "Retirarse",
+    "confirm": "Confirmar",
+    "checkIn": "Registrar Asistencia",
+    "noSignups": "Aún no hay inscripciones",
+    "unknown": "Desconocido",
+    "types": {
+      "castle_attack": "Ataque a Castillo",
+      "castle_defense": "Defensa de Castillo",
+      "node_attack": "Ataque a Nodo",
+      "node_defense": "Defensa de Nodo"
+    },
+    "roles": {
+      "frontline": "Primera Línea",
+      "ranged": "A Distancia",
+      "healer": "Sanador",
+      "siege_operator": "Operador de Máquinas",
+      "scout": "Explorador",
+      "reserve": "Reserva"
+    },
+    "result": {
+      "victory": "Victoria",
+      "defeat": "Derrota",
+      "draw": "Empate"
+    }
   }
 }
