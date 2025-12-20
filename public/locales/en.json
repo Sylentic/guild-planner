@@ -20,7 +20,20 @@
     "signIn": "Sign in with Discord",
     "signOut": "Sign out",
     "saving": "Saving...",
-    "saved": "Saved!"
+    "saved": "Saved!",
+    "create": "Create",
+    "update": "Update",
+    "remove": "Remove",
+    "accept": "Accept",
+    "reject": "Reject",
+    "pending": "Pending",
+    "showing": "Showing",
+    "of": "of",
+    "all": "All",
+    "none": "None",
+    "or": "or",
+    "and": "and",
+    "optional": "optional"
   },
   "nav": {
     "characters": "Characters",
@@ -29,6 +42,15 @@
     "matrix": "Matrix",
     "manage": "Manage"
   },
+  "auth": {
+    "signInWithDiscord": "Sign in with Discord",
+    "signingIn": "Signing in...",
+    "signInDescription": "Sign in with your Discord account to manage your guild's profession matrix, create events, and organize parties.",
+    "welcome": "Welcome to Guild Planner",
+    "pleaseSignIn": "Please sign in to access settings",
+    "goToLogin": "Go to Login",
+    "signedInAs": "Signed in as"
+  },
   "clan": {
     "create": "Create Clan",
     "createDescription": "The clan {{name}} doesn't exist yet. Would you like to create it?",
@@ -36,9 +58,13 @@
     "applyToJoin": "Apply to Join",
     "applicationPending": "Application Pending",
     "pendingApproval": "Your application is pending approval from clan officers.",
-    "characters_count": "{{count}} characters",
+    "charactersCount": "{{count}} characters",
     "noCharacters": "No characters yet. Add your first guild character above!",
-    "noCharactersMatch": "No characters match your filters."
+    "noCharactersMatch": "No characters match your filters.",
+    "viewPublicPage": "View Public Page",
+    "admin": "admin",
+    "officer": "officer",
+    "member": "member"
   },
   "character": {
     "addCharacter": "Add Character",
@@ -50,7 +76,15 @@
     "level": "Level",
     "mainCharacter": "Main Character",
     "professions": "Professions",
-    "searchPlaceholder": "Search characters..."
+    "searchPlaceholder": "Search characters...",
+    "selectRace": "Select race",
+    "selectArchetype": "Select archetype",
+    "noArchetype": "No secondary",
+    "grandmaster": "Grandmaster",
+    "master": "Master",
+    "journeyman": "Journeyman",
+    "apprentice": "Apprentice",
+    "novice": "Novice"
   },
   "party": {
     "createParty": "Create Party",
@@ -60,17 +94,35 @@
     "addCharacterToParty": "Add Character",
     "emptySlot": "Empty slot",
     "noChars": "No chars",
-    "select": "Select..."
+    "select": "Select...",
+    "tank": "Tank",
+    "healer": "Healer",
+    "dps": "DPS",
+    "support": "Support",
+    "tanksNeeded": "Tanks Needed",
+    "healersNeeded": "Healers Needed",
+    "dpsNeeded": "DPS Needed",
+    "supportNeeded": "Support Needed",
+    "noParties": "No parties created yet",
+    "deleteConfirm": "Are you sure you want to delete this party?"
   },
   "event": {
     "createEvent": "Create Event",
     "editEvent": "Edit Event",
+    "eventName": "Event Name",
+    "description": "Description",
+    "startsAt": "Starts At",
+    "duration": "Duration",
     "upcomingEvents": "Upcoming Events",
     "noEvents": "No events scheduled",
     "rsvp": "RSVP",
     "attending": "Attending",
     "maybe": "Maybe",
-    "declined": "Declined"
+    "declined": "Declined",
+    "cancelled": "Cancelled",
+    "cancelEvent": "Cancel Event",
+    "hours": "hours",
+    "minutes": "minutes"
   },
   "recruitment": {
     "settings": "Recruitment Settings",
@@ -85,7 +137,15 @@
     "applications": "Applications",
     "noApplications": "No applications yet",
     "accept": "Accept",
-    "reject": "Reject"
+    "reject": "Reject",
+    "applyNow": "Apply Now",
+    "applicationSent": "Application Sent!",
+    "characterName": "Character Name",
+    "discordUsername": "Discord Username",
+    "message": "Message",
+    "tellUsAboutYourself": "Tell us about yourself...",
+    "submitApplication": "Submit Application",
+    "submitting": "Submitting..."
   },
   "members": {
     "title": "Members",
@@ -93,7 +153,11 @@
     "noPending": "No pending applications",
     "promote": "Promote",
     "demote": "Demote",
-    "remove": "Remove"
+    "remove": "Remove",
+    "addMember": "Add Member",
+    "removeMember": "Remove Member",
+    "memberSince": "Member since",
+    "role": "Role"
   },
   "settings": {
     "title": "Settings",
@@ -113,7 +177,12 @@
     "supplyChain": "Supply Chain",
     "gm": "GM",
     "master": "Master",
-    "missing": "Missing"
+    "missing": "Missing",
+    "professionHealth": "Profession Health",
+    "excellent": "Excellent",
+    "good": "Good",
+    "needsWork": "Needs work",
+    "critical": "Critical"
   },
   "discord": {
     "integration": "Discord Integration",
@@ -123,6 +192,85 @@
     "eventNotifications": "Event Notifications",
     "eventNotificationsDesc": "Notify when new events are created",
     "announcementNotifications": "Announcement Notifications",
-    "announcementNotificationsDesc": "Notify when announcements are posted"
+    "announcementNotificationsDesc": "Notify when announcements are posted",
+    "testing": "Testing...",
+    "success": "Webhook test successful!"
+  },
+  "announcements": {
+    "title": "Announcements",
+    "createAnnouncement": "Create Announcement",
+    "editAnnouncement": "Edit Announcement",
+    "noAnnouncements": "No announcements",
+    "pinned": "Pinned"
+  },
+  "publicPage": {
+    "joinOurGuild": "Join Our Guild",
+    "aboutUs": "About Us",
+    "guildStats": "Guild Stats",
+    "members": "Members",
+    "characters": "Characters",
+    "upcomingEvents": "Upcoming Events",
+    "applyToJoin": "Apply to Join",
+    "recruitmentClosed": "Recruitment is currently closed",
+    "guildNotPublic": "This guild profile is not public"
+  },
+  "filters": {
+    "title": "Filters",
+    "clearAll": "Clear All",
+    "archetype": "Archetype",
+    "profession": "Profession",
+    "rank": "Rank",
+    "mainOnly": "Main characters only",
+    "anyArchetype": "Any archetype",
+    "anyProfession": "Any profession",
+    "anyRank": "Any rank"
+  },
+  "archetypes": {
+    "fighter": "Fighter",
+    "tank": "Tank",
+    "rogue": "Rogue",
+    "ranger": "Ranger",
+    "mage": "Mage",
+    "summoner": "Summoner",
+    "cleric": "Cleric",
+    "bard": "Bard"
+  },
+  "professions": {
+    "gathering": "Gathering",
+    "processing": "Processing",
+    "crafting": "Crafting",
+    "mining": "Mining",
+    "herbalism": "Herbalism",
+    "lumberjacking": "Lumberjacking",
+    "fishing": "Fishing",
+    "hunting": "Hunting",
+    "animalHusbandry": "Animal Husbandry",
+    "farming": "Farming",
+    "metalworking": "Metalworking",
+    "stonemasonry": "Stonemasonry",
+    "woodworking": "Woodworking",
+    "weaving": "Weaving",
+    "tanning": "Tanning",
+    "alchemy": "Alchemy",
+    "cooking": "Cooking",
+    "weaponsmithing": "Weaponsmithing",
+    "armorsmithing": "Armorsmithing",
+    "leatherworking": "Leatherworking",
+    "tailoring": "Tailoring",
+    "jewelcrafting": "Jewelcrafting",
+    "arcaneEngineering": "Arcane Engineering",
+    "carpentry": "Carpentry",
+    "scribe": "Scribe"
+  },
+  "races": {
+    "kaelar": "Kaelar",
+    "vaelune": "Vaelune",
+    "empyrean": "Empyrean",
+    "pyrai": "Py'rai",
+    "renkai": "Ren'kai",
+    "vek": "Vek",
+    "dunir": "Dünir",
+    "nikua": "Niküa",
+    "tulnar": "Tulnar"
   }
 }

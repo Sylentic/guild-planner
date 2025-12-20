@@ -1,6 +1,7 @@
 'use client';
 
 import { Users, Grid3X3, Calendar, Swords, Settings } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage';
 
@@ -10,15 +11,17 @@ interface BottomNavProps {
   canManage: boolean;
 }
 
-const NAV_ITEMS: { tab: Tab; icon: React.ElementType; label: string; requiresManage?: boolean }[] = [
-  { tab: 'characters', icon: Users, label: 'Chars' },
-  { tab: 'events', icon: Calendar, label: 'Events' },
-  { tab: 'parties', icon: Swords, label: 'Parties' },
-  { tab: 'matrix', icon: Grid3X3, label: 'Matrix' },
-  { tab: 'manage', icon: Settings, label: 'Manage', requiresManage: true },
-];
-
 export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps) {
+  const { t } = useLanguage();
+  
+  const NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
+    { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
+    { tab: 'events', icon: Calendar, labelKey: 'nav.events' },
+    { tab: 'parties', icon: Swords, labelKey: 'nav.parties' },
+    { tab: 'matrix', icon: Grid3X3, labelKey: 'nav.matrix' },
+    { tab: 'manage', icon: Settings, labelKey: 'nav.manage', requiresManage: true },
+  ];
+
   const visibleItems = NAV_ITEMS.filter(item => !item.requiresManage || canManage);
 
   return (
@@ -32,7 +35,7 @@ export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps)
       }}
     >
       <div className="flex items-stretch" style={{ height: '64px' }}>
-        {visibleItems.map(({ tab, icon: Icon, label }) => {
+        {visibleItems.map(({ tab, icon: Icon, labelKey }) => {
           const isActive = activeTab === tab;
           return (
             <button
@@ -67,7 +70,7 @@ export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps)
                   opacity: isActive ? 1 : 0.8,
                 }}
               >
-                {label}
+                {t(labelKey)}
               </span>
             </button>
           );

@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Globe, Save, Check, ArrowLeft, User } from 'lucide-react';
+import { Globe, Save, Check, ArrowLeft, User, Languages } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
+import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { COMMON_TIMEZONES } from '@/lib/events';
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuthContext();
+  const { language, setLanguage, t } = useLanguage();
   const [timezone, setTimezone] = useState('UTC');
   const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -70,12 +72,12 @@ export default function SettingsPage() {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-400 mb-4">Please log in to access settings</p>
+          <p className="text-slate-400 mb-4">{t('common.signIn')}</p>
           <Link 
             href="/login"
             className="text-orange-400 hover:text-orange-300 underline"
           >
-            Go to Login
+            {t('common.signIn')}
           </Link>
         </div>
       </div>
@@ -83,7 +85,7 @@ export default function SettingsPage() {
   }
 
   // Current time example
-  const currentTime = new Date().toLocaleString('en-US', {
+  const currentTime = new Date().toLocaleString(language === 'es' ? 'es-ES' : 'en-US', {
     timeZone: timezone,
     weekday: 'short',
     month: 'short',
@@ -104,7 +106,7 @@ export default function SettingsPage() {
           >
             <ArrowLeft size={20} />
           </Link>
-          <h1 className="text-xl font-bold text-white">Settings</h1>
+          <h1 className="text-xl font-bold text-white">{t('settings.title')}</h1>
         </div>
       </header>
 
@@ -113,23 +115,54 @@ export default function SettingsPage() {
         <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <User className="w-5 h-5 text-orange-400" />
-            Profile
+            {t('settings.profile')}
           </h2>
 
           {/* Display Name */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              Display Name
+              {t('settings.displayName')}
             </label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your display name"
+              placeholder={t('settings.displayName')}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
             <p className="text-xs text-slate-500 mt-1">
-              This is how your name appears to other clan members.
+              {t('settings.displayNameHint')}
+            </p>
+          </div>
+        </section>
+
+        {/* Language Section */}
+        <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+            <Languages className="w-5 h-5 text-orange-400" />
+            {t('settings.language')}
+          </h2>
+
+          {/* Language Selector */}
+          <div>
+            <div className="flex gap-3">
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                    language === lang.code
+                      ? 'bg-orange-500/20 border-orange-500 text-orange-400'
+                      : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  <span className="text-xl">{lang.flag}</span>
+                  <span className="font-medium">{lang.name}</span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-slate-500 mt-3">
+              {t('settings.languageHint')}
             </p>
           </div>
         </section>
@@ -138,13 +171,13 @@ export default function SettingsPage() {
         <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
           <h2 className="text-lg font-semibold text-white flex items-center gap-2">
             <Globe className="w-5 h-5 text-orange-400" />
-            Timezone
+            {t('settings.timezone')}
           </h2>
 
           {/* Timezone Selector */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              Your Timezone
+              {t('settings.yourTimezone')}
             </label>
             <div className="flex gap-2">
               <select
@@ -161,16 +194,16 @@ export default function SettingsPage() {
               <button
                 onClick={detectTimezone}
                 className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer text-sm"
-                title="Detect my timezone"
+                title={t('settings.autoDetect')}
               >
-                Auto-detect
+                {t('settings.autoDetect')}
               </button>
             </div>
           </div>
 
           {/* Preview */}
           <div className="bg-slate-800/50 rounded-lg p-4">
-            <p className="text-sm text-slate-400 mb-1">Your current time:</p>
+            <p className="text-sm text-slate-400 mb-1">{t('settings.currentTime')}</p>
             <p className="text-white font-medium">{currentTime}</p>
           </div>
         </section>
@@ -188,7 +221,7 @@ export default function SettingsPage() {
             href="/"
             className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer"
           >
-            Cancel
+            {t('common.cancel')}
           </Link>
           <button
             onClick={handleSave}
@@ -196,16 +229,16 @@ export default function SettingsPage() {
             className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
           >
             {saving ? (
-              <>Saving...</>
+              <>{t('common.saving')}</>
             ) : saved ? (
               <>
                 <Check size={18} />
-                Saved!
+                {t('common.saved')}
               </>
             ) : (
               <>
                 <Save size={18} />
-                Save Changes
+                {t('settings.saveChanges')}
               </>
             )}
           </button>

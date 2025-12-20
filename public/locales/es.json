@@ -20,7 +20,20 @@
     "signIn": "Iniciar sesión con Discord",
     "signOut": "Cerrar sesión",
     "saving": "Guardando...",
-    "saved": "¡Guardado!"
+    "saved": "¡Guardado!",
+    "create": "Crear",
+    "update": "Actualizar",
+    "remove": "Eliminar",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "pending": "Pendiente",
+    "showing": "Mostrando",
+    "of": "de",
+    "all": "Todos",
+    "none": "Ninguno",
+    "or": "o",
+    "and": "y",
+    "optional": "opcional"
   },
   "nav": {
     "characters": "Personajes",
@@ -29,6 +42,15 @@
     "matrix": "Matriz",
     "manage": "Gestionar"
   },
+  "auth": {
+    "signInWithDiscord": "Iniciar sesión con Discord",
+    "signingIn": "Iniciando sesión...",
+    "signInDescription": "Inicia sesión con tu cuenta de Discord para gestionar la matriz de profesiones de tu guild, crear eventos y organizar grupos.",
+    "welcome": "Bienvenido a Guild Planner",
+    "pleaseSignIn": "Por favor, inicia sesión para acceder a la configuración",
+    "goToLogin": "Ir al Login",
+    "signedInAs": "Conectado como"
+  },
   "clan": {
     "create": "Crear Clan",
     "createDescription": "El clan {{name}} no existe todavía. ¿Te gustaría crearlo?",
@@ -36,9 +58,13 @@
     "applyToJoin": "Solicitar unirse",
     "applicationPending": "Solicitud pendiente",
     "pendingApproval": "Tu solicitud está pendiente de aprobación por los oficiales del clan.",
-    "characters_count": "{{count}} personajes",
+    "charactersCount": "{{count}} personajes",
     "noCharacters": "Aún no hay personajes. ¡Añade tu primer personaje arriba!",
-    "noCharactersMatch": "Ningún personaje coincide con tus filtros."
+    "noCharactersMatch": "Ningún personaje coincide con tus filtros.",
+    "viewPublicPage": "Ver Página Pública",
+    "admin": "admin",
+    "officer": "oficial",
+    "member": "miembro"
   },
   "character": {
     "addCharacter": "Añadir Personaje",
@@ -50,7 +76,15 @@
     "level": "Nivel",
     "mainCharacter": "Personaje Principal",
     "professions": "Profesiones",
-    "searchPlaceholder": "Buscar personajes..."
+    "searchPlaceholder": "Buscar personajes...",
+    "selectRace": "Seleccionar raza",
+    "selectArchetype": "Seleccionar arquetipo",
+    "noArchetype": "Sin secundario",
+    "grandmaster": "Gran Maestro",
+    "master": "Maestro",
+    "journeyman": "Oficial",
+    "apprentice": "Aprendiz",
+    "novice": "Novato"
   },
   "party": {
     "createParty": "Crear Grupo",
@@ -60,17 +94,35 @@
     "addCharacterToParty": "Añadir Personaje",
     "emptySlot": "Hueco vacío",
     "noChars": "Sin personajes",
-    "select": "Seleccionar..."
+    "select": "Seleccionar...",
+    "tank": "Tanque",
+    "healer": "Sanador",
+    "dps": "DPS",
+    "support": "Soporte",
+    "tanksNeeded": "Tanques Necesarios",
+    "healersNeeded": "Sanadores Necesarios",
+    "dpsNeeded": "DPS Necesarios",
+    "supportNeeded": "Soportes Necesarios",
+    "noParties": "Aún no hay grupos creados",
+    "deleteConfirm": "¿Estás seguro de que quieres eliminar este grupo?"
   },
   "event": {
     "createEvent": "Crear Evento",
     "editEvent": "Editar Evento",
+    "eventName": "Nombre del Evento",
+    "description": "Descripción",
+    "startsAt": "Comienza a las",
+    "duration": "Duración",
     "upcomingEvents": "Próximos Eventos",
     "noEvents": "No hay eventos programados",
     "rsvp": "Confirmar asistencia",
     "attending": "Asistiré",
     "maybe": "Quizás",
-    "declined": "No asistiré"
+    "declined": "No asistiré",
+    "cancelled": "Cancelado",
+    "cancelEvent": "Cancelar Evento",
+    "hours": "horas",
+    "minutes": "minutos"
   },
   "recruitment": {
     "settings": "Configuración de Reclutamiento",
@@ -85,7 +137,15 @@
     "applications": "Solicitudes",
     "noApplications": "Aún no hay solicitudes",
     "accept": "Aceptar",
-    "reject": "Rechazar"
+    "reject": "Rechazar",
+    "applyNow": "Solicitar Ahora",
+    "applicationSent": "¡Solicitud Enviada!",
+    "characterName": "Nombre del Personaje",
+    "discordUsername": "Usuario de Discord",
+    "message": "Mensaje",
+    "tellUsAboutYourself": "Cuéntanos sobre ti...",
+    "submitApplication": "Enviar Solicitud",
+    "submitting": "Enviando..."
   },
   "members": {
     "title": "Miembros",
@@ -93,7 +153,11 @@
     "noPending": "No hay solicitudes pendientes",
     "promote": "Ascender",
     "demote": "Degradar",
-    "remove": "Eliminar"
+    "remove": "Eliminar",
+    "addMember": "Añadir Miembro",
+    "removeMember": "Eliminar Miembro",
+    "memberSince": "Miembro desde",
+    "role": "Rol"
   },
   "settings": {
     "title": "Configuración",
@@ -102,7 +166,7 @@
     "displayNameHint": "Así aparecerá tu nombre para otros miembros del clan.",
     "timezone": "Zona horaria",
     "yourTimezone": "Tu zona horaria",
-    "autoDetect": "Detectar automáticamente",
+    "autoDetect": "Detectar",
     "currentTime": "Tu hora actual:",
     "language": "Idioma",
     "languageHint": "Elige tu idioma preferido para la interfaz.",
@@ -112,17 +176,101 @@
     "coverage": "Cobertura",
     "supplyChain": "Cadena de Suministro",
     "gm": "GM",
-    "master": "Master",
-    "missing": "Faltantes"
+    "master": "Maestro",
+    "missing": "Faltantes",
+    "professionHealth": "Salud de Profesiones",
+    "excellent": "Excelente",
+    "good": "Bueno",
+    "needsWork": "Necesita trabajo",
+    "critical": "Crítico"
   },
   "discord": {
     "integration": "Integración con Discord",
     "webhookUrl": "URL del Webhook",
-    "webhookHint": "Obtén esto de Discord: Configuración del Servidor → Integraciones → Webhooks → Nuevo Webhook",
+    "webhookHint": "Obtén esto de Discord: Config. del Servidor → Integraciones → Webhooks → Nuevo Webhook",
     "testWebhook": "Probar Webhook",
     "eventNotifications": "Notificaciones de Eventos",
     "eventNotificationsDesc": "Notificar cuando se creen nuevos eventos",
     "announcementNotifications": "Notificaciones de Anuncios",
-    "announcementNotificationsDesc": "Notificar cuando se publiquen anuncios"
+    "announcementNotificationsDesc": "Notificar cuando se publiquen anuncios",
+    "testing": "Probando...",
+    "success": "¡Prueba de webhook exitosa!"
+  },
+  "announcements": {
+    "title": "Anuncios",
+    "createAnnouncement": "Crear Anuncio",
+    "editAnnouncement": "Editar Anuncio",
+    "noAnnouncements": "Sin anuncios",
+    "pinned": "Fijado"
+  },
+  "publicPage": {
+    "joinOurGuild": "Únete a Nuestra Guild",
+    "aboutUs": "Sobre Nosotros",
+    "guildStats": "Estadísticas de la Guild",
+    "members": "Miembros",
+    "characters": "Personajes",
+    "upcomingEvents": "Próximos Eventos",
+    "applyToJoin": "Solicitar Unirse",
+    "recruitmentClosed": "El reclutamiento está cerrado actualmente",
+    "guildNotPublic": "Este perfil de guild no es público"
+  },
+  "filters": {
+    "title": "Filtros",
+    "clearAll": "Limpiar Todo",
+    "archetype": "Arquetipo",
+    "profession": "Profesión",
+    "rank": "Rango",
+    "mainOnly": "Solo personajes principales",
+    "anyArchetype": "Cualquier arquetipo",
+    "anyProfession": "Cualquier profesión",
+    "anyRank": "Cualquier rango"
+  },
+  "archetypes": {
+    "fighter": "Guerrero",
+    "tank": "Tanque",
+    "rogue": "Pícaro",
+    "ranger": "Explorador",
+    "mage": "Mago",
+    "summoner": "Invocador",
+    "cleric": "Clérigo",
+    "bard": "Bardo"
+  },
+  "professions": {
+    "gathering": "Recolección",
+    "processing": "Procesamiento",
+    "crafting": "Fabricación",
+    "mining": "Minería",
+    "herbalism": "Herboristería",
+    "lumberjacking": "Tala",
+    "fishing": "Pesca",
+    "hunting": "Caza",
+    "animalHusbandry": "Ganadería",
+    "farming": "Agricultura",
+    "metalworking": "Metalurgia",
+    "stonemasonry": "Cantería",
+    "woodworking": "Carpintería",
+    "weaving": "Tejido",
+    "tanning": "Curtido",
+    "alchemy": "Alquimia",
+    "cooking": "Cocina",
+    "weaponsmithing": "Armería",
+    "armorsmithing": "Forja de Armaduras",
+    "leatherworking": "Marroquinería",
+    "tailoring": "Sastrería",
+    "jewelcrafting": "Joyería",
+    "arcaneEngineering": "Ingeniería Arcana",
+    "carpentry": "Ebanistería",
+    "scribe": "Escriba"
+  },
+  "races": {
+    "kaelar": "Kaelar",
+    "vaelune": "Vaelune",
+    "empyrean": "Empíreo",
+    "pyrai": "Py'rai",
+    "renkai": "Ren'kai",
+    "vek": "Vek",
+    "dunir": "Dünir",
+    "nikua": "Niküa",
+    "tulnar": "Tulnar"
   }
 }
