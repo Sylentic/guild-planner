@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Event, EventWithRsvps, EventRsvp, RsvpStatus, Announcement } from '@/lib/events';
+import { notifyNewEvent, notifyAnnouncement } from '@/lib/discord';
 
 interface UseEventsReturn {
   events: EventWithRsvps[];
@@ -118,6 +119,22 @@ export function useEvents(clanId: string | null, userId: string | null): UseEven
     if (createError) {
       setError(createError.message);
       throw createError;
+    }
+
+    // Send Discord notification
+    try {
+      const { data: clanData } = await supabase
+        .from('clans')
+        .select('name, discord_webhook_url, notify_on_events')
+        .eq('id', event.clan_id)
+        .single();
+
+      if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
+        await notifyNewEvent(clanData.discord_webhook_url, data, clanData.name);
+      }
+    } catch (err) {
+      console.error('Discord notification failed:', err);
+      // Don't throw - notification failure shouldn't break event creation
     }
 
     await fetchEvents();
@@ -244,13 +261,31 @@ export function useEvents(clanId: string | null, userId: string | null): UseEven
   const createAnnouncement = async (
     announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>
   ) => {
-    const { error: createError } = await supabase
+    const { data, error: createError } = await supabase
       .from('announcements')
-      .insert(announcement);
+      .insert(announcement)
+      .select()
+      .single();
 
     if (createError) {
       setError(createError.message);
       throw createError;
+    }
+
+    // Send Discord notification
+    try {
+      const { data: clanData } = await supabase
+        .from('clans')
+        .select('name, discord_webhook_url, notify_on_announcements')
+        .eq('id', announcement.clan_id)
+        .single();
+
+      if (clanData?.discord_webhook_url && clanData.notify_on_announcements !== false) {
+        await notifyAnnouncement(clanData.discord_webhook_url, data, clanData.name);
+      }
+    } catch (err) {
+      console.error('Discord notification failed:', err);
+      // Don't throw - notification failure shouldn't break announcement creation
     }
 
     await fetchAnnouncements();

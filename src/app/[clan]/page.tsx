@@ -12,6 +12,8 @@ import { AddCharacterButton } from '@/components/AddCharacterButton';
 import { CharacterForm } from '@/components/CharacterForm';
 import { ClanMatrix } from '@/components/ClanMatrix';
 import { EventsList } from '@/components/EventsList';
+import { CharacterFiltersBar, CharacterFilters, DEFAULT_FILTERS, filterCharacters } from '@/components/CharacterFilters';
+import { ClanSettings } from '@/components/ClanSettings';
 import { createClan, getClanBySlug } from '@/lib/auth';
 import { CharacterWithProfessions } from '@/lib/types';
 
@@ -26,6 +28,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [isCreating, setIsCreating] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<CharacterWithProfessions | null>(null);
+  const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
 
   // Fetch clan ID first
   useEffect(() => {
@@ -367,13 +370,29 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
         {activeTab === 'characters' ? (
           <div className="space-y-4">
             {canEdit && <AddCharacterButton onAdd={addCharacter} />}
+            
+            {/* Character Filters */}
+            {characters.length > 0 && (
+              <CharacterFiltersBar
+                filters={characterFilters}
+                onChange={setCharacterFilters}
+                characterCount={characters.length}
+                filteredCount={filterCharacters(characters, characterFilters).length}
+              />
+            )}
+            
             {characters.length === 0 ? (
               <div className="text-center py-12 text-slate-500">
                 <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>No characters yet. Add your first guild character above!</p>
               </div>
+            ) : filterCharacters(characters, characterFilters).length === 0 ? (
+              <div className="text-center py-12 text-slate-500">
+                <Swords className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>No characters match your filters.</p>
+              </div>
             ) : (
-              characters.map((character) => (
+              filterCharacters(characters, characterFilters).map((character) => (
                 <CharacterCard
                   key={character.id}
                   character={character}
@@ -407,15 +426,28 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
         ) : activeTab === 'matrix' ? (
           <ClanMatrix members={characters} />
         ) : activeTab === 'manage' && canManageMembers ? (
-          <ManageTab
-            members={clanMembers}
-            pendingMembers={pendingMembers}
-            onAccept={acceptMember}
-            onReject={rejectMember}
-            onUpdateRole={canManageRoles ? updateRole : undefined}
-            onRemove={canManageRoles ? removeMember : undefined}
-            currentUserId={user.id}
-          />
+          <div className="space-y-6">
+            {/* Member Management */}
+            <ManageTab
+              members={clanMembers}
+              pendingMembers={pendingMembers}
+              onAccept={acceptMember}
+              onReject={rejectMember}
+              onUpdateRole={canManageRoles ? updateRole : undefined}
+              onRemove={canManageRoles ? removeMember : undefined}
+              currentUserId={user.id}
+            />
+            
+            {/* Clan Settings (Admin only) */}
+            {membership?.role === 'admin' && clan && (
+              <ClanSettings
+                clanId={clan.id}
+                currentWebhookUrl={clan.discord_webhook_url || ''}
+                notifyOnEvents={clan.notify_on_events ?? true}
+                notifyOnAnnouncements={clan.notify_on_announcements ?? true}
+              />
+            )}
+          </div>
         ) : null}
       </main>
 

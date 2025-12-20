@@ -3,7 +3,9 @@
 import { MemberWithProfessions, RankLevel, RANK_COLORS, RANK_NAMES } from '@/lib/types';
 import { PROFESSIONS, PROFESSIONS_BY_TIER, TIER_CONFIG, PROFESSION_BY_ID, getFullDependencyChain } from '@/lib/professions';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Users, Link2 } from 'lucide-react';
+import { ProfessionHealth } from './ProfessionHealth';
+import { SupplyChainView } from './SupplyChainView';
 
 interface ClanMatrixProps {
   members: MemberWithProfessions[];
@@ -148,6 +150,7 @@ function ProfessionCard({ stats, showDependencies }: { stats: ProfessionStats; s
 
 export function ClanMatrix({ members }: ClanMatrixProps) {
   const [showDependencies, setShowDependencies] = useState(true);
+  const [viewMode, setViewMode] = useState<'coverage' | 'supplychain'>('coverage');
   const stats = calculateProfessionStats(members);
 
   const statsByTier = {
@@ -163,16 +166,46 @@ export function ClanMatrix({ members }: ClanMatrixProps) {
 
   return (
     <div className="space-y-6">
-      {/* Summary bar */}
+      {/* Profession Health Dashboard */}
+      <ProfessionHealth members={members} />
+
+      {/* View Mode Toggle */}
       <div className="bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-800 p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* View mode buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('coverage')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                viewMode === 'coverage' 
+                  ? 'bg-orange-500 text-white' 
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              <Users size={16} />
+              Coverage
+            </button>
+            <button
+              onClick={() => setViewMode('supplychain')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                viewMode === 'supplychain' 
+                  ? 'bg-orange-500 text-white' 
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              }`}
+            >
+              <Link2 size={16} />
+              Supply Chain
+            </button>
+          </div>
+
+          {/* Stats */}
           <div className="flex gap-6 text-sm">
             <div>
-              <span className="text-slate-400">Total Grandmasters:</span>
+              <span className="text-slate-400">Grandmasters:</span>
               <span className={`ml-2 font-semibold ${RANK_COLORS[4].text}`}>{totalGM}</span>
             </div>
             <div>
-              <span className="text-slate-400">Total Masters:</span>
+              <span className="text-slate-400">Masters:</span>
               <span className={`ml-2 font-semibold ${RANK_COLORS[3].text}`}>{totalMaster}</span>
             </div>
             {uncoveredCount > 0 && (
@@ -182,33 +215,44 @@ export function ClanMatrix({ members }: ClanMatrixProps) {
               </div>
             )}
           </div>
-          <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showDependencies}
-              onChange={(e) => setShowDependencies(e.target.checked)}
-              className="rounded border-slate-600 bg-slate-800 text-orange-500 focus:ring-orange-500"
-            />
-            Show dependencies
-          </label>
         </div>
       </div>
 
-      {/* Profession grids by tier */}
-      {(['gathering', 'processing', 'crafting'] as const).map((tier) => (
-        <div key={tier}>
-          <h3 className={`text-lg font-semibold ${TIER_CONFIG[tier].color} mb-3 flex items-center gap-2`}>
-            <span>{TIER_CONFIG[tier].icon}</span>
-            {TIER_CONFIG[tier].label}
-            <span className="text-sm text-slate-500 font-normal">({statsByTier[tier].length})</span>
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {statsByTier[tier].map((profStats) => (
-              <ProfessionCard key={profStats.professionId} stats={profStats} showDependencies={showDependencies} />
-            ))}
+      {/* Conditional view */}
+      {viewMode === 'supplychain' ? (
+        <SupplyChainView members={members} />
+      ) : (
+        <>
+          {/* Dependencies toggle */}
+          <div className="flex justify-end">
+            <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showDependencies}
+                onChange={(e) => setShowDependencies(e.target.checked)}
+                className="rounded border-slate-600 bg-slate-800 text-orange-500 focus:ring-orange-500 cursor-pointer"
+              />
+              Show dependencies
+            </label>
           </div>
-        </div>
-      ))}
+
+          {/* Profession grids by tier */}
+          {(['gathering', 'processing', 'crafting'] as const).map((tier) => (
+            <div key={tier}>
+              <h3 className={`text-lg font-semibold ${TIER_CONFIG[tier].color} mb-3 flex items-center gap-2`}>
+                <span>{TIER_CONFIG[tier].icon}</span>
+                {TIER_CONFIG[tier].label}
+                <span className="text-sm text-slate-500 font-normal">({statsByTier[tier].length})</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {statsByTier[tier].map((profStats) => (
+                  <ProfessionCard key={profStats.professionId} stats={profStats} showDependencies={showDependencies} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }
