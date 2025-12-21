@@ -1,13 +1,77 @@
 {
   "list": [
-    { "id": "tank", "name": "Tank", "icon": "🛡️", "color": "text-blue-400", "role": "tank" },
-    { "id": "fighter", "name": "Fighter", "icon": "⚔️", "color": "text-red-400", "role": "dps" },
-    { "id": "rogue", "name": "Rogue", "icon": "🗡️", "color": "text-amber-400", "role": "dps" },
-    { "id": "ranger", "name": "Ranger", "icon": "🏹", "color": "text-green-400", "role": "dps" },
-    { "id": "mage", "name": "Mage", "icon": "🔥", "color": "text-purple-400", "role": "dps" },
-    { "id": "summoner", "name": "Summoner", "icon": "👻", "color": "text-indigo-400", "role": "dps" },
-    { "id": "cleric", "name": "Cleric", "icon": "✨", "color": "text-yellow-400", "role": "healer" },
-    { "id": "bard", "name": "Bard", "icon": "🎵", "color": "text-pink-400", "role": "support" }
+    { 
+      "id": "tank", 
+      "name": "Tank", 
+      "icon": "🛡️", 
+      "color": "text-blue-400", 
+      "role": "tank",
+      "description": "Absorbs damage and controls battlefield with Courage",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/tank/page/1"
+    },
+    { 
+      "id": "fighter", 
+      "name": "Fighter", 
+      "icon": "⚔️", 
+      "color": "text-red-400", 
+      "role": "dps",
+      "description": "Melee DPS with Momentum and Forms",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/fighter/page/1"
+    },
+    { 
+      "id": "rogue", 
+      "name": "Rogue", 
+      "icon": "🗡️", 
+      "color": "text-amber-400", 
+      "role": "dps",
+      "description": "Stealth assassin with Advantage stacks",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/rogue/page/1"
+    },
+    { 
+      "id": "ranger", 
+      "name": "Ranger", 
+      "icon": "🏹", 
+      "color": "text-green-400", 
+      "role": "dps",
+      "description": "Ranged DPS with Focus, Hunts and Marks",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/ranger/page/1"
+    },
+    { 
+      "id": "mage", 
+      "name": "Mage", 
+      "icon": "🔥", 
+      "color": "text-purple-400", 
+      "role": "dps",
+      "description": "Elemental caster with Fire, Frost, Lightning",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/mage/page/1"
+    },
+    { 
+      "id": "summoner", 
+      "name": "Summoner", 
+      "icon": "👻", 
+      "color": "text-indigo-400", 
+      "role": "dps",
+      "description": "Commands Vessels (Guardian/Hunter/Mystic) with Essence",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/summoner/page/1"
+    },
+    { 
+      "id": "cleric", 
+      "name": "Cleric", 
+      "icon": "✨", 
+      "color": "text-yellow-400", 
+      "role": "healer",
+      "description": "Primary healer with Divine Power",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/cleric/page/1"
+    },
+    { 
+      "id": "bard", 
+      "name": "Bard", 
+      "icon": "🎵", 
+      "color": "text-pink-400", 
+      "role": "support",
+      "description": "Buffer/debuffer with Melodies, Dances and Songs",
+      "ashescodexUrl": "https://ashescodex.com/db/abilities/bard/page/1"
+    }
   ],
   "classes": {
     "tank": {
