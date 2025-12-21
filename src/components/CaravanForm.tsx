@@ -34,6 +34,16 @@ const CARAVAN_TYPES: { id: CaravanType; labelKey: string }[] = [
   { id: 'escort', labelKey: 'caravan.types.escort' },
 ];
 
+// Role keys for translation lookup
+const ROLE_TRANSLATION_KEYS: Record<string, string> = {
+  'Tank': 'party.tank',
+  'Healer': 'party.healer',
+  'DPS': 'party.dps',
+  'Scout': 'siege.roles.scout',
+  'Siege Operator': 'siege.roles.siege_operator',
+  'Reserve': 'siege.roles.reserve',
+};
+
 const PREDEFINED_ROLES = ['Tank', 'Healer', 'DPS', 'Scout', 'Siege Operator', 'Reserve'];
 const ARCHETYPES = ['Tank', 'Fighter', 'Rogue', 'Ranger', 'Mage', 'Summoner', 'Cleric', 'Bard'];
 
@@ -359,7 +369,7 @@ export function CaravanForm({
                         className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white text-xs"
                       >
                         {PREDEFINED_ROLES.map(role => (
-                          <option key={role} value={role}>{role}</option>
+                          <option key={role} value={role}>{t(ROLE_TRANSLATION_KEYS[role])}</option>
                         ))}
                       </select>
                     </div>
@@ -382,7 +392,7 @@ export function CaravanForm({
                         type="number"
                         value={req.minLevel || ''}
                         onChange={(e) => updateRequirement(req.id, { minLevel: parseInt(e.target.value) || undefined })}
-                        placeholder={t('common.optional')}
+                        placeholder=""
                         min="1"
                         max="50"
                         className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white text-xs"

@@ -111,13 +111,17 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
     if (!clanId) throw new Error('No clan selected');
 
     const { data: { user } } = await supabase.auth.getUser();
+    
+    // Destructure escortRequirements (not a DB column) from data to prevent insert error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { escortRequirements, ...caravanData } = data as CaravanData & { escortRequirements?: unknown };
 
     const { data: newCaravan, error: insertError } = await supabase
       .from('caravan_events')
       .insert({
         clan_id: clanId,
         created_by: user?.id,
-        ...data,
+        ...caravanData,
       })
       .select()
       .single();
