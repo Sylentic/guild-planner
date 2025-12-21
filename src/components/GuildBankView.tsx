@@ -1,23 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { Warehouse, Coins, Package, Search, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import { Warehouse, Coins, Package, Search, TrendingUp, TrendingDown, Clock, Plus } from 'lucide-react';
 import { 
   GuildBank, 
   BankInventoryWithResource, 
   BankTransactionWithDetails,
   ResourceCategory,
+  ResourceCatalog,
   RESOURCE_CATEGORY_CONFIG,
   ITEM_RARITY_CONFIG
 } from '@/lib/types';
+import { ResourceTransactionData } from '@/hooks/useGuildBank';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { BankTransactionForm } from './BankTransactionForm';
 
 interface GuildBankViewProps {
   bank: GuildBank;
   inventory: BankInventoryWithResource[];
   transactions: BankTransactionWithDetails[];
-  onDeposit?: (resourceId: string, quantity: number) => void;
-  onWithdraw?: (resourceId: string, quantity: number) => void;
+  resourceCatalog?: ResourceCatalog[];
+  onDeposit?: (data: ResourceTransactionData) => Promise<void>;
+  onWithdraw?: (data: ResourceTransactionData) => Promise<void>;
   isOfficer?: boolean;
 }
 
@@ -27,6 +31,7 @@ export function GuildBankView({
   bank,
   inventory,
   transactions,
+  resourceCatalog = [],
   onDeposit,
   onWithdraw,
   isOfficer = false,
@@ -35,6 +40,8 @@ export function GuildBankView({
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<ResourceCategory | 'all'>('all');
   const [activeTab, setActiveTab] = useState<'inventory' | 'transactions'>('inventory');
+  const [showDepositForm, setShowDepositForm] = useState(false);
+  const [showWithdrawForm, setShowWithdrawForm] = useState(false);
 
   // Filter inventory
   const filteredInventory = inventory.filter((item) => {
@@ -56,7 +63,29 @@ export function GuildBankView({
     return sum + (item.quantity * (item.resource.base_value || 0));
   }, 0);
 
+  // Get inventory quantity for a resource
+  const getInventoryQuantity = (resourceId: string) => {
+    const item = inventory.find(i => i.resource_id === resourceId);
+    return item ? item.quantity - (item.reserved_quantity || 0) : 0;
+  };
+
+  // Handle transactions
+  const handleDeposit = async (resourceId: string, quantity: number, notes?: string) => {
+    if (onDeposit) {
+      await onDeposit({ resource_id: resourceId, quantity, notes });
+      setShowDepositForm(false);
+    }
+  };
+
+  const handleWithdraw = async (resourceId: string, quantity: number, notes?: string) => {
+    if (onWithdraw) {
+      await onWithdraw({ resource_id: resourceId, quantity, notes });
+      setShowWithdrawForm(false);
+    }
+  };
+
   return (
+    <>
     <div className="space-y-4">
       {/* Header */}
       <div className="bg-gradient-to-r from-amber-500/20 to-amber-600/10 rounded-xl p-4">
@@ -96,6 +125,30 @@ export function GuildBankView({
             <div className="text-xs text-slate-400">{t('bank.estimatedValue')}</div>
           </div>
         </div>
+
+        {/* Action Buttons */}
+        {(onDeposit || onWithdraw) && (
+          <div className="flex gap-2 mt-4">
+            {onDeposit && (
+              <button
+                onClick={() => setShowDepositForm(true)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                <TrendingUp className="w-4 h-4" />
+                {t('bank.deposit')}
+              </button>
+            )}
+            {onWithdraw && (
+              <button
+                onClick={() => setShowWithdrawForm(true)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                <TrendingDown className="w-4 h-4" />
+                {t('bank.withdraw')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -254,5 +307,23 @@ export function GuildBankView({
         </div>
       )}
     </div>
+
+    {/* Transaction Modals */}
+    <BankTransactionForm
+      isOpen={showDepositForm}
+      onClose={() => setShowDepositForm(false)}
+      onSubmit={handleDeposit}
+      transactionType="deposit"
+      resourceCatalog={resourceCatalog}
+    />
+    <BankTransactionForm
+      isOpen={showWithdrawForm}
+      onClose={() => setShowWithdrawForm(false)}
+      onSubmit={handleWithdraw}
+      transactionType="withdraw"
+      resourceCatalog={resourceCatalog}
+      inventoryQuantity={getInventoryQuantity}
+    />
+    </>
   );
 }

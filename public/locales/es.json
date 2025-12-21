@@ -39,7 +39,9 @@
     "returnHome": "Volver al Inicio",
     "retryConnection": "Reintentar Conexión",
     "continueWithDiscord": "Continuar con Discord",
-    "comingSoon": "Próximamente"
+    "comingSoon": "Próximamente",
+    "available": "disponible",
+    "change": "Cambiar"
   },
   "nav": {
     "characters": "Personajes",
@@ -463,6 +465,11 @@
     "approveRequest": "Aprobar",
     "denyRequest": "Denegar",
     "fulfillRequest": "Entregar",
+    "depositNotesPlaceholder": "ej. Drops de raid de Dragon Keep",
+    "withdrawNotesPlaceholder": "ej. Para proyecto de crafteo de la guild",
+    "errorSelectResource": "Por favor, selecciona un recurso",
+    "errorInvalidQuantity": "Por favor, introduce una cantidad válida",
+    "errorInsufficientResources": "Recursos insuficientes en el banco",
     "categories": {
       "raw_material": "Materias Primas",
       "processed": "Procesados",

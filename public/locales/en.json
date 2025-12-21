@@ -39,7 +39,9 @@
     "returnHome": "Return Home",
     "retryConnection": "Retry Connection",
     "continueWithDiscord": "Continue with Discord",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "available": "available",
+    "change": "Change"
   },
   "nav": {
     "characters": "Characters",
@@ -463,6 +465,11 @@
     "approveRequest": "Approve",
     "denyRequest": "Deny",
     "fulfillRequest": "Fulfill",
+    "depositNotesPlaceholder": "e.g. Raid drops from Dragon Keep",
+    "withdrawNotesPlaceholder": "e.g. For guild crafting project",
+    "errorSelectResource": "Please select a resource",
+    "errorInvalidQuantity": "Please enter a valid quantity",
+    "errorInsufficientResources": "Insufficient resources in bank",
     "categories": {
       "raw_material": "Raw Materials",
       "processed": "Processed",

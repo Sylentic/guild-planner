@@ -25,8 +25,11 @@ export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps)
     bank,
     inventory,
     transactions,
+    resourceCatalog,
     loading: bankLoading,
     initializeBank,
+    deposit,
+    withdraw,
   } = useGuildBank(clanId);
 
   const {
@@ -79,6 +82,9 @@ export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps)
             bank={bank}
             inventory={inventory}
             transactions={transactions}
+            resourceCatalog={resourceCatalog}
+            onDeposit={deposit}
+            onWithdraw={withdraw}
             isOfficer={isOfficer}
           />
         ) : (
