@@ -323,3 +323,502 @@ export interface SiegeRosterCounts {
   confirmed_count: number;
   checked_in_count: number;
 }
+
+// ============================================================
+// LOOT & DKP TYPES
+// ============================================================
+
+// Loot distribution system types
+export type LootSystemType = 'dkp' | 'epgp' | 'loot_council' | 'roll' | 'round_robin';
+
+// Item rarity
+export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'heroic' | 'epic' | 'legendary';
+
+// Loot system type configuration
+export const LOOT_SYSTEM_CONFIG: Record<LootSystemType, { label: string; description: string }> = {
+  dkp: { label: 'DKP', description: 'Dragon Kill Points - Earn and spend points' },
+  epgp: { label: 'EPGP', description: 'Effort Points / Gear Points ratio' },
+  loot_council: { label: 'Loot Council', description: 'Officers vote on distribution' },
+  roll: { label: 'Roll', description: 'Random /roll for items' },
+  round_robin: { label: 'Round Robin', description: 'Taking turns for loot' },
+};
+
+// Item rarity configuration
+export const ITEM_RARITY_CONFIG: Record<ItemRarity, { label: string; color: string; bgColor: string }> = {
+  common: { label: 'Common', color: 'text-slate-400', bgColor: 'bg-slate-500/20' },
+  uncommon: { label: 'Uncommon', color: 'text-green-400', bgColor: 'bg-green-500/20' },
+  rare: { label: 'Rare', color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
+  heroic: { label: 'Heroic', color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+  epic: { label: 'Epic', color: 'text-orange-400', bgColor: 'bg-orange-500/20' },
+  legendary: { label: 'Legendary', color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
+};
+
+// Loot system configuration
+export interface LootSystem {
+  id: string;
+  clan_id: string;
+  system_type: LootSystemType;
+  name: string;
+  description?: string;
+  is_active: boolean;
+  starting_points: number;
+  decay_enabled: boolean;
+  decay_rate: number;
+  decay_minimum: number;
+  raid_attendance_points: number;
+  siege_attendance_points: number;
+  boss_kill_points: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Character DKP points
+export interface DKPPoints {
+  id: string;
+  loot_system_id: string;
+  character_id: string;
+  current_points: number;
+  earned_total: number;
+  spent_total: number;
+  priority_ratio: number;
+  last_earned_at?: string;
+  last_spent_at?: string;
+  last_decay_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// DKP points with character info
+export interface DKPPointsWithCharacter extends DKPPoints {
+  character?: CharacterWithProfessions;
+  rank?: number;
+}
+
+// Loot history entry
+export interface LootHistory {
+  id: string;
+  loot_system_id: string;
+  item_name: string;
+  item_rarity: ItemRarity;
+  item_slot?: string;
+  item_description?: string;
+  source_type?: string;
+  source_name?: string;
+  event_id?: string;
+  siege_id?: string;
+  awarded_to?: string;
+  awarded_by?: string;
+  dkp_cost: number;
+  votes_for: number;
+  votes_against: number;
+  dropped_at: string;
+  distributed_at?: string;
+  notes?: string;
+}
+
+// Loot history with character names
+export interface LootHistoryWithDetails extends LootHistory {
+  awarded_to_character?: CharacterWithProfessions;
+  awarded_by_user?: { display_name: string };
+}
+
+// DKP transaction (audit log)
+export interface DKPTransaction {
+  id: string;
+  dkp_points_id: string;
+  amount: number;
+  reason: string;
+  loot_id?: string;
+  event_id?: string;
+  siege_id?: string;
+  created_by?: string;
+  created_at: string;
+}
+
+// ============================================================
+// GUILD BANK TYPES
+// ============================================================
+
+// Resource categories
+export type ResourceCategory = 'raw_material' | 'processed' | 'consumable' | 'equipment' | 'currency' | 'blueprint' | 'other';
+
+// Bank transaction types
+export type BankTransactionType = 'deposit' | 'withdrawal' | 'transfer' | 'craft_input' | 'craft_output' | 'loot' | 'purchase' | 'sale' | 'adjustment';
+
+// Resource request status
+export type RequestStatus = 'pending' | 'approved' | 'denied' | 'fulfilled';
+
+// Resource category config
+export const RESOURCE_CATEGORY_CONFIG: Record<ResourceCategory, { label: string; icon: string; color: string }> = {
+  raw_material: { label: 'Raw Material', icon: '⛏️', color: 'text-amber-400' },
+  processed: { label: 'Processed', icon: '⚙️', color: 'text-blue-400' },
+  consumable: { label: 'Consumable', icon: '🧪', color: 'text-green-400' },
+  equipment: { label: 'Equipment', icon: '⚔️', color: 'text-purple-400' },
+  currency: { label: 'Currency', icon: '💰', color: 'text-yellow-400' },
+  blueprint: { label: 'Blueprint', icon: '📜', color: 'text-cyan-400' },
+  other: { label: 'Other', icon: '📦', color: 'text-slate-400' },
+};
+
+// Guild bank configuration
+export interface GuildBank {
+  id: string;
+  clan_id: string;
+  name: string;
+  description?: string;
+  deposit_min_role: string;
+  withdraw_min_role: string;
+  gold_balance: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Resource catalog item
+export interface ResourceCatalog {
+  id: string;
+  name: string;
+  category: ResourceCategory;
+  subcategory?: string;
+  rarity: ItemRarity;
+  base_value: number;
+  is_craftable: boolean;
+  profession_required?: string;
+  created_at: string;
+}
+
+// Bank inventory item
+export interface BankInventoryItem {
+  id: string;
+  bank_id: string;
+  resource_id: string;
+  quantity: number;
+  reserved_quantity: number;
+  last_updated_at: string;
+}
+
+// Inventory with resource details
+export interface BankInventoryWithResource extends BankInventoryItem {
+  resource: ResourceCatalog;
+}
+
+// Bank transaction
+export interface BankTransaction {
+  id: string;
+  bank_id: string;
+  resource_id?: string;
+  transaction_type: BankTransactionType;
+  quantity: number;
+  gold_amount: number;
+  user_id?: string;
+  character_id?: string;
+  notes?: string;
+  related_siege_id?: string;
+  created_at: string;
+}
+
+// Transaction with details
+export interface BankTransactionWithDetails extends BankTransaction {
+  resource?: ResourceCatalog;
+  user?: { display_name: string };
+  character?: { name: string };
+}
+
+// Resource request
+export interface ResourceRequest {
+  id: string;
+  bank_id: string;
+  resource_id: string;
+  requested_by: string;
+  character_id?: string;
+  quantity: number;
+  reason?: string;
+  status: RequestStatus;
+  reviewed_by?: string;
+  reviewed_at?: string;
+  fulfilled_at?: string;
+  created_at: string;
+}
+
+// Request with details
+export interface ResourceRequestWithDetails extends ResourceRequest {
+  resource: ResourceCatalog;
+  requested_by_user?: { display_name: string };
+  character?: { name: string };
+}
+
+// ============================================================
+// FREEHOLD TYPES
+// ============================================================
+
+export type FreeholdSize = 'small' | 'medium' | 'large';
+
+export type FreeholdBuildingType = 
+  | 'smelter' | 'lumbermill' | 'tannery' | 'loom' | 'farm' | 'stable'
+  | 'forge' | 'workshop' | 'clothier' | 'jeweler' | 'alchemist_lab' | 'kitchen'
+  | 'warehouse' | 'tavern' | 'inn' | 'house';
+
+export const FREEHOLD_SIZE_CONFIG: Record<FreeholdSize, { label: string; dimensions: string }> = {
+  small: { label: 'Small', dimensions: '8x8' },
+  medium: { label: 'Medium', dimensions: '16x16' },
+  large: { label: 'Large', dimensions: '32x32' },
+};
+
+export interface Freehold {
+  id: string;
+  clan_id: string;
+  owner_id: string;
+  owner_character_id?: string;
+  name: string;
+  node_name?: string;
+  region?: string;
+  coordinates?: string;
+  size: FreeholdSize;
+  is_public: boolean;
+  description?: string;
+  established_at: string;
+  updated_at: string;
+}
+
+export interface FreeholdBuilding {
+  id: string;
+  freehold_id: string;
+  building_type: FreeholdBuildingType;
+  building_name?: string;
+  tier: number;
+  profession_id?: string;
+  is_guild_accessible: boolean;
+  usage_fee: number;
+  built_at: string;
+  upgraded_at?: string;
+}
+
+export interface FreeholdWithBuildings extends Freehold {
+  buildings: FreeholdBuilding[];
+  owner?: { display_name: string };
+  owner_character?: { name: string };
+}
+
+// ============================================================
+// CARAVAN TYPES
+// ============================================================
+
+export type CaravanType = 'personal' | 'guild' | 'trade_route' | 'escort';
+export type CaravanStatus = 'planning' | 'recruiting' | 'ready' | 'in_transit' | 'completed' | 'failed' | 'cancelled';
+
+export interface CaravanEvent {
+  id: string;
+  clan_id: string;
+  created_by?: string;
+  owner_character_id?: string;
+  title: string;
+  description?: string;
+  caravan_type: CaravanType;
+  origin_node: string;
+  destination_node: string;
+  estimated_distance?: number;
+  departure_at: string;
+  estimated_arrival_at?: string;
+  cargo_description?: string;
+  cargo_value: number;
+  min_escorts: number;
+  max_escorts: number;
+  status: CaravanStatus;
+  completed_at?: string;
+  was_attacked: boolean;
+  escort_reward_gold: number;
+  escort_reward_dkp: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CaravanEscort {
+  id: string;
+  caravan_id: string;
+  character_id: string;
+  user_id?: string;
+  role: string;
+  confirmed: boolean;
+  checked_in: boolean;
+  notes?: string;
+  signed_up_at: string;
+}
+
+export interface CaravanWaypoint {
+  id: string;
+  caravan_id: string;
+  order_index: number;
+  location_name: string;
+  notes?: string;
+  is_danger_zone: boolean;
+  estimated_time_minutes?: number;
+  reached_at?: string;
+}
+
+export interface CaravanEventWithDetails extends CaravanEvent {
+  escorts: (CaravanEscort & { character?: { name: string } })[];
+  waypoints: CaravanWaypoint[];
+}
+
+// ============================================================
+// ALLIANCE TYPES
+// ============================================================
+
+export type AllianceStatus = 'pending' | 'active' | 'suspended' | 'dissolved';
+
+export interface Alliance {
+  id: string;
+  name: string;
+  description?: string;
+  leader_clan_id: string;
+  is_public: boolean;
+  max_guilds: number;
+  formed_at: string;
+  updated_at: string;
+}
+
+export interface AllianceMember {
+  id: string;
+  alliance_id: string;
+  clan_id: string;
+  status: AllianceStatus;
+  is_founder: boolean;
+  can_invite: boolean;
+  can_create_events: boolean;
+  invited_by?: string;
+  joined_at?: string;
+  left_at?: string;
+  created_at: string;
+}
+
+export interface AllianceWithMembers extends Alliance {
+  members: (AllianceMember & { clan?: { name: string; slug: string } })[];
+}
+
+// ============================================================
+// ACTIVITY TYPES
+// ============================================================
+
+export type ActivityType = 
+  | 'login' | 'event_signup' | 'event_attend' | 'siege_participate'
+  | 'caravan_escort' | 'bank_deposit' | 'loot_received' | 'dkp_earned'
+  | 'character_update' | 'profession_update';
+
+export interface ActivityLog {
+  id: string;
+  clan_id: string;
+  user_id?: string;
+  character_id?: string;
+  activity_type: ActivityType;
+  description?: string;
+  created_at: string;
+}
+
+export interface MemberActivitySummary {
+  id: string;
+  clan_id: string;
+  user_id: string;
+  last_login_at?: string;
+  last_activity_at?: string;
+  events_attended_30d: number;
+  sieges_attended_30d: number;
+  caravans_escorted_30d: number;
+  bank_deposits_30d: number;
+  total_activities_30d: number;
+  current_streak_days: number;
+  longest_streak_days: number;
+  is_inactive: boolean;
+  inactive_since?: string;
+  last_calculated_at: string;
+}
+
+export interface InactivityAlert {
+  id: string;
+  clan_id: string;
+  user_id: string;
+  days_inactive: number;
+  alert_level: 'warning' | 'critical';
+  is_acknowledged: boolean;
+  acknowledged_by?: string;
+  acknowledged_at?: string;
+  created_at: string;
+}
+
+// ============================================================
+// ACHIEVEMENT TYPES
+// ============================================================
+
+export type AchievementCategory = 'guild' | 'pvp' | 'economy' | 'community' | 'milestone';
+
+export interface AchievementDefinition {
+  id: string;
+  name: string;
+  description: string;
+  category: AchievementCategory;
+  icon?: string;
+  requirement_type: string;
+  requirement_value: number;
+  is_hidden: boolean;
+  points: number;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface ClanAchievement {
+  id: string;
+  clan_id: string;
+  achievement_id: string;
+  current_value: number;
+  is_unlocked: boolean;
+  unlocked_at?: string;
+  first_contributor_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClanAchievementWithDefinition extends ClanAchievement {
+  definition: AchievementDefinition;
+}
+
+// ============================================================
+// BUILD TYPES
+// ============================================================
+
+export type BuildVisibility = 'private' | 'guild' | 'public';
+
+export interface Build {
+  id: string;
+  created_by: string;
+  clan_id?: string;
+  name: string;
+  description?: string;
+  primary_archetype: string;
+  secondary_archetype?: string;
+  skills: Record<string, unknown>[];
+  augments: Record<string, unknown>[];
+  equipment: Record<string, unknown>;
+  stats: Record<string, unknown>;
+  tags: string[];
+  role?: string;
+  visibility: BuildVisibility;
+  views_count: number;
+  likes_count: number;
+  copies_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BuildWithDetails extends Build {
+  creator?: { display_name: string };
+  is_liked?: boolean;
+}
+
+export interface BuildComment {
+  id: string;
+  build_id: string;
+  user_id: string;
+  content: string;
+  parent_id?: string;
+  created_at: string;
+  updated_at: string;
+  user?: { display_name: string };
+}
+

@@ -2,28 +2,28 @@
 
 import { useState, use, useEffect } from 'react';
 import Link from 'next/link';
-import { Users, Grid3X3, Home, Loader2, AlertCircle, LogOut, Shield, Clock, UserPlus, Settings, Swords, Calendar } from 'lucide-react';
+import { Users, Home, Loader2, AlertCircle, LogOut, Shield, Clock, UserPlus, Settings, Swords } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useClanData } from '@/hooks/useClanData';
 import { useClanMembership } from '@/hooks/useClanMembership';
 import { useEvents } from '@/hooks/useEvents';
-import { useParties } from '@/hooks/useParties';
 import { CharacterCard } from '@/components/MemberCard';
 import { AddCharacterButton } from '@/components/AddCharacterButton';
 import { CharacterForm } from '@/components/CharacterForm';
-import { ClanMatrix } from '@/components/ClanMatrix';
 import { EventsList } from '@/components/EventsList';
-import { PartiesList } from '@/components/PartiesList';
 import { CharacterFiltersBar, CharacterFilters, DEFAULT_FILTERS, filterCharacters } from '@/components/CharacterFilters';
 import { ClanSettings } from '@/components/ClanSettings';
 import { RecruitmentSettings } from '@/components/RecruitmentSettings';
 import { BottomNav } from '@/components/BottomNav';
 import { InlineFooter } from '@/components/Footer';
+import { SiegeTabContent } from '@/components/SiegeTabContent';
+import { EconomyTabContent } from '@/components/EconomyTabContent';
+import { MoreTabContent } from '@/components/MoreTabContent';
 import { createClan, getClanBySlug } from '@/lib/auth';
 import { CharacterWithProfessions } from '@/lib/types';
 
-type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage';
+type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more';
 
 export default function ClanPage({ params }: { params: Promise<{ clan: string }> }) {
   const { clan: clanSlug } = use(params);
@@ -110,16 +110,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
     deleteAnnouncement,
   } = useEvents(clanId, user?.id || null);
 
-  // Parties hook
-  const {
-    parties,
-    createParty,
-    updateParty,
-    deleteParty,
-    assignCharacter,
-    removeFromRoster,
-    toggleConfirmed,
-  } = useParties(clanId, characters);
+
 
   // Loading state - include clanExists check for initial load
   const loading = (authLoading || membershipLoading || (clanExists === null) || (clanExists && dataLoading)) && !checkError;
@@ -475,22 +466,24 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
               onUpdateAnnouncement={updateAnnouncement}
               onDeleteAnnouncement={deleteAnnouncement}
             />
-          ) : activeTab === 'parties' ? (
-            <PartiesList
-              parties={parties}
+          ) : activeTab === 'siege' ? (
+            <SiegeTabContent
+              clanId={clanId!}
               characters={characters}
+              isOfficer={canManageMembers}
+            />
+          ) : activeTab === 'economy' ? (
+            <EconomyTabContent
+              clanId={clanId!}
+              isOfficer={canManageMembers}
+            />
+          ) : activeTab === 'more' ? (
+            <MoreTabContent
               clanId={clanId!}
               userId={user.id}
-              canManage={canManageMembers}
-              onCreateParty={createParty}
-              onUpdateParty={updateParty}
-              onDeleteParty={deleteParty}
-              onAssignCharacter={assignCharacter}
-              onRemoveFromRoster={removeFromRoster}
-              onToggleConfirmed={toggleConfirmed}
+              characters={characters}
+              isOfficer={canManageMembers}
             />
-          ) : activeTab === 'matrix' ? (
-            <ClanMatrix members={characters} />
           ) : activeTab === 'manage' && canManageMembers ? (
             <div className="space-y-6">
               {/* Member Management */}

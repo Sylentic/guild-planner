@@ -50,10 +50,12 @@ CREATE TABLE IF NOT EXISTS loot_systems (
   boss_kill_points INTEGER DEFAULT 5,
   -- Metadata
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  -- One active system per clan
-  UNIQUE(clan_id, is_active) WHERE is_active = TRUE
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Partial unique index: only one active system per clan
+CREATE UNIQUE INDEX IF NOT EXISTS idx_loot_systems_active_per_clan 
+  ON loot_systems(clan_id) WHERE is_active = TRUE;
 
 -- Character DKP points
 CREATE TABLE IF NOT EXISTS dkp_points (
