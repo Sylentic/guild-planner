@@ -143,11 +143,11 @@ export function ClanSettings({
           className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <p className="text-xs text-slate-500 mt-1">
-          Enter the numeric Discord Role ID to ping when posting announcements. Right-click a role &rarr; Copy ID (Developer Mode must be enabled).
+          Enter the numeric Discord Role ID to ping when posting announcements. Right-click a role {'>'} Copy ID (Developer Mode must be enabled).
         </p>
       </div>
 
-      {/* Test button */
+      {/* Test button */}
       {webhookUrl && isValidWebhookUrl(webhookUrl) && (
         <button
           onClick={handleTest}
