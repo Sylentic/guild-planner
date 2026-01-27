@@ -50,8 +50,13 @@ export function ProfessionSelector({
 
   const handleQualityChange = (newQuality: number) => {
     setQuality(newQuality);
+    // Don't trigger onChange yet - wait for blur
+  };
+
+  const handleQualityBlur = () => {
+    // Only save when user finishes editing
     if (currentRank) {
-      onChange(currentRank, level, newQuality);
+      onChange(currentRank, level, quality);
     }
   };
 
@@ -152,9 +157,12 @@ export function ProfessionSelector({
               step="1"
               value={quality}
               onChange={(e) => handleQualityChange(parseInt(e.target.value) || 0)}
+              onBlur={handleQualityBlur}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
+                  handleQualityBlur();
+                  (e.target as HTMLInputElement).blur();
                 }
               }}
               className="w-full px-3 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm"
