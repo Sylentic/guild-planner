@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { X, Calendar } from 'lucide-react';
-import { Event, EventType, EVENT_TYPES, utcToLocal } from '@/lib/events';
+import { Event, EventType, EVENT_TYPES, EVENT_ROLES, utcToLocal } from '@/lib/events';
 
 interface EventFormData {
   title: string;
@@ -12,6 +12,11 @@ interface EventFormData {
   ends_at: string;
   location: string;
   max_attendees: string;
+  tanks_needed: string;
+  clerics_needed: string;
+  bards_needed: string;
+  ranged_dps_needed: string;
+  melee_dps_needed: string;
 }
 
 interface EventFormProps {
@@ -39,6 +44,11 @@ export function EventForm({
     ends_at: initialData?.ends_at ? utcToLocal(initialData.ends_at) : '',
     location: initialData?.location || '',
     max_attendees: initialData?.max_attendees?.toString() || '',
+    tanks_needed: initialData?.tanks_needed?.toString() || '0',
+    clerics_needed: initialData?.clerics_needed?.toString() || '0',
+    bards_needed: initialData?.bards_needed?.toString() || '0',
+    ranged_dps_needed: initialData?.ranged_dps_needed?.toString() || '0',
+    melee_dps_needed: initialData?.melee_dps_needed?.toString() || '0',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +79,11 @@ export function EventForm({
         ends_at: formData.ends_at ? new Date(formData.ends_at).toISOString() : null,
         location: formData.location.trim() || null,
         max_attendees: formData.max_attendees ? parseInt(formData.max_attendees) : null,
+        tanks_needed: parseInt(formData.tanks_needed) || 0,
+        clerics_needed: parseInt(formData.clerics_needed) || 0,
+        bards_needed: parseInt(formData.bards_needed) || 0,
+        ranged_dps_needed: parseInt(formData.ranged_dps_needed) || 0,
+        melee_dps_needed: parseInt(formData.melee_dps_needed) || 0,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save event');
@@ -195,6 +210,36 @@ export function EventForm({
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Leave empty for unlimited"
             />
+          </div>
+
+          {/* Role Requirements */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Role Requirements <span className="text-slate-500">(optional)</span>
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              {Object.entries(EVENT_ROLES).map(([roleKey, roleConfig]) => (
+                <div key={roleKey} className="flex flex-col gap-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-lg">{roleConfig.icon}</span>
+                    <span className={`text-xs ${roleConfig.color}`}>
+                      {roleConfig.name}
+                    </span>
+                  </div>
+                  <input
+                    type="number"
+                    min="0"
+                    max="40"
+                    value={formData[`${roleKey}_needed` as keyof EventFormData]}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      [`${roleKey}_needed`]: e.target.value 
+                    })}
+                    className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Description */}
