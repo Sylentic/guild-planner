@@ -303,8 +303,9 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
           );
         }
       } catch (err) {
-      console.error('Discord notification failed:', err);
-      // Don't throw - notification failure shouldn't break announcement creation
+        console.error('Discord notification failed:', err);
+        // Don't throw - notification failure shouldn't break announcement creation
+      }
     }
 
     await fetchAnnouncements();
