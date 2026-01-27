@@ -241,13 +241,13 @@ export function EventForm({
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               {Object.entries(EVENT_ROLES).map(([roleKey, roleConfig]) => {
-                const fieldMap: Record<EventRole, keyof FormData> = {
+                const fieldMap = {
                   tank: 'tanks_needed',
                   cleric: 'clerics_needed',
                   bard: 'bards_needed',
                   ranged_dps: 'ranged_dps_needed',
                   melee_dps: 'melee_dps_needed'
-                };
+                } as const;
                 const fieldName = fieldMap[roleKey as EventRole];
                 return (
                   <div key={roleKey} className="flex flex-col gap-1">
