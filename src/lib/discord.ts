@@ -115,10 +115,15 @@ export async function testDiscordWebhook(
 export async function notifyNewEvent(
   webhookUrl: string,
   event: Event,
-  clanName: string
+  clanName: string,
+  clanSlug: string
 ): Promise<{ success: boolean; error?: string }> {
   const eventType = EVENT_TYPES[event.event_type];
   const startsAt = new Date(event.starts_at);
+  
+  // Build direct link to event
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
+  const eventUrl = `${baseUrl}/${clanSlug}?tab=events#event-${event.id}`;
   
   const fields: { name: string; value: string; inline?: boolean }[] = [
     {
@@ -160,6 +165,7 @@ export async function notifyNewEvent(
       title: `${eventType.icon} ${event.title}`,
       description: `Type: **${eventType.name}**`,
       color: EVENT_TYPE_COLORS[event.event_type] || COLORS.cyan,
+      url: eventUrl,
       fields,
       footer: {
         text: clanName,

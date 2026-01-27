@@ -125,12 +125,12 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     try {
       const { data: clanData } = await supabase
         .from('clans')
-        .select('name, discord_webhook_url, notify_on_events')
+        .select('name, slug, discord_webhook_url, notify_on_events')
         .eq('id', event.clan_id)
         .single();
 
       if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
-        await notifyNewEvent(clanData.discord_webhook_url, data, clanData.name);
+        await notifyNewEvent(clanData.discord_webhook_url, data, clanData.name, clanSlug || clanData.slug);
       }
     } catch (err) {
       console.error('Discord notification failed:', err);

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, MapPin, Users, Clock, Check, HelpCircle, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Check, HelpCircle, X, ChevronDown, ChevronUp, Link as LinkIcon } from 'lucide-react';
+import { useToast } from '@/contexts/ToastContext';
 import { 
   EventWithRsvps, 
   RsvpStatus, 
@@ -32,6 +33,7 @@ export function EventCard({
   canManage = false 
 }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { showToast } = useToast();
   
   const eventType = EVENT_TYPES[event.event_type];
   const isPast = isEventPast(event.starts_at);
@@ -47,8 +49,9 @@ export function EventCard({
   const isFull = event.max_attendees ? effectiveAttending >= event.max_attendees : false;
 
   return (
-    <div 
-      className={`bg-slate-900/80 backdrop-blur-sm rounded-lg border transition-all ${
+    <div
+      id={`event-${event.id}`}
+      className={`bg-slate-900/80 backdrop-blur-sm rounded-lg border transition-all scroll-mt-4 ${
         event.is_cancelled ? 'border-red-500/50 opacity-60' :
         isNow ? 'border-green-500 shadow-lg shadow-green-500/20' :
         isPast ? 'border-slate-700 opacity-70' :
@@ -102,6 +105,18 @@ export function EventCard({
 
           {/* Right side: RSVP counts and expand */}
           <div className="flex items-center gap-3 shrink-0">
+            {/* Copy link button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                copyEventLink();
+              }}
+              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer transition-colors"
+              title="Copy event link"
+            >
+              <LinkIcon size={16} />
+            </button>
+            
             {/* Attendee count */}
             <div className="text-sm text-slate-400 flex items-center gap-1">
               <Users size={14} />
