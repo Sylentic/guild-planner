@@ -137,6 +137,7 @@ export function formatEventTime(
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
     timeZone: timezone,
     ...options,
   };
@@ -164,6 +165,7 @@ export function formatTime(isoDate: string, timezone: string = 'UTC'): string {
   return date.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
     timeZone: timezone,
   });
 }
