@@ -137,7 +137,7 @@ export function ProfessionSelector({
             </div>
             {atCap && canCertify && (
               <div className="text-xs text-amber-400 mt-1 bg-amber-500/10 border border-amber-500/30 rounded px-2 py-1">
-                🎓 Ready to certify as {RANK_NAMES[currentRank + 1]}
+                🎓 Ready to certify as {RANK_NAMES[(currentRank + 1) as RankLevel]}
               </div>
             )}
           </div>
