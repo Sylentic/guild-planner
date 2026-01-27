@@ -510,13 +510,15 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
               clanId={clanId!}
               userId={user.id}
               canManage={canManageMembers}
-              onCreateEvent={async (eventData) => {
-                await createEvent(eventData);
+              onCreateEvent={async (eventData, sendDiscordNotification) => {
+                await createEvent(eventData, sendDiscordNotification);
               }}
               onUpdateEvent={updateEvent}
               onCancelEvent={cancelEvent}
               onRsvp={setRsvp}
-              onCreateAnnouncement={createAnnouncement}
+              onCreateAnnouncement={async (announcementData, sendDiscordNotification) => {
+                await createAnnouncement(announcementData, sendDiscordNotification);
+              }}
               onUpdateAnnouncement={updateAnnouncement}
               onDeleteAnnouncement={deleteAnnouncement}
             />
