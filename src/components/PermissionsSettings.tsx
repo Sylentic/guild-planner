@@ -40,7 +40,7 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
     return perms;
   });
 
-  // Load permissions from database on mount
+  // Load permissions from database on mount (optional - will use defaults if not found)
   useEffect(() => {
     if (!session || userRole !== 'admin') {
       setIsLoading(false);
@@ -59,12 +59,20 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
         );
 
         if (!response.ok) {
-          throw new Error('Failed to load permissions');
+          // If not found or error, just use defaults
+          setIsLoading(false);
+          return;
         }
 
         const { permissions } = await response.json();
 
-        // Convert database rows to our permission structure
+        // If no custom permissions exist, use defaults
+        if (!permissions || permissions.length === 0) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Build Sets from boolean fields
         const loaded: Record<ClanRole, Set<string>> = {
           admin: new Set(),
           officer: new Set(),
@@ -73,42 +81,27 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
           pending: new Set(),
         };
 
-        // If no custom permissions exist, use defaults
-        if (!permissions || permissions.length === 0) {
-          setCustomPermissions({
-            admin: new Set(DEFAULT_ROLE_PERMISSIONS.admin),
-            officer: new Set(DEFAULT_ROLE_PERMISSIONS.officer),
-            member: new Set(DEFAULT_ROLE_PERMISSIONS.member),
-            trial: new Set(DEFAULT_ROLE_PERMISSIONS.trial),
-            pending: new Set(DEFAULT_ROLE_PERMISSIONS.pending),
-          });
-        } else {
-          // Build Sets from boolean fields
-          permissions.forEach((perm: any) => {
-            const role = perm.role as ClanRole;
-            const perms = new Set<string>();
+        permissions.forEach((perm: any) => {
+          const role = perm.role as ClanRole;
+          const perms = new Set<string>();
 
-            // Check each permission field
-            Object.keys(perm).forEach(key => {
-              if (key !== 'id' && key !== 'clan_id' && key !== 'role' && 
-                  key !== 'created_at' && key !== 'updated_at') {
-                if (perm[key] === true) {
-                  perms.add(key);
-                }
+          // Check each permission field
+          Object.keys(perm).forEach(key => {
+            if (key !== 'id' && key !== 'clan_id' && key !== 'role' && 
+                key !== 'created_at' && key !== 'updated_at') {
+              if (perm[key] === true) {
+                perms.add(key);
               }
-            });
-
-            loaded[role] = perms;
+            }
           });
 
-          setCustomPermissions(loaded);
-        }
+          loaded[role] = perms;
+        });
+
+        setCustomPermissions(loaded);
       } catch (error) {
         console.error('Error loading permissions:', error);
-        setMessage({
-          type: 'error',
-          text: 'Failed to load permissions from server'
-        });
+        // Silently fail and use defaults
       } finally {
         setIsLoading(false);
       }
