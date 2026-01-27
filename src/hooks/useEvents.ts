@@ -134,7 +134,8 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
 
   // Create event
   const createEvent = async (
-    event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>
+    event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>,
+    sendDiscordNotification: boolean = true
   ): Promise<Event | null> => {
     console.log('Creating event with data:', event);
     const { data, error: createError } = await supabase
@@ -149,26 +150,28 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       throw createError;
     }
 
-    // Send Discord notification
-    try {
-      const { data: clanData } = await supabase
-        .from('clans')
-        .select('name, slug, discord_webhook_url, notify_on_events, discord_announcement_role_id')
-        .eq('id', event.clan_id)
-        .single();
+    // Send Discord notification only if enabled
+    if (sendDiscordNotification) {
+      try {
+        const { data: clanData } = await supabase
+          .from('clans')
+          .select('name, slug, discord_webhook_url, notify_on_events, discord_announcement_role_id')
+          .eq('id', event.clan_id)
+          .single();
 
-      if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
-        await notifyNewEvent(
-          clanData.discord_webhook_url, 
-          data, 
-          clanData.name, 
-          clanSlug || clanData.slug,
-          clanData.discord_announcement_role_id
-        );
+        if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
+          await notifyNewEvent(
+            clanData.discord_webhook_url, 
+            data, 
+            clanData.name, 
+            clanSlug || clanData.slug,
+            clanData.discord_announcement_role_id
+          );
+        }
+      } catch (err) {
+        console.error('Discord notification failed:', err);
+        // Don't throw - notification failure shouldn't break event creation
       }
-    } catch (err) {
-      console.error('Discord notification failed:', err);
-      // Don't throw - notification failure shouldn't break event creation
     }
 
     await fetchEvents();
@@ -267,7 +270,8 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
 
   // Create announcement
   const createAnnouncement = async (
-    announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>
+    announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>,
+    sendDiscordNotification: boolean = true
   ) => {
     const { data, error: createError } = await supabase
       .from('announcements')
@@ -280,24 +284,25 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       throw createError;
     }
 
-    // Send Discord notification
-    try {
-      const { data: clanData } = await supabase
-        .from('clans')
-        .select('name, slug, discord_webhook_url, notify_on_announcements, discord_announcement_role_id')
-        .eq('id', announcement.clan_id)
-        .single();
+    // Send Discord notification only if enabled
+    if (sendDiscordNotification) {
+      try {
+        const { data: clanData } = await supabase
+          .from('clans')
+          .select('name, slug, discord_webhook_url, notify_on_announcements, discord_announcement_role_id')
+          .eq('id', announcement.clan_id)
+          .single();
 
-      if (clanData?.discord_webhook_url && clanData.notify_on_announcements !== false) {
-        await notifyAnnouncement(
-          clanData.discord_webhook_url, 
-          data, 
-          clanData.name,
-          clanSlug || clanData.slug,
-          clanData.discord_announcement_role_id
-        );
-      }
-    } catch (err) {
+        if (clanData?.discord_webhook_url && clanData.notify_on_announcements !== false) {
+          await notifyAnnouncement(
+            clanData.discord_webhook_url, 
+            data, 
+            clanData.name,
+            clanSlug || clanData.slug,
+            clanData.discord_announcement_role_id
+          );
+        }
+      } catch (err) {
       console.error('Discord notification failed:', err);
       // Don't throw - notification failure shouldn't break announcement creation
     }

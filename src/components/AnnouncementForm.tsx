@@ -8,7 +8,7 @@ interface AnnouncementFormProps {
   clanId: string;
   userId: string;
   initialData?: Partial<Announcement>;
-  onSubmit: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onSubmit: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
 }
@@ -24,6 +24,7 @@ export function AnnouncementForm({
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [isPinned, setIsPinned] = useState(initialData?.is_pinned || false);
+  const [sendDiscordNotification, setSendDiscordNotification] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +50,7 @@ export function AnnouncementForm({
         title: title.trim(),
         content: content.trim(),
         is_pinned: isPinned,
-      });
+      }, sendDiscordNotification);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save announcement');
     } finally {
@@ -118,6 +119,20 @@ export function AnnouncementForm({
               <p className="text-xs text-slate-500">Pinned announcements stay at the top</p>
             </div>
           </label>
+
+          {/* Discord Notification */}
+          <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+            <input
+              type="checkbox"
+              id="sendDiscordNotificationAnn"
+              checked={sendDiscordNotification}
+              onChange={(e) => setSendDiscordNotification(e.target.checked)}
+              className="w-4 h-4 text-amber-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-amber-500"
+            />
+            <label htmlFor="sendDiscordNotificationAnn" className="text-sm text-slate-300 cursor-pointer">
+              Send Discord notification
+            </label>
+          </div>
 
           {/* Error */}
           {error && (

@@ -17,13 +17,14 @@ interface EventFormData {
   bards_needed: string;
   ranged_dps_needed: string;
   melee_dps_needed: string;
+  sendDiscordNotification: boolean;
 }
 
 interface EventFormProps {
   initialData?: Partial<Event>;
   clanId: string;
   userId: string;
-  onSubmit: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>) => Promise<void>;
+  onSubmit: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification?: boolean) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
 }
@@ -49,12 +50,14 @@ export function EventForm({
     bards_needed: initialData?.bards_needed?.toString() || '0',
     ranged_dps_needed: initialData?.ranged_dps_needed?.toString() || '0',
     melee_dps_needed: initialData?.melee_dps_needed?.toString() || '0',
+    sendDiscordNotification: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('EventForm handleSubmit called with formData:', formData);
     
     if (!formData.title.trim()) {
       setError('Title is required');
@@ -69,7 +72,7 @@ export function EventForm({
     setError(null);
 
     try {
-      await onSubmit({
+      const eventData = {
         clan_id: clanId,
         created_by: userId,
         title: formData.title.trim(),
@@ -84,7 +87,9 @@ export function EventForm({
         bards_needed: parseInt(formData.bards_needed) || 0,
         ranged_dps_needed: parseInt(formData.ranged_dps_needed) || 0,
         melee_dps_needed: parseInt(formData.melee_dps_needed) || 0,
-      });
+      };
+      console.log('EventForm submitting eventData:', eventData, 'sendDiscordNotification:', formData.sendDiscordNotification);
+      await onSubmit(eventData, formData.sendDiscordNotification);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save event');
     } finally {
@@ -254,6 +259,20 @@ export function EventForm({
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
               placeholder="Additional details about the event..."
             />
+          </div>
+
+          {/* Discord Notification */}
+          <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+            <input
+              type="checkbox"
+              id="sendDiscordNotification"
+              checked={formData.sendDiscordNotification}
+              onChange={(e) => setFormData({ ...formData, sendDiscordNotification: e.target.checked })}
+              className="w-4 h-4 text-orange-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-orange-500"
+            />
+            <label htmlFor="sendDiscordNotification" className="text-sm text-slate-300 cursor-pointer">
+              Send Discord notification
+            </label>
           </div>
 
           {/* Error */}
