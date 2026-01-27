@@ -110,25 +110,18 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
     deleteAnnouncement,
   } = useEvents(clanId, user?.id || null);
 
-  // Helper function to get main character name for an alt
+  // Helper function to get main character name for an alt (automatic based on user_id)
   const getMainCharacterName = (character: CharacterWithProfessions): string | undefined => {
-    if (!character.main_character_id) return undefined;
-    const mainChar = characters.find(c => c.id === character.main_character_id);
+    if (character.is_main || !character.user_id) return undefined;
+    const mainChar = characters.find(c => c.user_id === character.user_id && c.is_main);
     return mainChar?.name;
   };
 
-  // Helper function to get alts for a main character
+  // Helper function to get alts for a main character (automatic based on user_id)
   const getAltCharacters = (character: CharacterWithProfessions): Array<{ id: string; name: string }> => {
-    if (!character.is_main) return [];
+    if (!character.is_main || !character.user_id) return [];
     return characters
-      .filter(c => c.main_character_id === character.id)
-      .map(c => ({ id: c.id, name: c.name }));
-  };
-
-  // Helper function to get available main characters for the form
-  const getAvailableMainCharacters = (): Array<{ id: string; name: string }> => {
-    return characters
-      .filter(c => c.is_main)
+      .filter(c => c.user_id === character.user_id && !c.is_main && c.id !== character.id)
       .map(c => ({ id: c.id, name: c.name }));
   };
 
@@ -434,7 +427,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
         <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
           {activeTab === 'characters' ? (
             <div className="space-y-4">
-              {canEdit && <AddCharacterButton onAdd={addCharacter} availableMainCharacters={getAvailableMainCharacters()} />}
+              {canEdit && <AddCharacterButton onAdd={addCharacter} />}
               
               {/* Character Filters */}
               {characters.length > 0 && (
@@ -563,7 +556,6 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
             secondary_archetype: editingCharacter.secondary_archetype,
             level: editingCharacter.level,
             is_main: editingCharacter.is_main,
-            main_character_id: editingCharacter.main_character_id,
           }}
           onSubmit={async (data) => {
             await updateCharacter(editingCharacter.id, data);
@@ -571,7 +563,6 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
           }}
           onCancel={() => setEditingCharacter(null)}
           isEditing
-          availableMainCharacters={getAvailableMainCharacters().filter(c => c.id !== editingCharacter.id)}
         />
       )}
     </div>

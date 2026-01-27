@@ -22,7 +22,6 @@ interface CharacterFormData {
   secondary_archetype: Archetype | null;
   level: number;
   is_main: boolean;
-  main_character_id: string | null;
 }
 
 interface CharacterFormProps {
@@ -30,15 +29,13 @@ interface CharacterFormProps {
   onSubmit: (data: CharacterFormData) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
-  availableMainCharacters?: Array<{ id: string; name: string }>; // List of main characters to link to
 }
 
 export function CharacterForm({ 
   initialData, 
   onSubmit, 
   onCancel,
-  isEditing = false,
-  availableMainCharacters = []
+  isEditing = false
 }: CharacterFormProps) {
   const [formData, setFormData] = useState<CharacterFormData>({
     name: initialData?.name || '',
@@ -47,7 +44,6 @@ export function CharacterForm({
     secondary_archetype: initialData?.secondary_archetype || null,
     level: initialData?.level || 1,
     is_main: initialData?.is_main || false,
-    main_character_id: initialData?.main_character_id || null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -263,12 +259,7 @@ export function CharacterForm({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setFormData({ 
-                ...formData, 
-                is_main: !formData.is_main,
-                // Clear main_character_id if becoming main
-                main_character_id: !formData.is_main ? null : formData.main_character_id
-              })}
+              onClick={() => setFormData({ ...formData, is_main: !formData.is_main })}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all cursor-pointer ${
                 formData.is_main
                   ? 'bg-amber-500/20 text-amber-400 border border-amber-500'
@@ -278,35 +269,10 @@ export function CharacterForm({
               <Star size={18} className={formData.is_main ? 'fill-amber-400' : ''} />
               Main Character
             </button>
+            <p className="text-xs text-slate-500">
+              Characters with the same login are automatically linked
+            </p>
           </div>
-
-          {/* Link to Main Character (only shown for alts) */}
-          {!formData.is_main && availableMainCharacters.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Link to Main Character (Optional)
-              </label>
-              <select
-                value={formData.main_character_id || ''}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  main_character_id: e.target.value || null 
-                })}
-                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-                title={t('character.linkToMain')}
-              >
-                <option value="">No main character linked</option>
-                {availableMainCharacters.map((char) => (
-                  <option key={char.id} value={char.id}>
-                    {char.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-slate-500 mt-1">
-                Select which main character this alt belongs to
-              </p>
-            </div>
-          )}
 
           {/* Error */}
           {error && (

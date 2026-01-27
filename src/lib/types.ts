@@ -59,7 +59,6 @@ export interface Character {
   secondary_archetype: Archetype | null;
   level: number;
   is_main: boolean;
-  main_character_id: string | null; // Reference to main character for alts
   created_at: string;
 }
 
