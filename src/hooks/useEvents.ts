@@ -11,7 +11,7 @@ interface UseEventsReturn {
   loading: boolean;
   error: string | null;
   // Event actions
-  createEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification?: boolean) => Promise<Event | null>;
+  createEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<Event | null>;
   updateEvent: (id: string, updates: Partial<Event>) => Promise<void>;
   cancelEvent: (id: string) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
@@ -19,7 +19,7 @@ interface UseEventsReturn {
   setRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null, characterId?: string, note?: string) => Promise<void>;
   removeRsvp: (eventId: string) => Promise<void>;
   // Announcement actions
-  createAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => Promise<void>;
+  createAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   updateAnnouncement: (id: string, updates: Partial<Announcement>) => Promise<void>;
   deleteAnnouncement: (id: string) => Promise<void>;
   // Utils
@@ -135,7 +135,7 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
   // Create event
   const createEvent = async (
     event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>,
-    sendDiscordNotification: boolean = true
+    sendDiscordNotification: boolean
   ): Promise<Event | null> => {
     console.log('Creating event with data:', event, 'sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
     const { data, error: createError } = await supabase
@@ -278,7 +278,7 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
   // Create announcement
   const createAnnouncement = async (
     announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>,
-    sendDiscordNotification: boolean = true
+    sendDiscordNotification: boolean
   ) => {
     const { data, error: createError } = await supabase
       .from('announcements')

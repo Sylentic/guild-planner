@@ -24,7 +24,7 @@ interface EventFormProps {
   initialData?: Partial<Event>;
   clanId: string;
   userId: string;
-  onSubmit: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification?: boolean) => Promise<void>;
+  onSubmit: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
 }

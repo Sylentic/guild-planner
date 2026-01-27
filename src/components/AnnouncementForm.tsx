@@ -8,7 +8,7 @@ interface AnnouncementFormProps {
   clanId: string;
   userId: string;
   initialData?: Partial<Announcement>;
-  onSubmit: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => Promise<void>;
+  onSubmit: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
 }

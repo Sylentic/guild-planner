@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2, Link } from 'lucide-react';
-import { EventWithRsvps, Announcement, RsvpStatus, EventRole } from '@/lib/events';
+import { EventWithRsvps, Announcement, RsvpStatus, EventRole, Event } from '@/lib/events';
 import { EventCard } from './EventCard';
 import { EventForm } from './EventForm';
 import { AnnouncementForm } from './AnnouncementForm';
@@ -16,11 +16,11 @@ interface EventsListProps {
   clanId: string;
   userId: string;
   canManage: boolean;
-  onCreateEvent: (event: Parameters<typeof EventForm>[0]['onSubmit'] extends (e: infer E, s?: infer S) => Promise<void> ? E : never, sendDiscordNotification?: boolean) => Promise<void>;
+  onCreateEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateEvent: (id: string, updates: Partial<EventWithRsvps>) => Promise<void>;
   onCancelEvent: (id: string) => Promise<void>;
   onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null) => Promise<void>;
-  onCreateAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => Promise<void>;
+  onCreateAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateAnnouncement: (id: string, updates: Partial<Announcement>) => Promise<void>;
   onDeleteAnnouncement: (id: string) => Promise<void>;
 }
@@ -64,24 +64,25 @@ export function EventsList({
   const pinnedAnnouncements = announcements.filter(a => a.is_pinned);
   const recentAnnouncements = announcements.filter(a => !a.is_pinned).slice(0, 5);
 
-  const handleCreateEvent = async (eventData: Parameters<typeof onCreateEvent>[0], sendDiscordNotification?: boolean) => {
+  const handleCreateEvent = async (eventData: Omit<import('@/lib/events').Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => {
+    console.log('EventsList.handleCreateEvent called with sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
     await onCreateEvent(eventData, sendDiscordNotification);
     setShowEventForm(false);
   };
 
-  const handleEditEvent = async (eventData: Parameters<typeof onCreateEvent>[0], sendDiscordNotification?: boolean) => {
+  const handleEditEvent = async (eventData: Omit<import('@/lib/events').Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => {
     if (editingEvent) {
       await onUpdateEvent(editingEvent.id, eventData);
       setEditingEvent(null);
     }
   };
 
-  const handleCreateAnnouncement = async (data: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => {
+  const handleCreateAnnouncement = async (data: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => {
     await onCreateAnnouncement(data, sendDiscordNotification);
     setShowAnnouncementForm(false);
   };
 
-  const handleEditAnnouncement = async (data: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification?: boolean) => {
+  const handleEditAnnouncement = async (data: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => {
     if (editingAnnouncement) {
       await onUpdateAnnouncement(editingAnnouncement.id, data);
       setEditingAnnouncement(null);
