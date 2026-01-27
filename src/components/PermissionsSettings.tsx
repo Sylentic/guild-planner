@@ -155,23 +155,35 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
         });
       });
 
+      const payload = {
+        clanId,
+        rolePermissions,
+      };
+      
+      console.log('Sending permissions:', {
+        clanId,
+        roles: Object.keys(rolePermissions),
+        totalPermissions: Object.keys(PERMISSIONS).length,
+        sampleRole: rolePermissions['member'] ? Object.keys(rolePermissions['member']).length + ' perms' : 'none'
+      });
+
       const response = await fetch('/api/clan/permissions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({
-          clanId,
-          rolePermissions,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('API error response:', errorData);
         throw new Error(errorData.error || `Failed to save permissions: ${response.statusText}`);
       }
 
+      const result = await response.json();
+      console.log('Permissions saved:', result);
       setMessage({ type: 'success', text: 'Permissions updated successfully!' });
       
       // Call optional callback if provided
