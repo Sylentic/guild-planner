@@ -60,6 +60,9 @@ export function ProfessionSelector({
       <div className="flex items-center justify-between mb-2">
         <div className="text-sm text-slate-300 truncate flex-1 flex items-center gap-1" title={profession.name}>
           <span>{profession.name}</span>
+          {currentRank && level > 0 && (
+            <span className="text-xs text-slate-400">({RANK_NAMES[currentRank]} L{level})</span>
+          )}
           {currentRank && atCap && (
             <span className="text-amber-400 text-xs" title="Level capped - certification required to progress">
               🔒
