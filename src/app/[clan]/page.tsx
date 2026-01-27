@@ -451,19 +451,24 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
                   <p>{t('clan.noCharactersMatch')}</p>
                 </div>
               ) : (
-                filterCharacters(characters, characterFilters).map((character) => (
-                  <CharacterCard
-                    key={character.id}
-                    character={character}
-                    onUpdate={canEdit ? async (id, name) => updateCharacter(id, { name }) : async () => {}}
-                    onDelete={canEdit ? deleteCharacter : async () => {}}
-                    onSetProfessionRank={setProfessionRank}
-                    onEdit={canEdit ? setEditingCharacter : undefined}
-                    readOnly={!canEdit}
-                    mainCharacterName={getMainCharacterName(character)}
-                    altCharacters={getAltCharacters(character)}
-                  />
-                ))
+                filterCharacters(characters, characterFilters).map((character) => {
+                  // Users can edit their own characters, or officers+ can edit all
+                  const canEditCharacter = character.user_id === user.id || canEdit;
+                  
+                  return (
+                    <CharacterCard
+                      key={character.id}
+                      character={character}
+                      onUpdate={canEditCharacter ? async (id, name) => updateCharacter(id, { name }) : async () => {}}
+                      onDelete={canEditCharacter ? deleteCharacter : async () => {}}
+                      onSetProfessionRank={setProfessionRank}
+                      onEdit={canEditCharacter ? setEditingCharacter : undefined}
+                      readOnly={!canEditCharacter}
+                      mainCharacterName={getMainCharacterName(character)}
+                      altCharacters={getAltCharacters(character)}
+                    />
+                  );
+                })
               )}
             </div>
           ) : activeTab === 'events' ? (
