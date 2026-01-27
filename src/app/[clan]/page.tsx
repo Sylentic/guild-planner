@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, use, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Users, Home, Loader2, AlertCircle, LogOut, Shield, Clock, UserPlus, Settings, Swords } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
@@ -30,6 +30,8 @@ type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' |
 export default function ClanPage({ params }: { params: Promise<{ clan: string }> }) {
   const { clan: clanSlug } = use(params);
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   
   // Initialize activeTab from query parameter if present
@@ -51,7 +53,15 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [checkError, setCheckError] = useState<string | null>(null);
   const { t } = useLanguage();
 
-  // Handle tab query parameter changes
+  // Update URL when tab changes
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Handle tab query parameter changes from external navigation
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
@@ -565,7 +575,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
       <div className="shrink-0">
         <BottomNav
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           canManage={canManageMembers}
         />
         <InlineFooter variant="matching" />
