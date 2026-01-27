@@ -166,28 +166,32 @@ export async function POST(request: NextRequest) {
     // Verify user is admin of the clan
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized - no auth header' }, { status: 401 });
     }
 
     const token = authHeader.replace('Bearer ', '');
-    const supabaseClient = createClient(
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized - no token' }, { status: 401 });
+    }
+
+    // Create a client to verify the user token
+    const userClient = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-      }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Verify token by calling getUser with the token
+    const { data: { user }, error: authError } = await userClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('User auth verification failed:', { 
+        error: authError?.message, 
+        code: authError?.code,
+        hasUser: !!user
+      });
+      return NextResponse.json({ 
+        error: 'Unauthorized - invalid or expired token'
+      }, { status: 401 });
     }
 
     // Check if user is admin
