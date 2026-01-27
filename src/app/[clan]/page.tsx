@@ -30,7 +30,17 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const { clan: clanSlug } = use(params);
   const searchParams = useSearchParams();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
-  const [activeTab, setActiveTab] = useState<Tab>('characters');
+  
+  // Initialize activeTab from query parameter if present
+  const initialTab = (() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
+      return tabParam as Tab;
+    }
+    return 'characters';
+  })();
+  
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [clanId, setClanId] = useState<string | null>(null);
   const [clanExists, setClanExists] = useState<boolean | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -40,7 +50,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [checkError, setCheckError] = useState<string | null>(null);
   const { t } = useLanguage();
 
-  // Handle tab query parameter
+  // Handle tab query parameter changes
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
