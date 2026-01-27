@@ -106,10 +106,11 @@ export function ClanSettings({
 
       {/* Webhook URL */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <label htmlFor="discord-webhook-url" className="block text-sm font-medium text-slate-300 mb-2">
           {t('discord.webhookUrl')}
         </label>
         <input
+          id="discord-webhook-url"
           type="url"
           value={webhookUrl}
           onChange={(e) => setWebhookUrl(e.target.value)}
@@ -132,10 +133,11 @@ export function ClanSettings({
 
       {/* Announcement Role ID */}
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
+        <label htmlFor="discord-role-id" className="block text-sm font-medium text-slate-300 mb-2">
           Announcement Role ID (Optional)
         </label>
         <input
+          id="discord-role-id"
           type="text"
           value={roleId}
           onChange={(e) => setRoleId(e.target.value.replace(/[^0-9]/g, ''))}

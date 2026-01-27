@@ -115,6 +115,8 @@ export function SiegeEventForm({
           <button
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -123,10 +125,11 @@ export function SiegeEventForm({
         <form onSubmit={handleSubmit} className="p-4 space-y-5">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="siege-title" className="block text-sm font-medium text-slate-300 mb-2">
               {t('siege.title')} *
             </label>
             <input
+              id="siege-title"
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -173,6 +176,7 @@ export function SiegeEventForm({
               {t('siege.targetName')} *
             </label>
             <input
+              id="siege-target-name"
               type="text"
               value={formData.target_name}
               onChange={(e) => setFormData({ ...formData, target_name: e.target.value })}
@@ -184,10 +188,11 @@ export function SiegeEventForm({
           {/* Start Date/Time */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="siege-starts-at" className="block text-sm font-medium text-slate-300 mb-2">
                 {t('siege.startsAt')} *
               </label>
               <input
+                id="siege-starts-at"
                 type="datetime-local"
                 value={formData.starts_at}
                 onChange={(e) => setFormData({ ...formData, starts_at: e.target.value })}
@@ -195,10 +200,11 @@ export function SiegeEventForm({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="siege-signup-deadline" className="block text-sm font-medium text-slate-300 mb-2">
                 {t('siege.signupDeadline')}
               </label>
               <input
+                id="siege-signup-deadline"
                 type="datetime-local"
                 value={formData.declaration_ends_at}
                 onChange={(e) => setFormData({ ...formData, declaration_ends_at: e.target.value })}
@@ -209,10 +215,11 @@ export function SiegeEventForm({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="siege-description" className="block text-sm font-medium text-slate-300 mb-2">
               {t('siege.description')}
             </label>
             <textarea
+              id="siege-description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={2}
@@ -250,6 +257,7 @@ export function SiegeEventForm({
                       max="250"
                       value={value}
                       onChange={(e) => updateRoleCount(role, parseInt(e.target.value) || 0)}
+                      aria-label={t(`siege.roles.${role}`)}
                       className="w-full px-2 py-1 bg-slate-700 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
                   </div>

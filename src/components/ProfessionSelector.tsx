@@ -148,12 +148,13 @@ export function ProfessionSelector({
           {/* Max Quality Score */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs text-slate-400" title="Maximum quality achievable with all buffs">
+              <label htmlFor={`quality-${profession.id}`} className="text-xs text-slate-400" title="Maximum quality achievable with all buffs">
                 Max quality
               </label>
               <span className="text-xs text-slate-300 font-medium">{quality}</span>
             </div>
             <input
+              id={`quality-${profession.id}`}
               type="number"
               min="0"
               step="1"

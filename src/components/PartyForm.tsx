@@ -73,6 +73,8 @@ export function PartyForm({
           <button
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Close"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -81,10 +83,11 @@ export function PartyForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="party-name" className="block text-sm font-medium text-slate-300 mb-1">
               Party Name *
             </label>
             <input
+              id="party-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -97,10 +100,11 @@ export function PartyForm({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="party-description" className="block text-sm font-medium text-slate-300 mb-1">
               Description
             </label>
             <input
+              id="party-description"
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -136,6 +140,7 @@ export function PartyForm({
                       max="40"
                       value={value}
                       onChange={(e) => setValue(parseInt(e.target.value) || 0)}
+                      aria-label={config.name}
                       className="w-16 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>

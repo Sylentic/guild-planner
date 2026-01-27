@@ -113,6 +113,7 @@ export function EventsList({
                     onClick={() => copyAnnouncementLink(announcement.id)}
                     className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
                     title="Copy link"
+                    aria-label="Copy link"
                   >
                     <Link size={14} />
                   </button>
@@ -164,6 +165,7 @@ export function EventsList({
                     onClick={() => copyAnnouncementLink(announcement.id)}
                     className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
                     title="Copy link"
+                    aria-label="Copy link"
                   >
                     <Link size={14} />
                   </button>
@@ -173,6 +175,7 @@ export function EventsList({
                         onClick={() => setEditingAnnouncement(announcement)}
                         className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
                         title="Edit announcement"
+                        aria-label="Edit announcement"
                       >
                         <Edit2 size={14} />
                       </button>
@@ -180,6 +183,7 @@ export function EventsList({
                         onClick={() => onDeleteAnnouncement(announcement.id)}
                         className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
                         title="Delete announcement"
+                        aria-label="Delete announcement"
                       >
                         <Trash2 size={14} />
                       </button>

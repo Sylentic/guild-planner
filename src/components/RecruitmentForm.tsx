@@ -86,6 +86,8 @@ export function RecruitmentForm({
           <button
             onClick={onClose}
             className="p-1 text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Close"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -123,10 +125,11 @@ export function RecruitmentForm({
 
           {/* Primary Class */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="recruit-primary" className="block text-sm font-medium text-slate-300 mb-1">
               Primary Archetype
             </label>
             <select
+              id="recruit-primary"
               value={primaryClass}
               onChange={(e) => setPrimaryClass(e.target.value as ArchetypeId | '')}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
@@ -142,10 +145,11 @@ export function RecruitmentForm({
 
           {/* Experience */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="recruitment-experience" className="block text-sm font-medium text-slate-300 mb-1">
               MMO Experience
             </label>
             <textarea
+              id="recruitment-experience"
               value={experience}
               onChange={(e) => setExperience(e.target.value)}
               placeholder="Tell us about your MMO experience..."
@@ -170,10 +174,11 @@ export function RecruitmentForm({
 
           {/* Message */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="recruitment-message" className="block text-sm font-medium text-slate-300 mb-1">
               Why do you want to join?
             </label>
             <textarea
+              id="recruitment-message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tell us a bit about yourself and why you're interested..."

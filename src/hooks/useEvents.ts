@@ -137,7 +137,7 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>,
     sendDiscordNotification: boolean = true
   ): Promise<Event | null> => {
-    console.log('Creating event with data:', event);
+    console.log('Creating event with data:', event, 'sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
     const { data, error: createError } = await supabase
       .from('events')
       .insert(event)
@@ -150,8 +150,10 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       throw createError;
     }
 
+    console.log('Checking Discord notification: sendDiscordNotification =', sendDiscordNotification);
     // Send Discord notification only if enabled
     if (sendDiscordNotification) {
+      console.log('Discord notification enabled, proceeding...');
       try {
         const { data: clanData } = await supabase
           .from('clans')
@@ -160,6 +162,7 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
           .single();
 
         if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
+          console.log('Sending Discord notification for event:', data.title);
           await notifyNewEvent(
             clanData.discord_webhook_url, 
             data, 
@@ -167,11 +170,15 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
             clanSlug || clanData.slug,
             clanData.discord_announcement_role_id
           );
+        } else {
+          console.log('Skipping Discord notification - webhook or notify_on_events not configured');
         }
       } catch (err) {
         console.error('Discord notification failed:', err);
         // Don't throw - notification failure shouldn't break event creation
       }
+    } else {
+      console.log('Discord notification disabled by user');
     }
 
     await fetchEvents();

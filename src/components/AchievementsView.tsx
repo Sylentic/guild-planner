@@ -100,12 +100,14 @@ export function AchievementsView({
                             </span>
                           </div>
                           <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                            {/* webhint-disable no-inline-styles */}
                             <div
                               className="h-full bg-slate-500 rounded-full"
                               style={{
                                 width: `${Math.min(100, (achievement.current_value / achievement.definition.requirement_value) * 100)}%`
                               }}
                             />
+                            {/* webhint-enable no-inline-styles */}
                           </div>
                         </div>
                       )}

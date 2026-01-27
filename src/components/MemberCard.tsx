@@ -118,6 +118,7 @@ export function CharacterCard({
                   onClick={(e) => { e.stopPropagation(); handleSave(); }}
                   className="p-1 text-green-400 hover:text-green-300 transition-colors cursor-pointer"
                   title={t('common.save')}
+                  aria-label={t('common.save')}
                 >
                   <Check size={16} />
                 </button>
@@ -129,6 +130,7 @@ export function CharacterCard({
                   }}
                   className="p-1 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
                   title={t('common.cancel')}
+                  aria-label={t('common.cancel')}
                 >
                   <X size={16} />
                 </button>
@@ -199,6 +201,7 @@ export function CharacterCard({
                     onClick={(e) => { e.stopPropagation(); onEdit(character); }}
                     className="p-1 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                     title={t('character.editDetails')}
+                    aria-label={t('character.editDetails')}
                   >
                     <Edit2 size={16} />
                   </button>
@@ -209,6 +212,7 @@ export function CharacterCard({
                       onClick={(e) => { e.stopPropagation(); handleDelete(); }}
                       className="p-1 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
                       title={t('common.confirmDelete')}
+                      aria-label={t('common.confirmDelete')}
                     >
                       <Check size={16} />
                     </button>
@@ -216,6 +220,7 @@ export function CharacterCard({
                       onClick={(e) => { e.stopPropagation(); setIsDeleting(false); }}
                       className="p-1 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                       title={t('common.cancelDelete')}
+                      aria-label={t('common.cancelDelete')}
                     >
                       <X size={16} />
                     </button>
@@ -225,6 +230,7 @@ export function CharacterCard({
                     onClick={(e) => { e.stopPropagation(); setIsDeleting(true); }}
                     className="p-1 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
                     title={t('common.delete')}
+                    aria-label={t('common.delete')}
                   >
                     <Trash2 size={16} />
                   </button>

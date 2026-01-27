@@ -201,6 +201,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
                 Allow anyone to view your guild&apos;s public page
               </p>
             </div>
+            {/* axe-ignore aria-valid-attr-value */}
             <button
               onClick={() => setIsPublic(!isPublic)}
               className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
@@ -210,6 +211,8 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
               }`}
               role="switch"
               aria-checked={isPublic}
+              aria-label="Toggle public visibility"
+              title="Toggle public visibility"
             >
               <span className="block w-5 h-5 bg-white rounded-full shadow-md" />
             </button>
@@ -226,6 +229,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
                 Allow players to submit applications
               </p>
             </div>
+            {/* axe-ignore aria-valid-attr-value */}
             <button
               onClick={() => setRecruitmentOpen(!recruitmentOpen)}
               className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
@@ -235,6 +239,8 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
               }`}
               role="switch"
               aria-checked={recruitmentOpen}
+              aria-label="Toggle recruitment status"
+              title="Toggle recruitment status"
             >
               <span className="block w-5 h-5 bg-white rounded-full shadow-md" />
             </button>
@@ -243,10 +249,11 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
 
         {/* Public Description */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="recruitment-public-description" className="block text-sm font-medium text-slate-300 mb-1">
             Public Description
           </label>
           <textarea
+            id="recruitment-public-description"
             value={publicDescription}
             onChange={(e) => setPublicDescription(e.target.value)}
             placeholder="Tell potential recruits about your guild..."
@@ -327,15 +334,13 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
                     <button
                       onClick={() => handleApplicationAction(app.id, 'accepted')}
                       className="p-2 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors cursor-pointer"
-                      title="Accept"
-                    >
+                      title="Accept"                      aria-label="Accept"                    >
                       <CheckCircle size={20} />
                     </button>
                     <button
                       onClick={() => handleApplicationAction(app.id, 'rejected')}
                       className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors cursor-pointer"
-                      title="Reject"
-                    >
+                      title="Reject"                      aria-label="Reject"                    >
                       <XCircle size={20} />
                     </button>
                   </div>

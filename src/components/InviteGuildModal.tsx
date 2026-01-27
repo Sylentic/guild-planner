@@ -113,10 +113,11 @@ export function InviteGuildModal({
 
         {/* Optional Message */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="alliance-invite-message" className="block text-sm font-medium text-slate-300 mb-1">
             {t('alliance.inviteMessage')} ({t('common.optional')})
           </label>
           <textarea
+            id="alliance-invite-message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={t('alliance.inviteMessagePlaceholder')}

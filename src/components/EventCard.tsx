@@ -123,6 +123,7 @@ export function EventCard({
               }}
               className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer transition-colors"
               title="Copy event link"
+              aria-label="Copy event link"
             >
               <LinkIcon size={16} />
             </button>
@@ -235,7 +236,7 @@ export function EventCard({
                               ) : (
                                 <HelpCircle size={12} className="text-yellow-400" />
                               )}
-                              <span className="truncate">
+                              <span className="truncate">S
                                 {rsvp.character?.name || rsvp.user?.display_name || 'Unknown'}
                               </span>
                             </div>

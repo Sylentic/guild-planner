@@ -164,10 +164,11 @@ export function CaravanForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="caravan-title" className="block text-sm font-medium text-slate-300 mb-1">
             {t('caravan.caravanTitle')} *
           </label>
           <input
+            id="caravan-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -178,10 +179,11 @@ export function CaravanForm({
 
         {/* Caravan Type */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="caravan-type" className="block text-sm font-medium text-slate-300 mb-1">
             {t('siege.siegeType')}
           </label>
           <select
+            id="caravan-type"
             value={caravanType}
             onChange={(e) => setCaravanType(e.target.value as CaravanType)}
             className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-amber-500"
@@ -200,6 +202,7 @@ export function CaravanForm({
               {t('caravan.origin')} *
             </label>
             <input
+              id="caravan-origin"
               type="text"
               value={originNode}
               onChange={(e) => setOriginNode(e.target.value)}
@@ -213,6 +216,7 @@ export function CaravanForm({
               {t('caravan.destination')} *
             </label>
             <input
+              id="caravan-destination"
               type="text"
               value={destinationNode}
               onChange={(e) => setDestinationNode(e.target.value)}
@@ -224,11 +228,12 @@ export function CaravanForm({
 
         {/* Departure Time */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="caravan-departure" className="block text-sm font-medium text-slate-300 mb-1">
             <Clock className="w-3 h-3 inline mr-1" />
             {t('caravan.departure')} *
           </label>
           <input
+            id="caravan-departure"
             type="datetime-local"
             value={departureAt}
             onChange={(e) => setDepartureAt(e.target.value)}
@@ -239,11 +244,12 @@ export function CaravanForm({
         {/* Cargo Info */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="caravan-cargo-value" className="block text-sm font-medium text-slate-300 mb-1">
               <Coins className="w-3 h-3 inline mr-1 text-yellow-400" />
               {t('caravan.cargoValue')}
             </label>
             <input
+              id="caravan-cargo-value"
               type="number"
               value={cargoValue}
               onChange={(e) => setCargoValue(e.target.value)}
@@ -253,10 +259,11 @@ export function CaravanForm({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label htmlFor="caravan-cargo-description" className="block text-sm font-medium text-slate-300 mb-1">
               {t('caravan.cargoDescription')}
             </label>
             <input
+              id="caravan-cargo-description"
               type="text"
               value={cargoDescription}
               onChange={(e) => setCargoDescription(e.target.value)}
@@ -275,10 +282,11 @@ export function CaravanForm({
           
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">
+              <label htmlFor="caravan-min-escorts" className="block text-xs text-slate-400 mb-1">
                 {t('caravan.minEscorts')}
               </label>
               <input
+                id="caravan-min-escorts"
                 type="number"
                 value={minEscorts}
                 onChange={(e) => setMinEscorts(e.target.value)}
@@ -288,10 +296,11 @@ export function CaravanForm({
               />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">
+              <label htmlFor="caravan-max-escorts" className="block text-xs text-slate-400 mb-1">
                 {t('caravan.maxEscorts')}
               </label>
               <input
+                id="caravan-max-escorts"
                 type="number"
                 value={maxEscorts}
                 onChange={(e) => setMaxEscorts(e.target.value)}
@@ -304,10 +313,11 @@ export function CaravanForm({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-slate-400 mb-1">
+              <label htmlFor="caravan-reward-gold" className="block text-xs text-slate-400 mb-1">
                 {t('caravan.escortReward')} (Gold)
               </label>
               <input
+                id="caravan-reward-gold"
                 type="number"
                 value={escortRewardGold}
                 onChange={(e) => setEscortRewardGold(e.target.value)}
@@ -317,10 +327,11 @@ export function CaravanForm({
               />
             </div>
             <div>
-              <label className="block text-xs text-slate-400 mb-1">
+              <label htmlFor="caravan-reward-dkp" className="block text-xs text-slate-400 mb-1">
                 {t('caravan.escortReward')} (DKP)
               </label>
               <input
+                id="caravan-reward-dkp"
                 type="number"
                 value={escortRewardDkp}
                 onChange={(e) => setEscortRewardDkp(e.target.value)}
@@ -355,6 +366,8 @@ export function CaravanForm({
                       type="button"
                       onClick={() => removeRequirement(req.id)}
                       className="p-1 text-slate-400 hover:text-red-400"
+                      aria-label="Remove requirement"
+                      title="Remove requirement"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -362,8 +375,9 @@ export function CaravanForm({
 
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">{t('siege.roles.frontline')}</label>
+                      <label htmlFor={`escort-role-${req.id}`} className="block text-xs text-slate-500 mb-1">{t('siege.roles.frontline')}</label>
                       <select
+                        id={`escort-role-${req.id}`}
                         value={req.role}
                         onChange={(e) => updateRequirement(req.id, { role: e.target.value })}
                         className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white text-xs"
@@ -374,8 +388,9 @@ export function CaravanForm({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">{t('character.primaryArchetype')}</label>
+                      <label htmlFor={`escort-archetype-${req.id}`} className="block text-xs text-slate-500 mb-1">{t('character.primaryArchetype')}</label>
                       <select
+                        id={`escort-archetype-${req.id}`}
                         value={req.archetype || ''}
                         onChange={(e) => updateRequirement(req.id, { archetype: e.target.value || undefined })}
                         className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white text-xs"
@@ -387,8 +402,9 @@ export function CaravanForm({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">{t('character.level')}</label>
+                      <label htmlFor={`req-level-${req.id}`} className="block text-xs text-slate-500 mb-1">{t('character.level')}</label>
                       <input
+                        id={`req-level-${req.id}`}
                         type="number"
                         value={req.minLevel || ''}
                         onChange={(e) => updateRequirement(req.id, { minLevel: parseInt(e.target.value) || undefined })}
@@ -402,8 +418,9 @@ export function CaravanForm({
 
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">{t('caravan.countNeeded')}</label>
+                      <label htmlFor={`req-count-${req.id}`} className="block text-xs text-slate-500 mb-1">{t('caravan.countNeeded')}</label>
                       <input
+                        id={`req-count-${req.id}`}
                         type="number"
                         value={req.count}
                         onChange={(e) => updateRequirement(req.id, { count: parseInt(e.target.value) || 1 })}
@@ -454,10 +471,11 @@ export function CaravanForm({
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="caravan-description" className="block text-sm font-medium text-slate-300 mb-1">
             {t('siege.description')}
           </label>
           <textarea
+            id="caravan-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t('siege.descriptionPlaceholder')}

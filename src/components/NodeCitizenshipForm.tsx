@@ -90,6 +90,8 @@ export function NodeCitizenshipForm({
           <button
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -103,10 +105,11 @@ export function NodeCitizenshipForm({
 
           {/* Node Name */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="node-name" className="block text-sm font-medium text-slate-300 mb-2">
               {t('nodes.nodeName')} *
             </label>
             <input
+              id="node-name"
               type="text"
               value={formData.node_name}
               onChange={(e) => setFormData({ ...formData, node_name: e.target.value })}
@@ -175,10 +178,11 @@ export function NodeCitizenshipForm({
 
           {/* Region (optional) */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="node-region" className="block text-sm font-medium text-slate-300 mb-2">
               {t('nodes.region')} <span className="text-slate-500">({t('common.optional')})</span>
             </label>
             <input
+              id="node-region"
               type="text"
               value={formData.region}
               onChange={(e) => setFormData({ ...formData, region: e.target.value })}

@@ -64,8 +64,9 @@ export function FreeholdDirectoryView({
         <form onSubmit={handleSubmit} className="bg-slate-800 rounded-xl p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('freehold.freeholdName')}</label>
+              <label htmlFor="freehold-name" className="block text-sm text-slate-400 mb-1">{t('freehold.freeholdName')}</label>
               <input
+                id="freehold-name"
                 type="text"
                 value={newFreehold.name}
                 onChange={(e) => setNewFreehold({ ...newFreehold, name: e.target.value })}
@@ -74,8 +75,9 @@ export function FreeholdDirectoryView({
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('freehold.node')}</label>
+              <label htmlFor="freehold-node" className="block text-sm text-slate-400 mb-1">{t('freehold.node')}</label>
               <input
+                id="freehold-node"
                 type="text"
                 value={newFreehold.node_name}
                 onChange={(e) => setNewFreehold({ ...newFreehold, node_name: e.target.value })}
@@ -83,8 +85,9 @@ export function FreeholdDirectoryView({
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('freehold.region')}</label>
+              <label htmlFor="freehold-region" className="block text-sm text-slate-400 mb-1">{t('freehold.region')}</label>
               <input
+                id="freehold-region"
                 type="text"
                 value={newFreehold.region}
                 onChange={(e) => setNewFreehold({ ...newFreehold, region: e.target.value })}
@@ -92,8 +95,9 @@ export function FreeholdDirectoryView({
               />
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('freehold.size')}</label>
+              <label htmlFor="freehold-size" className="block text-sm text-slate-400 mb-1">{t('freehold.size')}</label>
               <select
+                id="freehold-size"
                 value={newFreehold.size}
                 onChange={(e) => setNewFreehold({ ...newFreehold, size: e.target.value as FreeholdSize })}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"

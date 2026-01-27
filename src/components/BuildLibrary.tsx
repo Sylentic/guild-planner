@@ -121,8 +121,9 @@ export function BuildLibrary({
           {/* Archetype Selectors */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('builds.primaryArchetype')}</label>
+              <label htmlFor="build-primary" className="block text-sm text-slate-400 mb-1">{t('builds.primaryArchetype')}</label>
               <select
+                id="build-primary"
                 value={formPrimary}
                 onChange={(e) => setFormPrimary(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -136,8 +137,9 @@ export function BuildLibrary({
               </select>
             </div>
             <div>
-              <label className="block text-sm text-slate-400 mb-1">{t('builds.secondaryArchetype')}</label>
+              <label htmlFor="build-secondary" className="block text-sm text-slate-400 mb-1">{t('builds.secondaryArchetype')}</label>
               <select
+                id="build-secondary"
                 value={formSecondary}
                 onChange={(e) => setFormSecondary(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -172,8 +174,9 @@ export function BuildLibrary({
 
           {/* Build Name */}
           <div>
-            <label className="block text-sm text-slate-400 mb-1">{t('builds.buildName')}</label>
+            <label htmlFor="build-name" className="block text-sm text-slate-400 mb-1">{t('builds.buildName')}</label>
             <input
+              id="build-name"
               type="text"
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
@@ -184,8 +187,9 @@ export function BuildLibrary({
 
           {/* Purpose/Description */}
           <div>
-            <label className="block text-sm text-slate-400 mb-1">{t('builds.purpose')}</label>
+            <label htmlFor="build-purpose" className="block text-sm text-slate-400 mb-1">{t('builds.purpose')}</label>
             <textarea
+              id="build-purpose"
               value={formDescription}
               onChange={(e) => setFormDescription(e.target.value)}
               placeholder={t('builds.purposePlaceholder')}
@@ -222,6 +226,7 @@ export function BuildLibrary({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('builds.searchBuilds')}
+            aria-label={t('builds.searchBuilds')}
             className="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
         </div>
@@ -229,6 +234,7 @@ export function BuildLibrary({
           value={archetypeFilter}
           onChange={(e) => setArchetypeFilter(e.target.value)}
           className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          aria-label={t('builds.filterByClass')}
         >
           <option value="all">{t('builds.filterByClass')}</option>
           {archetypesConfig.list.map((arch) => (
@@ -239,6 +245,7 @@ export function BuildLibrary({
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
           className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          aria-label={t('builds.filterByRole')}
         >
           <option value="all">{t('builds.filterByRole')}</option>
           {roles.map((role) => (

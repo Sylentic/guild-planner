@@ -86,6 +86,7 @@ export function CharacterForm({
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
             title={t('common.close')}
+            aria-label={t('common.close')}
           >
             <X size={20} />
           </button>
@@ -94,10 +95,11 @@ export function CharacterForm({
         <form onSubmit={handleSubmit} className="p-4 space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="character-name" className="block text-sm font-medium text-slate-300 mb-2">
               Character Name *
             </label>
             <input
+              id="character-name"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}

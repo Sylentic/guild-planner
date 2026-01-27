@@ -66,6 +66,7 @@ export function LootHistoryView({
             value={rarityFilter}
             onChange={(e) => setRarityFilter(e.target.value as ItemRarity | 'all')}
             className="px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            aria-label={t('loot.allRarities')}
           >
             <option value="all">{t('loot.allRarities')}</option>
             {Object.entries(ITEM_RARITY_CONFIG).map(([key, config]) => (

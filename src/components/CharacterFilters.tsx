@@ -63,6 +63,7 @@ export function CharacterFiltersBar({
             value={filters.search}
             onChange={(e) => onChange({ ...filters, search: e.target.value })}
             placeholder={t('character.searchPlaceholder')}
+            aria-label={t('character.searchPlaceholder')}
             className="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
           {filters.search && (
@@ -70,6 +71,7 @@ export function CharacterFiltersBar({
               onClick={() => onChange({ ...filters, search: '' })}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white cursor-pointer"
               title={t('common.clear')}
+              aria-label={t('common.clear')}
             >
               <X size={14} />
             </button>
@@ -99,12 +101,12 @@ export function CharacterFiltersBar({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
           {/* Race filter */}
           <div>
-            <label className="text-xs text-slate-400 mb-1 block">{t('filters.race')}</label>
+            <label htmlFor="filter-race" className="text-xs text-slate-400 mb-1 block">{t('filters.race')}</label>
             <select
+              id="filter-race"
               value={filters.race}
               onChange={(e) => onChange({ ...filters, race: e.target.value as RaceId | '' })}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-              title={t('filters.race')}
             >
               <option value="">{t('filters.allRaces')}</option>
               {Object.entries(RACES).map(([id, race]) => (
@@ -115,12 +117,12 @@ export function CharacterFiltersBar({
 
           {/* Archetype filter */}
           <div>
-            <label className="text-xs text-slate-400 mb-1 block">{t('filters.class')}</label>
+            <label htmlFor="filter-archetype" className="text-xs text-slate-400 mb-1 block">{t('filters.class')}</label>
             <select
+              id="filter-archetype"
               value={filters.archetype}
               onChange={(e) => onChange({ ...filters, archetype: e.target.value as ArchetypeId | '' })}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-              title={t('filters.archetype')}
             >
               <option value="">{t('filters.allArchetypes')}</option>
               {Object.entries(ARCHETYPES).map(([id, arch]) => (
@@ -140,7 +142,7 @@ export function CharacterFiltersBar({
                 value={filters.minLevel}
                 onChange={(e) => onChange({ ...filters, minLevel: parseInt(e.target.value) || 1 })}
                 className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                title={t('filters.minLevel')}
+                aria-label={t('filters.minLevel')}
               />
               <span className="text-slate-500">-</span>
               <input
@@ -150,21 +152,21 @@ export function CharacterFiltersBar({
                 value={filters.maxLevel}
                 onChange={(e) => onChange({ ...filters, maxLevel: parseInt(e.target.value) || 50 })}
                 className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                title={t('filters.maxLevel')}
+                aria-label={t('filters.maxLevel')}
               />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-slate-400 mb-1 block">{t('filters.professions')}</label>
+            <label htmlFor="filter-professions" className="text-xs text-slate-400 mb-1 block">{t('filters.professions')}</label>
             <select
+              id="filter-professions"
               value={filters.hasProfessions === null ? '' : filters.hasProfessions ? 'yes' : 'no'}
               onChange={(e) => onChange({ 
                 ...filters, 
                 hasProfessions: e.target.value === '' ? null : e.target.value === 'yes' 
               })}
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-              title={t('filters.professions')}
             >
               <option value="">{t('common.all')}</option>
               <option value="yes">{t('filters.hasProfessions')}</option>

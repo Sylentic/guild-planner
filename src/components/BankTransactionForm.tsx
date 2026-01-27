@@ -119,6 +119,7 @@ export function BankTransactionForm({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('bank.searchResources')}
+                  aria-label={t('bank.searchResources')}
                   className="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -126,6 +127,7 @@ export function BankTransactionForm({
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value as ResourceCategory | 'all')}
                 className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500"
+                aria-label={t('bank.allCategories')}
               >
                 <option value="all">{t('bank.allCategories')}</option>
                 {Object.entries(RESOURCE_CATEGORY_CONFIG).map(([key, config]) => (
@@ -195,6 +197,7 @@ export function BankTransactionForm({
               </label>
               <div className="flex items-center gap-2">
                 <input
+                  id="bank-transaction-amount"
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
@@ -217,10 +220,11 @@ export function BankTransactionForm({
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">
+              <label htmlFor="bank-transaction-notes" className="block text-sm font-medium text-slate-300 mb-1">
                 {t('loot.reason')} ({t('common.optional')})
               </label>
               <input
+                id="bank-transaction-notes"
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}

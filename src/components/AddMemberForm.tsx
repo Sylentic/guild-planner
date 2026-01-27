@@ -57,6 +57,7 @@ export function AddMemberForm({ onAdd }: AddMemberFormProps) {
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Member name..."
+          aria-label="Member name"
           className="flex-1 bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
           autoFocus
           disabled={isSubmitting}
@@ -65,6 +66,8 @@ export function AddMemberForm({ onAdd }: AddMemberFormProps) {
           type="submit"
           disabled={!name.trim() || isSubmitting}
           className="p-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          aria-label="Add member"
+          title="Add member"
         >
           <Check size={20} />
         </button>
@@ -74,8 +77,8 @@ export function AddMemberForm({ onAdd }: AddMemberFormProps) {
             setName('');
             setIsAdding(false);
           }}
-          className="p-2 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
-        >
+          className="p-2 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"          aria-label="Cancel"
+          title="Cancel"        >
           <X size={20} />
         </button>
       </div>

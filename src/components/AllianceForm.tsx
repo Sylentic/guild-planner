@@ -99,10 +99,11 @@ export function AllianceForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Alliance Name */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="alliance-name" className="block text-sm font-medium text-slate-300 mb-1">
             {t('alliance.allianceName')} *
           </label>
           <input
+            id="alliance-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -114,10 +115,11 @@ export function AllianceForm({
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="alliance-description" className="block text-sm font-medium text-slate-300 mb-1">
             {t('alliance.description')}
           </label>
           <textarea
+            id="alliance-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t('alliance.descriptionPlaceholder')}
@@ -153,6 +155,8 @@ export function AllianceForm({
             className={`relative w-12 h-6 rounded-full transition-colors ${
               isPublic ? 'bg-green-600' : 'bg-slate-600'
             }`}
+            aria-label={isPublic ? t('alliance.makePrivate') : t('alliance.makePublic')}
+            title={isPublic ? t('alliance.makePrivate') : t('alliance.makePublic')}
           >
             <span
               className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -164,10 +168,11 @@ export function AllianceForm({
 
         {/* Max Guilds */}
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-1">
+          <label htmlFor="alliance-max-guilds" className="block text-sm font-medium text-slate-300 mb-1">
             {t('alliance.maxGuilds')}
           </label>
           <select
+            id="alliance-max-guilds"
             value={maxGuilds}
             onChange={(e) => setMaxGuilds(e.target.value)}
             className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-purple-500"

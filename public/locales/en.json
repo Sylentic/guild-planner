@@ -645,6 +645,8 @@
     "privateAlliance": "Private Alliance",
     "publicDesc": "Any guild can see and request to join",
     "privateDesc": "Only invited guilds can join",
+    "makePublic": "Make alliance public",
+    "makePrivate": "Make alliance private",
     "maxGuilds": "Maximum Guilds",
     "guilds": "guilds",
     "searchClan": "Search for a guild...",

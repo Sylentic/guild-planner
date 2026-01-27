@@ -258,6 +258,7 @@ export function SiegeRosterView({
               value={selectedCharacter}
               onChange={(e) => setSelectedCharacter(e.target.value)}
               className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              aria-label={t('siege.selectCharacter')}
             >
               <option value="">{t('siege.selectCharacter')}</option>
               {availableCharacters.map((char) => (
@@ -270,6 +271,7 @@ export function SiegeRosterView({
               value={selectedRole || ''}
               onChange={(e) => setSelectedRole(e.target.value as SiegeRole)}
               className="px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              aria-label={t('siege.selectRole')}
             >
               <option value="">{t('siege.selectRole')}</option>
               {SIEGE_ROLES.map((role) => (

@@ -72,6 +72,18 @@ export function EventForm({
     setError(null);
 
     try {
+      console.log('Parsing role values:',{
+        tanks_needed_raw: formData.tanks_needed,
+        tanks_needed_parsed: parseInt(formData.tanks_needed),
+        clerics_needed_raw: formData.clerics_needed,
+        clerics_needed_parsed: parseInt(formData.clerics_needed),
+        bards_needed_raw: formData.bards_needed,
+        bards_needed_parsed: parseInt(formData.bards_needed),
+        ranged_dps_needed_raw: formData.ranged_dps_needed,
+        ranged_dps_needed_parsed: parseInt(formData.ranged_dps_needed),
+        melee_dps_needed_raw: formData.melee_dps_needed,
+        melee_dps_needed_parsed: parseInt(formData.melee_dps_needed),
+      });
       const eventData = {
         clan_id: clanId,
         created_by: userId,
@@ -109,6 +121,8 @@ export function EventForm({
           <button
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close"
+            title="Close"
           >
             <X size={20} />
           </button>
@@ -163,10 +177,11 @@ export function EventForm({
 
           {/* Start Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="event-starts-at" className="block text-sm font-medium text-slate-300 mb-2">
               Start Date & Time *
             </label>
             <input
+              id="event-starts-at"
               type="datetime-local"
               value={formData.starts_at}
               onChange={(e) => setFormData({ ...formData, starts_at: e.target.value })}
@@ -176,10 +191,11 @@ export function EventForm({
 
           {/* End Time */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="event-ends-at" className="block text-sm font-medium text-slate-300 mb-2">
               End Date & Time <span className="text-slate-500">(optional)</span>
             </label>
             <input
+              id="event-ends-at"
               type="datetime-local"
               value={formData.ends_at}
               onChange={(e) => setFormData({ ...formData, ends_at: e.target.value })}
@@ -203,10 +219,11 @@ export function EventForm({
 
           {/* Max Attendees */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="event-max-attendees" className="block text-sm font-medium text-slate-300 mb-2">
               Max Attendees <span className="text-slate-500">(optional)</span>
             </label>
             <input
+              id="event-max-attendees"
               type="number"
               min="1"
               max="100"
@@ -238,6 +255,7 @@ export function EventForm({
                       min="0"
                       max="40"
                       value={formData[fieldName]}
+                      aria-label={roleConfig.name}
                       onChange={(e) => setFormData({ 
                         ...formData, 
                         [fieldName]: e.target.value 
@@ -252,10 +270,11 @@ export function EventForm({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="event-description" className="block text-sm font-medium text-slate-300 mb-2">
               Description <span className="text-slate-500">(optional)</span>
             </label>
             <textarea
+              id="event-description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}

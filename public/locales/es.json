@@ -646,6 +646,8 @@
     "privateAlliance": "Alianza Privada",
     "publicDesc": "Cualquier clan puede ver y solicitar unirse",
     "privateDesc": "Solo los clanes invitados pueden unirse",
+    "makePublic": "Hacer alianza pública",
+    "makePrivate": "Hacer alianza privada",
     "maxGuilds": "Máximo de Clanes",
     "guilds": "clanes",
     "searchClan": "Buscar un clan...",

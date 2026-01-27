@@ -70,6 +70,7 @@ export function AnnouncementForm({
           <button
             onClick={onCancel}
             className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close"
           >
             <X size={20} />
           </button>
@@ -78,10 +79,11 @@ export function AnnouncementForm({
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="announcement-title" className="block text-sm font-medium text-slate-300 mb-2">
               Title *
             </label>
             <input
+              id="announcement-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -93,10 +95,11 @@ export function AnnouncementForm({
 
           {/* Content */}
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="announcement-content" className="block text-sm font-medium text-slate-300 mb-2">
               Content *
             </label>
             <textarea
+              id="announcement-content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={4}

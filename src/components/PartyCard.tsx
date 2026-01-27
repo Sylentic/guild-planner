@@ -230,6 +230,7 @@ export function PartyCard({
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value as PartyRole)}
                     className="w-24 px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-sm cursor-pointer"
+                    aria-label="Select role"
                   >
                     {(['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'] as PartyRole[]).map(role => (
                       <option key={role} value={role}>
@@ -242,6 +243,7 @@ export function PartyCard({
                     disabled={assigning || availableCharacters.length === 0}
                     className="flex-1 min-w-0 px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-sm cursor-pointer truncate"
                     defaultValue=""
+                    aria-label="Select character"
                   >
                     <option value="" disabled>
                       {availableCharacters.length === 0 ? 'No chars' : 'Select...'}
@@ -258,6 +260,8 @@ export function PartyCard({
                   <button
                     onClick={() => setShowAssign(false)}
                     className="p-1.5 text-slate-400 hover:text-white cursor-pointer"
+                    aria-label="Cancel"
+                    title="Cancel"
                   >
                     <X size={16} />
                   </button>
@@ -276,15 +280,13 @@ export function PartyCard({
                 <button
                   onClick={onEdit}
                   className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors cursor-pointer"
-                  title={t('party.editParty')}
-                >
+                  title={t('party.editParty')}                  aria-label={t('party.editParty')}                >
                   <Edit2 size={16} />
                 </button>
                 <button
                   onClick={onDelete}
                   className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/20 rounded transition-colors cursor-pointer"
-                  title={t('party.deleteParty')}
-                >
+                  title={t('party.deleteParty')}                  aria-label={t('party.deleteParty')}                >
                   <Trash2 size={16} />
                 </button>
               </div>
