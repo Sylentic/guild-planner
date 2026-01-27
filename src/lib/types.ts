@@ -103,10 +103,10 @@ export function getRankFromLevel(level: number): RankLevel {
 // Helper function to get max level allowed for a rank
 export function getMaxLevelForRank(rank: RankLevel): number {
   switch (rank) {
-    case 1: return 10; // Novice caps at 10
-    case 2: return 20; // Apprentice caps at 20
-    case 3: return 30; // Journeyman caps at 30
-    case 4: return 50; // Master/Grandmaster caps at 50
+    case 1: return 20; // Apprentice caps at 20
+    case 2: return 30; // Journeyman caps at 30
+    case 3: return 40; // Master caps at 40
+    case 4: return 50; // Grandmaster caps at 50
     default: return 10;
   }
 }

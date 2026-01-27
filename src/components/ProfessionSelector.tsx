@@ -22,7 +22,7 @@ export function ProfessionSelector({
   const [isExpanded, setIsExpanded] = useState(false);
   const [level, setLevel] = useState(currentLevel);
   const [quality, setQuality] = useState(currentQuality);
-  const ranks: RankLevel[] = [2, 3, 4]; // Start at Apprentice - Novice is the default
+  const ranks: RankLevel[] = [1, 2, 3, 4]; // 1=Apprentice, 2=Journeyman, 3=Master, 4=Grandmaster
   
   // Max level is determined by current certification rank (or 10 if uncertified/Novice)
   const maxLevel = currentRank ? getMaxLevelForRank(currentRank) : 10;
@@ -36,8 +36,8 @@ export function ProfessionSelector({
       setIsExpanded(false);
     } else {
       // Set new rank and default level for that rank
-      // Map rank to minimum level: 1->0, 2->10, 3->20, 4->30
-      const defaultLevel = rank === 1 ? 0 : rank === 2 ? 10 : rank === 3 ? 20 : 30;
+      // Map rank to minimum level: 1->10, 2->20, 3->30, 4->40
+      const defaultLevel = rank === 1 ? 10 : rank === 2 ? 20 : rank === 3 ? 30 : 40;
       setLevel(defaultLevel);
       onChange(rank, defaultLevel, quality);
     }
