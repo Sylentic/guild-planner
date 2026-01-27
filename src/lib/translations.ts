@@ -62,9 +62,10 @@ const RANK_KEYS: Record<number, string> = {
 
 const PARTY_ROLE_KEYS: Record<string, string> = {
   tank: 'party.tank',
-  healer: 'party.healer',
-  dps: 'party.dps',
-  support: 'party.support',
+  cleric: 'party.cleric',
+  bard: 'party.bard',
+  ranged_dps: 'party.ranged_dps',
+  melee_dps: 'party.melee_dps',
 };
 
 // Custom hook for game term translations

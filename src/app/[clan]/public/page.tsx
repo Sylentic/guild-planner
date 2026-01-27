@@ -138,7 +138,7 @@ export default function PublicClanPage({ params }: { params: Promise<{ clan: str
         <section className="bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
           <h2 className="text-lg font-semibold text-white mb-4">We&apos;re Looking For</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {(['tank', 'healer', 'dps', 'support'] as const).map(role => (
+            {(['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'] as const).map(role => (
               <div 
                 key={role}
                 className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg"

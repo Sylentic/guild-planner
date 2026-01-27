@@ -117,7 +117,7 @@ export function PartyCard({
 
         {/* Role summary */}
         <div className="flex gap-4 mt-2">
-          {(['tank', 'healer', 'dps', 'support'] as PartyRole[]).map(role => {
+          {(['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'] as PartyRole[]).map(role => {
             const needed = roleNeeded[role];
             if (needed === 0) return null;
             const filled = roleCounts[role];
@@ -139,7 +139,7 @@ export function PartyCard({
       {isExpanded && (
         <div className="border-t border-slate-800 p-4 space-y-4">
           {/* Role sections */}
-          {(['tank', 'healer', 'dps', 'support'] as PartyRole[]).map(role => {
+          {(['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'] as PartyRole[]).map(role => {
             const needed = roleNeeded[role];
             if (needed === 0) return null;
             const roleRoster = party.roster.filter(r => r.role === role);
@@ -231,7 +231,7 @@ export function PartyCard({
                     onChange={(e) => setSelectedRole(e.target.value as PartyRole)}
                     className="w-24 px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-sm cursor-pointer"
                   >
-                    {(['tank', 'healer', 'dps', 'support'] as PartyRole[]).map(role => (
+                    {(['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'] as PartyRole[]).map(role => (
                       <option key={role} value={role}>
                         {PARTY_ROLES[role].icon} {PARTY_ROLES[role].name}
                       </option>

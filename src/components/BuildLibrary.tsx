@@ -54,7 +54,7 @@ export function BuildLibrary({
     return matchesSearch && matchesRole && matchesArchetype;
   });
 
-  const roles = ['tank', 'healer', 'dps', 'support'];
+  const roles = ['tank', 'cleric', 'bard', 'ranged_dps', 'melee_dps'];
 
   const handleLike = async (buildId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -76,7 +76,7 @@ export function BuildLibrary({
         description: formDescription.trim() || undefined,
         primary_archetype: formPrimary,
         secondary_archetype: formSecondary || undefined,
-        role: getArchetypeById(formPrimary)?.role as 'tank' | 'healer' | 'dps' | 'support' | undefined,
+        role: getArchetypeById(formPrimary)?.role as 'tank' | 'cleric' | 'bard' | 'ranged_dps' | 'melee_dps' | undefined,
         visibility: 'guild',
         tags: [],
       });
@@ -280,9 +280,10 @@ export function BuildLibrary({
                   {build.role && (
                     <span className={`px-2 py-1 text-xs rounded ${
                       build.role === 'tank' ? 'bg-blue-500/20 text-blue-400' :
-                      build.role === 'healer' ? 'bg-green-500/20 text-green-400' :
-                      build.role === 'dps' ? 'bg-red-500/20 text-red-400' :
-                      'bg-purple-500/20 text-purple-400'
+                      build.role === 'cleric' ? 'bg-green-500/20 text-green-400' :
+                      build.role === 'bard' ? 'bg-purple-500/20 text-purple-400' :
+                      build.role === 'ranged_dps' ? 'bg-red-500/20 text-red-400' :
+                      'bg-orange-500/20 text-orange-400'
                     }`}>
                       {build.role}
                     </span>
