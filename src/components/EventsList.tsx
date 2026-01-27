@@ -52,9 +52,9 @@ export function EventsList({
     const url = `${window.location.origin}${window.location.pathname}?tab=events#announcement-${announcementId}`;
     try {
       await navigator.clipboard.writeText(url);
-      showToast('Link copied to clipboard!', 'success');
+      showToast('success', 'Link copied to clipboard!');
     } catch (err) {
-      showToast('Failed to copy link', 'error');
+      showToast('error', 'Failed to copy link');
     }
   };
 
