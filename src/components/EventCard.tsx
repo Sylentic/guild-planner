@@ -403,22 +403,22 @@ export function EventCard({
                   onClick={(e) => { e.stopPropagation(); onCancel(); }}
                   className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm rounded-lg cursor-pointer"
                 >
-                  {t('events.cancelEvent')}
+                  {t('event.cancelEvent')}
                 </button>
               )}
               {onDelete && (
                 <button
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    if (confirm(t('events.confirmDeleteEvent', { title: event.title }))) {
+                    if (confirm(t('event.confirmDeleteEvent', { title: event.title }))) {
                       onDelete();
                     }
                   }}
                   className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-sm rounded-lg cursor-pointer flex items-center gap-1"
-                  title={t('events.deleteEvent')}
+                  title={t('event.deleteEvent')}
                 >
                   <Trash2 size={14} />
-                  {t('events.deleteEvent')}
+                  {t('event.deleteEvent')}
                 </button>
               )}
             </div>
