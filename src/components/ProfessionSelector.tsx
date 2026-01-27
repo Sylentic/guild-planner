@@ -53,10 +53,12 @@ export function ProfessionSelector({
     // Don't trigger onChange yet - wait for blur
   };
 
-  const handleQualityBlur = () => {
+  const handleQualityBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     // Only save when user finishes editing
+    // Read directly from the input to ensure we get the latest value
+    const finalQuality = parseInt(e.target.value) || 0;
     if (currentRank) {
-      onChange(currentRank, level, quality);
+      onChange(currentRank, level, finalQuality);
     }
   };
 
@@ -161,7 +163,10 @@ export function ProfessionSelector({
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  handleQualityBlur();
+                  const finalQuality = parseInt((e.target as HTMLInputElement).value) || 0;
+                  if (currentRank) {
+                    onChange(currentRank, level, finalQuality);
+                  }
                   (e.target as HTMLInputElement).blur();
                 }
               }}
