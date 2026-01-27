@@ -247,7 +247,7 @@ export function EventCard({
                               ) : (
                                 <HelpCircle size={12} className="text-yellow-400" />
                               )}
-                              <span className="truncate">S
+                              <span className="truncate">
                                 {rsvp.character?.name || rsvp.user?.display_name || 'Unknown'}
                               </span>
                             </div>
