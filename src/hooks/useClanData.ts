@@ -115,6 +115,19 @@ export function useClanData(clanSlug: string): UseClanDataReturn {
   const addCharacter = async (data: CharacterData) => {
     if (!clan) return;
 
+    // If setting as main, first unmark any other main characters for this user
+    if (data.is_main) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('members')
+          .update({ is_main: false })
+          .eq('clan_id', clan.id)
+          .eq('user_id', user.id)
+          .eq('is_main', true);
+      }
+    }
+
     const { error: insertError } = await supabase
       .from('members')
       .insert({ 
@@ -139,6 +152,20 @@ export function useClanData(clanSlug: string): UseClanDataReturn {
 
   // Update character
   const updateCharacter = async (id: string, data: Partial<CharacterData>) => {
+    // If setting as main, first unmark any other main characters for this user
+    if (data.is_main === true) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('members')
+          .update({ is_main: false })
+          .eq('clan_id', clan?.id || '')
+          .eq('user_id', user.id)
+          .eq('is_main', true)
+          .neq('id', id); // Don't update the character we're about to update
+      }
+    }
+
     const { error: updateError } = await supabase
       .from('members')
       .update(data)
