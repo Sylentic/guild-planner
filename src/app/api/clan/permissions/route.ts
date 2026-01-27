@@ -134,18 +134,19 @@ export async function GET(request: NextRequest) {
 
 // POST: Save permission overrides for a clan
 export async function POST(request: NextRequest) {
-  const { clanId, rolePermissions } = await request.json();
-
-  if (!clanId || !rolePermissions) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-  }
-
-  const supabaseAdmin = getSupabaseAdmin();
-  if (!supabaseAdmin) {
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-  }
-
   try {
+    const body = await request.json();
+    const { clanId, rolePermissions } = body;
+
+    if (!clanId || !rolePermissions) {
+      return NextResponse.json({ error: 'Missing required fields: clanId and rolePermissions' }, { status: 400 });
+    }
+
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    }
+
     // Verify user is admin of the clan
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -182,7 +183,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!membership || membership.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden - user is not an admin' }, { status: 403 });
     }
 
     // Save each role's permissions
@@ -196,18 +197,28 @@ export async function POST(request: NextRequest) {
       };
     });
 
+    console.log('Saving permissions:', { clanId, updates: updates.length });
+
     const { error: upsertError } = await supabaseAdmin
       .from('clan_permission_overrides')
       .upsert(updates, { onConflict: 'clan_id,role' });
 
     if (upsertError) {
       console.error('Error saving permissions:', upsertError);
-      return NextResponse.json({ error: 'Failed to save permissions' }, { status: 500 });
+      // If table doesn't exist yet (migration not applied), return friendly message
+      if (upsertError.code === 'PGRST116' || upsertError.message?.includes('relation')) {
+        return NextResponse.json({ error: 'Permission system not yet initialized. Please run database migrations.' }, { status: 503 });
+      }
+      return NextResponse.json({ error: 'Failed to save permissions', details: upsertError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    console.log('Permissions saved successfully');
+    return NextResponse.json({ success: true, saved: updates.length });
   } catch (error) {
     console.error('Error in POST /api/clan/permissions:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 }

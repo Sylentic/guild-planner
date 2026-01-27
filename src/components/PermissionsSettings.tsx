@@ -168,7 +168,8 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save permissions');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || `Failed to save permissions: ${response.statusText}`);
       }
 
       setMessage({ type: 'success', text: 'Permissions updated successfully!' });
