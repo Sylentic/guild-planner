@@ -11,6 +11,7 @@ interface ClanSettingsProps {
   currentWebhookUrl?: string;
   notifyOnEvents?: boolean;
   notifyOnAnnouncements?: boolean;
+  announcementRoleId?: string;
   onUpdate?: () => void;
 }
 
@@ -19,11 +20,13 @@ export function ClanSettings({
   currentWebhookUrl = '',
   notifyOnEvents = true,
   notifyOnAnnouncements = true,
+  announcementRoleId = '',
   onUpdate,
 }: ClanSettingsProps) {
   const [webhookUrl, setWebhookUrl] = useState(currentWebhookUrl);
   const [eventsEnabled, setEventsEnabled] = useState(notifyOnEvents);
   const [announcementsEnabled, setAnnouncementsEnabled] = useState(notifyOnAnnouncements);
+  const [roleId, setRoleId] = useState(announcementRoleId);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -44,6 +47,7 @@ export function ClanSettings({
           discord_webhook_url: webhookUrl.trim() || null,
           notify_on_events: eventsEnabled,
           notify_on_announcements: announcementsEnabled,
+          discord_announcement_role_id: roleId.trim() || null,
         })
         .eq('id', clanId)
         .select();
@@ -126,7 +130,24 @@ export function ClanSettings({
         </p>
       </div>
 
-      {/* Test button */}
+      {/* Announcement Role ID */}
+      <div>
+        <label className="block text-sm font-medium text-slate-300 mb-2">
+          Announcement Role ID (Optional)
+        </label>
+        <input
+          type="text"
+          value={roleId}
+          onChange={(e) => setRoleId(e.target.value.replace(/[^0-9]/g, ''))}
+          placeholder="123456789012345678"
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <p className="text-xs text-slate-500 mt-1">
+          Enter the numeric Discord Role ID to ping when posting announcements. Right-click a role → Copy ID (Developer Mode must be enabled).
+        </p>
+      </div>
+
+      {/* Test button */
       {webhookUrl && isValidWebhookUrl(webhookUrl) && (
         <button
           onClick={handleTest}

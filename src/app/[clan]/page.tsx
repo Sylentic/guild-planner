@@ -108,7 +108,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
     createAnnouncement,
     updateAnnouncement,
     deleteAnnouncement,
-  } = useEvents(clanId, user?.id || null);
+  } = useEvents(clanId, user?.id || null, clanSlug);
 
   // Helper function to get main character name for an alt (automatic based on user_id)
   const getMainCharacterName = (character: CharacterWithProfessions): string | undefined => {
@@ -528,6 +528,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
                   currentWebhookUrl={clan.discord_webhook_url || ''}
                   notifyOnEvents={clan.notify_on_events ?? true}
                   notifyOnAnnouncements={clan.notify_on_announcements ?? true}
+                  announcementRoleId={clan.discord_announcement_role_id || ''}
                 />
               )}
               

@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2, Link } from 'lucide-react';
 import { EventWithRsvps, Announcement, RsvpStatus } from '@/lib/events';
 import { EventCard } from './EventCard';
 import { EventForm } from './EventForm';
 import { AnnouncementForm } from './AnnouncementForm';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface EventsListProps {
   events: EventWithRsvps[];
@@ -44,6 +45,18 @@ export function EventsList({
   const [editingEvent, setEditingEvent] = useState<EventWithRsvps | null>(null);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const { t } = useLanguage();
+  const { showToast } = useToast();
+
+  // Copy announcement link to clipboard
+  const copyAnnouncementLink = async (announcementId: string) => {
+    const url = `${window.location.origin}${window.location.pathname}?tab=events#announcement-${announcementId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy link', 'error');
+    }
+  };
 
   // Split events into upcoming and past
   const now = new Date();
@@ -87,29 +100,41 @@ export function EventsList({
           {pinnedAnnouncements.map(announcement => (
             <div
               key={announcement.id}
-              className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 group"
+              id={`announcement-${announcement.id}`}
+              className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 group scroll-mt-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="flex-1">
                   <h4 className="font-medium text-amber-400">{announcement.title}</h4>
                   <p className="text-slate-300 text-sm mt-1 whitespace-pre-wrap">{announcement.content}</p>
                 </div>
-                {canManage && (
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => setEditingAnnouncement(announcement)}
-                      className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button
-                      onClick={() => onDeleteAnnouncement(announcement.id)}
-                      className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                )}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => copyAnnouncementLink(announcement.id)}
+                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                    title="Copy link"
+                  >
+                    <Link size={14} />
+                  </button>
+                  {canManage && (
+                    <>
+                      <button
+                        onClick={() => setEditingAnnouncement(announcement)}
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                        title="Edit announcement"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => onDeleteAnnouncement(announcement.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
+                        title="Delete announcement"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -126,29 +151,41 @@ export function EventsList({
           {recentAnnouncements.map(announcement => (
             <div
               key={announcement.id}
-              className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 group"
+              id={`announcement-${announcement.id}`}
+              className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 group scroll-mt-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="flex-1">
                   <h4 className="font-medium text-white">{announcement.title}</h4>
                   <p className="text-slate-400 text-sm mt-1 whitespace-pre-wrap">{announcement.content}</p>
                 </div>
-                {canManage && (
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => setEditingAnnouncement(announcement)}
-                      className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button
-                      onClick={() => onDeleteAnnouncement(announcement.id)}
-                      className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                )}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => copyAnnouncementLink(announcement.id)}
+                    className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                    title="Copy link"
+                  >
+                    <Link size={14} />
+                  </button>
+                  {canManage && (
+                    <>
+                      <button
+                        onClick={() => setEditingAnnouncement(announcement)}
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                        title="Edit announcement"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => onDeleteAnnouncement(announcement.id)}
+                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
+                        title="Delete announcement"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}

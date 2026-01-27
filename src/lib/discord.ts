@@ -14,6 +14,7 @@ interface DiscordEmbed {
   fields?: { name: string; value: string; inline?: boolean }[];
   footer?: { text: string };
   timestamp?: string;
+  url?: string;
 }
 
 interface DiscordWebhookPayload {
@@ -174,16 +175,29 @@ export async function notifyNewEvent(
 export async function notifyAnnouncement(
   webhookUrl: string,
   announcement: Announcement,
-  clanName: string
+  clanName: string,
+  clanSlug: string,
+  roleId?: string | null
 ): Promise<{ success: boolean; error?: string }> {
+  // Build content with role ping if provided
+  let content = announcement.is_pinned ? '📌 **Pinned Announcement**' : '📢 **New Announcement**';
+  if (roleId) {
+    content = `<@&${roleId}> ${content}`;
+  }
+
+  // Build direct link to announcement
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
+  const announcementUrl = `${baseUrl}/${clanSlug}?tab=events#announcement-${announcement.id}`;
+
   return sendDiscordWebhook(webhookUrl, {
-    content: announcement.is_pinned ? '📌 **Pinned Announcement**' : '📢 **New Announcement**',
+    content,
     embeds: [{
       title: announcement.title,
       description: announcement.content.length > 1000 
         ? announcement.content.slice(0, 1000) + '...' 
         : announcement.content,
       color: announcement.is_pinned ? COLORS.orange : COLORS.cyan,
+      url: announcementUrl,
       footer: {
         text: clanName,
       },
