@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, use, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Users, Home, Loader2, AlertCircle, LogOut, Shield, Clock, UserPlus, Settings, Swords } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
@@ -27,6 +28,7 @@ type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' |
 
 export default function ClanPage({ params }: { params: Promise<{ clan: string }> }) {
   const { clan: clanSlug } = use(params);
+  const searchParams = useSearchParams();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   const [activeTab, setActiveTab] = useState<Tab>('characters');
   const [clanId, setClanId] = useState<string | null>(null);
@@ -37,6 +39,14 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
   const [checkError, setCheckError] = useState<string | null>(null);
   const { t } = useLanguage();
+
+  // Handle tab query parameter
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
+      setActiveTab(tabParam as Tab);
+    }
+  }, [searchParams]);
 
   // Fetch clan ID first
   useEffect(() => {
