@@ -111,7 +111,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
         .select(`
           *,
           members (
-            id, name, race, primary_archetype, level, is_main
+            id, name, race, primary_archetype, level, is_main, main_character_id
           )
         `)
         .eq('loot_system_id', systemData.id)
@@ -139,6 +139,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
           primary_archetype: p.members.primary_archetype,
           level: p.members.level,
           is_main: p.members.is_main,
+          main_character_id: p.members.main_character_id,
           professions: [],
           clan_id: clanId,
           user_id: null,
