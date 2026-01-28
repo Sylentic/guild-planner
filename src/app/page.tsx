@@ -27,7 +27,7 @@ export default function Home() {
   const [clansLoading, setClansLoading] = useState(false);
   const router = useRouter();
   const { user, profile, loading, signIn, signOut } = useAuthContext();
-  const { t } = useLanguage();
+  const { t, isLoading } = useLanguage();
 
   // Fetch user's clans when logged in
   useEffect(() => {
@@ -74,6 +74,8 @@ export default function Home() {
       default: return 'text-cyan-400';
     }
   };
+
+  if (isLoading) return null;
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
