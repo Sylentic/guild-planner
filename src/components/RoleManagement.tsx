@@ -34,16 +34,11 @@ export function RoleManagement({ clanId, members, userRole, onRoleChange }: Role
   const canManage = userRole === 'admin' || userRole === 'officer';
 
   // Get available roles to promote/demote to
-  const getAvailableRoles = (currentRole: ClanRole): ClanRole[] => {
+  const getAvailableRoles = (): ClanRole[] => {
     // Allow assigning any role except 'pending'.
-    // Only allow assigning roles with hierarchy less than or equal to the current user's role.
+    // Use the order from ROLE_CONFIG for display.
     return (Object.keys(ROLE_CONFIG) as ClanRole[])
-      .filter(role => {
-        if (role === 'pending') return false;
-        // Only allow assigning roles with hierarchy less than or equal to the current user's role
-        return hierarchy[userRole] >= hierarchy[role];
-      })
-      .sort((a, b) => hierarchy[b] - hierarchy[a]);
+      .filter(role => role !== 'pending');
   };
 
   const handleRoleChange = async (memberId: string, userId: string, newRole: ClanRole) => {
@@ -87,7 +82,7 @@ export function RoleManagement({ clanId, members, userRole, onRoleChange }: Role
       <div className="space-y-2">
         {members.map((member) => {
           const roleConfig = ROLE_CONFIG[member.role];
-          const availableRoles = getAvailableRoles(member.role);
+          const availableRoles = getAvailableRoles();
           const isExpanded = expandedUserId === member.user_id;
           const isUpdatingMember = isUpdating === member.user_id;
           const memberMessage = message?.userId === member.user_id ? message : null;
