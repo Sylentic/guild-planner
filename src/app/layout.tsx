@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
+import { IsAdminBannerWrapper } from '@/components/IsAdminBannerWrapper';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -62,6 +63,7 @@ export default function RootLayout({
           <ToastProvider>
             <AuthProvider>
               <div className="flex flex-col min-h-screen">
+                <IsAdminBannerWrapper />
                 <main className="flex-1">
                   {children}
                 </main>
