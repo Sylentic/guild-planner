@@ -25,7 +25,9 @@ export function CharactersTab({
 }: CharactersTabProps) {
   const { user } = useAuthContext();
   const clanMembership = useClanMembership(null, user?.id || null);
+  console.log('[DEBUG] clanMembership:', clanMembership);
   const userRole = clanMembership.membership?.role || 'pending';
+  console.log('[DEBUG] userRole from membership:', userRole);
 
   return (
     <div className="space-y-4">
