@@ -275,6 +275,13 @@ export function CharacterCard({
               </div>
             </div>
           ))}
+          {/* Debug info for editability - only show if window.DEBUG_PERMISSIONS is true */}
+          {typeof window !== 'undefined' && window.DEBUG_PERMISSIONS && (
+            <div className="mt-6 text-xs text-slate-400 border-t border-slate-700 pt-2">
+              <div>user_id: {character.user_id}</div>
+              <div>readOnly: {String(readOnly)}</div>
+            </div>
+          )}
         </div>
       )}
       {/* Debug info for editability */}
