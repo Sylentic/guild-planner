@@ -16,7 +16,7 @@ import { CharacterFiltersBar, CharacterFilters, DEFAULT_FILTERS, filterCharacter
 import { ClanSettings } from '@/components/ClanSettings';
 import { RecruitmentSettings } from '@/components/RecruitmentSettings';
 import { PermissionsSettings } from '@/components/PermissionsSettings';
-import { BottomNav } from '@/components/BottomNav';
+import { ClanTabNav, Tab } from '@/components/ClanTabNav';
 import { InlineFooter } from '@/components/Footer';
 import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
 import { ClanMatrix } from '@/components/ClanMatrix';
@@ -30,7 +30,7 @@ import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
 import { ClanCreateScreen } from '@/components/ClanCreateScreen';
 
-type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more';
+// Tab type now imported from ClanTabNav
 
 export default function ClanPage({ params }: { params: Promise<{ clan: string }> }) {
   const { clan: clanSlug } = use(params);
@@ -39,16 +39,8 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const pathname = usePathname();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   
-  // Initialize activeTab from query parameter if present
-  const initialTab = (() => {
-    const tabParam = searchParams?.get('tab');
-    if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
-      return tabParam as Tab;
-    }
-    return 'characters';
-  })();
-  
-  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
+  // Use state for activeTab, but let ClanTabNav manage URL sync
+  const [activeTab, setActiveTab] = useState<Tab>('characters');
   const [clanId, setClanId] = useState<string | null>(null);
   const [clanExists, setClanExists] = useState<boolean | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -58,16 +50,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   const [checkError, setCheckError] = useState<string | null>(null);
   const { t } = useLanguage();
 
-  // Update URL when tab changes
+  // Handler for tab change
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
-    const params = new URLSearchParams(searchParams?.toString() ?? '');
-    params.set('tab', tab);
-    // Remove subTab if switching away from 'more'
-    if (tab !== 'more' && params.has('subTab')) {
-      params.delete('subTab');
-    }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Handle tab query parameter changes from external navigation
@@ -503,10 +488,10 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
 
       {/* Bottom navigation and Footer - fixed at bottom */}
       <div className="shrink-0">
-        <BottomNav
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
+        <ClanTabNav
           canManage={canManageMembers}
+          onTabChange={handleTabChange}
+          initialTab={activeTab}
         />
         <InlineFooter variant="matching" />
       </div>
