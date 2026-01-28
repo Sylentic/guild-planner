@@ -17,6 +17,65 @@ async function calculateAchievementProgress(
   clanId: string
 ): Promise<AchievementProgress[]> {
   try {
+    // Helper function to check profession mastery
+    async function checkProfessionMastery(
+      tier: 'gathering' | 'processing' | 'crafting',
+      minRank: number,
+      countAll: boolean = false
+    ): Promise<number> {
+      const { data: characters } = await supabaseAdmin
+        .from('characters')
+        .select('id, professions')
+        .eq('clan_id', clanId);
+
+      if (!characters || characters.length === 0) return 0;
+
+      // Define skills for each tier
+      const tierSkills: Record<string, string[]> = {
+        gathering: ['mining', 'lumberjacking', 'herbalism', 'fishing', 'hunting'],
+        processing: ['metalworking', 'lumber_milling', 'stonemasonry', 'weaving', 'tanning', 'alchemy', 'farming', 'animal_husbandry', 'cooking'],
+        crafting: ['weapon_smithing', 'armor_smithing', 'leatherworking', 'tailoring', 'jewelcrafting', 'carpentry', 'arcane_engineering', 'scribe'],
+      };
+
+      const requiredSkills = tierSkills[tier] || [];
+      const skillMastery: Record<string, boolean> = {};
+
+      // Initialize all skills as unmet
+      requiredSkills.forEach(skill => {
+        skillMastery[skill] = false;
+      });
+
+      // Check each character's professions
+      for (const char of characters) {
+        if (!char.professions) continue;
+
+        const profs = typeof char.professions === 'string' 
+          ? JSON.parse(char.professions)
+          : char.professions;
+
+        if (Array.isArray(profs)) {
+          for (const prof of profs) {
+            const profId = typeof prof === 'string' ? prof : prof.id;
+            const profRank = typeof prof === 'string' ? 1 : (prof.rank || 1);
+
+            // Check if this profession matches one we need
+            if (requiredSkills.includes(profId) && profRank >= minRank) {
+              skillMastery[profId] = true;
+            }
+          }
+        }
+      }
+
+      // If countAll is true, return count of mastered skills; otherwise check if all are mastered
+      if (countAll) {
+        return Object.values(skillMastery).filter(v => v).length;
+      } else {
+        const allMastered = Object.values(skillMastery).every(v => v);
+        console.log(`Checked ${tier} tier (rank ${minRank}):`, skillMastery, `Result: ${allMastered ? 1 : 0}`);
+        return allMastered ? 1 : 0;
+      }
+    }
+
     // Define all achievement calculations indexed by requirement_type
     const calculations: Record<string, () => Promise<number>> = {
       // Milestone achievements - based on member count
@@ -123,6 +182,65 @@ async function calculateAchievementProgress(
         const uniqueUsers = new Set(activities?.map(a => a.user_id) || []);
         console.log(`Calculated weekly_active: ${uniqueUsers.size}`);
         return uniqueUsers.size;
+      },
+
+      // Gathering profession mastery
+      'gathering_journeyman_all': async () => {
+        const gatheringSkills = ['mining', 'lumberjacking', 'herbalism', 'fishing', 'hunting'];
+        return await checkProfessionMastery('gathering', 2); // Journeyman = rank 2
+      },
+
+      'gathering_master_all': async () => {
+        return await checkProfessionMastery('gathering', 3); // Master = rank 3
+      },
+
+      'gathering_grandmaster_all': async () => {
+        return await checkProfessionMastery('gathering', 4); // Grandmaster = rank 4
+      },
+
+      // Processing profession mastery
+      'processing_journeyman_all': async () => {
+        return await checkProfessionMastery('processing', 2);
+      },
+
+      'processing_master_all': async () => {
+        return await checkProfessionMastery('processing', 3);
+      },
+
+      'processing_grandmaster_all': async () => {
+        return await checkProfessionMastery('processing', 4);
+      },
+
+      // Crafting profession mastery
+      'crafting_journeyman_all': async () => {
+        return await checkProfessionMastery('crafting', 2);
+      },
+
+      'crafting_master_all': async () => {
+        return await checkProfessionMastery('crafting', 3);
+      },
+
+      'crafting_grandmaster_all': async () => {
+        return await checkProfessionMastery('crafting', 4);
+      },
+
+      // Special achievements
+      'jack_of_all_trades': async () => {
+        // Check if at least one GM from each tier
+        const gatheringGM = await checkProfessionMastery('gathering', 4);
+        const processingGM = await checkProfessionMastery('processing', 4);
+        const craftingGM = await checkProfessionMastery('crafting', 4);
+        
+        return (gatheringGM > 0 && processingGM > 0 && craftingGM > 0) ? 1 : 0;
+      },
+
+      'master_of_all_trades': async () => {
+        // Check if at least 3 Master+ from each tier
+        const gatheringMasters = await checkProfessionMastery('gathering', 3, true);
+        const processingMasters = await checkProfessionMastery('processing', 3, true);
+        const craftingMasters = await checkProfessionMastery('crafting', 3, true);
+        
+        return (gatheringMasters >= 3 && processingMasters >= 3 && craftingMasters >= 3) ? 1 : 0;
       },
     };
 
