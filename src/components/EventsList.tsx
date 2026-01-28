@@ -31,7 +31,7 @@ interface EventsListProps {
 export function EventsList({
   events,
   announcements,
-  timezone,
+  timezone, // Keep the timezone prop for backward compatibility
   clanId,
   userId,
   canManage,
@@ -44,6 +44,8 @@ export function EventsList({
   onUpdateAnnouncement,
   onDeleteAnnouncement,
 }: EventsListProps) {
+  // Detect user's local timezone using browser API
+  const localTimezone = typeof window !== 'undefined' && window.Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC';
   const [showEventForm, setShowEventForm] = useState(false);
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<EventWithRsvps | null>(null);
@@ -264,7 +266,7 @@ export function EventsList({
             <EventCard
               key={event.id}
               event={event}
-              timezone={timezone}
+              timezone={localTimezone}
               clanId={clanId}
               userId={userId}
               onRsvp={(status, role) => onRsvp(event.id, status, role)}

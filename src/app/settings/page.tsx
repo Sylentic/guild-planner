@@ -87,6 +87,7 @@ export default function SettingsPage() {
 
   // Current time example
   const currentTime = new Date().toLocaleString(language === 'es' ? 'es-ES' : 'en-US', {
+    timeZone: typeof window !== 'undefined' && window.Intl ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'UTC',
     timeZone: timezone,
     weekday: 'short',
     month: 'short',

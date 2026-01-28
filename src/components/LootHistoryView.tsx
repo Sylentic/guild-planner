@@ -159,7 +159,7 @@ function LootHistoryItem({
             )}
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {droppedAt.toLocaleDateString()}
+              {droppedAt.toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().timeZone)}
             </span>
           </div>
 

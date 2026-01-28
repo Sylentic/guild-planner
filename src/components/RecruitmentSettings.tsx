@@ -330,7 +330,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
                       <p className="text-sm text-slate-300 mt-2">{app.message}</p>
                     )}
                     <div className="text-xs text-slate-500 mt-2">
-                      Applied {new Date(app.created_at).toLocaleDateString()}
+                      Applied {new Date(app.created_at).toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().timeZone)}
                     </div>
                   </div>
                   <div className="flex gap-2">

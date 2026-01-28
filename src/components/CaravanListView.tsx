@@ -37,7 +37,7 @@ export function CaravanListView({
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, {
+    return date.toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().timeZone, {
       weekday: 'short',
       month: 'short',
       day: 'numeric',

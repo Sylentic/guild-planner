@@ -110,7 +110,7 @@ export function SiegeRosterView({
             <div className="flex items-center gap-1 text-slate-300">
               <Calendar className="w-4 h-4" />
               <span className="text-sm">
-                {startsAt.toLocaleDateString()} {startsAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {startsAt.toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().timeZone)} {startsAt.toLocaleTimeString(Intl.DateTimeFormat().resolvedOptions().timeZone, { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
