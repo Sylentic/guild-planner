@@ -23,6 +23,7 @@ interface EventCardProps {
   event: EventWithRsvps;
   timezone: string;
   clanId: string;
+  userId: string;
   onRsvp: (status: RsvpStatus, role?: EventRole | null) => void;
   onEdit?: () => void;
   onCancel?: () => void;
@@ -34,6 +35,7 @@ export function EventCard({
   event, 
   timezone, 
   clanId,
+  userId,
   onRsvp, 
   onEdit, 
   onCancel,
@@ -51,8 +53,9 @@ export function EventCard({
   const isNow = isEventNow(event.starts_at, event.ends_at);
   const userRsvp = event.user_rsvp;
   
-  // Check if user can delete events
-  const canDeleteEvent = hasPermission('events_delete_any') || hasPermission('events_delete_own');
+  // Check if user can edit or delete events
+  const canEditEvent = hasPermission('events_edit_any') || (hasPermission('events_edit_own') && event.created_by === userId);
+  const canDeleteEvent = hasPermission('events_delete_any') || (hasPermission('events_delete_own') && event.created_by === userId);
 
   const totalAttending = event.rsvp_counts.attending + event.rsvp_counts.maybe;
 
@@ -419,10 +422,10 @@ export function EventCard({
             </div>
           )}
 
-          {/* Admin actions */}
-          {canManage && (
+          {/* Event actions based on permissions */}
+          {(canEditEvent || canDeleteEvent || (onCancel && !event.is_cancelled)) && (
             <div className="flex gap-2 pt-2 border-t border-slate-800">
-              {onEdit && (
+              {canEditEvent && onEdit && (
                 <button
                   onClick={(e) => { e.stopPropagation(); onEdit(); }}
                   className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg cursor-pointer"
@@ -438,7 +441,7 @@ export function EventCard({
                   {t('event.cancelEvent')}
                 </button>
               )}
-              {onDelete && canDeleteEvent && (
+              {canDeleteEvent && onDelete && (
                 <button
                   onClick={(e) => { 
                     e.stopPropagation(); 
