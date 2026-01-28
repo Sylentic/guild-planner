@@ -5,7 +5,7 @@ import { Skeleton } from './ui/Skeleton';
 import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more' | 'achievements';
+type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more' | 'achievements' | 'alliances';
 
 interface BottomNavProps {
   activeTab: Tab;
