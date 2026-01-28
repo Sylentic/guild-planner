@@ -133,7 +133,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
         <SiegeTabContent
           clanId={clanId}
           characters={characters}
-          isOfficer={isOfficer}
+          userId={userId}
         />
       )}
 

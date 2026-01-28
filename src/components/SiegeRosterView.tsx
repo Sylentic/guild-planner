@@ -10,6 +10,7 @@ import {
   SIEGE_ROLE_CONFIG 
 } from '@/lib/types';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface SiegeRosterViewProps {
   siege: SiegeEventWithRoster;
@@ -30,9 +31,9 @@ export function SiegeRosterView({
   onWithdraw,
   onConfirm,
   onCheckIn,
-  isOfficer = false,
 }: SiegeRosterViewProps) {
   const { t } = useLanguage();
+  const { hasPermission } = usePermissions(siege.clan_id);
   const [selectedRole, setSelectedRole] = useState<SiegeRole | null>(null);
   const [selectedCharacter, setSelectedCharacter] = useState<string>('');
 
@@ -222,8 +223,8 @@ export function SiegeRosterView({
                           </div>
                         )}
                         
-                        {/* Officer check-in */}
-                        {isOfficer && entry.status === 'confirmed' && onCheckIn && (
+                        {/* Officer check-in (permission-based) */}
+                        {hasPermission('siege_edit_rosters') && entry.status === 'confirmed' && onCheckIn && (
                           <button
                             onClick={() => onCheckIn(entry.id)}
                             className="text-green-400 hover:text-green-300 cursor-pointer ml-1"

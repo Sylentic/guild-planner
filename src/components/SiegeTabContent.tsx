@@ -119,7 +119,6 @@ export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentP
               characters={characters}
               onSignUp={handleSignUp}
               onWithdraw={handleWithdraw}
-              canEditRosters={canEditRosters}
             />
           ) : (
             <div className="bg-slate-800/50 rounded-xl p-8 text-center">
