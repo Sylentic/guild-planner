@@ -24,7 +24,7 @@ import { InlineFooter } from '@/components/Footer';
 import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
 import { ClanMatrix } from '@/components/ClanMatrix';
 import { SiegeTab } from './tabs/SiegeTab';
-import { EconomyTabContent } from '@/components/EconomyTabContent';
+import { EconomyTab } from './tabs/EconomyTab';
 import { MoreTabContent } from '@/components/MoreTabContent';
 import { createClan, getClanBySlug } from '@/lib/auth';
 import { CharacterWithProfessions } from '@/lib/types';
@@ -444,7 +444,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
           ) : activeTab === 'matrix' ? (
             <ClanMatrix members={characters} />
           ) : activeTab === 'economy' ? (
-            <EconomyTabContent
+            <EconomyTab
               clanId={clanId!}
               isOfficer={canManageMembers}
             />
