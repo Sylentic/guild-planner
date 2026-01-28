@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Edit2, Save, X } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ClanAchievementWithDefinition } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
@@ -18,55 +18,53 @@ export function AchievementAdminPanel({
   onRefresh,
 }: AchievementAdminPanelProps) {
   const { t } = useLanguage();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<Record<string, number>>({});
-  const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
-  const handleEdit = (achievement: ClanAchievementWithDefinition) => {
-    setEditingId(achievement.id);
-    setEditValues({
-      [achievement.id]: achievement.current_value,
-    });
-  };
-
-  const handleSave = async (achievement: ClanAchievementWithDefinition) => {
-    setSaving(true);
+  const handleSync = async () => {
+    setSyncing(true);
     try {
-      const newValue = editValues[achievement.id] ?? achievement.current_value;
-      const isUnlocked = newValue >= achievement.definition.requirement_value;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
-      const { error } = await supabase
-        .from('clan_achievements')
-        .upsert({
-          clan_id: clanId,
-          achievement_id: achievement.achievement_id,
-          current_value: newValue,
-          is_unlocked: isUnlocked,
-          unlocked_at: isUnlocked && !achievement.is_unlocked ? new Date().toISOString() : achievement.unlocked_at,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: 'clan_id,achievement_id',
-        });
+      const response = await fetch('/api/clan/achievements/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ clanId }),
+      });
 
-      if (error) throw error;
-      setEditingId(null);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to sync achievements');
+      }
+
+      const result = await response.json();
+      console.log('Achievements synced:', result);
       await onRefresh();
     } catch (err) {
-      console.error('Error saving achievement:', err);
-      alert('Error saving achievement: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      console.error('Error syncing achievements:', err);
+      alert('Error syncing achievements: ' + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
-      setSaving(false);
+      setSyncing(false);
     }
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditValues({});
   };
 
   return (
     <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Achievement Admin</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-white">Achievement Sync</h3>
+        <button
+          onClick={handleSync}
+          disabled={syncing}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 disabled:opacity-50 transition-colors text-sm font-medium"
+        >
+          <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+          {syncing ? 'Syncing...' : 'Sync Achievements'}
+        </button>
+      </div>
+
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {achievements.map((achievement) => (
           <div
@@ -88,53 +86,23 @@ export function AchievementAdminPanel({
               <p className="text-xs text-slate-400 mt-1">
                 {achievement.current_value} / {achievement.definition.requirement_value}
               </p>
-            </div>
-
-            <div className="flex items-center gap-2 ml-4">
-              {editingId === achievement.id ? (
-                <>
-                  <input
-                    type="number"
-                    min="0"
-                    max={achievement.definition.requirement_value}
-                    value={editValues[achievement.id] ?? achievement.current_value}
-                    onChange={(e) =>
-                      setEditValues({
-                        ...editValues,
-                        [achievement.id]: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="w-16 px-2 py-1 bg-slate-600 border border-slate-500 rounded text-white text-sm"
-                  />
-                  <button
-                    onClick={() => handleSave(achievement)}
-                    disabled={saving}
-                    className="p-1 rounded hover:bg-green-500/20 text-green-400 disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    disabled={saving}
-                    className="p-1 rounded hover:bg-red-500/20 text-red-400 disabled:opacity-50"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleEdit(achievement)}
-                  className="p-1 rounded hover:bg-blue-500/20 text-blue-400"
-                >
-                  <Edit2 className="w-4 h-4" />
-                </button>
-              )}
+              <p className="text-xs text-slate-500 mt-1">
+                {achievement.definition.requirement_type}
+              </p>
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded text-sm text-blue-300">
-        <p>Click Edit to change achievement progress. Values will automatically unlock when reaching the requirement.</p>
+
+      <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded text-sm text-blue-300 space-y-2">
+        <p className="font-medium">Auto-calculated from guild data:</p>
+        <ul className="text-xs space-y-1 list-disc list-inside">
+          <li>Member counts from clan roster</li>
+          <li>Siege wins from battle records</li>
+          <li>Bank deposits and caravan runs</li>
+          <li>Grandmaster crafter counts</li>
+          <li>Events hosted and weekly activity</li>
+        </ul>
       </div>
     </div>
   );
