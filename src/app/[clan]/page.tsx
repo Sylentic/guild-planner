@@ -59,6 +59,10 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
     setActiveTab(tab);
     const params = new URLSearchParams(searchParams.toString());
     params.set('tab', tab);
+    // Remove subTab if switching away from 'more'
+    if (tab !== 'more' && params.has('subTab')) {
+      params.delete('subTab');
+    }
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
