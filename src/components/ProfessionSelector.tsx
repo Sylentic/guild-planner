@@ -9,14 +9,15 @@ interface ProfessionSelectorProps {
   currentLevel?: number; // 0-50 artisan level
   currentQuality?: number;
   onChange: (rank: RankLevel | null, level?: number, quality?: number) => void;
+  readOnly?: boolean;
 }
-
-export function ProfessionSelector({ 
-  profession, 
-  currentRank, 
+export function ProfessionSelector({
+  profession,
+  currentRank,
   currentLevel = 0,
   currentQuality = 0,
-  onChange 
+  onChange,
+  readOnly = false
 }: ProfessionSelectorProps) {
   const [level, setLevel] = useState(currentLevel);
   const [quality, setQuality] = useState(currentQuality);
@@ -96,8 +97,10 @@ export function ProfessionSelector({
                     : 'bg-slate-700/50 text-slate-500 border border-transparent hover:border-slate-600'
                 }
                 ${isExactRank ? 'ring-1 ring-offset-1 ring-offset-slate-800' : ''}
+                ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}
               `}
               style={isExactRank ? { '--tw-ring-color': colors.border.replace('border-', 'rgb(var(--color-') + ')' } as React.CSSProperties : {}}
+              disabled={readOnly}
             >
               {RANK_NAMES[rank][0]}
             </button>
@@ -127,8 +130,9 @@ export function ProfessionSelector({
               max={maxLevel}
               value={level}
               onChange={(e) => handleLevelChange(parseInt(e.target.value))}
-              className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
+              className={`w-full h-1 bg-slate-700 rounded-lg appearance-none accent-orange-500 ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
               title={`Artisan level: ${level}/${maxLevel}`}
+              disabled={readOnly}
             />
             <div className="flex justify-between text-xs text-slate-600 mt-0.5">
               <span>0</span>
@@ -171,9 +175,10 @@ export function ProfessionSelector({
                   (e.target as HTMLInputElement).blur();
                 }
               }}
-              className="w-full px-3 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm"
+              className={`w-full px-3 py-1 bg-slate-700 border border-slate-600 rounded text-white text-sm ${readOnly ? 'opacity-50 cursor-not-allowed' : ''}`}
               placeholder="Enter max quality"
               title="Max quality with food, clothes, town buffs, etc."
+              disabled={readOnly}
             />
           </div>
         </div>
