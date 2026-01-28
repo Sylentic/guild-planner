@@ -4,9 +4,15 @@ import { useState } from 'react';
 import { Plus, X, Check } from 'lucide-react';
 import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
 
+
 interface AddMemberFormProps {
-  onAdd: (name: string, role: ClanRole) => Promise<void>;
+  onAdd: (name: string) => Promise<void>;
 }
+
+export function AddMemberForm({ onAdd }: AddMemberFormProps) {
+  const [isAdding, setIsAdding] = useState(false);
+  const [name, setName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isAdding, setIsAdding] = useState(false);
   const [name, setName] = useState('');
