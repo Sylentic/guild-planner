@@ -50,6 +50,7 @@ export function useClanMembership(clanId: string | null, userId: string | null):
   const [error, setError] = useState<string | null>(null);
 
   const fetchMembership = useCallback(async () => {
+    console.log('[DEBUG] useClanMembership: clanId', clanId, 'userId', userId);
     if (!clanId || !userId) {
       setMembership(null);
       setLoading(false);
@@ -58,6 +59,7 @@ export function useClanMembership(clanId: string | null, userId: string | null):
 
     try {
       const data = await getClanMembership(clanId, userId);
+      console.log('[DEBUG] getClanMembership returned:', data);
       if (data) {
         setMembership({
           role: data.role as UserRole,
