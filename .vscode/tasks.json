@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Rename duplicated migration files for unique numbering",
+			"type": "shell",
+			"command": "$ErrorActionPreference = 'Stop'; $migrations = Get-ChildItem 'j:/Projects/aoc-guild-profession-planner/supabase/migrations/' | Sort-Object Name; $used = @{}; $next = 0; foreach ($file in $migrations) { if ($file.Name -match '^(\\d{3})_') { $num = [int]$Matches[1]; if ($used.ContainsKey($num)) { while ($used.ContainsKey($next)) { $next++ } $newName = $file.Name -replace '^\\d{3}_', ('{0:D3}_' -f $next) + '_'; Rename-Item $file.FullName -NewName $newName; $used[$next] = $true } else { $used[$num] = $true; if ($num -ge $next) { $next = $num + 1 } } } }",
+			"isBackground": false
+		}
+	]
+}

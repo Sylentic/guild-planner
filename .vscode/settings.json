@@ -4,6 +4,8 @@
         "Tee-Object": true,
         "Test-Path": true,
         "Get-Item": true,
-        "npx next": true
+        "npx next": true,
+        "ForEach-Object": true,
+        "Rename-Item": true
     }
 }
