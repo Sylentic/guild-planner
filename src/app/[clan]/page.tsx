@@ -782,11 +782,31 @@ function ManageTab({
                     {Object.entries(ROLE_CONFIG)
                       .filter(([role]) => role !== 'pending')
                       .map(([role, config]) => (
-                        <option key={role} value={role}>
-                          {t(`clan.${role}`) || config.label}
+                        <option
+                          key={role}
+                          value={role}
+                          title={config.description}
+                          style={{ color: `var(--${config.color.replace('text-', '')})` }}
+                        >
+                          {/* Show a colored dot and label */}
+                          {String.fromCharCode(9679)} {t(`clan.${role}`) || config.label}
                         </option>
                       ))}
                   </select>
+                  {/* Show description below dropdown for selected role */}
+                  {(() => {
+                    const validRole = (role: string | null): role is ClanRole =>
+                      role !== null && Object.prototype.hasOwnProperty.call(ROLE_CONFIG, role);
+                    const roleKey: ClanRole = validRole(member.role) ? member.role : 'member';
+                    return (
+                      <span
+                        className="ml-2 text-xs text-slate-400 max-w-xs truncate"
+                        title={ROLE_CONFIG[roleKey].description}
+                      >
+                        {ROLE_CONFIG[roleKey].description}
+                      </span>
+                    );
+                  })()}
                   {onRemove && (
                     <button
                       onClick={() => onRemove(member.id)}
