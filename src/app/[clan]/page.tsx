@@ -41,7 +41,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   
   // Initialize activeTab from query parameter if present
   const initialTab = (() => {
-    const tabParam = searchParams.get('tab');
+    const tabParam = searchParams?.get('tab');
     if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
       return tabParam as Tab;
     }
@@ -61,7 +61,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   // Update URL when tab changes
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() ?? '');
     params.set('tab', tab);
     // Remove subTab if switching away from 'more'
     if (tab !== 'more' && params.has('subTab')) {
@@ -72,7 +72,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
 
   // Handle tab query parameter changes from external navigation
   useEffect(() => {
-    const tabParam = searchParams.get('tab');
+    const tabParam = searchParams?.get('tab');
     if (tabParam && ['characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'].includes(tabParam)) {
       setActiveTab(tabParam as Tab);
     }

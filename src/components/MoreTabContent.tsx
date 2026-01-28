@@ -36,7 +36,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
 
   // Sync state with URL parameter on mount and when searchParams changes
   useEffect(() => {
-    const subTabParam = searchParams.get('subTab');
+    const subTabParam = searchParams?.get('subTab');
     if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
       setSubTab(subTabParam as MoreSubTab);
     }
@@ -45,7 +45,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
   // Update URL when sub-tab changes
   const handleSubTabChange = (newSubTab: MoreSubTab) => {
     setSubTab(newSubTab);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     params.set('subTab', newSubTab);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
