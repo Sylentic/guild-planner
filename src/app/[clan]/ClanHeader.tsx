@@ -8,6 +8,7 @@ interface ClanHeaderProps {
   role: string;
   displayName: string;
   onSignOut: () => void;
+  guildIconUrl?: string;
 }
 
 export function ClanHeader({
@@ -17,6 +18,7 @@ export function ClanHeader({
   role,
   displayName,
   onSignOut,
+  guildIconUrl,
 }: ClanHeaderProps) {
   return (
     <header className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 shrink-0 z-50">
@@ -31,6 +33,9 @@ export function ClanHeader({
             >
               <Home className="w-5 h-5 md:w-5 md:h-5" />
             </Link>
+            {guildIconUrl && (
+              <img src={guildIconUrl} alt="Guild Icon" className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800" />
+            )}
             <div>
               <h1 className="font-display text-base md:text-xl font-semibold text-white">
                 {clanName || clanSlug}

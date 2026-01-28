@@ -3,6 +3,7 @@
 import { AchievementsTab } from './tabs/AchievementsTab';
 import { ClanHeader } from './ClanHeader';
 import { ManageTab } from './tabs/ManageTab';
+import { GuildIconUploaderWrapper } from './GuildIconUploaderWrapper';
 import { BuildsTab } from './tabs/BuildsTab';
 import { AlliancesTab } from './tabs/AlliancesTab';
 
@@ -143,6 +144,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
     updateAnnouncement,
     deleteAnnouncement,
   } = useEvents(clanId, user?.id || null, clanSlug);
+
+  // Guild icon state for live update
+  const [guildIconUrl, setGuildIconUrl] = useState(clan?.guild_icon_url || '');
 
   // Helper function to get main character name for an alt (automatic based on user_id)
   const getMainCharacterName = (character: CharacterWithProfessions): string | undefined => {
@@ -351,6 +355,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
         role={membership.role || ''}
         displayName={displayName}
         onSignOut={signOut}
+        guildIconUrl={guildIconUrl}
       />
 
       {/* Main content - scrollable area */}
@@ -434,6 +439,18 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
                 <h2 className="text-2xl font-bold text-white">{t('nav.manage')}</h2>
                 <p className="text-slate-400 mt-1">Manage clan members, roles, and settings</p>
               </div>
+
+              {/* Guild Icon Uploader (Admin only) */}
+              {membership?.role === 'admin' && clan && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Guild Icon</h3>
+                  <GuildIconUploaderWrapper
+                    clanId={clan.id}
+                    currentUrl={guildIconUrl}
+                    onIconChange={setGuildIconUrl}
+                  />
+                </div>
+              )}
 
               {/* Member Management */}
               <ManageTab

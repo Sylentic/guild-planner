@@ -40,6 +40,7 @@ export interface Clan {
   notify_on_events?: boolean;
   notify_on_announcements?: boolean;
   discord_announcement_role_id?: string;
+  guild_icon_url?: string;
 }
 
 // Race and Archetype types (match database ENUMs)

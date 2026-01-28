@@ -1,3 +1,11 @@
+// Update the guild icon URL for a clan
+export async function updateClanIconUrl(clanId: string, url: string) {
+  const { error } = await supabase
+    .from('clans')
+    .update({ guild_icon_url: url })
+    .eq('id', clanId);
+  if (error) throw error;
+}
 import { supabase } from './supabase';
 import { getURL } from './url';
 
