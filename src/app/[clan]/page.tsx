@@ -23,7 +23,8 @@ import { CharacterFiltersBar, CharacterFilters, DEFAULT_FILTERS, filterCharacter
 import { ClanSettings } from '@/components/ClanSettings';
 import { RecruitmentSettings } from '@/components/RecruitmentSettings';
 import { PermissionsSettings } from '@/components/PermissionsSettings';
-import { ClanTabNav, Tab } from '@/components/ClanTabNav';
+import { ClanTabNav } from '@/components/ClanTabNav';
+import { Tab } from '@/components/tabs';
 import { InlineFooter } from '@/components/Footer';
 import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
 import { ClanMatrix } from '@/components/ClanMatrix';

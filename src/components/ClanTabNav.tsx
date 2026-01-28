@@ -1,8 +1,7 @@
 import { BottomNav } from '@/components/BottomNav';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-export type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more' | 'achievements' | 'alliances' | 'builds';
+import { Tab, TAB_LIST } from './tabs';
 
 interface ClanTabNavProps {
   canManage: boolean;
@@ -19,9 +18,7 @@ export function ClanTabNav({ canManage, onTabChange, initialTab = 'characters' }
   // Sync with URL
   useEffect(() => {
     const tabParam = searchParams?.get('tab');
-    if (tabParam && [
-      'characters', 'events', 'parties', 'matrix', 'manage', 'siege', 'economy', 'more'
-    ].includes(tabParam)) {
+    if (tabParam && (TAB_LIST as readonly string[]).includes(tabParam)) {
       setActiveTab(tabParam as Tab);
     }
   }, [searchParams]);
