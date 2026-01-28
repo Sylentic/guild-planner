@@ -284,11 +284,6 @@ export function CharacterCard({
           )}
         </div>
       )}
-      {/* Debug info for editability */}
-      <div className="text-xs text-slate-500 mt-2">
-        <div>user_id: {character.user_id}</div>
-        <div>readOnly: {String(readOnly)}</div>
-      </div>
     </div>
   );
 }
