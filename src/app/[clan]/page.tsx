@@ -730,25 +730,25 @@ function ManageTab({
               .map((member) => (
                 <div
                   key={member.id}
-                  className={
-                    [
-                      "bg-slate-900/80",
-                      "backdrop-blur-sm",
-                      "rounded-lg",
-                      "border",
-                      member.role === 'admin' ? 'border-orange-400' :
-                      member.role === 'officer' ? 'border-purple-400' :
-                      member.role === 'trial' ? 'border-yellow-400' :
-                      'border-slate-700',
-                      "transition-all",
-                      "duration-300",
-                      "hover:border-slate-600",
-                      "p-4",
-                      "flex",
-                      "items-center",
-                      "justify-between"
-                    ].join(' ')
-                  }
+                  className={[
+                    "bg-slate-900/80",
+                    "backdrop-blur-sm",
+                    "rounded-lg",
+                    "border",
+                    (() => {
+                      const validRole = (role: string | null): role is ClanRole =>
+                        role !== null && Object.prototype.hasOwnProperty.call(ROLE_CONFIG, role);
+                      const roleKey: ClanRole = validRole(member.role) ? member.role : 'member';
+                      return ROLE_CONFIG[roleKey].borderColor;
+                    })(),
+                    "transition-all",
+                    "duration-300",
+                    "hover:border-slate-600",
+                    "p-4",
+                    "flex",
+                    "items-center",
+                    "justify-between"
+                  ].join(' ')}
                 >
               <div className="flex items-center gap-3">
                 {/* Colored dot for role */}

@@ -279,14 +279,15 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
               key={role}
               onClick={() => setSelectedRole(role)}
               disabled={!canEditRole}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 border transition-all ${
                 selectedRole === role
-                  ? `${bgColor} text-white` // Inverted: colored bg, white text
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                  ? `${bgColor} text-white ${roleConfig.borderColor}` // Inverted: colored bg, white text, colored border
+                  : `bg-slate-900 text-slate-300 ${roleConfig.borderColor}` // Neutral bg, colored border, colored dot
               } ${!canEditRole ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+              style={selectedRole === role ? { boxShadow: '0 0 0 2px rgba(0,0,0,0.2)' } : undefined}
             >
               <span className={roleConfig.color}>{String.fromCharCode(9679)}</span>
-              {roleConfig.label}
+              <span className={selectedRole === role ? 'text-white' : roleConfig.color}>{roleConfig.label}</span>
             </button>
           );
         })}
