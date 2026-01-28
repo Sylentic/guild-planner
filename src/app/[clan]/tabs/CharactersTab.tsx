@@ -46,17 +46,14 @@ export function CharactersTab({
         filterCharacters(characters, characterFilters).map((character) => {
           // Only allow edit if user owns character AND has 'characters_edit_own', or has 'characters_edit_any' permission
           const isAdmin = userRole === 'admin';
-          if (typeof window !== 'undefined' && window.DEBUG_PERMISSIONS) {
-            console.log('userRole:', userRole, 'isAdmin:', isAdmin, 'userId:', user?.id, 'charUserId:', character.user_id);
-          }
+          // Always log debug info for permissions
+          console.log('[DEBUG] userRole:', userRole, 'isAdmin:', isAdmin, 'userId:', user?.id, 'charUserId:', character.user_id);
           // Force canEdit for admin for debugging
           const canEdit = isAdmin ? true : (
             (user?.id && character.user_id === user.id && roleHasPermission(userRole, 'characters_edit_own'))
             || roleHasPermission(userRole, 'characters_edit_any')
           );
-          if (typeof window !== 'undefined' && window.DEBUG_PERMISSIONS) {
-            console.log('canEdit:', canEdit);
-          }
+          console.log('[DEBUG] canEdit:', canEdit, 'readOnly:', !canEdit, 'character:', character.name);
           return (
             <CharacterCard
               key={character.id}
