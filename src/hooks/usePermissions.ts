@@ -26,16 +26,16 @@ export function usePermissions(clanId?: string) {
         const { data: { session } } = await (await import('@/lib/supabase')).supabase.auth.getSession();
         if (!session) return;
 
-        const response = await fetch('/api/clan/permissions', {
+        // Include clan_id as a query parameter
+        const response = await fetch(`/api/clan/permissions?clan_id=${encodeURIComponent(clanId!)}` , {
           headers: {
             'Authorization': `Bearer ${session.access_token}`,
-            'X-Clan-ID': clanId,
           },
         });
 
         if (response.ok) {
-          const data = await response.json();
-          const overrides = data.find((o: any) => o.role === membership?.role);
+          const { permissions } = await response.json();
+          const overrides = permissions?.find((o: any) => o.role === membership?.role);
           if (overrides) {
             // Extract just the permission columns (all the boolean fields)
             const perms: Record<string, boolean> = {};
