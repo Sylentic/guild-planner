@@ -131,3 +131,6 @@ ON recruitment_applications FOR UPDATE
 USING (
   user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
 );
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('006_fix_rls_recursion.sql');

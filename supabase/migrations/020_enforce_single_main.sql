@@ -14,3 +14,6 @@ CREATE UNIQUE INDEX idx_members_one_main_per_user
 
 -- Update comment for clarity
 COMMENT ON COLUMN members.is_main IS 'Whether this is the users main character. Only one main per user_id is allowed.';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('020_enforce_single_main.sql');

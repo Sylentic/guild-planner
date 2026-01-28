@@ -290,3 +290,6 @@ COMMENT ON TABLE resource_catalog IS 'Global catalog of all trackable resources'
 COMMENT ON TABLE bank_inventory IS 'Current resource quantities in guild bank';
 COMMENT ON TABLE bank_transactions IS 'Audit log of all bank transactions';
 COMMENT ON TABLE resource_requests IS 'Member requests for resource withdrawals';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('012_guild_bank.sql');

@@ -132,3 +132,6 @@ ON CONFLICT DO NOTHING;
 COMMENT ON TABLE achievement_definitions IS 'Achievement templates and requirements';
 COMMENT ON TABLE clan_achievements IS 'Clan progress and unlocks for achievements';
 COMMENT ON TABLE achievement_notifications IS 'Queue for achievement unlock notifications';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('017_achievements.sql');

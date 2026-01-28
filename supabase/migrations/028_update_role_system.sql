@@ -69,3 +69,6 @@ COMMENT ON COLUMN events.bards_needed IS 'Number of bards needed';
 COMMENT ON COLUMN events.ranged_dps_needed IS 'Number of ranged DPS needed';
 COMMENT ON COLUMN events.melee_dps_needed IS 'Number of melee DPS needed';
 COMMENT ON COLUMN event_rsvps.role IS 'Role: tank, cleric, bard, ranged_dps, melee_dps';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('028_update_role_system.sql');

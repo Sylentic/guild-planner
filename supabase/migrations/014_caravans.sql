@@ -208,3 +208,6 @@ CREATE POLICY "Creators can manage waypoints"
 COMMENT ON TABLE caravan_events IS 'Guild caravan coordination and planning';
 COMMENT ON TABLE caravan_escorts IS 'Player signups for caravan escort duty';
 COMMENT ON TABLE caravan_waypoints IS 'Route waypoints for caravan runs';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('014_caravans.sql');

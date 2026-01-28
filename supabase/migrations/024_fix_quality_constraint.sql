@@ -14,3 +14,6 @@ ALTER TABLE member_professions
 
 -- Update comment to clarify
 COMMENT ON COLUMN member_professions.quality_score IS 'Quality/proficiency score with all buffs (food, clothes, town buffs, etc.) - no upper limit, can be in thousands';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('024_fix_quality_constraint.sql');

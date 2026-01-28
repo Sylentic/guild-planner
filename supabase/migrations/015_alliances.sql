@@ -181,3 +181,6 @@ COMMENT ON TABLE alliances IS 'Cross-guild alliances for coordination';
 COMMENT ON TABLE alliance_members IS 'Guild memberships in alliances';
 COMMENT ON TABLE alliance_events IS 'Shared events across allied guilds';
 COMMENT ON TABLE alliance_event_participation IS 'Per-guild commitment to alliance events';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('015_alliances.sql');

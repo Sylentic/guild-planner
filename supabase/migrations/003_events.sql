@@ -143,3 +143,6 @@ COMMENT ON TABLE events IS 'Clan events like raids, sieges, gatherings';
 COMMENT ON TABLE event_rsvps IS 'Member responses to events';
 COMMENT ON TABLE announcements IS 'Clan announcements and pinned messages';
 COMMENT ON COLUMN users.timezone IS 'User timezone for displaying event times (IANA format)';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('003_events.sql');

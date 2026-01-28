@@ -169,3 +169,6 @@ CREATE POLICY "Freehold owners can manage schedules"
 COMMENT ON TABLE freeholds IS 'Guild member freeholds registry';
 COMMENT ON TABLE freehold_buildings IS 'Buildings on member freeholds';
 COMMENT ON TABLE freehold_schedules IS 'When freehold buildings are available for guild use';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('013_freeholds.sql');

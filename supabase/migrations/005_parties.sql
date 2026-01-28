@@ -170,3 +170,6 @@ CREATE POLICY "Public clans are viewable"
 COMMENT ON TABLE parties IS 'Party/raid group templates';
 COMMENT ON TABLE party_roster IS 'Character assignments to parties';
 COMMENT ON TABLE recruitment_applications IS 'Applications from potential recruits';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('005_parties.sql');

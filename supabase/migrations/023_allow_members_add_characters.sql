@@ -40,3 +40,6 @@ CREATE POLICY "Members can delete own characters" ON members
   FOR DELETE USING (
     user_id = auth.uid() OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
   );
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('023_allow_members_add_characters.sql');

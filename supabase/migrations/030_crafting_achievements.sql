@@ -24,3 +24,6 @@ INSERT INTO achievement_definitions (name, description, category, icon, requirem
   ('Jack of All Trades', 'Have Grandmaster in at least one skill from each tier', 'economy', '🎓', 'jack_of_all_trades', 1, 75, 49),
   ('Master of All Trades', 'Have Master+ in at least 3 skills from each tier', 'economy', '📚', 'master_of_all_trades', 1, 90, 50)
 ON CONFLICT DO NOTHING;
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('030_crafting_achievements.sql');

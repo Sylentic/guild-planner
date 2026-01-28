@@ -10,3 +10,6 @@ ALTER TYPE event_type ADD VALUE IF NOT EXISTS 'farming_other';
 
 -- Add comment documenting the change
 COMMENT ON TYPE event_type IS 'Event types: raid, siege, gathering, social, farming_glint, farming_materials, farming_gear, farming_other, other';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('026_add_farming_event_types.sql');

@@ -11,3 +11,6 @@
 -- - All others are alts
 --
 -- This file is kept for migration history but makes no changes.
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('019_character_linking.sql');

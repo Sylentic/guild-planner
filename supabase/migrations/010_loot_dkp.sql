@@ -243,3 +243,6 @@ COMMENT ON TABLE dkp_points IS 'Character DKP point balances';
 COMMENT ON TABLE loot_history IS 'Historical record of all loot drops and distribution';
 COMMENT ON TABLE dkp_transactions IS 'Audit log of all DKP point changes';
 COMMENT ON VIEW dkp_leaderboard IS 'Ranked DKP standings per loot system';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('010_loot_dkp.sql');

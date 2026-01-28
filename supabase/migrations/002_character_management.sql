@@ -51,3 +51,6 @@ COMMENT ON COLUMN members.primary_archetype IS 'Primary archetype chosen at char
 COMMENT ON COLUMN members.secondary_archetype IS 'Secondary archetype chosen at level 25';
 COMMENT ON COLUMN members.level IS 'Character level (1-50)';
 COMMENT ON COLUMN members.is_main IS 'Whether this is the users main character';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('002_character_management.sql');

@@ -168,3 +168,6 @@ COMMENT ON TABLE build_likes IS 'User likes for build rating';
 COMMENT ON TABLE build_comments IS 'Comments and discussions on builds';
 COMMENT ON TABLE skill_definitions IS 'Reference data for class skills';
 COMMENT ON TABLE augment_definitions IS 'Reference data for skill augments';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('018_builds.sql');

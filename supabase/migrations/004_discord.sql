@@ -12,3 +12,6 @@ ALTER TABLE clans ADD COLUMN notify_on_announcements BOOLEAN DEFAULT true;
 COMMENT ON COLUMN clans.discord_webhook_url IS 'Discord webhook URL for clan notifications';
 COMMENT ON COLUMN clans.notify_on_events IS 'Whether to send Discord notifications for new events';
 COMMENT ON COLUMN clans.notify_on_announcements IS 'Whether to send Discord notifications for announcements';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('004_discord.sql');

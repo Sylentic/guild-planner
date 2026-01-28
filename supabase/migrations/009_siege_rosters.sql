@@ -176,3 +176,6 @@ GROUP BY sr.siege_id, sr.role;
 COMMENT ON TABLE siege_events IS 'Castle and node siege events (250v250 battles)';
 COMMENT ON TABLE siege_roster IS 'Player signups for siege events';
 COMMENT ON VIEW siege_roster_counts IS 'Aggregated roster counts by role per siege';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('009_siege_rosters.sql');

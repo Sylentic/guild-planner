@@ -24,3 +24,6 @@ WHERE m.clan_id = cm.clan_id
 -- For clans with multiple members, you'll need to manually assign characters
 -- or let users edit their characters to automatically claim them
 COMMENT ON TABLE members IS 'Characters in clans. user_id links characters to their owner for automatic main/alt detection.';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('021_backfill_user_ids.sql');

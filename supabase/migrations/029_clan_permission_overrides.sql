@@ -99,4 +99,7 @@ CREATE POLICY "clan_members_can_view_permissions" ON clan_permission_overrides
     )
   );
 
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('029_clan_permission_overrides.sql');
+
 COMMIT;

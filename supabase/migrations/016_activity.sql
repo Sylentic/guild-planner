@@ -138,3 +138,6 @@ CREATE POLICY "Officers can manage alerts"
 COMMENT ON TABLE activity_log IS 'Raw activity tracking for members';
 COMMENT ON TABLE member_activity_summary IS 'Aggregated activity metrics per member';
 COMMENT ON TABLE inactivity_alerts IS 'Alerts for inactive guild members';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('016_activity.sql');

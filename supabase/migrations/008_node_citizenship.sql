@@ -10,7 +10,7 @@ EXCEPTION
   WHEN duplicate_object THEN null;
 END $$;
 
--- Node citizenships table
+-- Node citizenship table
 CREATE TABLE IF NOT EXISTS node_citizenships (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   character_id UUID NOT NULL REFERENCES members(id) ON DELETE CASCADE,
@@ -96,3 +96,6 @@ GROUP BY m.clan_id, nc.node_name, nc.node_type, nc.node_stage;
 COMMENT ON TABLE node_citizenships IS 'Tracks which node each character is a citizen of';
 COMMENT ON COLUMN node_citizenships.node_stage IS '0=Wilderness, 1=Expedition, 2=Encampment, 3=Village, 4=Town, 5=City, 6=Metropolis';
 COMMENT ON VIEW node_distribution IS 'Aggregated view of citizen distribution per node per clan';
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('008_node_citizenship.sql');

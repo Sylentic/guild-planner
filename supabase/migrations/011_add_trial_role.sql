@@ -11,4 +11,7 @@ ALTER TABLE clan_members
 ADD CONSTRAINT clan_members_role_check 
   CHECK (role IN ('admin', 'officer', 'member', 'trial', 'pending'));
 
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('011_add_trial_role.sql');
+
 COMMIT;

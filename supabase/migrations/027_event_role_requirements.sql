@@ -21,3 +21,6 @@ COMMENT ON COLUMN events.support_needed IS 'Number of support players needed for
 COMMENT ON COLUMN event_rsvps.role IS 'Which role the user is attending as (tank, healer, dps, support)';
 
 -- Note: max_attendees is kept for backward compatibility and general events without role requirements
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('027_event_role_requirements.sql');

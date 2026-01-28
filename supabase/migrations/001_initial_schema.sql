@@ -3,6 +3,13 @@
 -- Phase 1: Authentication & Security
 -- =====================================================
 
+-- Track applied migrations (must be first for all future DBs)
+CREATE TABLE IF NOT EXISTS migration_history (
+  id SERIAL PRIMARY KEY,
+  filename TEXT NOT NULL,
+  applied_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- =====================================================
 -- CORE TABLES
 -- =====================================================
@@ -225,3 +232,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Record this migration as applied
+INSERT INTO migration_history (filename) VALUES ('001_initial_schema.sql');
