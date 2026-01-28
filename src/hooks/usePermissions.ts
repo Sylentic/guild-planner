@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { useClanMembership } from './useClanMembership';
-import { ClanRole, roleHasPermission, canManageRole } from '@/lib/permissions';
+import { ClanRole, roleHasPermission, canManageRole, DEFAULT_ROLE_PERMISSIONS } from '@/lib/permissions';
 
 export interface RolePermissions {
   role: ClanRole;
@@ -13,19 +13,73 @@ export interface RolePermissions {
 export function usePermissions(clanId?: string) {
   const { user } = useAuth();
   const { membership } = useClanMembership(clanId || null, user?.id || null);
-  const [rolePermissions, setRolePermissions] = useState<Map<ClanRole, Set<string>>>(new Map());
+  const [customPermissions, setCustomPermissions] = useState<Record<string, boolean> | null>(null);
+  const [loading, setLoading] = useState(false);
   
+  // Fetch custom permission overrides from the server
+  useEffect(() => {
+    if (!clanId || !user) return;
+
+    const fetchPermissions = async () => {
+      setLoading(true);
+      try {
+        const { data: { session } } = await (await import('@/lib/supabase')).supabase.auth.getSession();
+        if (!session) return;
+
+        const response = await fetch('/api/clan/permissions', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'X-Clan-ID': clanId,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const overrides = data.find((o: any) => o.role === membership?.role);
+          if (overrides) {
+            // Extract just the permission columns (all the boolean fields)
+            const perms: Record<string, boolean> = {};
+            Object.keys(overrides).forEach(key => {
+              if (key !== 'id' && key !== 'clan_id' && key !== 'role' && key !== 'created_at' && key !== 'updated_at') {
+                perms[key] = overrides[key];
+              }
+            });
+            setCustomPermissions(perms);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching permissions:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPermissions();
+  }, [clanId, user, membership?.role]);
+  
+  // Check if current user has a specific permission
+  // First checks custom overrides, then falls back to default role permissions
+  const hasPermission = useCallback((permission: string): boolean => {
+    if (!user || !membership) return false;
+
+    // If we have custom permissions loaded, check those first
+    if (customPermissions !== null) {
+      // Convert permission ID to database column name (convert underscores to match DB format)
+      const dbColumnName = permission; // Already in correct format from PERMISSIONS object
+      if (dbColumnName in customPermissions) {
+        return customPermissions[dbColumnName];
+      }
+    }
+
+    // Fall back to default role permissions
+    const userRole = membership.role as ClanRole;
+    return roleHasPermission(userRole, permission);
+  }, [user, membership, customPermissions]);
+
   // Get current user's role
   const getUserRole = useCallback((): ClanRole => {
     return (membership?.role as ClanRole) ?? 'pending';
   }, [membership]);
-
-  // Check if current user has a specific permission
-  const hasPermission = useCallback((permission: string): boolean => {
-    if (!user || !membership) return false;
-    const userRole = getUserRole();
-    return roleHasPermission(userRole, permission);
-  }, [user, membership, getUserRole]);
 
   // Check if user can manage another role
   const canManage = useCallback((targetRole: ClanRole): boolean => {
@@ -62,7 +116,7 @@ export function usePermissions(clanId?: string) {
     hasAnyPermission,
     isAdmin,
     isLeadership,
-    rolePermissions,
-    setRolePermissions,
+    rolePermissions: customPermissions,
+    loading,
   };
 }
