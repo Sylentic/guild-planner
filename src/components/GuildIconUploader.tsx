@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { updateClanIconUrl } from '@/lib/auth';
@@ -19,6 +19,11 @@ export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconU
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const { user, session } = useAuthContext();
+
+  // Keep iconUrl in sync with currentUrl prop
+  useEffect(() => {
+    setIconUrl(currentUrl || '');
+  }, [currentUrl]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
