@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, Handshake, Hammer, Swords, Castle } from 'lucide-react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CharacterWithProfessions } from '@/lib/types';
 import { PartiesList } from './PartiesList';
@@ -26,7 +27,36 @@ interface MoreTabContentProps {
 
 export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTabContentProps) {
   const { t } = useLanguage();
-  const [subTab, setSubTab] = useState<MoreSubTab>('parties');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  // Initialize from URL query parameter
+  const initialSubTab = (() => {
+    const subTabParam = searchParams.get('subTab');
+    if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
+      return subTabParam as MoreSubTab;
+    }
+    return 'parties';
+  })();
+
+  const [subTab, setSubTab] = useState<MoreSubTab>(initialSubTab);
+
+  // Update URL when sub-tab changes
+  const handleSubTabChange = (newSubTab: MoreSubTab) => {
+    setSubTab(newSubTab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('subTab', newSubTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Sync state with URL parameter changes
+  useEffect(() => {
+    const subTabParam = searchParams.get('subTab');
+    if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
+      setSubTab(subTabParam as MoreSubTab);
+    }
+  }, [searchParams]);
 
   const {
     parties,
@@ -77,7 +107,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
         {SUB_TABS.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
-            onClick={() => setSubTab(id as MoreSubTab)}
+            onClick={() => handleSubTabChange(id as MoreSubTab)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
               subTab === id
                 ? 'bg-purple-500 text-white'
