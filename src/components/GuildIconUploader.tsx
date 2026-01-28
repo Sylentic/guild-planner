@@ -9,6 +9,7 @@ interface GuildIconUploaderProps {
   onUploaded?: (url: string) => void;
 }
 
+export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [iconUrl, setIconUrl] = useState(currentUrl || '');
   const { user, session } = useAuthContext();
