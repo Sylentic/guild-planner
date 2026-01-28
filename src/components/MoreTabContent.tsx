@@ -31,16 +31,16 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // Initialize from URL query parameter
-  const initialSubTab = (() => {
+  // Always initialize with default, let useEffect handle URL sync
+  const [subTab, setSubTab] = useState<MoreSubTab>('parties');
+
+  // Sync state with URL parameter on mount and when searchParams changes
+  useEffect(() => {
     const subTabParam = searchParams.get('subTab');
     if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
-      return subTabParam as MoreSubTab;
+      setSubTab(subTabParam as MoreSubTab);
     }
-    return 'parties';
-  })();
-
-  const [subTab, setSubTab] = useState<MoreSubTab>(initialSubTab);
+  }, [searchParams]);
 
   // Update URL when sub-tab changes
   const handleSubTabChange = (newSubTab: MoreSubTab) => {
@@ -49,14 +49,6 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
     params.set('subTab', newSubTab);
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
-
-  // Sync state with URL parameter changes
-  useEffect(() => {
-    const subTabParam = searchParams.get('subTab');
-    if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
-      setSubTab(subTabParam as MoreSubTab);
-    }
-  }, [searchParams]);
 
   const {
     parties,
