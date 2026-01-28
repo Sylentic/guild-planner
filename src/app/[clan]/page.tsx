@@ -28,6 +28,7 @@ import { CharacterWithProfessions } from '@/lib/types';
 import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
+import { ClanCreateScreen } from '@/components/ClanCreateScreen';
 
 type Tab = 'characters' | 'events' | 'parties' | 'matrix' | 'manage' | 'siege' | 'economy' | 'more';
 
@@ -258,36 +259,15 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   // Clan doesn't exist - offer to create
   if (!clanExists) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <UserPlus className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.createNew')}</h2>
-          <p className="text-slate-400 mb-6">
-            {t('clan.createDescription', { name: clanSlug })}
-          </p>
-          <button
-            onClick={handleCreateClan}
-            disabled={isCreating}
-            className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {isCreating ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Shield className="w-5 h-5" />
-            )}
-            {t('clan.create')}
-          </button>
-          <p className="text-slate-500 text-sm mt-3">
-            {t('clan.youWillBeAdmin')}
-          </p>
-          <Link
-            href="/"
-            className="inline-block mt-4 text-slate-400 hover:text-white transition-colors"
-          >
-            ← {t('common.returnHome')}
-          </Link>
-        </div>
-      </div>
+      <ClanCreateScreen
+        title={t('clan.createNew')}
+        message={t('clan.createDescription', { name: clanSlug })}
+        onCreate={handleCreateClan}
+        creating={isCreating}
+        createLabel={t('clan.create')}
+        adminNote={t('clan.youWillBeAdmin')}
+        homeLabel={t('common.returnHome')}
+      />
     );
   }
 
