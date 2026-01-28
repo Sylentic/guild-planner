@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Shield, Crosshair, Trophy, Gem, Swords } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePermissions } from '@/hooks/usePermissions';
 import { useSiegeEvents, RosterSignupData } from '@/hooks/useSiegeEvents';
 import { useLootSystem } from '@/hooks/useLootSystem';
 import { useNodeCitizenships } from '@/hooks/useNodeCitizenships';
@@ -18,11 +19,12 @@ type SiegeSubTab = 'roster' | 'nodes' | 'dkp' | 'loot';
 interface SiegeTabContentProps {
   clanId: string;
   characters: CharacterWithProfessions[];
-  isOfficer: boolean;
+  userId?: string;
 }
 
-export function SiegeTabContent({ clanId, characters, isOfficer }: SiegeTabContentProps) {
+export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentProps) {
   const { t } = useLanguage();
+  const { hasPermission } = usePermissions(clanId);
   const [subTab, setSubTab] = useState<SiegeSubTab>('roster');
   const [showEventForm, setShowEventForm] = useState(false);
   
@@ -72,6 +74,11 @@ export function SiegeTabContent({ clanId, characters, isOfficer }: SiegeTabConte
     distributeLoot(lootId, '', 0);
   };
 
+  // Permission checks
+  const canCreateSiege = hasPermission('siege_create_event');
+  const canEditRosters = hasPermission('siege_edit_rosters');
+  const canDistributeLoot = hasPermission('siege_edit_rosters');
+
   return (
     <div className="space-y-4">
       {/* Sub-navigation */}
@@ -95,7 +102,7 @@ export function SiegeTabContent({ clanId, characters, isOfficer }: SiegeTabConte
       {/* Content */}
       {subTab === 'roster' && (
         <div className="space-y-4">
-          {isOfficer && (
+          {canCreateSiege && (
             <button
               onClick={() => setShowEventForm(true)}
               className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
@@ -112,7 +119,7 @@ export function SiegeTabContent({ clanId, characters, isOfficer }: SiegeTabConte
               characters={characters}
               onSignUp={handleSignUp}
               onWithdraw={handleWithdraw}
-              isOfficer={isOfficer}
+              canEditRosters={canEditRosters}
             />
           ) : (
             <div className="bg-slate-800/50 rounded-xl p-8 text-center">
@@ -163,7 +170,7 @@ export function SiegeTabContent({ clanId, characters, isOfficer }: SiegeTabConte
         ) : (
           <LootHistoryView
             history={lootHistory}
-            onDistribute={isOfficer ? handleDistribute : undefined}
+            onDistribute={canDistributeLoot ? handleDistribute : undefined}
           />
         )
       )}
