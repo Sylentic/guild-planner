@@ -28,6 +28,5 @@
   "027_event_role_requirements.sql",
   "028_update_role_system.sql",
   "029_clan_permission_overrides.sql",
-  "030_crafting_achievements.sql",
-  "999_dummy_test_migration.sql"
+  "030_crafting_achievements.sql"
 ]
