@@ -11,6 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 interface ClanSettingsProps {
   clanId: string;
   currentWebhookUrl?: string;
+  currentWelcomeWebhookUrl?: string;
   notifyOnEvents?: boolean;
   notifyOnAnnouncements?: boolean;
   announcementRoleId?: string;
@@ -20,6 +21,7 @@ interface ClanSettingsProps {
 export function ClanSettings({
   clanId,
   currentWebhookUrl = '',
+  currentWelcomeWebhookUrl = '',
   notifyOnEvents = true,
   notifyOnAnnouncements = true,
   announcementRoleId = '',
@@ -27,6 +29,7 @@ export function ClanSettings({
 }: ClanSettingsProps) {
   const { loading } = usePermissions(clanId);
   const [webhookUrl, setWebhookUrl] = useState(currentWebhookUrl);
+  const [welcomeWebhookUrl, setWelcomeWebhookUrl] = useState(currentWelcomeWebhookUrl);
   const [eventsEnabled, setEventsEnabled] = useState(notifyOnEvents);
   const [announcementsEnabled, setAnnouncementsEnabled] = useState(notifyOnAnnouncements);
   const [roleId, setRoleId] = useState(announcementRoleId);
@@ -48,6 +51,7 @@ export function ClanSettings({
         .from('clans')
         .update({
           discord_webhook_url: webhookUrl.trim() || null,
+          discord_welcome_webhook_url: welcomeWebhookUrl.trim() || null,
           notify_on_events: eventsEnabled,
           notify_on_announcements: announcementsEnabled,
           discord_announcement_role_id: roleId.trim() || null,
@@ -131,6 +135,33 @@ export function ClanSettings({
         )}
         <p className="text-xs text-slate-500 mt-1">
           {t('discord.webhookHint')}
+        </p>
+      </div>
+
+      {/* Welcome Webhook URL */}
+      <div>
+        <label htmlFor="discord-welcome-webhook-url" className="block text-sm font-medium text-slate-300 mb-2">
+          Welcome Webhook URL (Optional)
+        </label>
+        <input
+          id="discord-welcome-webhook-url"
+          type="url"
+          value={welcomeWebhookUrl}
+          onChange={(e) => setWelcomeWebhookUrl(e.target.value)}
+          placeholder="https://discord.com/api/webhooks/... (for welcome messages)"
+          className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            welcomeWebhookUrl && !isValidWebhookUrl(welcomeWebhookUrl) 
+              ? 'border-red-500' 
+              : 'border-slate-600'
+          }`}
+        />
+        {welcomeWebhookUrl && !isValidWebhookUrl(welcomeWebhookUrl) && (
+          <p className="text-xs text-red-400 mt-1">
+            Invalid Discord webhook URL
+          </p>
+        )}
+        <p className="text-xs text-slate-500 mt-1">
+          If set, new member welcome messages will be sent to this webhook. Otherwise, the main webhook is used.
         </p>
       </div>
 
@@ -239,7 +270,11 @@ export function ClanSettings({
         ) : (
           <button
             onClick={handleSave}
-            disabled={saving || !!(webhookUrl && !isValidWebhookUrl(webhookUrl))}
+            disabled={
+              saving ||
+              !!(webhookUrl && !isValidWebhookUrl(webhookUrl)) ||
+              !!(welcomeWebhookUrl && !isValidWebhookUrl(welcomeWebhookUrl))
+            }
             className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
           >
             {saving ? (

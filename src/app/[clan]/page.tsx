@@ -491,6 +491,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
                 <ClanSettings
                   clanId={clan.id}
                   currentWebhookUrl={clan.discord_webhook_url || ''}
+                  currentWelcomeWebhookUrl={clan.discord_welcome_webhook_url || ''}
                   notifyOnEvents={clan.notify_on_events ?? true}
                   notifyOnAnnouncements={clan.notify_on_announcements ?? true}
                   announcementRoleId={clan.discord_announcement_role_id || ''}

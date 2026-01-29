@@ -37,6 +37,7 @@ export interface Clan {
   name: string;
   created_at: string;
   discord_webhook_url?: string;
+  discord_welcome_webhook_url?: string;
   notify_on_events?: boolean;
   notify_on_announcements?: boolean;
   discord_announcement_role_id?: string;
