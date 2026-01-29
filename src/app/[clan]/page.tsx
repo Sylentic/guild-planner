@@ -148,6 +148,11 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   // Guild icon state for live update
   const [guildIconUrl, setGuildIconUrl] = useState(clan?.guild_icon_url || '');
 
+  // Keep guildIconUrl in sync with DB
+  useEffect(() => {
+    setGuildIconUrl(clan?.guild_icon_url || '');
+  }, [clan?.guild_icon_url]);
+
   // Refresh the icon from the DB after upload
   async function refreshGuildIcon() {
     if (!clanSlug) return;
