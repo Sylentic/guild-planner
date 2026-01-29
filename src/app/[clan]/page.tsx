@@ -148,6 +148,13 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
   // Guild icon state for live update
   const [guildIconUrl, setGuildIconUrl] = useState(clan?.guild_icon_url || '');
 
+  // Refresh the icon from the DB after upload
+  async function refreshGuildIcon() {
+    if (!clanSlug) return;
+    const latest = await getClanBySlug(clanSlug);
+    if (latest?.guild_icon_url) setGuildIconUrl(latest.guild_icon_url);
+  }
+
   // Helper function to get main character name for an alt (automatic based on user_id)
   const getMainCharacterName = (character: CharacterWithProfessions): string | undefined => {
     if (character.is_main || !character.user_id) return undefined;
@@ -448,7 +455,7 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
                   <GuildIconUploaderWrapper
                     clanId={clan.id}
                     currentUrl={guildIconUrl}
-                    onIconChange={setGuildIconUrl}
+                    onIconChange={refreshGuildIcon}
                   />
                 </div>
               )}
