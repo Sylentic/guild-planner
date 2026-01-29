@@ -232,7 +232,7 @@ export async function createClan(slug: string, name: string, userId: string) {
 export async function getClanBySlug(slug: string) {
   const { data, error } = await supabase
     .from('clans')
-    .select('id, slug, name')
+    .select('id, slug, name, guild_icon_url')
     .eq('slug', slug)
     .maybeSingle();
   
