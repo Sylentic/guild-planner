@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { CharacterWithProfessions } from '@/lib/types';
 import { Skeleton } from './ui/Skeleton';
+import { GuestSignupForm } from './GuestSignupForm';
 import { 
   EventWithRsvps, 
   RsvpStatus, 
@@ -399,15 +400,13 @@ export function EventCard({
           {!event.is_cancelled && !isPast && (
             <div className="space-y-3">
               {/* Guest signup form - show this at the top for ally members */}
-              {/* This would be shown for allied clan members in production */}
-              {/* For now, commented out until we have a way to identify ally-only events */}
-              {/* <GuestSignupForm 
+              <GuestSignupForm 
                 eventId={event.id}
                 alliedClanId={clanId}
                 onSuccess={() => {
                   // Could refresh the event here
                 }}
-              /> */}
+              />
 
               {/* Admin mode toggle - only show for admins */}
               {isAdmin && (

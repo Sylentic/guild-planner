@@ -14,7 +14,7 @@ interface GuestSignupFormProps {
 }
 
 export function GuestSignupForm({ eventId, alliedClanId, onSuccess }: GuestSignupFormProps) {
-  const { showToast } = useToast();
+  const { success, error } = useToast();
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,16 +24,16 @@ export function GuestSignupForm({ eventId, alliedClanId, onSuccess }: GuestSignu
     role: 'ranged_dps' as EventRole,
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     
     if (!formData.guestName.trim()) {
-      showToast('Please enter your character name', 'error');
+      error('Please enter your character name');
       return;
     }
     
     if (!formData.role) {
-      showToast('Please select a role', 'error');
+      error('Please select a role');
       return;
     }
 
@@ -48,15 +48,15 @@ export function GuestSignupForm({ eventId, alliedClanId, onSuccess }: GuestSignu
       });
 
       if ('error' in result) {
-        showToast(result.error, 'error');
+        error(result.error || 'Unknown error occurred');
       } else {
-        showToast(`${formData.guestName} has been added to the event!`, 'success');
+        success(`${formData.guestName} has been added to the event!`);
         setFormData({ guestName: '', classId: '', role: 'ranged_dps' });
         setIsOpen(false);
         onSuccess();
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Failed to sign up', 'error');
+      error(err instanceof Error ? err.message : 'Failed to sign up');
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +98,7 @@ export function GuestSignupForm({ eventId, alliedClanId, onSuccess }: GuestSignu
           <input
             type="text"
             value={formData.guestName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, guestName: e.target.value })}
+            onChange={(e: any) => setFormData({ ...formData, guestName: e.target.value })}
             placeholder="Enter your character name"
             className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isSubmitting}

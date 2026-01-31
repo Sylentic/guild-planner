@@ -29,5 +29,13 @@
   "028_update_role_system.sql",
   "029_clan_permission_overrides.sql",
   "030_crafting_achievements.sql",
-  "031_add_discord_welcome_webhook_url.sql"
+  "031_add_discord_welcome_webhook_url.sql",
+  "032_role_minimums_not_caps.sql",
+  "033_add_role_max_caps.sql",
+  "034_fix_events_rls_include_trial.sql",
+  "035_allow_admin_rsvp_on_behalf.sql",
+  "036_allow_allied_clan_event_participation.sql",
+  "037_add_combined_dps_option.sql",
+  "038_guest_event_rsvps.sql",
+  "039_add_check_clans_allied_function.sql"
 ]
