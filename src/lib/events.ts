@@ -148,11 +148,12 @@ export interface EventRsvp {
 export interface GuestEventRsvp {
   id: string;
   event_id: string;
-  allied_clan_id: string;
+  allied_clan_id: string | null;
   guest_name: string;
   guest_email?: string | null;
   class_id: string | null;
   role: EventRole;
+  status: 'attending' | 'maybe' | 'declined';
   created_at: string;
   updated_at: string;
 }
