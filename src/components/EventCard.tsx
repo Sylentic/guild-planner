@@ -33,6 +33,7 @@ interface EventCardProps {
   onCancel?: () => void;
   onDelete?: () => void;
   canManage?: boolean;
+  isPublicView?: boolean;
 }
 
 export function EventCard({ 
@@ -45,7 +46,8 @@ export function EventCard({
   onEdit, 
   onCancel,
   onDelete,
-  canManage = false 
+  canManage = false,
+  isPublicView = false
 }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EventRole | null>(null);
@@ -357,8 +359,8 @@ export function EventCard({
                         />
                       </div>
                       
-                      {/* List of signups */}
-                      {(roleRsvps.length > 0 || roleGuestRsvps.length > 0) && (
+                      {/* List of signups - hide guest names on public view */}
+                      {!isPublicView && (roleRsvps.length > 0 || roleGuestRsvps.length > 0) && (
                         <div className="text-xs space-y-1">
                           {roleRsvps.map((rsvp, idx) => (
                             <div 
@@ -387,6 +389,13 @@ export function EventCard({
                               </span>
                             </div>
                           ))}
+                        </div>
+                      )}
+                      
+                      {/* On public view, show guest count only */}
+                      {isPublicView && roleGuestRsvps.length > 0 && (
+                        <div className="text-xs text-slate-400 italic">
+                          {roleGuestRsvps.length} guest{roleGuestRsvps.length !== 1 ? 's' : ''}
                         </div>
                       )}
                     </div>

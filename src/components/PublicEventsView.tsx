@@ -45,7 +45,17 @@ export function PublicEventsView() {
 
       if (error) throw error;
 
-      setEvents(data || []);
+      // Compute rsvp_counts for each event
+      const eventsWithCounts = (data || []).map(event => ({
+        ...event,
+        rsvp_counts: {
+          attending: (event.event_rsvps || []).filter((r: any) => r.status === 'attending').length,
+          maybe: (event.event_rsvps || []).filter((r: any) => r.status === 'maybe').length,
+          declined: (event.event_rsvps || []).filter((r: any) => r.status === 'declined').length,
+        }
+      }));
+
+      setEvents(eventsWithCounts);
     } catch (err) {
       console.error('Error fetching public events:', err);
       showError('Failed to load events');
@@ -121,6 +131,7 @@ export function PublicEventsView() {
                 onRsvp={() => {
                   // Public events don't support member RSVP, only guest signup
                 }}
+                isPublicView={true}
               />
             ))}
           </div>
