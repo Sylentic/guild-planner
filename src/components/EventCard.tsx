@@ -27,7 +27,7 @@ interface EventCardProps {
   clanId: string;
   userId: string;
   characters: CharacterWithProfessions[];
-  onRsvp: (status: RsvpStatus, role?: EventRole | null, characterId?: string) => void;
+  onRsvp: (status: RsvpStatus, role?: EventRole | null, characterId?: string, targetUserId?: string) => void;
   onEdit?: () => void;
   onCancel?: () => void;
   onDelete?: () => void;
@@ -49,6 +49,8 @@ export function EventCard({
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EventRole | null>(null);
   const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminTargetUserId, setAdminTargetUserId] = useState<string | null>(null);
   const [isRsvpLoading, setIsRsvpLoading] = useState(false);
   const { showToast } = useToast();
   const { t } = useLanguage();
@@ -57,6 +59,14 @@ export function EventCard({
   // Get user's main character and filter characters for this user
   const userCharacters = characters.filter(c => c.user_id === userId);
   const mainCharacter = userCharacters.find(c => c.is_main);
+  
+  // Check if user is admin
+  const isAdmin = hasPermission('events_edit_any') || canManage;
+  
+  // Get unique users from all characters for admin selector
+  const uniqueUsers = Array.from(new Map(
+    characters.map(char => [char.user_id, { userId: char.user_id, userName: char.display_name }])
+  ).values()).filter(u => u.userId !== userId); // Exclude current user
 
   // Helper function to format attendee name (show char + discord name)
   const formatAttendeeName = (rsvp: EventWithRsvps['rsvps'][0]): string => {
@@ -87,10 +97,12 @@ export function EventCard({
       setIsRsvpLoading(true);
       // Use selected character, or default to main character for status changes
       const charId = selectedCharacterId || mainCharacter?.id;
-      await onRsvp(status, role, charId);
+      const targetUserId = adminMode && adminTargetUserId ? adminTargetUserId : undefined;
+      await onRsvp(status, role, charId, targetUserId);
       // Show success toast
       const statusText = status === 'attending' ? 'attending' : status === 'maybe' ? 'maybe' : 'declined';
-      showToast('success', `Successfully marked as ${statusText}`);
+      const forText = adminMode && adminTargetUserId ? ' for selected member' : '';
+      showToast('success', `Successfully marked as ${statusText}${forText}`);
     } catch (err) {
       console.error('RSVP error:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to RSVP for event';
@@ -363,31 +375,80 @@ export function EventCard({
           {/* RSVP buttons */}
           {!event.is_cancelled && !isPast && (
             <div className="space-y-3">
-              {/* Character selector - show if user has characters */}
-              {userCharacters.length > 0 && (
+              {/* Admin mode toggle - only show for admins */}
+              {isAdmin && (
+                <div className="p-2 bg-slate-800/50 border border-amber-500/30 rounded-lg">
+                  <label className="flex items-center gap-2 text-xs text-amber-300 cursor-pointer mb-2">
+                    <input
+                      type="checkbox"
+                      checked={adminMode}
+                      onChange={(e) => {
+                        setAdminMode(e.target.checked);
+                        setAdminTargetUserId(null);
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <span>Respond on behalf of member</span>
+                  </label>
+                  
+                  {/* Show member selector when admin mode is on */}
+                  {adminMode && uniqueUsers.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {uniqueUsers.map((user) => (
+                        <button
+                          key={user.userId}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAdminTargetUserId(adminTargetUserId === user.userId ? null : user.userId);
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            adminTargetUserId === user.userId
+                              ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-amber-600/30 text-amber-300'
+                              : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                          }`}
+                        >
+                          {user.userName}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Character selector - show if user has characters (or admin selected a target) */}
+              {(userCharacters.length > 0 || (adminMode && adminTargetUserId)) && (
                 <div>
                   <label className="block text-xs text-slate-400 mb-2">
                     Attending as
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {userCharacters.map((character) => (
-                      <button
-                        key={character.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCharacterId(selectedCharacterId === character.id ? null : character.id);
-                        }}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                          selectedCharacterId === character.id || (!selectedCharacterId && mainCharacter?.id === character.id)
-                            ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-slate-700 text-white'
-                            : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                        }`}
-                      >
-                        {character.name}
-                        {character.is_main && <span className="text-xs text-yellow-400">★</span>}
-                      </button>
-                    ))}
+                    {(() => {
+                      // If admin mode is on, show target user's characters; otherwise show current user's
+                      const charsToShow = adminMode && adminTargetUserId 
+                        ? characters.filter(c => c.user_id === adminTargetUserId)
+                        : userCharacters;
+                      const mainChar = charsToShow.find(c => c.is_main);
+                      
+                      return charsToShow.map((character) => (
+                        <button
+                          key={character.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCharacterId(selectedCharacterId === character.id ? null : character.id);
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            selectedCharacterId === character.id || (!selectedCharacterId && mainChar?.id === character.id)
+                              ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-slate-700 text-white'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                          }`}
+                        >
+                          {character.name}
+                          {character.is_main && <span className="text-xs text-yellow-400">★</span>}
+                        </button>
+                      ));
+                    })()}
                   </div>
                 </div>
               )}

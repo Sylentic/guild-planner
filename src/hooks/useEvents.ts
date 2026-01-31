@@ -228,15 +228,19 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     status: RsvpStatus,
     role?: EventRole | null,
     characterId?: string,
+    targetUserId?: string,
     note?: string
   ) => {
     if (!userId) return;
+
+    // Use targetUserId if provided (admin responding on behalf), otherwise use current user
+    const rsvpUserId = targetUserId || userId;
 
     const { error: rsvpError } = await supabase
       .from('event_rsvps')
       .upsert({
         event_id: eventId,
-        user_id: userId,
+        user_id: rsvpUserId,
         status,
         role: role || null,
         character_id: characterId || null,

@@ -24,7 +24,7 @@ interface EventsListProps {
   onUpdateEvent: (id: string, updates: Partial<EventWithRsvps>) => Promise<void>;
   onCancelEvent: (id: string) => Promise<void>;
   onDeleteEvent: (id: string) => Promise<void>;
-  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null, characterId?: string) => Promise<void>;
+  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null, characterId?: string, targetUserId?: string) => Promise<void>;
   onCreateAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateAnnouncement: (id: string, updates: Partial<Announcement>) => Promise<void>;
   onDeleteAnnouncement: (id: string) => Promise<void>;
@@ -264,7 +264,7 @@ export function EventsList({
               clanId={clanId}
               userId={userId}
               characters={characters}
-              onRsvp={(status, role, characterId) => onRsvp(event.id, status, role, characterId)}
+              onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
               onEdit={canManage ? () => setEditingEvent(event) : undefined}
               onCancel={canManage ? () => onCancelEvent(event.id) : undefined}
               onDelete={canManage ? () => onDeleteEvent(event.id) : undefined}
