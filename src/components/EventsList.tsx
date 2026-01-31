@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2, Link } from 'lucide-react';
 import { EventWithRsvps, Announcement, RsvpStatus, EventRole, Event } from '@/lib/events';
+import { CharacterWithProfessions } from '@/lib/types';
 import { EventCard } from './EventCard';
 import { EventForm } from './EventForm';
 import { AnnouncementForm } from './AnnouncementForm';
@@ -17,12 +18,13 @@ interface EventsListProps {
   timezone: string;
   clanId: string;
   userId: string;
+  characters: CharacterWithProfessions[];
   canManage: boolean;
   onCreateEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateEvent: (id: string, updates: Partial<EventWithRsvps>) => Promise<void>;
   onCancelEvent: (id: string) => Promise<void>;
   onDeleteEvent: (id: string) => Promise<void>;
-  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null) => Promise<void>;
+  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null, characterId?: string) => Promise<void>;
   onCreateAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateAnnouncement: (id: string, updates: Partial<Announcement>) => Promise<void>;
   onDeleteAnnouncement: (id: string) => Promise<void>;
@@ -34,6 +36,7 @@ export function EventsList({
   timezone, // Keep the timezone prop for backward compatibility
   clanId,
   userId,
+  characters,
   canManage,
   onCreateEvent,
   onUpdateEvent,
@@ -260,7 +263,8 @@ export function EventsList({
               timezone={localTimezone}
               clanId={clanId}
               userId={userId}
-              onRsvp={(status, role) => onRsvp(event.id, status, role)}
+              characters={characters}
+              onRsvp={(status, role, characterId) => onRsvp(event.id, status, role, characterId)}
               onEdit={canManage ? () => setEditingEvent(event) : undefined}
               onCancel={canManage ? () => onCancelEvent(event.id) : undefined}
               onDelete={canManage ? () => onDeleteEvent(event.id) : undefined}

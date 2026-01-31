@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Clock, Check, HelpCircle, X, ChevronDown, Chev
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePermissions } from '@/hooks/usePermissions';
+import { CharacterWithProfessions } from '@/lib/types';
 import { Skeleton } from './ui/Skeleton';
 import { 
   EventWithRsvps, 
@@ -25,7 +26,8 @@ interface EventCardProps {
   timezone: string;
   clanId: string;
   userId: string;
-  onRsvp: (status: RsvpStatus, role?: EventRole | null) => void;
+  characters: CharacterWithProfessions[];
+  onRsvp: (status: RsvpStatus, role?: EventRole | null, characterId?: string) => void;
   onEdit?: () => void;
   onCancel?: () => void;
   onDelete?: () => void;
@@ -37,6 +39,7 @@ export function EventCard({
   timezone, 
   clanId,
   userId,
+  characters,
   onRsvp, 
   onEdit, 
   onCancel,
@@ -45,16 +48,23 @@ export function EventCard({
 }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EventRole | null>(null);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
   const [isRsvpLoading, setIsRsvpLoading] = useState(false);
   const { showToast } = useToast();
   const { t } = useLanguage();
   const { hasPermission } = usePermissions(clanId);
 
+  // Get user's main character and filter characters for this user
+  const userCharacters = characters.filter(c => c.user_id === userId);
+  const mainCharacter = userCharacters.find(c => c.is_main);
+
   // Wrapper for RSVP calls with error handling and loading state
   const handleRsvpClick = async (status: RsvpStatus, role?: EventRole | null) => {
     try {
       setIsRsvpLoading(true);
-      await onRsvp(status, role);
+      // Use selected character, or default to main character for status changes
+      const charId = selectedCharacterId || mainCharacter?.id;
+      await onRsvp(status, role, charId);
       // Show success toast
       const statusText = status === 'attending' ? 'attending' : status === 'maybe' ? 'maybe' : 'declined';
       showToast('success', `Successfully marked as ${statusText}`);
@@ -328,6 +338,37 @@ export function EventCard({
           )}
 
           {/* RSVP buttons */}
+          {!event.is_cancelled && !isPast && (
+            <div className="space-y-3">
+              {/* Character selector - show if user has characters */}
+              {userCharacters.length > 0 && (
+                <div>
+                  <label className="block text-xs text-slate-400 mb-2">
+                    Attending as
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {userCharacters.map((character) => (
+                      <button
+                        key={character.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCharacterId(selectedCharacterId === character.id ? null : character.id);
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                          selectedCharacterId === character.id || (!selectedCharacterId && mainCharacter?.id === character.id)
+                            ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-slate-700 text-white'
+                            : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                        }`}
+                      >
+                        {character.name}
+                        {character.is_main && <span className="text-xs text-yellow-400">★</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
           {!event.is_cancelled && !isPast && (
             <div className="space-y-3">
               {/* Role selector - show if any roles are needed */}
