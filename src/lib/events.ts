@@ -119,6 +119,7 @@ export interface Event {
   melee_dps_max: number | null; // Maximum allowed (null = unlimited)
   allow_combined_dps: boolean; // If true, ignore individual ranged/melee maxes
   combined_dps_max: number | null; // Combined max for ranged + melee DPS
+  is_public: boolean; // If true, public guests can RSVP
   is_cancelled: boolean;
   created_at: string;
   updated_at: string;
