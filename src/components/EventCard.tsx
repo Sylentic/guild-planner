@@ -65,8 +65,14 @@ export function EventCard({
   
   // Get unique users from all characters for admin selector
   const uniqueUsers = Array.from(new Map(
-    characters.map(char => [char.user_id, { userId: char.user_id, userName: char.display_name }])
-  ).values()).filter(u => u.userId !== userId); // Exclude current user
+    characters
+      .filter(char => char.user_id !== userId) // Exclude current user
+      .map(char => {
+        const mainChar = characters.find(c => c.user_id === char.user_id && c.is_main);
+        const displayChar = mainChar || char;
+        return [char.user_id, { userId: char.user_id, characterName: displayChar.name }];
+      })
+  ).values());
 
   // Helper function to format attendee name (show char + discord name)
   const formatAttendeeName = (rsvp: EventWithRsvps['rsvps'][0]): string => {
@@ -408,7 +414,7 @@ export function EventCard({
                               : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
                           }`}
                         >
-                          {user.userName}
+                          {user.characterName}
                         </button>
                       ))}
                     </div>
