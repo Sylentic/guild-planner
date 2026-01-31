@@ -268,7 +268,19 @@ export function EventCard({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {Object.entries(EVENT_ROLES).map(([roleKey, roleConfig]) => {
                   const role = roleKey as EventRole;
-                  // Map role keys to database field names (tanks_min, clerics_min, etc.)
+                  
+                  // Skip individual DPS roles if combined
+                  if (event.allow_combined_dps && (role === 'ranged_dps' || role === 'melee_dps')) {
+                    return null;
+                  }
+                  
+                  // Special handling for combined DPS
+                  if (role === 'tank' && event.allow_combined_dps && (event.ranged_dps_min > 0 || event.melee_dps_min > 0 || event.ranged_dps_max || event.melee_dps_max)) {
+                    // This will be handled as a separate card below
+                    return null;
+                  }
+                  
+                  // Map role keys to database field names
                   const minFieldMap: Record<EventRole, keyof EventWithRsvps> = {
                     tank: 'tanks_min',
                     cleric: 'clerics_min',
@@ -415,6 +427,150 @@ export function EventCard({
                     </div>
                   );
                 })}
+                
+                {/* Combined DPS card if enabled */}
+                {event.allow_combined_dps && (event.ranged_dps_min > 0 || event.melee_dps_min > 0 || event.ranged_dps_max || event.melee_dps_max) && (
+                  (() => {
+                    const combinedMin = (event.ranged_dps_min || 0) + (event.melee_dps_min || 0);
+                    const combinedMax = event.combined_dps_max;
+                    
+                    const rangedCounts = event.role_counts?.ranged_dps || { attending: 0, maybe: 0 };
+                    const meleeCounts = event.role_counts?.melee_dps || { attending: 0, maybe: 0 };
+                    const combinedAttending = rangedCounts.attending + meleeCounts.attending;
+                    const combinedMaybe = rangedCounts.maybe + meleeCounts.maybe;
+                    const combinedTotal = combinedAttending + combinedMaybe;
+                    
+                    const isMinimumMet = combinedMin > 0 && combinedTotal >= combinedMin;
+                    const isAtMax = combinedMax !== null && combinedTotal >= combinedMax;
+                    
+                    // Get combined RSVPs
+                    const combinedRsvps = (event.rsvps || []).filter(rsvp => 
+                      (rsvp.role === 'ranged_dps' || rsvp.role === 'melee_dps') &&
+                      (rsvp.status === 'attending' || rsvp.status === 'maybe')
+                    );
+                    
+                    // Get combined guest RSVPs
+                    const combinedGuestRsvps = (event.guest_rsvps || []).filter(guest =>
+                      guest.role === 'ranged_dps' || guest.role === 'melee_dps'
+                    );
+                    
+                    let countDisplay;
+                    if (combinedMin > 0 && combinedMax !== null) {
+                      countDisplay = `${combinedTotal}/${combinedMin}/${combinedMax}`;
+                    } else if (combinedMin > 0) {
+                      countDisplay = `${combinedTotal}/${combinedMin}+`;
+                    } else if (combinedMax !== null) {
+                      countDisplay = `${combinedTotal}/${combinedMax}`;
+                    } else {
+                      countDisplay = `${combinedTotal}`;
+                    }
+                    
+                    return (
+                      <div 
+                        key="combined_dps"
+                        className={`bg-slate-800/50 rounded-lg p-3 space-y-2 border transition-all sm:col-span-2 lg:col-span-3 ${
+                          isAtMax ? 'border-red-500/50' :
+                          isMinimumMet ? 'border-green-500/50' : 'border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">🗡️</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-purple-400">
+                                DPS (Combined)
+                              </span>
+                              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">
+                                Ranged + Melee
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-sm font-semibold ${
+                              isAtMax ? 'text-red-400' :
+                              isMinimumMet ? 'text-green-400' : 'text-slate-400'
+                            }`}>
+                              {countDisplay}
+                            </span>
+                            {isAtMax && (
+                              <span className="text-xs text-red-400" title="Role is full">🔒</span>
+                            )}
+                            {isMinimumMet && !isAtMax && (
+                              <Check size={14} className="text-green-400" />
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="w-full bg-slate-700 rounded-full h-1.5">
+                          <div 
+                            className="h-1.5 rounded-full transition-all"
+                            style={{ 
+                              width: `${Math.min(100, (combinedTotal / (combinedMax || combinedMin || 1)) * 100)}%`,
+                              backgroundColor: isAtMax ? '#ef4444' : '#a855f7'
+                            }}
+                          />
+                        </div>
+                        
+                        {/* List of signups */}
+                        {!isPublicView && (combinedRsvps.length > 0 || combinedGuestRsvps.length > 0) && (
+                          <div className="text-xs space-y-1">
+                            {combinedRsvps.map((rsvp, idx) => (
+                              <div 
+                                key={`combined-member-${idx}`}
+                                className="flex items-center gap-1.5 text-slate-300"
+                              >
+                                {rsvp.status === 'attending' ? (
+                                  <Check size={12} className="text-green-400" />
+                                ) : (
+                                  <HelpCircle size={12} className="text-yellow-400" />
+                                )}
+                                <span className="text-xs text-slate-500">{rsvp.role === 'ranged_dps' ? '(Ranged)' : '(Melee)'}</span>
+                                <span className="truncate">
+                                  {formatAttendeeName(rsvp)}
+                                </span>
+                              </div>
+                            ))}
+                            {combinedGuestRsvps.map((guest, idx) => (
+                              <div 
+                                key={`combined-guest-${idx}`}
+                                className="flex items-center gap-1.5 text-slate-400 italic"
+                              >
+                                <Check size={12} className="text-blue-400" />
+                                <span className="text-xs text-slate-500">{guest.role === 'ranged_dps' ? '(Ranged)' : '(Melee)'}</span>
+                                <span className="truncate">
+                                  {guest.guest_name}
+                                  <span className="text-slate-500 text-xs ml-1">(guest)</span>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Public view combined counts */}
+                        {isPublicView && (
+                          <div className="text-xs space-y-1">
+                            <div className="text-slate-300">
+                              <span className="font-medium text-green-400">{combinedRsvps.filter(r => r.status === 'attending').length}</span>
+                              <span className="text-slate-400 mx-1">confirmed</span>
+                              {combinedRsvps.filter(r => r.status === 'maybe').length > 0 && (
+                                <>
+                                  <span className="font-medium text-yellow-400">{combinedRsvps.filter(r => r.status === 'maybe').length}</span>
+                                  <span className="text-slate-400">tentative</span>
+                                </>
+                              )}
+                            </div>
+                            {combinedGuestRsvps.length > 0 && (
+                              <div className="text-slate-400 italic">
+                                {combinedGuestRsvps.length} guest{combinedGuestRsvps.length !== 1 ? 's' : ''}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
               </div>
             </div>
           )}
