@@ -85,7 +85,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
 
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">{clanName} - Public Events</h1>
-        <p className="text-slate-400">
+        <p className="text-slate-300">
           {events.length === 0
             ? `No public events scheduled for ${clanName}`
             : `${events.length} public event${events.length !== 1 ? 's' : ''} available`}
@@ -94,7 +94,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
 
       {events.length === 0 ? (
         <div className="text-center py-12 bg-slate-800/50 rounded-lg border border-slate-700">
-          <p className="text-slate-400">No public events at the moment.</p>
+          <p className="text-slate-300">No public events at the moment.</p>
         </div>
       ) : (
         <div className="space-y-4">

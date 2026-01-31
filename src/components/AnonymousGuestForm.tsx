@@ -74,7 +74,8 @@ export function AnonymousGuestForm({ eventId, onSuccess }: AnonymousGuestFormPro
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 px-3 py-2 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors cursor-pointer"
+        aria-label="Sign up as guest for this event"
+        className="flex items-center gap-2 px-3 py-2 text-sm bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-lg transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900"
       >
         <Users size={16} />
         Sign up as guest
@@ -91,7 +92,8 @@ export function AnonymousGuestForm({ eventId, onSuccess }: AnonymousGuestFormPro
         </h3>
         <button
           onClick={() => setIsOpen(false)}
-          className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          aria-label="Close guest sign-up form"
+          className="p-1 text-slate-300 hover:text-white active:text-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500 rounded"
         >
           <X size={16} />
         </button>
@@ -100,23 +102,26 @@ export function AnonymousGuestForm({ eventId, onSuccess }: AnonymousGuestFormPro
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* Character Name */}
         <div>
-          <label className="block text-xs text-slate-300 mb-1">
-            Character Name *
+          <label htmlFor="guestName" className="block text-xs text-slate-200 font-medium mb-1">
+            Character Name <span className="text-red-400" aria-label="required">*</span>
           </label>
           <input
+            id="guestName"
             type="text"
             value={formData.guestName}
             onChange={(e: any) => setFormData({ ...formData, guestName: e.target.value })}
             placeholder="Enter your character name"
-            className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-slate-700 border border-slate-500 rounded text-slate-100 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isSubmitting}
+            required
+            aria-required="true"
           />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-xs text-slate-300 mb-1">
-            Email *
+          <label htmlFor="guestEmail" className="block text-xs text-slate-200 font-medium mb-1">
+            Email <span className="text-red-400" aria-label="required">*</span>
           </label>
           <input
             type="email"
@@ -130,8 +135,8 @@ export function AnonymousGuestForm({ eventId, onSuccess }: AnonymousGuestFormPro
 
         {/* Role Selection */}
         <div>
-          <label className="block text-xs text-slate-300 mb-2">
-            Role *
+          <label className="block text-xs text-slate-200 font-medium mb-2">
+            Role <span className="text-red-400" aria-label="required">*</span>
           </label>
           <div className="grid grid-cols-3 gap-2">
             {Object.entries(EVENT_ROLES).map(([roleKey, roleConfig]) => (
@@ -167,14 +172,14 @@ export function AnonymousGuestForm({ eventId, onSuccess }: AnonymousGuestFormPro
             type="button"
             onClick={() => setIsOpen(false)}
             disabled={isSubmitting}
-            className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 active:bg-slate-500 text-slate-100 text-sm rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white text-sm font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             {isSubmitting ? 'Registering...' : 'Register'}
           </button>

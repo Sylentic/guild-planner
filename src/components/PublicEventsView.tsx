@@ -105,14 +105,15 @@ export function PublicEventsView() {
           <div className="flex items-center justify-between border-b border-slate-700 pb-3">
             <div>
               <h2 className="text-lg font-semibold text-white">{clanName}</h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-300">
                 {clanEvents.length} event{clanEvents.length !== 1 ? 's' : ''}
               </p>
             </div>
             {slug && (
               <Link
                 href={`/${slug}/public-events`}
-                className="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-600 text-white rounded transition-colors cursor-pointer"
+                className="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-600 active:bg-slate-500 text-slate-100 rounded transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500"
+                title="View all events for this guild"
               >
                 View All
               </Link>
