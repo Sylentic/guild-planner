@@ -24,6 +24,7 @@ interface EventFormData {
   melee_dps_max: string;
   allow_combined_dps: boolean;
   combined_dps_max: string;
+  is_public: boolean;
   sendDiscordNotification: boolean;
 }
 
@@ -64,6 +65,7 @@ export function EventForm({
     melee_dps_max: initialData?.melee_dps_max?.toString() || '',
     allow_combined_dps: (initialData as any)?.allow_combined_dps || false,
     combined_dps_max: (initialData as any)?.combined_dps_max?.toString() || '',
+    is_public: (initialData as any)?.is_public || false,
     sendDiscordNotification: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,6 +122,7 @@ export function EventForm({
         melee_dps_max: formData.melee_dps_max ? parseInt(formData.melee_dps_max) : null,
         allow_combined_dps: formData.allow_combined_dps,
         combined_dps_max: formData.allow_combined_dps && formData.combined_dps_max ? parseInt(formData.combined_dps_max) : null,
+        is_public: formData.is_public,
       };
       console.log('EventForm submitting eventData:', eventData, 'sendDiscordNotification:', formData.sendDiscordNotification);
       await onSubmit(eventData, formData.sendDiscordNotification);
@@ -372,6 +375,25 @@ export function EventForm({
                     </p>
                   </div>
                 )}
+              </div>
+
+              {/* Public Event Option */}
+              <div className="pt-2 border-t border-slate-700">
+                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="isPublic"
+                    checked={formData.is_public}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      is_public: e.target.checked
+                    })}
+                    className="w-4 h-4 text-green-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-green-500"
+                  />
+                  <label htmlFor="isPublic" className="text-sm text-slate-300 cursor-pointer flex-1">
+                    Make this event public (allow unauthenticated guests to sign up)
+                  </label>
+                </div>
               </div>
             </div>
           </div>
