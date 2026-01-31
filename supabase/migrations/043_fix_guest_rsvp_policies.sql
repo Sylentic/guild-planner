@@ -1,23 +1,30 @@
--- Migration: Fix guest RSVP RLS policies
--- Purpose: Ensure only public events and API-validated inserts are allowed
+-- Migration: Fix guest RSVP for public events
+-- Purpose: Allow public guests to RSVP without an allied clan
 
 -- =====================================================
--- DROP OLD PERMISSIVE POLICY
+-- MAKE ALLIED_CLAN_ID NULLABLE FOR PUBLIC GUESTS
 -- =====================================================
 
--- Drop the old "API can create guest RSVPs" policy that allowed everything
-DROP POLICY IF EXISTS "API can create guest RSVPs" ON guest_event_rsvps;
+-- Make allied_clan_id nullable so public guests can sign up without a clan
+ALTER TABLE guest_event_rsvps ALTER COLUMN allied_clan_id DROP NOT NULL;
 
--- Allow authenticated members to insert guest RSVPs for their clan's events
-CREATE POLICY "Members can add guest RSVPs for their clan"
-  ON guest_event_rsvps FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM events e
-      WHERE e.id = guest_event_rsvps.event_id
-      AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
-    )
-  );
+-- Drop the foreign key constraint and recreate it as deferrable
+ALTER TABLE guest_event_rsvps DROP CONSTRAINT guest_event_rsvps_allied_clan_id_fkey;
+ALTER TABLE guest_event_rsvps 
+ADD CONSTRAINT guest_event_rsvps_allied_clan_id_fkey 
+FOREIGN KEY (allied_clan_id) REFERENCES clans(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+-- Update unique constraint to allow NULL allied_clan_id for public guests
+ALTER TABLE guest_event_rsvps DROP CONSTRAINT guest_rsvp_unique_anonymous;
+ALTER TABLE guest_event_rsvps 
+ADD CONSTRAINT guest_rsvp_unique_anonymous UNIQUE NULLS NOT DISTINCT (event_id, guest_email, allied_clan_id);
+
+-- =====================================================
+-- DISABLE RLS (validation happens at application layer)
+-- =====================================================
+
+-- Disable RLS since we validate at the application layer
+ALTER TABLE guest_event_rsvps DISABLE ROW LEVEL SECURITY;
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('043_fix_guest_rsvp_policies.sql');

@@ -413,7 +413,18 @@ export function EventCard({
                           </div>
                           {roleGuestRsvps.length > 0 && (
                             <div className="text-slate-400 italic">
-                              {roleGuestRsvps.length} guest{roleGuestRsvps.length !== 1 ? 's' : ''}
+                              <span className="font-medium text-blue-400">
+                                {roleGuestRsvps.filter(g => g.status === 'attending').length}
+                              </span>
+                              <span className="mx-1">guest confirmed</span>
+                              {roleGuestRsvps.filter(g => g.status === 'maybe').length > 0 && (
+                                <>
+                                  <span className="font-medium text-blue-300">
+                                    {roleGuestRsvps.filter(g => g.status === 'maybe').length}
+                                  </span>
+                                  <span className="mx-1">guest tentative</span>
+                                </>
+                              )}
                             </div>
                           )}
                         </div>
@@ -556,7 +567,20 @@ export function EventCard({
                             </div>
                             {combinedGuestRsvps.length > 0 && (
                               <div className="text-slate-400 italic">
-                                {combinedGuestRsvps.length} guest{combinedGuestRsvps.length !== 1 ? 's' : ''}
+                                <span className="font-medium text-blue-400">
+                                  {combinedGuestRsvps.filter(g => g.status === 'attending').length}
+                                </span>
+                                <span className="mx-1">guest confirmed</span>
+                                {combinedGuestRsvps.filter(g => g.status === 'maybe').length > 0 && (
+                                  <>
+                                    <span className="font-medium text-blue-300">
+                                      {combinedGuestRsvps.filter(g => g.status === 'maybe').length}
+                                    </span>
+                                    <span className="mx-1">guest tentative</span>
+                                  </>
+                                )}
+                              </div>
+                            )}
                               </div>
                             )}
                           </div>
