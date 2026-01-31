@@ -117,6 +117,8 @@ export interface Event {
   bards_max: number | null; // Maximum allowed (null = unlimited)
   ranged_dps_max: number | null; // Maximum allowed (null = unlimited)
   melee_dps_max: number | null; // Maximum allowed (null = unlimited)
+  allow_combined_dps: boolean; // If true, ignore individual ranged/melee maxes
+  combined_dps_max: number | null; // Combined max for ranged + melee DPS
   is_cancelled: boolean;
   created_at: string;
   updated_at: string;
@@ -141,8 +143,20 @@ export interface EventRsvp {
   };
 }
 
+export interface GuestEventRsvp {
+  id: string;
+  event_id: string;
+  allied_clan_id: string;
+  guest_name: string;
+  class_id: string | null;
+  role: EventRole;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface EventWithRsvps extends Event {
   rsvps: EventRsvp[];
+  guest_rsvps?: GuestEventRsvp[];
   rsvp_counts: {
     attending: number;
     maybe: number;

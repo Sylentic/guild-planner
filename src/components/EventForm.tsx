@@ -22,6 +22,8 @@ interface EventFormData {
   bards_max: string;
   ranged_dps_max: string;
   melee_dps_max: string;
+  allow_combined_dps: boolean;
+  combined_dps_max: string;
   sendDiscordNotification: boolean;
 }
 
@@ -60,6 +62,8 @@ export function EventForm({
     bards_max: initialData?.bards_max?.toString() || '',
     ranged_dps_max: initialData?.ranged_dps_max?.toString() || '',
     melee_dps_max: initialData?.melee_dps_max?.toString() || '',
+    allow_combined_dps: (initialData as any)?.allow_combined_dps || false,
+    combined_dps_max: (initialData as any)?.combined_dps_max?.toString() || '',
     sendDiscordNotification: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,6 +118,8 @@ export function EventForm({
         bards_max: formData.bards_max ? parseInt(formData.bards_max) : null,
         ranged_dps_max: formData.ranged_dps_max ? parseInt(formData.ranged_dps_max) : null,
         melee_dps_max: formData.melee_dps_max ? parseInt(formData.melee_dps_max) : null,
+        allow_combined_dps: formData.allow_combined_dps,
+        combined_dps_max: formData.allow_combined_dps && formData.combined_dps_max ? parseInt(formData.combined_dps_max) : null,
       };
       console.log('EventForm submitting eventData:', eventData, 'sendDiscordNotification:', formData.sendDiscordNotification);
       await onSubmit(eventData, formData.sendDiscordNotification);
@@ -272,6 +278,12 @@ export function EventForm({
                 } as const;
                 const minFieldName = minFieldMap[roleKey as EventRole];
                 const maxFieldName = maxFieldMap[roleKey as EventRole];
+
+                // Skip DPS fields if combined DPS is enabled
+                if (formData.allow_combined_dps && (roleKey === 'ranged_dps' || roleKey === 'melee_dps')) {
+                  return null;
+                }
+
                 return (
                   <div key={roleKey} className="flex items-center gap-3">
                     <div className="flex items-center gap-2 w-32">
@@ -317,6 +329,50 @@ export function EventForm({
                   </div>
                 );
               })}
+
+              {/* Combined DPS Option */}
+              <div className="pt-2 border-t border-slate-700">
+                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="allowCombinedDps"
+                    checked={formData.allow_combined_dps}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      allow_combined_dps: e.target.checked,
+                      combined_dps_max: ''
+                    })}
+                    className="w-4 h-4 text-orange-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-orange-500"
+                  />
+                  <label htmlFor="allowCombinedDps" className="text-sm text-slate-300 cursor-pointer flex-1">
+                    Combine Ranged & Melee DPS limits
+                  </label>
+                </div>
+
+                {formData.allow_combined_dps && (
+                  <div className="mt-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                    <label htmlFor="combined-dps-max" className="block text-sm text-slate-300 mb-2">
+                      Combined DPS Max
+                    </label>
+                    <input
+                      id="combined-dps-max"
+                      type="number"
+                      min="1"
+                      max="40"
+                      value={formData.combined_dps_max}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        combined_dps_max: e.target.value 
+                      })}
+                      className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      placeholder="e.g., 5"
+                    />
+                    <p className="text-xs text-slate-400 mt-2">
+                      Any combination of Ranged or Melee DPS can fill this slot
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

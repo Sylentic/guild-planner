@@ -291,10 +291,15 @@ export function EventCard({
                   const isMinimumMet = minimum > 0 && total >= minimum;
                   const isAtMax = maximum !== null && total >= maximum;
                   
-                  // Get RSVPs for this role
+                  // Get RSVPs for this role (both member and guest)
                   const roleRsvps = event.rsvps?.filter(rsvp => 
                     rsvp.role === role && 
                     (rsvp.status === 'attending' || rsvp.status === 'maybe')
+                  ) || [];
+                  
+                  // Get guest RSVPs for this role
+                  const roleGuestRsvps = event.guest_rsvps?.filter(guest => 
+                    guest.role === role
                   ) || [];
                   
                   // Format the count display
@@ -352,11 +357,11 @@ export function EventCard({
                       </div>
                       
                       {/* List of signups */}
-                      {roleRsvps.length > 0 && (
+                      {(roleRsvps.length > 0 || roleGuestRsvps.length > 0) && (
                         <div className="text-xs space-y-1">
                           {roleRsvps.map((rsvp, idx) => (
                             <div 
-                              key={idx}
+                              key={`member-${idx}`}
                               className="flex items-center gap-1.5 text-slate-300"
                             >
                               {rsvp.status === 'attending' ? (
@@ -366,6 +371,18 @@ export function EventCard({
                               )}
                               <span className="truncate">
                                 {formatAttendeeName(rsvp)}
+                              </span>
+                            </div>
+                          ))}
+                          {roleGuestRsvps.map((guest, idx) => (
+                            <div 
+                              key={`guest-${idx}`}
+                              className="flex items-center gap-1.5 text-slate-400 italic"
+                            >
+                              <Check size={12} className="text-blue-400" />
+                              <span className="truncate">
+                                {guest.guest_name}
+                                <span className="text-slate-500 text-xs ml-1">(guest)</span>
                               </span>
                             </div>
                           ))}
@@ -381,6 +398,17 @@ export function EventCard({
           {/* RSVP buttons */}
           {!event.is_cancelled && !isPast && (
             <div className="space-y-3">
+              {/* Guest signup form - show this at the top for ally members */}
+              {/* This would be shown for allied clan members in production */}
+              {/* For now, commented out until we have a way to identify ally-only events */}
+              {/* <GuestSignupForm 
+                eventId={event.id}
+                alliedClanId={clanId}
+                onSuccess={() => {
+                  // Could refresh the event here
+                }}
+              /> */}
+
               {/* Admin mode toggle - only show for admins */}
               {isAdmin && (
                 <div className="p-2 bg-slate-800/50 border border-amber-500/30 rounded-lg">

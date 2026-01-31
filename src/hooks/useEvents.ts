@@ -45,7 +45,8 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
             *,
             character:members(id, name),
             user:users(id, display_name)
-          )
+          ),
+          guest_event_rsvps (*)
         `)
         .eq('clan_id', clanId)
         .gte('starts_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24h + future
@@ -56,33 +57,40 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       // Transform to EventWithRsvps
       const eventsWithRsvps: EventWithRsvps[] = (eventsData || []).map((event) => {
         const rsvps = event.event_rsvps || [];
+        const guestRsvps = event.guest_event_rsvps || [];
         return {
           ...event,
           rsvps,
+          guest_rsvps: guestRsvps,
           rsvp_counts: {
-            attending: rsvps.filter((r: EventRsvp) => r.status === 'attending').length,
+            attending: rsvps.filter((r: EventRsvp) => r.status === 'attending').length + guestRsvps.length,
             maybe: rsvps.filter((r: EventRsvp) => r.status === 'maybe').length,
             declined: rsvps.filter((r: EventRsvp) => r.status === 'declined').length,
           },
           role_counts: {
             tank: {
-              attending: rsvps.filter((r: EventRsvp) => r.role === 'tank' && r.status === 'attending').length,
+              attending: rsvps.filter((r: EventRsvp) => r.role === 'tank' && r.status === 'attending').length + 
+                         guestRsvps.filter((g: any) => g.role === 'tank').length,
               maybe: rsvps.filter((r: EventRsvp) => r.role === 'tank' && r.status === 'maybe').length,
             },
             cleric: {
-              attending: rsvps.filter((r: EventRsvp) => r.role === 'cleric' && r.status === 'attending').length,
+              attending: rsvps.filter((r: EventRsvp) => r.role === 'cleric' && r.status === 'attending').length +
+                         guestRsvps.filter((g: any) => g.role === 'cleric').length,
               maybe: rsvps.filter((r: EventRsvp) => r.role === 'cleric' && r.status === 'maybe').length,
             },
             bard: {
-              attending: rsvps.filter((r: EventRsvp) => r.role === 'bard' && r.status === 'attending').length,
+              attending: rsvps.filter((r: EventRsvp) => r.role === 'bard' && r.status === 'attending').length +
+                         guestRsvps.filter((g: any) => g.role === 'bard').length,
               maybe: rsvps.filter((r: EventRsvp) => r.role === 'bard' && r.status === 'maybe').length,
             },
             ranged_dps: {
-              attending: rsvps.filter((r: EventRsvp) => r.role === 'ranged_dps' && r.status === 'attending').length,
+              attending: rsvps.filter((r: EventRsvp) => r.role === 'ranged_dps' && r.status === 'attending').length +
+                         guestRsvps.filter((g: any) => g.role === 'ranged_dps').length,
               maybe: rsvps.filter((r: EventRsvp) => r.role === 'ranged_dps' && r.status === 'maybe').length,
             },
             melee_dps: {
-              attending: rsvps.filter((r: EventRsvp) => r.role === 'melee_dps' && r.status === 'attending').length,
+              attending: rsvps.filter((r: EventRsvp) => r.role === 'melee_dps' && r.status === 'attending').length +
+                         guestRsvps.filter((g: any) => g.role === 'melee_dps').length,
               maybe: rsvps.filter((r: EventRsvp) => r.role === 'melee_dps' && r.status === 'maybe').length,
             },
           },
