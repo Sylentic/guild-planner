@@ -39,7 +39,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
         )
         .eq('clan_id', clanId)
         .eq('is_public', true)
-        .order('event_start', { ascending: true });
+        .order('starts_at', { ascending: true });
 
       if (error) throw error;
 

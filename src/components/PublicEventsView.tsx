@@ -41,7 +41,7 @@ export function PublicEventsView() {
         `
         )
         .eq('is_public', true)
-        .order('event_start', { ascending: true });
+        .order('starts_at', { ascending: true });
 
       if (error) throw error;
 
