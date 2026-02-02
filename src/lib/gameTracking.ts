@@ -7,10 +7,13 @@ import { GameId } from '@/lib/games';
 export async function addUserGame(userId: string, gameId: GameId) {
   const { error } = await supabase
     .from('user_games')
-    .upsert({
-      user_id: userId,
-      game: gameId,
-    });
+    .upsert(
+      {
+        user_id: userId,
+        game: gameId,
+      },
+      { onConflict: 'user_id,game' }
+    );
 
   if (error) {
     console.error('Error adding user game:', error);
