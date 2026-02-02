@@ -3,11 +3,12 @@
 import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AlertCircle, LogOut, ChevronRight, Home, Plus, Trash2, Shield } from 'lucide-react';
+import { AlertCircle, LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader } from 'lucide-react';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { getGroupGames, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
 import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
@@ -34,6 +35,9 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const [loading, setLoading] = useState(true);
   const [enabledGames, setEnabledGames] = useState<string[]>(['aoc']); // Default to AoC
   const [showAddGame, setShowAddGame] = useState(false);
+  const [loadingGames, setLoadingGames] = useState(false);
+  const [addingGame, setAddingGame] = useState<string | null>(null);
+  const [removingGame, setRemovingGame] = useState<string | null>(null);
 
   // Fetch group data
   useEffect(() => {
@@ -57,6 +61,9 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           setGroupId(group.id);
           setGroupData(group);
           setGroupExists(true);
+          
+          // Load enabled games from database
+          await loadGroupGames(group.id);
         } else {
           setGroupExists(false);
         }
@@ -69,6 +76,55 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     }
     checkGroup();
   }, [groupSlug]);
+
+  // Load group games from database
+  const loadGroupGames = async (gid: string) => {
+    setLoadingGames(true);
+    try {
+      const games = await getGroupGames(gid);
+      setEnabledGames(games.length > 0 ? games : ['aoc']);
+    } catch (err) {
+      console.error('Error loading group games:', err);
+      setEnabledGames(['aoc']);
+    } finally {
+      setLoadingGames(false);
+    }
+  };
+
+  // Add game to group
+  const handleAddGame = async (gameSlug: string) => {
+    if (!groupId) return;
+    
+    setAddingGame(gameSlug);
+    try {
+      const success = await addGameToGroup(groupId, gameSlug);
+      if (success) {
+        setEnabledGames([...enabledGames, gameSlug]);
+        setShowAddGame(false);
+      }
+    } catch (err) {
+      console.error('Error adding game:', err);
+    } finally {
+      setAddingGame(null);
+    }
+  };
+
+  // Remove game from group
+  const handleRemoveGame = async (gameSlug: string) => {
+    if (!groupId) return;
+    
+    setRemovingGame(gameSlug);
+    try {
+      const success = await removeGameFromGroup(groupId, gameSlug);
+      if (success) {
+        setEnabledGames(enabledGames.filter(g => g !== gameSlug));
+      }
+    } catch (err) {
+      console.error('Error removing game:', err);
+    } finally {
+      setRemovingGame(null);
+    }
+  };
 
   // Get membership info to check if user is admin
   const {
@@ -193,14 +249,15 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               {ALL_AVAILABLE_GAMES.filter(g => !enabledGames.includes(g.slug)).map((game) => (
                 <button
                   key={game.slug}
-                  onClick={() => {
-                    setEnabledGames([...enabledGames, game.slug]);
-                    setShowAddGame(false);
-                  }}
-                  className="text-left p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded border border-slate-600 hover:border-orange-500 transition-colors"
+                  onClick={() => handleAddGame(game.slug)}
+                  disabled={addingGame === game.slug}
+                  className="text-left p-3 bg-slate-700/50 hover:bg-slate-600/50 disabled:opacity-50 disabled:cursor-not-allowed rounded border border-slate-600 hover:border-orange-500 transition-colors flex items-center justify-between"
                 >
-                  <span className="text-2xl block mb-1">{game.icon}</span>
-                  <span className="text-white font-medium">{game.name}</span>
+                  <div>
+                    <span className="text-2xl block mb-1">{game.icon}</span>
+                    <span className="text-white font-medium">{game.name}</span>
+                  </div>
+                  {addingGame === game.slug && <Loader className="w-4 h-4 text-orange-400 animate-spin" />}
                 </button>
               ))}
             </div>
@@ -250,11 +307,16 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               {/* Admin delete button */}
               {isAdmin && (
                 <button
-                  onClick={() => setEnabledGames(enabledGames.filter(g => g !== game.slug))}
-                  className="absolute top-2 right-2 p-2 opacity-0 group-hover:opacity-100 bg-red-500/20 hover:bg-red-500/40 rounded transition-all"
+                  onClick={() => handleRemoveGame(game.slug)}
+                  disabled={removingGame === game.slug}
+                  className="absolute top-2 right-2 p-2 opacity-0 group-hover:opacity-100 bg-red-500/20 hover:bg-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-all"
                   title="Remove this game from the group"
                 >
-                  <Trash2 className="w-4 h-4 text-red-400" />
+                  {removingGame === game.slug ? (
+                    <Loader className="w-4 h-4 text-red-400 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                  )}
                 </button>
               )}
             </div>

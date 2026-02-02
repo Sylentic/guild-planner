@@ -45,5 +45,6 @@
   "044_add_guest_rsvp_status.sql",
   "045_add_game_support.sql",
   "046_comprehensive_clans_to_groups_migration.sql",
-  "047_comprehensive_rls_recreation.sql"
+  "047_comprehensive_rls_recreation.sql",
+  "048_create_group_games_table.sql"
 ]
