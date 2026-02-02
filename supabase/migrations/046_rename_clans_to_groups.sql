@@ -23,8 +23,8 @@ ALTER TABLE group_achievements RENAME COLUMN clan_id TO group_id;
 
 -- 7. Rename indexes
 ALTER INDEX idx_clans_game RENAME TO idx_groups_game;
-ALTER INDEX idx_clan_members_user RENAME TO idx_group_members_user;
-ALTER INDEX idx_clan_members_clan RENAME TO idx_group_members_group;
+ALTER INDEX idx_clan_members_user_id RENAME TO idx_group_members_user_id;
+ALTER INDEX idx_clan_members_clan_id RENAME TO idx_group_members_group_id;
 ALTER INDEX idx_clan_achievements_clan RENAME TO idx_group_achievements_group;
 
 -- 8. Update constraints and references in other tables that reference clans
