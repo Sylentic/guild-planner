@@ -52,27 +52,39 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
 
   const loadCharacterShips = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const { data, error: fetchError } = await supabase
-        .from('character_ships')
-        .select('*')
-        .in('character_id', characters.map(c => c.id));
-
-      if (fetchError) throw fetchError;
-
+      // Initialize empty ships for all characters
       const shipsByCharacter: Record<string, CharacterShip[]> = {};
       characters.forEach(char => {
         shipsByCharacter[char.id] = [];
       });
 
-      data.forEach(ship => {
-        if (shipsByCharacter[ship.character_id]) {
-          shipsByCharacter[ship.character_id].push(ship);
+      // Only query if we have characters
+      if (characters.length > 0) {
+        const { data, error: fetchError } = await supabase
+          .from('character_ships')
+          .select('*')
+          .in('character_id', characters.map(c => c.id));
+
+        if (fetchError) {
+          console.error('Error loading ships:', fetchError);
+          throw fetchError;
         }
-      });
+
+        // Populate ships data
+        if (data) {
+          data.forEach(ship => {
+            if (shipsByCharacter[ship.character_id]) {
+              shipsByCharacter[ship.character_id].push(ship);
+            }
+          });
+        }
+      }
 
       setCharacterShips(shipsByCharacter);
     } catch (err) {
+      console.error('Failed to load ships:', err);
       setError(err instanceof Error ? err.message : 'Failed to load ships');
     } finally {
       setLoading(false);
@@ -118,16 +130,21 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
   const handleDeleteShip = async (shipId: string) => {
     if (!confirm('Remove this ship?')) return;
 
+    setError(null);
     try {
       const { error: deleteError } = await supabase
         .from('character_ships')
         .delete()
         .eq('id', shipId);
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error('Error deleting ship:', deleteError);
+        throw deleteError;
+      }
 
       await loadCharacterShips();
     } catch (err) {
+      console.error('Failed to delete ship:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete ship');
     }
   };
@@ -136,6 +153,29 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+      </div>
+    );
+  }
+
+  // Show helpful message if there's an error (like table not existing yet)
+  if (error && error.includes('relation') && error.includes('does not exist')) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Ship className="w-6 h-6 text-cyan-400" />
+            <h2 className="text-2xl font-bold text-white">Fleet</h2>
+          </div>
+        </div>
+        <div className="flex items-start gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-400">
+          <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="font-medium mb-1">Database Migration Required</p>
+            <p className="text-sm text-amber-300">
+              The ship tracking feature requires a database migration. Please run the latest migrations to enable this feature.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
