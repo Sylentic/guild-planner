@@ -51,5 +51,6 @@
   "050_add_game_to_events.sql",
   "051_add_preferred_role_to_members.sql",
   "052_add_guild_rank_to_members.sql",
-  "053_add_character_ships.sql"
+  "053_add_character_ships.sql",
+  "054_add_game_specific_roles.sql"
 ]

@@ -5,15 +5,16 @@ import { Skeleton } from './ui/Skeleton';
 import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-import { Tab } from './tabs';
+import { Tab, GAME_TAB_EXCLUSIONS } from './tabs';
 
 interface BottomNavProps {
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
   canManage: boolean;
+  gameSlug?: string;
 }
 
-export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps) {
+export function BottomNav({ activeTab, onTabChange, canManage, gameSlug = 'aoc' }: BottomNavProps) {
   const { t } = useLanguage();
   const NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
     { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
@@ -23,7 +24,12 @@ export function BottomNav({ activeTab, onTabChange, canManage }: BottomNavProps)
     { tab: 'more', icon: MoreHorizontal, labelKey: 'nav.more' },
     { tab: 'manage', icon: Settings, labelKey: 'nav.manage', requiresManage: true },
   ];
-  const visibleItems = NAV_ITEMS.filter(item => !item.requiresManage || canManage);
+  const excludedTabs = GAME_TAB_EXCLUSIONS[gameSlug] || [];
+  const visibleItems = NAV_ITEMS.filter(item => {
+    if (excludedTabs.includes(item.tab)) return false;
+    if (item.requiresManage && !canManage) return false;
+    return true;
+  });
   return (
     <nav 
       className="z-50"

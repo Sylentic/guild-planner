@@ -17,6 +17,7 @@ interface CharacterCardProps {
   readOnly?: boolean;
   mainCharacterName?: string; // Name of the main character this alt belongs to
   altCharacters?: Array<{ id: string; name: string }>; // List of alts for this main character
+  gameSlug?: string; // Game slug to determine if professions should be shown
 }
 
 export function CharacterCard({ 
@@ -27,7 +28,8 @@ export function CharacterCard({
   onEdit,
   readOnly = false,
   mainCharacterName,
-  altCharacters = []
+  altCharacters = [],
+  gameSlug = 'aoc'
 }: CharacterCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -179,10 +181,12 @@ export function CharacterCard({
 
           {/* Summary */}
           <div className="flex items-center gap-3 ml-4">
-            <span className="text-sm text-slate-400 hidden sm:inline">{summary}</span>
+            {gameSlug === 'aoc' && (
+              <span className="text-sm text-slate-400 hidden sm:inline">{summary}</span>
+            )}
 
             {/* Warning indicator */}
-            {warnings.length > 0 && (
+            {gameSlug === 'aoc' && warnings.length > 0 && (
               <div className="relative group">
                 <AlertTriangle size={16} className="text-yellow-500" />
                 <div className="absolute right-0 top-6 bg-slate-800 border border-slate-600 rounded p-2 text-xs text-yellow-400 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -249,8 +253,8 @@ export function CharacterCard({
         <div className="sm:hidden mt-2 text-sm text-slate-400">{summary}</div>
       </div>
 
-      {/* Expanded content */}
-      {isExpanded && (
+      {/* Expanded content - Professions only for AoC */}
+      {isExpanded && gameSlug === 'aoc' && (
         <div className="border-t border-slate-800 p-4 space-y-4">
           {(['gathering', 'processing', 'crafting'] as const).map((tier) => (
             <div key={tier}>
@@ -278,6 +282,19 @@ export function CharacterCard({
           {/* Debug info for editability - only show if window.DEBUG_PERMISSIONS is true */}
           {typeof window !== 'undefined' && window.DEBUG_PERMISSIONS && (
             <div className="mt-6 text-xs text-slate-400 border-t border-slate-700 pt-2">
+              <div>user_id: {character.user_id}</div>
+              <div>readOnly: {String(readOnly)}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Expanded content - Non-profession content for Star Citizen */}
+      {isExpanded && gameSlug === 'star-citizen' && (
+        <div className="border-t border-slate-800 p-4 space-y-4">
+          {/* Debug info for editability - only show if window.DEBUG_PERMISSIONS is true */}
+          {typeof window !== 'undefined' && window.DEBUG_PERMISSIONS && (
+            <div className="text-xs text-slate-400 border-t border-slate-700 pt-2">
               <div>user_id: {character.user_id}</div>
               <div>readOnly: {String(readOnly)}</div>
             </div>

@@ -128,6 +128,7 @@ export function CharactersTab({
               readOnly={!canEdit}
               mainCharacterName={mainCharacter?.name}
               altCharacters={alts}
+              gameSlug={gameSlug}
             />
           );
         })

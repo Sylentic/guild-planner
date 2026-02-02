@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { X, Calendar } from 'lucide-react';
-import { Event, EventType, EventRole, EVENT_TYPES, EVENT_ROLES, utcToLocal } from '@/lib/events';
+import { Event, EventType, EventRole, EVENT_TYPES, EVENT_ROLES, utcToLocal, getEventTypesForGame } from '@/lib/events';
 
 interface EventFormData {
   title: string;
@@ -33,6 +33,7 @@ interface EventFormProps {
   initialData?: Partial<Event>;
   groupId: string;
   userId: string;
+  gameSlug?: string;
   onSubmit: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onCancel: () => void;
   isEditing?: boolean;
@@ -42,6 +43,7 @@ export function EventForm({
   initialData, 
   groupId,
   userId,
+  gameSlug = 'aoc',
   onSubmit, 
   onCancel,
   isEditing = false 
@@ -177,7 +179,7 @@ export function EventForm({
               Event Type
             </label>
             <div className="grid grid-cols-5 gap-2">
-              {Object.entries(EVENT_TYPES).map(([id, type]) => {
+              {Object.entries(getEventTypesForGame(gameSlug)).map(([id, type]) => {
                 const isSelected = formData.event_type === id;
                 return (
                   <button
@@ -261,7 +263,8 @@ export function EventForm({
             />
           </div>
 
-          {/* Role Requirements */}
+          {/* Role Requirements - AoC Only */}
+          {gameSlug === 'aoc' && (
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Role Requirements <span className="text-slate-500">(min / max per role)</span>
@@ -379,41 +382,47 @@ export function EventForm({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+          )}
 
-              {/* Public Event Option */}
-              <div className="pt-2 border-t border-slate-700">
-                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg">
-                  <input
-                    type="checkbox"
-                    id="isPublic"
-                    checked={formData.is_public}
-                    onChange={(e) => setFormData({ 
-                      ...formData, 
-                      is_public: e.target.checked
-                    })}
-                    className="w-4 h-4 text-green-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-green-500"
-                  />
-                  <label htmlFor="isPublic" className="text-sm text-slate-300 cursor-pointer flex-1">
-                    Make this event public (allow unauthenticated guests to sign up)
-                  </label>
-                </div>
+          {/* Public Event Option */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Options
+            </label>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={formData.is_public}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    is_public: e.target.checked
+                  })}
+                  className="w-4 h-4 text-green-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-green-500"
+                />
+                <label htmlFor="isPublic" className="text-sm text-slate-300 cursor-pointer flex-1">
+                  Make this event public (allow unauthenticated guests to sign up)
+                </label>
+              </div>
 
-                {/* Allied Member Signup Option */}
-                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg mt-2">
-                  <input
-                    type="checkbox"
-                    id="allowAlliedSignups"
-                    checked={formData.allow_allied_signups}
-                    onChange={(e) => setFormData({ 
-                      ...formData, 
-                      allow_allied_signups: e.target.checked
-                    })}
-                    className="w-4 h-4 text-blue-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <label htmlFor="allowAlliedSignups" className="text-sm text-slate-300 cursor-pointer flex-1">
-                    Allow allied member signups
-                  </label>
-                </div>
+              {/* Allied Member Signup Option */}
+              <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg">
+                <input
+                  type="checkbox"
+                  id="allowAlliedSignups"
+                  checked={formData.allow_allied_signups}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    allow_allied_signups: e.target.checked
+                  })}
+                  className="w-4 h-4 text-blue-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-blue-500"
+                />
+                <label htmlFor="allowAlliedSignups" className="text-sm text-slate-300 cursor-pointer flex-1">
+                  Allow allied member signups
+                </label>
               </div>
             </div>
           </div>

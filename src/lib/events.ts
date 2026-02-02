@@ -2,7 +2,7 @@
 // Event Types and Helpers
 // =====================================================
 
-export type EventType = 'raid' | 'siege' | 'gathering' | 'social' | 'farming_glint' | 'farming_materials' | 'farming_gear' | 'farming_other' | 'other';
+export type EventType = 'raid' | 'siege' | 'gathering' | 'social' | 'farming_glint' | 'farming_materials' | 'farming_gear' | 'farming_other' | 'other' | 'missions' | 'salvaging' | 'pirating' | 'bounty_hunting';
 export type RsvpStatus = 'attending' | 'maybe' | 'declined';
 
 // Event type display config
@@ -59,6 +59,30 @@ export const EVENT_TYPES: Record<EventType, {
     icon: '🌾', 
     color: '#84cc16',
     description: 'Other farming activity'
+  },
+  missions: { 
+    name: 'Missions', 
+    icon: '📋', 
+    color: '#3b82f6',
+    description: 'Contract and mission ops'
+  },
+  salvaging: { 
+    name: 'Salvaging', 
+    icon: '♻️', 
+    color: '#10b981',
+    description: 'Salvage operations'
+  },
+  pirating: { 
+    name: 'Pirating', 
+    icon: '🏴‍☠️', 
+    color: '#ef4444',
+    description: 'Piracy and raiding'
+  },
+  bounty_hunting: { 
+    name: 'Bounty Hunting', 
+    icon: '🎯', 
+    color: '#f97316',
+    description: 'Bounty hunting operations'
   },
   other: { 
     name: 'Other', 
@@ -307,4 +331,31 @@ export function utcToLocal(isoDate: string): string {
   const date = new Date(isoDate);
   // Format as YYYY-MM-DDTHH:mm for datetime-local input
   return date.toISOString().slice(0, 16);
+}
+/**
+ * Get event types for a specific game
+ */
+export function getEventTypesForGame(gameSlug: string): Record<string, { name: string; icon: string; color: string; description: string }> {
+  if (gameSlug === 'star-citizen') {
+    return {
+      missions: EVENT_TYPES.missions,
+      salvaging: EVENT_TYPES.salvaging,
+      pirating: EVENT_TYPES.pirating,
+      bounty_hunting: EVENT_TYPES.bounty_hunting,
+      other: EVENT_TYPES.other,
+    };
+  }
+  
+  // Default AoC event types
+  return {
+    raid: EVENT_TYPES.raid,
+    siege: EVENT_TYPES.siege,
+    gathering: EVENT_TYPES.gathering,
+    social: EVENT_TYPES.social,
+    farming_glint: EVENT_TYPES.farming_glint,
+    farming_materials: EVENT_TYPES.farming_materials,
+    farming_gear: EVENT_TYPES.farming_gear,
+    farming_other: EVENT_TYPES.farming_other,
+    other: EVENT_TYPES.other,
+  };
 }

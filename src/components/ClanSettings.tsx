@@ -15,6 +15,8 @@ interface ClanSettingsProps {
   notifyOnEvents?: boolean;
   notifyOnAnnouncements?: boolean;
   announcementRoleId?: string;
+  scAnnouncementRoleId?: string;
+  scEventsRoleId?: string;
   onUpdate?: () => void;
 }
 
@@ -25,6 +27,8 @@ export function ClanSettings({
   notifyOnEvents = true,
   notifyOnAnnouncements = true,
   announcementRoleId = '',
+  scAnnouncementRoleId = '',
+  scEventsRoleId = '',
   onUpdate,
 }: ClanSettingsProps) {
   const { loading } = usePermissions(groupId);
@@ -33,6 +37,8 @@ export function ClanSettings({
   const [eventsEnabled, setEventsEnabled] = useState(notifyOnEvents);
   const [announcementsEnabled, setAnnouncementsEnabled] = useState(notifyOnAnnouncements);
   const [roleId, setRoleId] = useState(announcementRoleId);
+  const [scAnnouncementRole, setScAnnouncementRole] = useState(scAnnouncementRoleId);
+  const [scEventsRole, setScEventsRole] = useState(scEventsRoleId);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -55,6 +61,8 @@ export function ClanSettings({
           notify_on_events: eventsEnabled,
           notify_on_announcements: announcementsEnabled,
           discord_announcement_role_id: roleId.trim() || null,
+          sc_announcement_role_id: scAnnouncementRole.trim() || null,
+          sc_events_role_id: scEventsRole.trim() || null,
         })
         .eq('id', groupId)
         .select();
@@ -168,7 +176,7 @@ export function ClanSettings({
       {/* Announcement Role ID */}
       <div>
         <label htmlFor="discord-role-id" className="block text-sm font-medium text-slate-300 mb-2">
-          Announcement Role ID (Optional)
+          Announcement Role ID (AoC) (Optional)
         </label>
         <input
           id="discord-role-id"
@@ -179,7 +187,43 @@ export function ClanSettings({
           className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
         <p className="text-xs text-slate-500 mt-1">
-          Enter the numeric Discord Role ID to ping when posting announcements. Right-click a role {'>'} Copy ID (Developer Mode must be enabled).
+          Enter the numeric Discord Role ID to ping when posting AoC announcements. Right-click a role {'>'} Copy ID (Developer Mode must be enabled).
+        </p>
+      </div>
+
+      {/* Star Citizen Announcement Role ID */}
+      <div>
+        <label htmlFor="sc-announcement-role-id" className="block text-sm font-medium text-slate-300 mb-2">
+          Announcement Role ID (Star Citizen) (Optional)
+        </label>
+        <input
+          id="sc-announcement-role-id"
+          type="text"
+          value={scAnnouncementRole}
+          onChange={(e) => setScAnnouncementRole(e.target.value.replace(/[^0-9]/g, ''))}
+          placeholder="123456789012345678"
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <p className="text-xs text-slate-500 mt-1">
+          Enter the numeric Discord Role ID to ping when posting Star Citizen announcements.
+        </p>
+      </div>
+
+      {/* Star Citizen Events Role ID */}
+      <div>
+        <label htmlFor="sc-events-role-id" className="block text-sm font-medium text-slate-300 mb-2">
+          Events Role ID (Star Citizen) (Optional)
+        </label>
+        <input
+          id="sc-events-role-id"
+          type="text"
+          value={scEventsRole}
+          onChange={(e) => setScEventsRole(e.target.value.replace(/[^0-9]/g, ''))}
+          placeholder="123456789012345678"
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <p className="text-xs text-slate-500 mt-1">
+          Enter the numeric Discord Role ID to ping when posting Star Citizen events.
         </p>
       </div>
 

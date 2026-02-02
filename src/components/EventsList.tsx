@@ -19,6 +19,7 @@ interface EventsListProps {
   timezone: string;
   groupId: string;
   groupSlug?: string;
+  gameSlug?: string;
   userId: string;
   characters: CharacterWithProfessions[];
   canManage: boolean;
@@ -38,6 +39,7 @@ export function EventsList({
   timezone, // Keep the timezone prop for backward compatibility
   groupId,
   groupSlug,
+  gameSlug = 'aoc',
   userId,
   characters,
   canManage,
@@ -292,6 +294,7 @@ export function EventsList({
         <EventForm
           groupId={groupId}
           userId={userId}
+          gameSlug={gameSlug}
           onSubmit={handleCreateEvent}
           onCancel={() => setShowEventForm(false)}
         />
@@ -302,6 +305,7 @@ export function EventsList({
         <EventForm
           groupId={groupId}
           userId={userId}
+          gameSlug={gameSlug}
           initialData={editingEvent}
           onSubmit={handleEditEvent}
           onCancel={() => setEditingEvent(null)}

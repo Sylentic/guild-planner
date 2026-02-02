@@ -73,3 +73,6 @@ CREATE TRIGGER update_character_ships_updated_at
   BEFORE UPDATE ON character_ships
   FOR EACH ROW
   EXECUTE FUNCTION update_character_ships_updated_at();
+
+-- Track this migration
+INSERT INTO migration_history (filename) VALUES ('053_add_character_ships.sql') ON CONFLICT DO NOTHING;

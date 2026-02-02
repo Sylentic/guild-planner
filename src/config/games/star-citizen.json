@@ -91,5 +91,42 @@
       "description": "Admiral rank",
       "hierarchy": 6
     }
+  ],
+  "eventCategories": [
+    {
+      "id": "missions",
+      "name": "Missions",
+      "icon": "📋",
+      "color": "#3b82f6",
+      "description": "Contract and mission ops"
+    },
+    {
+      "id": "salvaging",
+      "name": "Salvaging",
+      "icon": "♻️",
+      "color": "#10b981",
+      "description": "Salvage operations"
+    },
+    {
+      "id": "pirating",
+      "name": "Pirating",
+      "icon": "🏴‍☠️",
+      "color": "#ef4444",
+      "description": "Piracy and raiding"
+    },
+    {
+      "id": "bounty_hunting",
+      "name": "Bounty Hunting",
+      "icon": "🎯",
+      "color": "#f97316",
+      "description": "Bounty hunting operations"
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "icon": "📅",
+      "color": "#6b7280",
+      "description": "Other activities"
+    }
   ]
 }

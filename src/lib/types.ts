@@ -41,6 +41,8 @@ export interface Clan {
   notify_on_events?: boolean;
   notify_on_announcements?: boolean;
   discord_announcement_role_id?: string;
+  sc_announcement_role_id?: string;
+  sc_events_role_id?: string;
   group_icon_url?: string;
 }
 

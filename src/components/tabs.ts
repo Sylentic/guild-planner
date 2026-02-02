@@ -15,3 +15,8 @@ export const TAB_LIST = [
 ] as const;
 
 export type Tab = typeof TAB_LIST[number];
+
+// Tabs to hide for specific games
+export const GAME_TAB_EXCLUSIONS: Record<string, Tab[]> = {
+  'star-citizen': ['matrix', 'economy', 'achievements', 'alliances', 'builds', 'parties', 'siege'],
+};

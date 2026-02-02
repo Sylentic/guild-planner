@@ -444,6 +444,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
               timezone={profile?.timezone || 'UTC'}
               groupId={groupId!}
               groupSlug={groupSlug}
+              gameSlug={gameSlug}
               userId={user.id}
               characters={characters}
               canManage={canManageMembers}
@@ -554,6 +555,8 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
                   notifyOnEvents={group.notify_on_events ?? true}
                   notifyOnAnnouncements={group.notify_on_announcements ?? true}
                   announcementRoleId={group.discord_announcement_role_id || ''}
+                  scAnnouncementRoleId={group.sc_announcement_role_id || ''}
+                  scEventsRoleId={group.sc_events_role_id || ''}
                 />
               )}
               
@@ -575,6 +578,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
           canManage={canManageMembers}
           onTabChange={handleTabChange}
           initialTab={activeTab}
+          gameSlug={gameSlug}
         />
         <InlineFooter variant="matching" />
       </div>

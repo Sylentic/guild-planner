@@ -7,9 +7,10 @@ interface ClanTabNavProps {
   canManage: boolean;
   onTabChange?: (tab: Tab) => void;
   initialTab?: Tab;
+  gameSlug?: string;
 }
 
-export function ClanTabNav({ canManage, onTabChange, initialTab = 'characters' }: ClanTabNavProps) {
+export function ClanTabNav({ canManage, onTabChange, initialTab = 'characters', gameSlug = 'aoc' }: ClanTabNavProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -39,6 +40,7 @@ export function ClanTabNav({ canManage, onTabChange, initialTab = 'characters' }
       activeTab={activeTab}
       onTabChange={handleTabChange}
       canManage={canManage}
+      gameSlug={gameSlug}
     />
   );
 }
