@@ -38,6 +38,7 @@ import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
 import { ClanCreateScreen } from '@/components/ClanCreateScreen';
+import { getGroupGames } from '@/lib/group-games';
 
 // Tab type now imported from ClanTabNav
 
@@ -57,6 +58,8 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
   const [editingCharacter, setEditingCharacter] = useState<CharacterWithProfessions | null>(null);
   const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
   const [checkError, setCheckError] = useState<string | null>(null);
+  const [enabledGames, setEnabledGames] = useState<string[]>(['aoc']);
+  const [gameNotEnabled, setGameNotEnabled] = useState(false);
   const { t } = useLanguage();
 
   // Handler for tab change
@@ -77,6 +80,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
     async function checkGroup() {
       console.log('checkGroup: starting for slug', groupSlug);
       setCheckError(null);
+      setGameNotEnabled(false);
       try {
         // Add timeout to prevent infinite hanging
         const timeoutPromise = new Promise<{ id: string } | null>((_, reject) => {
@@ -92,6 +96,21 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
         if (group) {
           setGroupId(group.id);
           setClanExists(true);
+          
+          // Load enabled games and validate current game
+          try {
+            const games = await getGroupGames(group.id);
+            setEnabledGames(games.length > 0 ? games : ['aoc']);
+            
+            // Check if the requested game is enabled
+            if (!games.includes(gameSlug)) {
+              console.warn(`Game ${gameSlug} is not enabled for group ${groupSlug}`);
+              setGameNotEnabled(true);
+            }
+          } catch (err) {
+            console.error('Error loading group games:', err);
+            setEnabledGames(['aoc']);
+          }
         } else {
           setClanExists(false);
         }
@@ -102,7 +121,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
       }
     }
     checkGroup();
-  }, [groupSlug]);
+  }, [groupSlug, gameSlug]);
 
   const {
     membership,
@@ -246,6 +265,20 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
         error={checkError}
         retryLabel={t('common.retryConnection')}
         onRetry={() => window.location.reload()}
+        homeLabel={t('common.returnHome')}
+      />
+    );
+  }
+
+  // Game not enabled for this group
+  if (gameNotEnabled && clanExists) {
+    return (
+      <ClanErrorScreen
+        title="Game Not Enabled"
+        message={`The game "${gameSlug}" is not enabled for this group.`}
+        error={`Available games: ${enabledGames.join(', ')}`}
+        retryLabel={t('common.returnHome')}
+        onRetry={() => router.push(`/${groupSlug}`)}
         homeLabel={t('common.returnHome')}
       />
     );

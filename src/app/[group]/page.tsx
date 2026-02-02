@@ -284,7 +284,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                     onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
                     className="flex-1 text-left group/link cursor-pointer"
                   >
-                    <span className="text-3xl block mb-2 group-hover/link:scale-110 transition-transform">{game.icon}</span>
+                    <span className="text-3xl block mb-2">{game.icon}</span>
                     <h3 className="text-lg font-semibold text-white group-hover/link:text-cyan-400 transition-colors">
                       {game.name}
                     </h3>
