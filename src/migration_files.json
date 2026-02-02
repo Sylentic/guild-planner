@@ -29,5 +29,9 @@
   "028_update_role_system.sql",
   "029_clan_permission_overrides.sql",
   "030_crafting_achievements.sql",
-  "031_add_discord_welcome_webhook_url.sql"
+  "031_add_discord_welcome_webhook_url.sql",
+  "032_role_minimums_not_caps.sql",
+  "033_add_role_max_caps.sql",
+  "034_add_game_support.sql",
+  "045_rename_clans_to_groups.sql"
 ]
