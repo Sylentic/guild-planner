@@ -6,6 +6,7 @@
         "Get-Item": true,
         "npx next": true,
         "ForEach-Object": true,
-        "Rename-Item": true
+        "Rename-Item": true,
+        "git push": true
     }
 }
