@@ -4,7 +4,8 @@ import { CharacterFiltersBar, filterCharacters, DEFAULT_FILTERS } from "@/compon
 import { CharacterCard } from "@/components/MemberCard";
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { useAuthContext } from '@/components/AuthProvider';
-import { roleHasPermission } from '@/lib/permissions';
+import { roleHasPermission, ClanRole } from '@/lib/permissions';
+import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
 import { CharacterWithProfessions } from "@/lib/types";
 import { useState } from "react";
 
@@ -37,6 +38,59 @@ export function CharactersTab({
   const clanMembership = useGroupMembership(groupId, user?.id || null);
   const userRole = clanMembership.membership?.role || 'pending';
 
+  // Helper to check if user can edit a specific character
+  const getUserCanEditCharacter = (character: CharacterWithProfessions): boolean => {
+    if (!user) return false;
+
+    // First check basic permission
+    if (!canEditCharacter(userRole as ClanRole, character.user_id, user.id)) {
+      return false;
+    }
+
+    // If officer editing another user's character, check that target user is a member
+    if (userRole === 'officer' && character.user_id !== user.id) {
+      const targetCharacters = characters.filter(c => c.user_id === character.user_id);
+      const targetUser = clanMembership.members.find(m => m.id === character.user_id);
+      
+      if (targetUser && !canOfficerManageUser(userRole as ClanRole, targetUser.role as ClanRole)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Helper to check if user can delete a specific character
+  const getUserCanDeleteCharacter = (character: CharacterWithProfessions): boolean => {
+    if (!user) return false;
+
+    // First check basic permission
+    if (!canDeleteCharacter(userRole as ClanRole, character.user_id, user.id)) {
+      return false;
+    }
+
+    // If officer deleting another user's character, check that target user is a member
+    if (userRole === 'officer' && character.user_id !== user.id) {
+      const targetUser = clanMembership.members.find(m => m.id === character.user_id);
+      
+      if (targetUser && !canOfficerManageUser(userRole as ClanRole, targetUser.role as ClanRole)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Stub function for disabled update
+  const handleUpdateStub = async (id: string, name: string) => {
+    throw new Error('You do not have permission to edit this character');
+  };
+
+  // Stub function for disabled delete
+  const handleDeleteStub = async (id: string) => {
+    throw new Error('You do not have permission to delete this character');
+  };
+
   return (
     <div className="space-y-4">
       <AddCharacterButton onAdd={addCharacter} gameSlug={gameSlug} />
@@ -54,12 +108,9 @@ export function CharactersTab({
         <div className="text-slate-400 text-center py-8">No characters match the filters.</div>
       ) : (
         filterCharacters(characters, characterFilters).map((character) => {
-          // Only allow edit if user owns character AND has 'characters_edit_own', or has 'characters_edit_any' permission
-          const isAdmin = userRole === 'admin';
-          const canEdit = isAdmin ? true : (
-            (user?.id && character.user_id === user.id && roleHasPermission(userRole, 'characters_edit_own'))
-            || roleHasPermission(userRole, 'characters_edit_any')
-          );
+          // Check if user can edit this character
+          const canEdit = getUserCanEditCharacter(character);
+          const canDelete = getUserCanDeleteCharacter(character);
           
           // Get main character name if this is an alt
           const mainCharacter = character.is_main ? null : characters.find(c => c.user_id === character.user_id && c.is_main);
@@ -70,8 +121,8 @@ export function CharactersTab({
             <CharacterCard
               key={character.id}
               character={character}
-              onUpdate={updateMember}
-              onDelete={deleteMember}
+              onUpdate={canEdit ? updateMember : handleUpdateStub}
+              onDelete={canDelete ? deleteMember : handleDeleteStub}
               onSetProfessionRank={setProfessionRank}
               onEdit={canEdit ? () => setEditingCharacter(character) : undefined}
               readOnly={!canEdit}

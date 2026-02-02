@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Clan, CharacterWithProfessions, RankLevel, Race, Archetype } from '@/lib/types';
+import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
+import { ClanRole } from '@/lib/permissions';
 
 // Character data for creating/updating
 export interface CharacterData {
@@ -165,6 +167,51 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
   const updateCharacter = async (id: string, data: Partial<CharacterData>) => {
     const { data: { user } } = await supabase.auth.getUser();
 
+    if (!user) {
+      throw new Error('You must be logged in to update a character');
+    }
+
+    // Get the character being updated
+    const character = characters.find(c => c.id === id);
+    if (!character) {
+      throw new Error('Character not found');
+    }
+
+    // Get current user's role in the group
+    if (!group) {
+      throw new Error('Group not found');
+    }
+
+    const { data: membershipData } = await supabase
+      .from('group_members')
+      .select('role')
+      .eq('group_id', group.id)
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const userRole = (membershipData?.role || 'member') as ClanRole;
+
+    // Check if user can edit this character
+    if (!canEditCharacter(userRole, character.user_id, user.id)) {
+      // If officer trying to edit another user's character, check that target user is a member
+      if (userRole === 'officer' && character.user_id !== user.id) {
+        const { data: targetMembership } = await supabase
+          .from('group_members')
+          .select('role')
+          .eq('group_id', group.id)
+          .eq('user_id', character.user_id)
+          .maybeSingle();
+
+        const targetRole = (targetMembership?.role || 'member') as ClanRole;
+        
+        if (!canOfficerManageUser(userRole, targetRole)) {
+          throw new Error('Officers can only manage characters owned by members, not other officers or admins');
+        }
+      } else {
+        throw new Error('You do not have permission to edit this character');
+      }
+    }
+
     // If setting as main, first unmark any other main characters for this user
     if (data.is_main === true && user) {
       await supabase
@@ -203,6 +250,53 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
   // Delete character
   const deleteCharacter = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('You must be logged in to delete a character');
+    }
+
+    // Get the character being deleted
+    const character = characters.find(c => c.id === id);
+    if (!character) {
+      throw new Error('Character not found');
+    }
+
+    // Get current user's role in the group
+    if (!group) {
+      throw new Error('Group not found');
+    }
+
+    const { data: membershipData } = await supabase
+      .from('group_members')
+      .select('role')
+      .eq('group_id', group.id)
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const userRole = (membershipData?.role || 'member') as ClanRole;
+
+    // Check if user can delete this character
+    if (!canDeleteCharacter(userRole, character.user_id, user.id)) {
+      // If officer trying to delete another user's character, check that target user is a member
+      if (userRole === 'officer' && character.user_id !== user.id) {
+        const { data: targetMembership } = await supabase
+          .from('group_members')
+          .select('role')
+          .eq('group_id', group.id)
+          .eq('user_id', character.user_id)
+          .maybeSingle();
+
+        const targetRole = (targetMembership?.role || 'member') as ClanRole;
+        
+        if (!canOfficerManageUser(userRole, targetRole)) {
+          throw new Error('Officers can only manage characters owned by members, not other officers or admins');
+        }
+      } else {
+        throw new Error('You do not have permission to delete this character');
+      }
+    }
+
     const { error: deleteError } = await supabase
       .from('members')
       .delete()
