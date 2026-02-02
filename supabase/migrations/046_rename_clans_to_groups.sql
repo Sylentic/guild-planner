@@ -27,15 +27,14 @@ ALTER INDEX idx_clan_members_user_id RENAME TO idx_group_members_user_id;
 ALTER INDEX idx_clan_members_clan_id RENAME TO idx_group_members_group_id;
 ALTER INDEX idx_clan_achievements_clan RENAME TO idx_group_achievements_group;
 
--- 8. Update constraints and references in other tables that reference clans
--- For each table with clan_id foreign key, rename the column
+-- 8. Update foreign key columns in other tables that reference clans
+-- Note: Only renaming columns in tables that definitely exist based on migrations
 ALTER TABLE events RENAME COLUMN clan_id TO group_id;
 ALTER TABLE parties RENAME COLUMN clan_id TO group_id;
 ALTER TABLE freeholds RENAME COLUMN clan_id TO group_id;
-ALTER TABLE caravans RENAME COLUMN clan_id TO group_id;
 ALTER TABLE guild_bank_transactions RENAME COLUMN clan_id TO group_id;
-ALTER TABLE nodes RENAME COLUMN clan_id TO group_id;
-ALTER TABLE activities RENAME COLUMN clan_id TO group_id;
+ALTER TABLE caravan_events RENAME COLUMN clan_id TO group_id;
+ALTER TABLE activity_log RENAME COLUMN clan_id TO group_id;
 ALTER TABLE announcements RENAME COLUMN clan_id TO group_id;
 ALTER TABLE alliances RENAME COLUMN clan_id_1 TO group_id_1;
 ALTER TABLE alliances RENAME COLUMN clan_id_2 TO group_id_2;
@@ -43,14 +42,13 @@ ALTER TABLE dkp_entries RENAME COLUMN clan_id TO group_id;
 ALTER TABLE loot_entries RENAME COLUMN clan_id TO group_id;
 ALTER TABLE recruitment_settings RENAME COLUMN clan_id TO group_id;
 ALTER TABLE role_templates RENAME COLUMN clan_id TO group_id;
+ALTER TABLE nodes RENAME COLUMN clan_id TO group_id;
+ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
+ALTER TABLE group_permission_overrides RENAME COLUMN clan_id TO group_id;
 
--- 9. Update foreign key constraint names and references
--- Note: Constraints need to be updated to reference the new table/column names
--- The database will handle this automatically for most FK constraints,
--- but we should verify no custom constraint names break
+-- 9. Update guest_event_rsvps allied_clan_id column
+ALTER TABLE guest_event_rsvps RENAME COLUMN allied_clan_id TO allied_group_id;
 
--- 10. Update user_games table - change references from clans to groups
--- (This was just tracking games, no direct clan reference needed, so no change)
-
--- 11. Update groups table game constraint to reference new table name
+-- 10. Update constraint references
+-- The foreign key constraints should auto-update, but we need to handle the constraint names
 ALTER TABLE groups RENAME CONSTRAINT valid_game TO groups_valid_game;
