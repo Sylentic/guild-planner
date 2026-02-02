@@ -1,0 +1,57 @@
+{
+  "name": "Star Citizen",
+  "slug": "star-citizen",
+  "icon": "🚀",
+  "roles": [
+    {
+      "id": "miner",
+      "name": "Miner",
+      "description": "Resource extraction and refining"
+    },
+    {
+      "id": "trader",
+      "name": "Trader",
+      "description": "Cargo hauling and trading"
+    },
+    {
+      "id": "bounty-hunter",
+      "name": "Bounty Hunter",
+      "description": "Combat and bounty contracts"
+    },
+    {
+      "id": "explorer",
+      "name": "Explorer",
+      "description": "Exploration and scanning"
+    },
+    {
+      "id": "combat-pilot",
+      "name": "Combat Pilot",
+      "description": "Fighter and combat operations"
+    },
+    {
+      "id": "transport-pilot",
+      "name": "Transport Pilot",
+      "description": "Personnel and cargo transport"
+    },
+    {
+      "id": "medic",
+      "name": "Medic",
+      "description": "Medical support and rescue"
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "description": "Ship repair and maintenance"
+    },
+    {
+      "id": "salvager",
+      "name": "Salvager",
+      "description": "Salvage operations"
+    },
+    {
+      "id": "support",
+      "name": "Support",
+      "description": "General support roles"
+    }
+  ]
+}

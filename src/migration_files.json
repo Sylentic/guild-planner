@@ -48,5 +48,6 @@
   "047_comprehensive_rls_recreation.sql",
   "048_create_group_games_table.sql",
   "049_add_game_to_characters.sql",
-  "050_add_game_to_events.sql"
+  "050_add_game_to_events.sql",
+  "051_add_preferred_role_to_members.sql"
 ]

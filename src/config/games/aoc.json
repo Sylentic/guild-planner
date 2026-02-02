@@ -1,0 +1,312 @@
+{
+  "name": "Ashes of Creation",
+  "slug": "aoc",
+  "icon": "⚔️",
+  "professions": {
+    "gathering": [
+      { "id": "mining", "name": "Mining", "icon": "⛏️", "dependencies": [] },
+      { "id": "lumberjacking", "name": "Lumberjacking", "icon": "🪓", "dependencies": [] },
+      { "id": "herbalism", "name": "Herbalism", "icon": "🌿", "dependencies": [] },
+      { "id": "fishing", "name": "Fishing", "icon": "🎣", "dependencies": [] },
+      { "id": "hunting", "name": "Hunting", "icon": "🏹", "dependencies": [] }
+    ],
+    "processing": [
+      { "id": "metalworking", "name": "Metalworking", "icon": "⚙️", "dependencies": ["mining"] },
+      { "id": "lumber_milling", "name": "Lumber Milling", "icon": "🪚", "dependencies": ["lumberjacking"] },
+      { "id": "stonemasonry", "name": "Stonemasonry", "icon": "🧱", "dependencies": ["mining"] },
+      { "id": "weaving", "name": "Weaving", "icon": "🧵", "dependencies": ["herbalism", "farming"] },
+      { "id": "tanning", "name": "Tanning", "icon": "🦴", "dependencies": ["hunting"] },
+      { "id": "alchemy", "name": "Alchemy", "icon": "⚗️", "dependencies": ["herbalism"] },
+      { "id": "farming", "name": "Farming", "icon": "🌾", "dependencies": ["herbalism"] },
+      { "id": "animal_husbandry", "name": "Animal Husbandry", "icon": "🐴", "dependencies": ["hunting"] },
+      { "id": "cooking", "name": "Cooking", "icon": "🍳", "dependencies": ["fishing", "farming", "animal_husbandry"] }
+    ],
+    "crafting": [
+      { "id": "weapon_smithing", "name": "Weapon Smithing", "icon": "⚔️", "dependencies": ["metalworking", "lumber_milling"] },
+      { "id": "armor_smithing", "name": "Armor Smithing", "icon": "🛡️", "dependencies": ["metalworking", "weaving", "tanning"] },
+      { "id": "leatherworking", "name": "Leatherworking", "icon": "👜", "dependencies": ["tanning"] },
+      { "id": "tailoring", "name": "Tailoring", "icon": "👘", "dependencies": ["weaving", "tanning"] },
+      { "id": "jewelcrafting", "name": "Jewelcrafting", "icon": "💎", "dependencies": ["stonemasonry", "metalworking"] },
+      { "id": "carpentry", "name": "Carpentry", "icon": "🪑", "dependencies": ["lumber_milling", "metalworking"] },
+      { "id": "arcane_engineering", "name": "Arcane Engineering", "icon": "🔮", "dependencies": ["lumber_milling", "metalworking", "jewelcrafting"] },
+      { "id": "scribe", "name": "Scribe", "icon": "📜", "dependencies": ["lumber_milling", "alchemy", "tanning"] }
+    ],
+    "tiers": {
+      "gathering": { "label": "Gathering", "icon": "🪓", "color": "text-amber-400" },
+      "processing": { "label": "Processing", "icon": "⚙️", "color": "text-cyan-400" },
+      "crafting": { "label": "Crafting", "icon": "🔨", "color": "text-rose-400" }
+    },
+    "ranks": {
+      "1": { "name": "Apprentice", "short": "A", "color": "text-green-400" },
+      "2": { "name": "Journeyman", "short": "J", "color": "text-blue-400" },
+      "3": { "name": "Master", "short": "M", "color": "text-purple-400" },
+      "4": { "name": "Grandmaster", "short": "GM", "color": "text-orange-400" }
+    },
+    "limits": {
+      "4": 2,
+      "3": 3,
+      "2": 4,
+      "1": 5
+    }
+  },
+  "archetypes": {
+    "list": [
+      { 
+        "id": "tank", 
+        "name": "Tank", 
+        "icon": "🛡️", 
+        "color": "text-blue-400", 
+        "role": "tank",
+        "description": "Absorbs damage and controls battlefield with Courage",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/tank/page/1"
+      },
+      { 
+        "id": "fighter", 
+        "name": "Fighter", 
+        "icon": "⚔️", 
+        "color": "text-red-400", 
+        "role": "dps",
+        "description": "Melee DPS with Momentum and Forms",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/fighter/page/1"
+      },
+      { 
+        "id": "rogue", 
+        "name": "Rogue", 
+        "icon": "🗡️", 
+        "color": "text-amber-400", 
+        "role": "dps",
+        "description": "Stealth assassin with Advantage stacks",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/rogue/page/1"
+      },
+      { 
+        "id": "ranger", 
+        "name": "Ranger", 
+        "icon": "🏹", 
+        "color": "text-green-400", 
+        "role": "dps",
+        "description": "Ranged DPS with Focus, Hunts and Marks",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/ranger/page/1"
+      },
+      { 
+        "id": "mage", 
+        "name": "Mage", 
+        "icon": "🔥", 
+        "color": "text-purple-400", 
+        "role": "dps",
+        "description": "Elemental caster with Fire, Frost, Lightning",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/mage/page/1"
+      },
+      { 
+        "id": "summoner", 
+        "name": "Summoner", 
+        "icon": "🐉", 
+        "color": "text-emerald-400", 
+        "role": "dps",
+        "description": "Pet master controlling powerful summons",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/summoner/page/1"
+      },
+      { 
+        "id": "cleric", 
+        "name": "Cleric", 
+        "icon": "✨", 
+        "color": "text-yellow-300", 
+        "role": "healer",
+        "description": "Healing and divine magic with Devotion",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/cleric/page/1"
+      },
+      { 
+        "id": "bard", 
+        "name": "Bard", 
+        "icon": "🎵", 
+        "color": "text-pink-400", 
+        "role": "support",
+        "description": "Buffs and debuffs through musical performance",
+        "ashescodexUrl": "https://ashescodex.com/db/abilities/bard/page/1"
+      }
+    ],
+    "classes": {
+      "tank": {
+        "tank": "Guardian",
+        "fighter": "Warden",
+        "rogue": "Nightshield",
+        "ranger": "Sentinel",
+        "mage": "Spellshield",
+        "summoner": "Keeper",
+        "cleric": "Paladin",
+        "bard": "Siren"
+      },
+      "fighter": {
+        "tank": "Highsword",
+        "fighter": "Weapon Master",
+        "rogue": "Shadowblade",
+        "ranger": "Hunter",
+        "mage": "Spellsword",
+        "summoner": "Bladecaller",
+        "cleric": "Templar",
+        "bard": "Bladedancer"
+      },
+      "rogue": {
+        "tank": "Shadow Guardian",
+        "fighter": "Duelist",
+        "rogue": "Assassin",
+        "ranger": "Scout",
+        "mage": "Nightspell",
+        "summoner": "Shadowmancer",
+        "cleric": "Cultist",
+        "bard": "Trickster"
+      },
+      "ranger": {
+        "tank": "Strider",
+        "fighter": "Slayer",
+        "rogue": "Predator",
+        "ranger": "Hawkeye",
+        "mage": "Soulbow",
+        "summoner": "Falconer",
+        "cleric": "Protector",
+        "bard": "Bowsinger"
+      },
+      "mage": {
+        "tank": "Spellstone",
+        "fighter": "Battlemage",
+        "rogue": "Shadow Caster",
+        "ranger": "Spellhunter",
+        "mage": "Archwizard",
+        "summoner": "Warlock",
+        "cleric": "Apostle",
+        "bard": "Magician"
+      },
+      "summoner": {
+        "tank": "Brood Warden",
+        "fighter": "Wild Blade",
+        "rogue": "Shadowcaller",
+        "ranger": "Beastmaster",
+        "mage": "Sorcerer",
+        "summoner": "Conjurer",
+        "cleric": "Necromancer",
+        "bard": "Enchanter"
+      },
+      "cleric": {
+        "tank": "Apostle",
+        "fighter": "Highsword",
+        "rogue": "Cultist Assassin",
+        "ranger": "Protector",
+        "mage": "Oracle",
+        "summoner": "Shaman",
+        "cleric": "High Priest",
+        "bard": "Soul Weaver"
+      },
+      "bard": {
+        "tank": "Argent",
+        "fighter": "Tellsword",
+        "rogue": "Minstrel",
+        "ranger": "Songcaller",
+        "mage": "Sorcerer",
+        "summoner": "Songcaller",
+        "cleric": "Muse",
+        "bard": "Minstrel"
+      }
+    },
+    "roles": ["tank", "healer", "dps", "support"]
+  },
+  "races": {
+    "list": [
+      { "id": "kaelar", "name": "Kaelar", "parent": "Aela Humans", "icon": "👤" },
+      { "id": "vaelune", "name": "Vaelune", "parent": "Aela Humans", "icon": "👤" },
+      { "id": "empyrean", "name": "Empyrean", "parent": "Pyrian Elves", "icon": "🧝" },
+      { "id": "pyrai", "name": "Py'rai", "parent": "Pyrian Elves", "icon": "🧝" },
+      { "id": "dunir", "name": "Dünir", "parent": "Kaivek Orcs", "icon": "🧔" },
+      { "id": "nikua", "name": "Niküa", "parent": "Kaivek Orcs", "icon": "🧔" },
+      { "id": "renkai", "name": "Ren'kai", "parent": "Dünzenkell Dwarves", "icon": "⛏️" },
+      { "id": "vek", "name": "Vek", "parent": "Dünzenkell Dwarves", "icon": "⛏️" },
+      { "id": "tulnar", "name": "Tulnar", "parent": "Underrealm", "icon": "🦎" }
+    ],
+    "parentRaces": {
+      "Aela Humans": ["kaelar", "vaelune"],
+      "Pyrian Elves": ["empyrean", "pyrai"],
+      "Kaivek Orcs": ["dunir", "nikua"],
+      "Dünzenkell Dwarves": ["renkai", "vek"],
+      "Underrealm": ["tulnar"]
+    }
+  },
+  "supplyChain": {
+    "chains": [
+      {
+        "id": "metal_weapons",
+        "name": "Metal Weapons",
+        "description": "Swords, axes, maces, and other metal weapons",
+        "flow": ["mining", "metalworking", "weapon_smithing"],
+        "icon": "⚔️"
+      },
+      {
+        "id": "wooden_weapons",
+        "name": "Wooden Weapons",
+        "description": "Bows, staves, and wooden components",
+        "flow": ["lumberjacking", "lumber_milling", "carpentry"],
+        "icon": "🏹"
+      },
+      {
+        "id": "plate_armor",
+        "name": "Plate Armor",
+        "description": "Heavy metal armor",
+        "flow": ["mining", "metalworking", "armor_smithing"],
+        "icon": "🛡️"
+      },
+      {
+        "id": "leather_armor",
+        "name": "Leather Armor",
+        "description": "Medium armor and bags",
+        "flow": ["hunting", "tanning", "leatherworking"],
+        "icon": "👜"
+      },
+      {
+        "id": "cloth_armor",
+        "name": "Cloth Armor",
+        "description": "Light armor and robes",
+        "flow": ["herbalism", "farming", "weaving", "tailoring"],
+        "icon": "👘"
+      },
+      {
+        "id": "jewelry",
+        "name": "Jewelry",
+        "description": "Rings, necklaces, and accessories",
+        "flow": ["mining", "stonemasonry", "metalworking", "jewelcrafting"],
+        "icon": "💎"
+      },
+      {
+        "id": "potions",
+        "name": "Potions & Consumables",
+        "description": "Health potions, buffs, and other consumables",
+        "flow": ["herbalism", "alchemy"],
+        "icon": "⚗️"
+      },
+      {
+        "id": "food",
+        "name": "Food & Cooking",
+        "description": "Buff food and cooking materials",
+        "flow": ["fishing", "farming", "animal_husbandry", "cooking"],
+        "icon": "🍳"
+      },
+      {
+        "id": "siege_equipment",
+        "name": "Siege Equipment",
+        "description": "Trebuchets, rams, and magical devices",
+        "flow": ["mining", "lumberjacking", "metalworking", "lumber_milling", "jewelcrafting", "arcane_engineering"],
+        "icon": "🔮"
+      },
+      {
+        "id": "scrolls",
+        "name": "Scrolls & Enchants",
+        "description": "Recipes, scrolls, and enchantments",
+        "flow": ["lumberjacking", "herbalism", "hunting", "lumber_milling", "alchemy", "tanning", "scribe"],
+        "icon": "📜"
+      },
+      {
+        "id": "mounts",
+        "name": "Mounts & Pets",
+        "description": "Breeding and raising animals",
+        "flow": ["hunting", "animal_husbandry"],
+        "icon": "🐴"
+      }
+    ]
+  }
+}
