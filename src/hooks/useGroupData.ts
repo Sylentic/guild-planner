@@ -49,7 +49,6 @@ export function useGroupData(groupSlug: string): UseGroupDataReturn {
   // Fetch clan (no longer auto-creates - that's handled by UI)
   const fetchClan = useCallback(async (): Promise<Clan | null> => {
     try {
-      console.log('[useGroupData] Fetching group with slug:', groupSlug);
       const { data: existingClan, error: fetchError } = await supabase
         .from('groups')
         .select('*')
@@ -60,7 +59,6 @@ export function useGroupData(groupSlug: string): UseGroupDataReturn {
         throw fetchError;
       }
 
-      console.log('[useGroupData] Fetched group:', existingClan);
       return existingClan as Clan | null;
     } catch (err) {
       console.error('Error fetching clan:', err);
@@ -71,15 +69,12 @@ export function useGroupData(groupSlug: string): UseGroupDataReturn {
 
   // Fetch all data
   const fetchData = useCallback(async () => {
-    console.log('[useGroupData] fetchData called for slug:', groupSlug);
     setLoading(true);
     setError(null);
 
     try {
       const groupData = await fetchClan();
-      console.log('[useGroupData] Got group data:', groupData);
       if (!groupData) {
-        console.log('[useGroupData] No group data, returning');
         setLoading(false);
         return;
       }
@@ -96,8 +91,6 @@ export function useGroupData(groupSlug: string): UseGroupDataReturn {
         .eq('group_id', groupData.id)
         .order('is_main', { ascending: false })
         .order('name');
-
-      console.log('[useGroupData] Fetched characters for group_id', groupData.id, ':', charactersData?.length || 0, 'characters');
 
       if (charactersError) throw charactersError;
 
