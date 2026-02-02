@@ -44,7 +44,7 @@ interface UseClanMembershipReturn {
   canManageRoles: boolean;
 }
 
-export function useGroupMembership(groupId: string | null, userId: string | null): UseClanMembershipReturn {
+export function useGroupMembership(groupId: string | null, userId: string | null, gameSlug: string = 'aoc'): UseClanMembershipReturn {
   const [membership, setMembership] = useState<UseClanMembershipReturn['membership']>(null);
   const [members, setMembers] = useState<ClanMember[]>([]);
   const [pendingMembers, setPendingMembers] = useState<ClanMember[]>([]);
@@ -144,6 +144,65 @@ export function useGroupMembership(groupId: string | null, userId: string | null
     await refresh();
   };
 
+  const getWelcomeEmbed = (discordUsername: string) => {
+    if (gameSlug === 'star-citizen') {
+      const checklist = [
+        '✅ Register your main character in the planner',
+        '✅ Set your preferred role (Pilot, Engineer, Medic, etc.)',
+        '✅ Connect your org tags and callsign',
+        '✅ Review flight safety protocols and guidelines',
+        '✅ Introduce yourself and your experience in Discord',
+      ];
+      return {
+        title: '🚀 Welcome to the Squadron!',
+        description: `Welcome <@${discordUsername}>! We're thrilled to have you join our squadron. Here's how to get started:`,
+        color: 0xff6600, // Star Citizen orange
+        fields: [
+          {
+            name: 'Getting Started',
+            value: checklist.join('\n'),
+            inline: false,
+          },
+          {
+            name: 'Need Help?',
+            value: 'Ask in this channel or contact a squad lead for assistance.',
+            inline: false,
+          },
+        ],
+        footer: { text: 'Star Citizen Squadron Planner' },
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // Ashes of Creation (default)
+      const checklist = [
+        '✅ Set your main character in the planner',
+        '✅ Fill out your professions and skills',
+        '✅ Join upcoming events and RSVP',
+        '✅ Read the guild rules and code of conduct',
+        '✅ Introduce yourself in Discord',
+      ];
+      return {
+        title: '🎉 Welcome to the Guild!',
+        description: `Welcome <@${discordUsername}>! We're excited to have you join us. Here's how to get started:`,
+        color: 0x22c55e, // green
+        fields: [
+          {
+            name: 'Onboarding Checklist',
+            value: checklist.join('\n'),
+            inline: false,
+          },
+          {
+            name: 'Need Help?',
+            value: 'Ask in this channel or contact an officer for assistance.',
+            inline: false,
+          },
+        ],
+        footer: { text: 'AoC Guild Profession Planner' },
+        timestamp: new Date().toISOString(),
+      };
+    }
+  };
+
   const acceptMember = async (membershipId: string) => {
     if (!userId) throw new Error('Not authenticated');
 
@@ -212,8 +271,6 @@ export function useGroupMembership(groupId: string | null, userId: string | null
             value: 'Ask in this channel or contact an officer for assistance.',
           },
         ],
-        footer: { text: 'AoC Guild Profession Planner' },
-        timestamp: new Date().toISOString(),
       };
       fetch('/api/discord', {
         method: 'POST',

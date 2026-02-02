@@ -151,7 +151,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
     updateRole,
     updateRank,
     removeMember,
-  } = useGroupMembership(groupId, user?.id || null);
+  } = useGroupMembership(groupId, user?.id || null, gameSlug);
 
   const {
     group,
