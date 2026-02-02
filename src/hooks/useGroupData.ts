@@ -33,18 +33,18 @@ interface UseGroupDataReturn {
   deleteMember: (id: string) => Promise<void>;
 }
 
-export function useGroupData(groupSlug: string): UseGroupDataReturn {
+export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupDataReturn {
   const [group, setGroup] = useState<Clan | null>(null);
   const [characters, setCharacters] = useState<CharacterWithProfessions[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Reset state when groupSlug changes (prevent stale data on route transition)
+  // Reset state when groupSlug or gameSlug changes (prevent stale data on route transition)
   useEffect(() => {
     setGroup(null);
     setCharacters([]);
     setLoading(true);
-  }, [groupSlug]);
+  }, [groupSlug, gameSlug]);
 
   // Fetch clan (no longer auto-creates - that's handled by UI)
   const fetchClan = useCallback(async (): Promise<Clan | null> => {

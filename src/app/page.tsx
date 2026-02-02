@@ -174,7 +174,7 @@ export default function Home() {
               {userClans.map((group) => (
                 <Link
                   key={group.id}
-                  href={`/${group.slug}`}
+                  href={`/${group.slug}/${selectedGame || 'aoc'}`}
                   className="flex items-center justify-between bg-slate-900/60 hover:bg-slate-800/80 backdrop-blur-sm border border-slate-700 hover:border-slate-600 rounded-lg p-4 transition-all cursor-pointer group"
                 >
                   <div className="flex items-center gap-3">
