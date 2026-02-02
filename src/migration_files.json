@@ -32,7 +32,6 @@
   "031_add_discord_welcome_webhook_url.sql",
   "032_role_minimums_not_caps.sql",
   "033_add_role_max_caps.sql",
-  "034_add_game_support.sql",
   "034_fix_events_rls_include_trial.sql",
   "035_allow_admin_rsvp_on_behalf.sql",
   "036_allow_allied_clan_event_participation.sql",
@@ -44,5 +43,6 @@
   "042_allow_public_event_rsvp_view.sql",
   "043_fix_guest_rsvp_policies.sql",
   "044_add_guest_rsvp_status.sql",
-  "045_rename_clans_to_groups.sql"
+  "045_add_game_support.sql",
+  "046_rename_clans_to_groups.sql"
 ]
