@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2, Link } from 'lucide-react';
+import Link from 'next/link';
+import { Plus, Calendar, Megaphone, Pin, Trash2, Edit2, ExternalLink } from 'lucide-react';
 import { EventWithRsvps, Announcement, RsvpStatus, EventRole, Event } from '@/lib/events';
+import { CharacterWithProfessions } from '@/lib/types';
 import { EventCard } from './EventCard';
 import { EventForm } from './EventForm';
 import { AnnouncementForm } from './AnnouncementForm';
@@ -16,13 +18,15 @@ interface EventsListProps {
   announcements: Announcement[];
   timezone: string;
   clanId: string;
+  clanSlug?: string;
   userId: string;
+  characters: CharacterWithProfessions[];
   canManage: boolean;
   onCreateEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateEvent: (id: string, updates: Partial<EventWithRsvps>) => Promise<void>;
   onCancelEvent: (id: string) => Promise<void>;
   onDeleteEvent: (id: string) => Promise<void>;
-  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null) => Promise<void>;
+  onRsvp: (eventId: string, status: RsvpStatus, role?: EventRole | null, characterId?: string, targetUserId?: string) => Promise<void>;
   onCreateAnnouncement: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateAnnouncement: (id: string, updates: Partial<Announcement>) => Promise<void>;
   onDeleteAnnouncement: (id: string) => Promise<void>;
@@ -33,7 +37,9 @@ export function EventsList({
   announcements,
   timezone, // Keep the timezone prop for backward compatibility
   clanId,
+  clanSlug,
   userId,
+  characters,
   canManage,
   onCreateEvent,
   onUpdateEvent,
@@ -128,7 +134,7 @@ export function EventsList({
                     title="Copy link"
                     aria-label="Copy link"
                   >
-                    <Link size={14} />
+                    <ExternalLink size={14} />
                   </button>
                   {canManage && (
                     <>
@@ -180,7 +186,7 @@ export function EventsList({
                     title="Copy link"
                     aria-label="Copy link"
                   >
-                    <Link size={14} />
+                    <ExternalLink size={14} />
                   </button>
                   {canManage && (
                     <>
@@ -221,6 +227,16 @@ export function EventsList({
           )}
         </h3>
         <div className="flex gap-2">
+          {clanSlug && (
+            <Link
+              href={`/${clanSlug}/public-events`}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border bg-slate-700/50 hover:bg-slate-600 text-slate-300 border-slate-600 cursor-pointer"
+              title="View public events"
+            >
+              <ExternalLink size={16} />
+              <span className="hidden sm:inline">Public Events</span>
+            </Link>
+          )}
           <button
             onClick={() => setShowAnnouncementForm(true)}
             className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border-amber-500/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -260,7 +276,8 @@ export function EventsList({
               timezone={localTimezone}
               clanId={clanId}
               userId={userId}
-              onRsvp={(status, role) => onRsvp(event.id, status, role)}
+              characters={characters}
+              onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
               onEdit={canManage ? () => setEditingEvent(event) : undefined}
               onCancel={canManage ? () => onCancelEvent(event.id) : undefined}
               onDelete={canManage ? () => onDeleteEvent(event.id) : undefined}

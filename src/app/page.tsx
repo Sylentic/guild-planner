@@ -86,7 +86,16 @@ export default function Home() {
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header - fixed at top */}
       <header className="shrink-0 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-end">
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+          <Link
+            href="/events"
+            className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors cursor-pointer"
+            title="Public Events"
+          >
+            <Sword size={18} />
+            <span className="text-sm font-medium hidden sm:inline">Public Events</span>
+          </Link>
+          <div className="flex items-center justify-end">
           {loading ? (
             <div className="flex items-center gap-2 text-slate-400">
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -132,6 +141,7 @@ export default function Home() {
               {t('common.login')}
             </button>
           )}
+          </div>
         </div>
       </header>
 

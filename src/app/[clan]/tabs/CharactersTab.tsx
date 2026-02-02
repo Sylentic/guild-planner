@@ -64,6 +64,12 @@ export function CharactersTab({
             || roleHasPermission(userRole, 'characters_edit_any')
           );
           console.log('[DEBUG] canEdit:', canEdit, 'readOnly:', !canEdit, 'character:', character.name);
+          
+          // Get main character name if this is an alt
+          const mainCharacter = character.is_main ? null : characters.find(c => c.user_id === character.user_id && c.is_main);
+          // Get alt characters if this is a main
+          const alts = character.is_main ? characters.filter(c => c.user_id === character.user_id && !c.is_main) : [];
+          
           return (
             <CharacterCard
               key={character.id}
@@ -73,6 +79,8 @@ export function CharactersTab({
               onSetProfessionRank={setProfessionRank}
               onEdit={canEdit ? () => setEditingCharacter(character) : undefined}
               readOnly={!canEdit}
+              mainCharacterName={mainCharacter?.name}
+              altCharacters={alts}
             />
           );
         })

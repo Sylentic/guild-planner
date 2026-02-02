@@ -73,7 +73,7 @@ ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Clan members can view events"
   ON events FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial']));
 
 CREATE POLICY "Officers+ can create events"
   ON events FOR INSERT
@@ -96,7 +96,7 @@ CREATE POLICY "Clan members can view RSVPs"
     EXISTS (
       SELECT 1 FROM events e 
       WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
     )
   );
 
@@ -107,7 +107,7 @@ CREATE POLICY "Members can RSVP"
     EXISTS (
       SELECT 1 FROM events e 
       WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
     )
   );
 

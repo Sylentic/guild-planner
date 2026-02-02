@@ -393,7 +393,9 @@ export default function ClanPage({ params }: { params: Promise<{ clan: string }>
               announcements={announcements}
               timezone={profile?.timezone || 'UTC'}
               clanId={clanId!}
+              clanSlug={clanSlug}
               userId={user.id}
+              characters={characters}
               canManage={canManageMembers}
               onCreateEvent={async (eventData, sendDiscordNotification) => {
                 console.log('ClanPage onCreateEvent called with sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);

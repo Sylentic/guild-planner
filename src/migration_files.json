@@ -33,5 +33,16 @@
   "032_role_minimums_not_caps.sql",
   "033_add_role_max_caps.sql",
   "034_add_game_support.sql",
+  "034_fix_events_rls_include_trial.sql",
+  "035_allow_admin_rsvp_on_behalf.sql",
+  "036_allow_allied_clan_event_participation.sql",
+  "037_add_combined_dps_option.sql",
+  "038_guest_event_rsvps.sql",
+  "039_add_check_clans_allied_function.sql",
+  "040_add_public_events.sql",
+  "041_add_allied_signup_control.sql",
+  "042_allow_public_event_rsvp_view.sql",
+  "043_fix_guest_rsvp_policies.sql",
+  "044_add_guest_rsvp_status.sql",
   "045_rename_clans_to_groups.sql"
 ]

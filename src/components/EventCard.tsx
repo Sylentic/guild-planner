@@ -5,7 +5,9 @@ import { Calendar, MapPin, Users, Clock, Check, HelpCircle, X, ChevronDown, Chev
 import { useToast } from '@/contexts/ToastContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { usePermissions } from '@/hooks/usePermissions';
+import { CharacterWithProfessions } from '@/lib/types';
 import { Skeleton } from './ui/Skeleton';
+import { AnonymousGuestForm } from './AnonymousGuestForm';
 import { 
   EventWithRsvps, 
   RsvpStatus, 
@@ -25,11 +27,13 @@ interface EventCardProps {
   timezone: string;
   clanId: string;
   userId: string;
-  onRsvp: (status: RsvpStatus, role?: EventRole | null) => void;
+  characters: CharacterWithProfessions[];
+  onRsvp: (status: RsvpStatus, role?: EventRole | null, characterId?: string, targetUserId?: string) => void;
   onEdit?: () => void;
   onCancel?: () => void;
   onDelete?: () => void;
   canManage?: boolean;
+  isPublicView?: boolean;
 }
 
 export function EventCard({ 
@@ -37,17 +41,85 @@ export function EventCard({
   timezone, 
   clanId,
   userId,
+  characters,
   onRsvp, 
   onEdit, 
   onCancel,
   onDelete,
-  canManage = false 
+  canManage = false,
+  isPublicView = false
 }: EventCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EventRole | null>(null);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminTargetUserId, setAdminTargetUserId] = useState<string | null>(null);
+  const [isRsvpLoading, setIsRsvpLoading] = useState(false);
   const { showToast } = useToast();
   const { t } = useLanguage();
   const { hasPermission } = usePermissions(clanId);
+
+  // Get user's main character and filter characters for this user
+  const userCharacters = characters.filter(c => c.user_id === userId);
+  const mainCharacter = userCharacters.find(c => c.is_main);
+  
+  // Check if user is admin
+  const isAdmin = hasPermission('events_edit_any') || canManage;
+  
+  // Get unique users from all characters for admin selector
+  const uniqueUsers = Array.from(new Map(
+    characters
+      .filter(char => char.user_id !== userId) // Exclude current user
+      .map(char => {
+        const mainChar = characters.find(c => c.user_id === char.user_id && c.is_main);
+        const displayChar = mainChar || char;
+        return [char.user_id, { userId: char.user_id, characterName: displayChar.name }];
+      })
+  ).values());
+
+  // Helper function to format attendee name (show char + discord name)
+  const formatAttendeeName = (rsvp: EventWithRsvps['rsvps'][0]): string => {
+    let charName = rsvp.character?.name;
+    const userName = rsvp.user?.display_name;
+    
+    // If no character linked but user exists, find their main character
+    if (!charName && rsvp.user_id) {
+      const userMainChar = characters.find(c => c.user_id === rsvp.user_id && c.is_main);
+      if (userMainChar) {
+        charName = userMainChar.name;
+      }
+    }
+    
+    if (charName && userName) {
+      return `${charName} (${userName})`;
+    } else if (charName) {
+      return charName;
+    } else if (userName) {
+      return userName;
+    }
+    return 'Unknown';
+  };
+
+  // Wrapper for RSVP calls with error handling and loading state
+  const handleRsvpClick = async (status: RsvpStatus, role?: EventRole | null) => {
+    try {
+      setIsRsvpLoading(true);
+      // Use selected character, or default to main character for status changes
+      const charId = selectedCharacterId || mainCharacter?.id;
+      const targetUserId = adminMode && adminTargetUserId ? adminTargetUserId : undefined;
+      await onRsvp(status, role, charId, targetUserId);
+      // Show success toast
+      const statusText = status === 'attending' ? 'attending' : status === 'maybe' ? 'maybe' : 'declined';
+      const forText = adminMode && adminTargetUserId ? ' for selected member' : '';
+      showToast('success', `Successfully marked as ${statusText}${forText}`);
+    } catch (err) {
+      console.error('RSVP error:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to RSVP for event';
+      showToast('error', errorMsg);
+    } finally {
+      setIsRsvpLoading(false);
+    }
+  };
   
   const eventType = EVENT_TYPES[event.event_type];
   const isPast = isEventPast(event.starts_at);
@@ -196,7 +268,13 @@ export function EventCard({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {Object.entries(EVENT_ROLES).map(([roleKey, roleConfig]) => {
                   const role = roleKey as EventRole;
-                  // Map role keys to database field names (tanks_min, clerics_min, etc.)
+                  
+                  // Skip individual DPS roles if combined
+                  if (event.allow_combined_dps && (role === 'ranged_dps' || role === 'melee_dps')) {
+                    return null;
+                  }
+                  
+                  // Map role keys to database field names
                   const minFieldMap: Record<EventRole, keyof EventWithRsvps> = {
                     tank: 'tanks_min',
                     cleric: 'clerics_min',
@@ -222,10 +300,15 @@ export function EventCard({
                   const isMinimumMet = minimum > 0 && total >= minimum;
                   const isAtMax = maximum !== null && total >= maximum;
                   
-                  // Get RSVPs for this role
+                  // Get RSVPs for this role (both member and guest)
                   const roleRsvps = event.rsvps?.filter(rsvp => 
                     rsvp.role === role && 
                     (rsvp.status === 'attending' || rsvp.status === 'maybe')
+                  ) || [];
+                  
+                  // Get guest RSVPs for this role
+                  const roleGuestRsvps = event.guest_rsvps?.filter(guest => 
+                    guest.role === role
                   ) || [];
                   
                   // Format the count display
@@ -282,12 +365,12 @@ export function EventCard({
                         />
                       </div>
                       
-                      {/* List of signups */}
-                      {roleRsvps.length > 0 && (
+                      {/* List of signups - hide names on public view, show counts instead */}
+                      {!isPublicView && (roleRsvps.length > 0 || roleGuestRsvps.length > 0) && (
                         <div className="text-xs space-y-1">
                           {roleRsvps.map((rsvp, idx) => (
                             <div 
-                              key={idx}
+                              key={`member-${idx}`}
                               className="flex items-center gap-1.5 text-slate-300"
                             >
                               {rsvp.status === 'attending' ? (
@@ -296,15 +379,214 @@ export function EventCard({
                                 <HelpCircle size={12} className="text-yellow-400" />
                               )}
                               <span className="truncate">
-                                {rsvp.character?.name || rsvp.user?.display_name || 'Unknown'}
+                                {formatAttendeeName(rsvp)}
+                              </span>
+                            </div>
+                          ))}
+                          {roleGuestRsvps.map((guest, idx) => (
+                            <div 
+                              key={`guest-${idx}`}
+                              className="flex items-center gap-1.5 text-slate-400 italic"
+                            >
+                              <Check size={12} className="text-blue-400" />
+                              <span className="truncate">
+                                {guest.guest_name}
+                                <span className="text-slate-500 text-xs ml-1">(guest)</span>
                               </span>
                             </div>
                           ))}
                         </div>
                       )}
+                      
+                      {/* On public view, show counts without names - always show even if 0 */}
+                      {isPublicView && (
+                        <div className="text-xs space-y-1">
+                          <div className="text-slate-300">
+                            <span className="font-medium text-green-400">{roleRsvps.filter(r => r.status === 'attending').length}</span>
+                            <span className="text-slate-400 mx-1">confirmed</span>
+                            {roleRsvps.filter(r => r.status === 'maybe').length > 0 && (
+                              <>
+                                <span className="font-medium text-yellow-400">{roleRsvps.filter(r => r.status === 'maybe').length}</span>
+                                <span className="text-slate-400">tentative</span>
+                              </>
+                            )}
+                          </div>
+                          {roleGuestRsvps.length > 0 && (
+                            <div className="text-slate-400 italic">
+                              <span className="font-medium text-blue-400">
+                                {roleGuestRsvps.filter(g => g.status === 'attending').length}
+                              </span>
+                              <span className="text-slate-400 mx-1">guest confirmed</span>
+                              {roleGuestRsvps.filter(g => g.status === 'maybe').length > 0 && (
+                                <>
+                                  <span className="font-medium text-blue-300">
+                                    {roleGuestRsvps.filter(g => g.status === 'maybe').length}
+                                  </span>
+                                  <span className="text-slate-400 mx-1">guest tentative</span>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
+                
+                {/* Combined DPS card if enabled */}
+                {event.allow_combined_dps && (event.ranged_dps_min > 0 || event.melee_dps_min > 0 || event.ranged_dps_max || event.melee_dps_max) && (
+                  (() => {
+                    const combinedMin = (event.ranged_dps_min || 0) + (event.melee_dps_min || 0);
+                    const combinedMax = event.combined_dps_max;
+                    
+                    const rangedCounts = event.role_counts?.ranged_dps || { attending: 0, maybe: 0 };
+                    const meleeCounts = event.role_counts?.melee_dps || { attending: 0, maybe: 0 };
+                    const combinedAttending = rangedCounts.attending + meleeCounts.attending;
+                    const combinedMaybe = rangedCounts.maybe + meleeCounts.maybe;
+                    const combinedTotal = combinedAttending + combinedMaybe;
+                    
+                    const isMinimumMet = combinedMin > 0 && combinedTotal >= combinedMin;
+                    const isAtMax = combinedMax !== null && combinedTotal >= combinedMax;
+                    
+                    // Get combined RSVPs
+                    const combinedRsvps = (event.rsvps || []).filter(rsvp => 
+                      (rsvp.role === 'ranged_dps' || rsvp.role === 'melee_dps') &&
+                      (rsvp.status === 'attending' || rsvp.status === 'maybe')
+                    );
+                    
+                    // Get combined guest RSVPs
+                    const combinedGuestRsvps = (event.guest_rsvps || []).filter(guest =>
+                      guest.role === 'ranged_dps' || guest.role === 'melee_dps'
+                    );
+                    
+                    let countDisplay;
+                    if (combinedMin > 0 && combinedMax !== null) {
+                      countDisplay = `${combinedTotal}/${combinedMin}/${combinedMax}`;
+                    } else if (combinedMin > 0) {
+                      countDisplay = `${combinedTotal}/${combinedMin}+`;
+                    } else if (combinedMax !== null) {
+                      countDisplay = `${combinedTotal}/${combinedMax}`;
+                    } else {
+                      countDisplay = `${combinedTotal}`;
+                    }
+                    
+                    return (
+                      <div 
+                        key="combined_dps"
+                        className={`bg-slate-800/50 rounded-lg p-3 space-y-2 border transition-all sm:col-span-2 lg:col-span-3 ${
+                          isAtMax ? 'border-red-500/50' :
+                          isMinimumMet ? 'border-green-500/50' : 'border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">🗡️</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-purple-400">
+                                DPS (Combined)
+                              </span>
+                              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">
+                                Ranged + Melee
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-sm font-semibold ${
+                              isAtMax ? 'text-red-400' :
+                              isMinimumMet ? 'text-green-400' : 'text-slate-400'
+                            }`}>
+                              {countDisplay}
+                            </span>
+                            {isAtMax && (
+                              <span className="text-xs text-red-400" title="Role is full">🔒</span>
+                            )}
+                            {isMinimumMet && !isAtMax && (
+                              <Check size={14} className="text-green-400" />
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="w-full bg-slate-700 rounded-full h-1.5">
+                          <div 
+                            className="h-1.5 rounded-full transition-all"
+                            style={{ 
+                              width: `${Math.min(100, (combinedTotal / (combinedMax || combinedMin || 1)) * 100)}%`,
+                              backgroundColor: isAtMax ? '#ef4444' : '#a855f7'
+                            }}
+                          />
+                        </div>
+                        
+                        {/* List of signups */}
+                        {!isPublicView && (combinedRsvps.length > 0 || combinedGuestRsvps.length > 0) && (
+                          <div className="text-xs space-y-1">
+                            {combinedRsvps.map((rsvp, idx) => (
+                              <div 
+                                key={`combined-member-${idx}`}
+                                className="flex items-center gap-1.5 text-slate-300"
+                              >
+                                {rsvp.status === 'attending' ? (
+                                  <Check size={12} className="text-green-400" />
+                                ) : (
+                                  <HelpCircle size={12} className="text-yellow-400" />
+                                )}
+                                <span className="text-xs text-slate-500">{rsvp.role === 'ranged_dps' ? '(Ranged)' : '(Melee)'}</span>
+                                <span className="truncate">
+                                  {formatAttendeeName(rsvp)}
+                                </span>
+                              </div>
+                            ))}
+                            {combinedGuestRsvps.map((guest, idx) => (
+                              <div 
+                                key={`combined-guest-${idx}`}
+                                className="flex items-center gap-1.5 text-slate-400 italic"
+                              >
+                                <Check size={12} className="text-blue-400" />
+                                <span className="text-xs text-slate-500">{guest.role === 'ranged_dps' ? '(Ranged)' : '(Melee)'}</span>
+                                <span className="truncate">
+                                  {guest.guest_name}
+                                  <span className="text-slate-500 text-xs ml-1">(guest)</span>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Public view combined counts */}
+                        {isPublicView && (
+                          <div className="text-xs space-y-1">
+                            <div className="text-slate-300">
+                              <span className="font-medium text-green-400">{combinedRsvps.filter(r => r.status === 'attending').length}</span>
+                              <span className="text-slate-400 mx-1">confirmed</span>
+                              {combinedRsvps.filter(r => r.status === 'maybe').length > 0 && (
+                                <>
+                                  <span className="font-medium text-yellow-400">{combinedRsvps.filter(r => r.status === 'maybe').length}</span>
+                                  <span className="text-slate-400">tentative</span>
+                                </>
+                              )}
+                            </div>
+                            {combinedGuestRsvps.length > 0 && (
+                              <div className="text-slate-400 italic">
+                                <span className="font-medium text-blue-400">
+                                  {combinedGuestRsvps.filter(g => g.status === 'attending').length}
+                                </span>
+                                <span className="text-slate-400 mx-1">guest confirmed</span>
+                                {combinedGuestRsvps.filter(g => g.status === 'maybe').length > 0 && (
+                                  <>
+                                    <span className="font-medium text-blue-300">
+                                      {combinedGuestRsvps.filter(g => g.status === 'maybe').length}
+                                    </span>
+                                    <span className="text-slate-400 mx-1">guest tentative</span>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
               </div>
             </div>
           )}
@@ -312,6 +594,94 @@ export function EventCard({
           {/* RSVP buttons */}
           {!event.is_cancelled && !isPast && (
             <div className="space-y-3">
+              {/* For public events with anonymous users, show anonymous signup only */}
+              {event.is_public && !userId && (
+                <AnonymousGuestForm 
+                  eventId={event.id}
+                  onSuccess={() => {
+                    // Could refresh the event here
+                  }}
+                />
+              )}
+
+              {/* Admin mode toggle - only show for admins */}
+              {isAdmin && (
+                <div className="p-2 bg-slate-800/50 border border-amber-500/30 rounded-lg">
+                  <label className="flex items-center gap-2 text-xs text-amber-300 cursor-pointer mb-2">
+                    <input
+                      type="checkbox"
+                      checked={adminMode}
+                      onChange={(e) => {
+                        setAdminMode(e.target.checked);
+                        setAdminTargetUserId(null);
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <span>Respond on behalf of member</span>
+                  </label>
+                  
+                  {/* Show member selector when admin mode is on */}
+                  {adminMode && uniqueUsers.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {uniqueUsers.map((user) => (
+                        <button
+                          key={user.userId}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAdminTargetUserId(adminTargetUserId === user.userId ? null : user.userId);
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            adminTargetUserId === user.userId
+                              ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-amber-600/30 text-amber-300'
+                              : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                          }`}
+                        >
+                          {user.characterName}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Character selector - show if user has characters (or admin selected a target) */}
+              {(userCharacters.length > 0 || (adminMode && adminTargetUserId)) && (
+                <div>
+                  <label className="block text-xs text-slate-400 mb-2">
+                    Attending as
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(() => {
+                      // If admin mode is on, show target user's characters; otherwise show current user's
+                      const charsToShow = adminMode && adminTargetUserId 
+                        ? characters.filter(c => c.user_id === adminTargetUserId)
+                        : userCharacters;
+                      const mainChar = charsToShow.find(c => c.is_main);
+                      
+                      return charsToShow.map((character) => (
+                        <button
+                          key={character.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCharacterId(selectedCharacterId === character.id ? null : character.id);
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            selectedCharacterId === character.id || (!selectedCharacterId && mainChar?.id === character.id)
+                              ? 'ring-2 ring-offset-2 ring-offset-slate-900 bg-slate-700 text-white'
+                              : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                          }`}
+                        >
+                          {character.name}
+                          {character.is_main && <span className="text-xs text-yellow-400">★</span>}
+                        </button>
+                      ));
+                    })()}
+                  </div>
+                </div>
+              )}
+              
               {/* Role selector - show if any roles are needed */}
               {(event.tanks_min > 0 || event.clerics_min > 0 || event.bards_min > 0 || 
                 event.ranged_dps_min > 0 || event.melee_dps_min > 0) && (
@@ -355,7 +725,14 @@ export function EventCard({
                           onClick={(e) => {
                             e.stopPropagation();
                             if (!isRoleFull || userInThisRole) {
-                              setSelectedRole(isSelected ? null : role);
+                              if (isSelected) {
+                                // Deselect the role
+                                setSelectedRole(null);
+                              } else {
+                                // Select the role and automatically RSVP as attending
+                                setSelectedRole(role);
+                                handleRsvpClick('attending', role);
+                              }
                             }
                           }}
                           disabled={isRoleFull && !userInThisRole}
@@ -396,20 +773,20 @@ export function EventCard({
                     <button
                       onClick={(e) => { 
                         e.stopPropagation(); 
-                        onRsvp('attending', null);
+                        handleRsvpClick('attending', null);
                       }}
-                      disabled={isFull && userRsvp?.status !== 'attending'}
+                      disabled={(isFull && userRsvp?.status !== 'attending') || isRsvpLoading}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                         userRsvp?.status === 'attending' && !userRsvp?.role
                           ? 'ring-2 ring-offset-2 ring-offset-slate-900 text-green-400'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                      } ${isFull && userRsvp?.status !== 'attending' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${(isFull && userRsvp?.status !== 'attending') || isRsvpLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                       style={userRsvp?.status === 'attending' && !userRsvp?.role ? { 
                         backgroundColor: '#22c55e30'
                       } : undefined}
                     >
                       <Check size={14} />
-                      Attending
+                      {isRsvpLoading ? 'Updating...' : 'Attending'}
                       {isFull && userRsvp?.status !== 'attending' && ' (Full)'}
                     </button>
                   )}
@@ -420,56 +797,59 @@ export function EventCard({
                     <button
                       onClick={(e) => { 
                         e.stopPropagation(); 
-                        onRsvp('attending', selectedRole);
+                        handleRsvpClick('attending', selectedRole);
                       }}
+                      disabled={isRsvpLoading}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                         userRsvp?.status === 'attending' && userRsvp?.role === selectedRole
                           ? 'ring-2 ring-offset-2 ring-offset-slate-900 text-green-400'
                           : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                      }`}
+                      } ${isRsvpLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                       style={userRsvp?.status === 'attending' && userRsvp?.role === selectedRole ? { 
                         backgroundColor: '#22c55e30'
                       } : undefined}
                     >
                       <Check size={14} />
-                      Attending
+                      {isRsvpLoading ? 'Updating...' : 'Attending'}
                     </button>
                   )}
                   
                   <button
                     onClick={(e) => { 
                       e.stopPropagation(); 
-                      onRsvp('maybe', selectedRole);
+                      handleRsvpClick('maybe', selectedRole);
                     }}
+                    disabled={isRsvpLoading}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                       userRsvp?.status === 'maybe'
                         ? 'ring-2 ring-offset-2 ring-offset-slate-900 text-yellow-400'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                    }`}
+                    } ${isRsvpLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     style={userRsvp?.status === 'maybe' ? { 
                       backgroundColor: '#eab30830'
                     } : undefined}
                   >
                     <HelpCircle size={14} />
-                    Maybe
+                    {isRsvpLoading ? 'Updating...' : 'Maybe'}
                   </button>
                   
                   <button
                     onClick={(e) => { 
                       e.stopPropagation(); 
-                      onRsvp('declined', null);
+                      handleRsvpClick('declined', null);
                     }}
+                    disabled={isRsvpLoading}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                       userRsvp?.status === 'declined'
                         ? 'ring-2 ring-offset-2 ring-offset-slate-900 text-red-400'
                         : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-                    }`}
+                    } ${isRsvpLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     style={userRsvp?.status === 'declined' ? { 
                       backgroundColor: '#ef444430'
                     } : undefined}
                   >
                     <X size={14} />
-                    Decline
+                    {isRsvpLoading ? 'Updating...' : 'Decline'}
                   </button>
                 </div>
               </div>

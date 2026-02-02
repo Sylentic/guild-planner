@@ -41,7 +41,7 @@ export interface ClanMembership {
  * Sign in with Discord OAuth
  */
 export async function signInWithDiscord(redirectTo?: string) {
-  // Detect if user is on dev domain and store that for later
+  // Detect if user is on dev domain and route through intermediary
   const isDev = typeof window !== 'undefined' && 
                 window.location.hostname === 'dev.gp.pandamonium-gaming.com';
   
