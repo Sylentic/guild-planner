@@ -1,0 +1,72 @@
+{
+  "pilot_roles": [
+    {
+      "id": "pilot",
+      "name": "Pilot",
+      "icon": "👨‍✈️",
+      "description": "Commands a ship in combat/exploration"
+    },
+    {
+      "id": "copilot",
+      "name": "Co-Pilot",
+      "icon": "👩‍✈️",
+      "description": "Assists pilot with navigation/systems"
+    },
+    {
+      "id": "gunner",
+      "name": "Gunner",
+      "icon": "🔫",
+      "description": "Operates ship weapons"
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "icon": "⚙️",
+      "description": "Manages power, cooling, repairs"
+    },
+    {
+      "id": "medic",
+      "name": "Medic",
+      "icon": "🏥",
+      "description": "Field medicine and recovery"
+    },
+    {
+      "id": "scout",
+      "name": "Scout",
+      "icon": "🔍",
+      "description": "Reconnaissance and intel gathering"
+    }
+  ],
+  "specializations": [
+    {
+      "id": "combat",
+      "name": "Combat",
+      "icon": "⚔️",
+      "roles": ["pilot", "gunner"]
+    },
+    {
+      "id": "exploration",
+      "name": "Exploration",
+      "icon": "🔭",
+      "roles": ["pilot", "scout"]
+    },
+    {
+      "id": "logistics",
+      "name": "Logistics",
+      "icon": "📦",
+      "roles": ["engineer", "pilot"]
+    },
+    {
+      "id": "medical",
+      "name": "Medical",
+      "icon": "🚑",
+      "roles": ["medic"]
+    },
+    {
+      "id": "salvage",
+      "name": "Salvage",
+      "icon": "♻️",
+      "roles": ["engineer", "copilot"]
+    }
+  ]
+}

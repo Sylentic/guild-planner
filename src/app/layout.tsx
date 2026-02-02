@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { GameProvider } from "@/contexts/GameContext";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { IsAdminBannerWrapper } from '@/components/IsAdminBannerWrapper';
@@ -62,14 +63,16 @@ export default function RootLayout({
         <LanguageProvider>
           <ToastProvider>
             <AuthProvider>
-              <div className="flex flex-col min-h-screen">
-                <IsAdminBannerWrapper />
-                <main className="flex-1">
-                  {children}
-                </main>
-              </div>
-              <Footer />
-              <Analytics />
+              <GameProvider>
+                <div className="flex flex-col min-h-screen">
+                  <IsAdminBannerWrapper />
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                </div>
+                <Footer />
+                <Analytics />
+              </GameProvider>
             </AuthProvider>
           </ToastProvider>
         </LanguageProvider>
