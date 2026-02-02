@@ -32,9 +32,9 @@ export function GameSelector() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-white mb-2">Choose Your Game</h2>
+        <h2 className="text-3xl font-bold text-white mb-2">Select Your Game</h2>
         <p className="text-slate-400">
-          Select which game you'd like to manage with this tool
+          Choose which game you want to organize
         </p>
       </div>
 
