@@ -11,7 +11,6 @@ ALTER TABLE clan_members RENAME TO group_members;
 ALTER TABLE clan_achievements RENAME TO group_achievements;
 
 -- 4. Update column names in groups table
-ALTER TABLE groups RENAME COLUMN clan_name TO group_name;
 ALTER TABLE groups RENAME COLUMN guild_icon_url TO group_icon_url;
 ALTER TABLE groups RENAME COLUMN discord_webhook_url TO group_webhook_url;
 ALTER TABLE groups RENAME COLUMN discord_welcome_webhook_url TO group_welcome_webhook_url;
