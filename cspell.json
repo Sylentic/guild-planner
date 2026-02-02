@@ -131,6 +131,7 @@
     "Spellsinger",
     "Spellstone",
     "Spellsword",
+    "starcitizen",
     "stonecutting",
     "Stonecutting",
     "stonemasonry",
@@ -145,11 +146,13 @@
     "Tanstack",
     "Tellsword",
     "Templar",
+    "TIMESTAMPTZ",
     "Toole",
     "Trebuchets",
     "Tulnar",
     "upserting",
     "Vaelune",
+    "VARCHAR",
     "Verra",
     "Warden",
     "Warlock",
@@ -160,7 +163,8 @@
     "Weaving",
     "webhint",
     "woodworking",
-    "Woodworking"
+    "Woodworking",
+    "worldofwarcraft"
   ],
   "ignorePaths": [
     "node_modules",

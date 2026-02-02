@@ -8,7 +8,7 @@ The application has been refactored to support multiple games (Ashes of Creation
 
 ## Directory Structure
 
-```
+```txt
 src/
 ├── games/
 │   ├── aoc/
@@ -101,11 +101,13 @@ A new migration (`034_add_game_support.sql`) adds:
 To add a new game (e.g., "World of Warcraft"):
 
 1. **Create config directory**:
+
    ```bash
    mkdir -p src/games/worldofwarcraft/config
    ```
 
 2. **Create game config** (`src/games/worldofwarcraft/config/index.ts`):
+
    ```typescript
    import classes from './classes.json';
    import professions from './professions.json';
@@ -131,6 +133,7 @@ To add a new game (e.g., "World of Warcraft"):
 3. **Create JSON data files** (classes.json, professions.json, etc.)
 
 4. **Update game registry** (`src/lib/games.ts`):
+
    ```typescript
    import { WOW_CONFIG } from '@/games/worldofwarcraft/config';
 
@@ -142,6 +145,7 @@ To add a new game (e.g., "World of Warcraft"):
    ```
 
 5. **Update GameId type** (`src/lib/games.ts`):
+
    ```typescript
    export type GameId = 'aoc' | 'starcitizen' | 'worldofwarcraft';
    ```
