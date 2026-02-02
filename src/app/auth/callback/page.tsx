@@ -18,26 +18,8 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      // Check if the user came from dev domain (via localStorage)
-      const redirectTo = localStorage.getItem('authRedirectTo');
-      localStorage.removeItem('authRedirectTo');
-      
-      // If coming from dev domain, redirect back to dev
-      if (redirectTo && redirectTo.includes('dev.gp')) {
-        router.push(redirectTo);
-      } else {
-        // Check if we should redirect to dev based on current hostname
-        const isDev = typeof window !== 'undefined' && 
-                      window.location.hostname === 'dev.gp.pandamonium-gaming.com';
-        
-        if (isDev) {
-          // Redirect to dev home
-          router.push('/');
-        } else {
-          // Redirect to prod home or stored location
-          router.push(redirectTo || '/');
-        }
-      }
+      // Redirect to home - getURL() already ensures we're on the correct domain
+      router.push('/');
     };
 
     handleCallback();

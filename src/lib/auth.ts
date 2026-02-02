@@ -41,18 +41,12 @@ export interface ClanMembership {
  * Sign in with Discord OAuth
  */
 export async function signInWithDiscord(redirectTo?: string) {
-  // Store the current domain so we can redirect back to it after auth
-  if (typeof window !== 'undefined') {
-    const currentHostname = window.location.hostname;
-    if (currentHostname === 'dev.gp.pandamonium-gaming.com') {
-      localStorage.setItem('authRedirectTo', redirectTo || 'https://dev.gp.pandamonium-gaming.com/');
-    }
-  }
-
+  const callbackUrl = redirectTo || `${getURL()}auth/callback`;
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
     options: {
-      redirectTo: redirectTo || `${getURL()}auth/callback`,
+      redirectTo: callbackUrl,
       scopes: 'identify',
     },
   });
