@@ -18,7 +18,7 @@ export function BottomNav({ activeTab, onTabChange, canManage, gameSlug = 'aoc' 
   const { t } = useLanguage();
   const NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
     { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
-    { tab: 'matrix', icon: Grid3X3, labelKey: 'nav.matrix' },
+    { tab: 'matrix', icon: Grid3X3, labelKey: gameSlug === 'star-citizen' ? 'nav.ships' : 'nav.matrix' },
     { tab: 'economy', icon: Warehouse, labelKey: 'nav.economy' },
     { tab: 'events', icon: Calendar, labelKey: 'nav.events' },
     { tab: 'more', icon: MoreHorizontal, labelKey: 'nav.more' },

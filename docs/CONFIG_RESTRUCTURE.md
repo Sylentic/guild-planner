@@ -6,7 +6,7 @@ As of January 2025, the config files have been restructured from a scattered app
 
 ## Old Structure (Deprecated)
 
-```
+```txt
 src/config/
   ├── professions.json      → AoC-specific
   ├── archetypes.json       → AoC-specific
@@ -18,7 +18,7 @@ src/config/
 
 ## New Structure
 
-```
+```txt
 src/config/
   ├── games/
   │   ├── aoc.json          → All AoC config (professions, archetypes, races, roles)
@@ -129,7 +129,7 @@ export type RaceId = typeof aocConfig.races.list[number]['id'];
 }
 ```
 
-2. Import in `src/config/index.ts`:
+1. Import in `src/config/index.ts`:
 
 ```typescript
 import newGameData from './games/new-game.json';
@@ -146,7 +146,7 @@ export function getGameConfig(gameSlug: string) {
 }
 ```
 
-3. Update types if needed
+1. Update types if needed
 
 ## Migration Notes
 

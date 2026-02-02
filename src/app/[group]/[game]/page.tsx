@@ -29,6 +29,7 @@ import { Tab } from '@/components/tabs';
 import { InlineFooter } from '@/components/Footer';
 import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
 import { ClanMatrix } from '@/components/ClanMatrix';
+import { ShipsView } from '@/components/ShipsView';
 import { SiegeTab } from './tabs/SiegeTab';
 import { EconomyTab } from './tabs/EconomyTab';
 import { MoreTabContent } from '@/components/MoreTabContent';
@@ -490,7 +491,16 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
               groupId={groupId!}
             />
           ) : activeTab === 'matrix' ? (
-            <ClanMatrix members={characters} />
+            gameSlug === 'star-citizen' ? (
+              <ShipsView
+                characters={characters}
+                userId={user.id}
+                canManage={canManageMembers}
+                groupId={groupId!}
+              />
+            ) : (
+              <ClanMatrix members={characters} />
+            )
           ) : activeTab === 'economy' ? (
             <EconomyTab
               groupId={groupId!}
