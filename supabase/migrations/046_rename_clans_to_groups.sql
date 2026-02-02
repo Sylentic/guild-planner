@@ -33,7 +33,6 @@ ALTER TABLE events RENAME COLUMN clan_id TO group_id;
 ALTER TABLE parties RENAME COLUMN clan_id TO group_id;
 ALTER TABLE freeholds RENAME COLUMN clan_id TO group_id;
 ALTER TABLE guild_banks RENAME COLUMN clan_id TO group_id;
-ALTER TABLE bank_transactions RENAME COLUMN clan_id TO group_id;
 ALTER TABLE caravan_events RENAME COLUMN clan_id TO group_id;
 ALTER TABLE activity_log RENAME COLUMN clan_id TO group_id;
 ALTER TABLE announcements RENAME COLUMN clan_id TO group_id;
@@ -42,8 +41,6 @@ ALTER TABLE alliances RENAME COLUMN clan_id_2 TO group_id_2;
 ALTER TABLE dkp_points RENAME COLUMN clan_id TO group_id;
 ALTER TABLE loot_history RENAME COLUMN clan_id TO group_id;
 ALTER TABLE dkp_transactions RENAME COLUMN clan_id TO group_id;
-ALTER TABLE recruitment_settings RENAME COLUMN clan_id TO group_id;
-ALTER TABLE role_templates RENAME COLUMN clan_id TO group_id;
 ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
 ALTER TABLE group_permission_overrides RENAME COLUMN clan_id TO group_id;
 
