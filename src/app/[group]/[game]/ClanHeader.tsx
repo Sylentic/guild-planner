@@ -1,6 +1,31 @@
 import Link from 'next/link';
 import { Home, Settings, LogOut } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+
+// Map pages that only exist in specific games to their equivalents in other games
+const pageEquivalencyMap: Record<string, Record<string, string>> = {
+  'star-citizen': {
+    'matrix': 'matrix',      // Both games have matrix
+    'fleet': 'matrix',       // AoC doesn't have fleet, use matrix
+    'ships': 'matrix',       // AoC doesn't have ships, use matrix
+  },
+  'aoc': {
+    'matrix': 'matrix',      // Both games have matrix
+    'fleet': 'fleet',        // AoC doesn't have fleet, go back to characters
+    'ships': 'characters',   // AoC doesn't have ships, go to characters
+  },
+};
+
+function getPageForGame(currentPath: string, targetGame: string): string {
+  // Extract the page segment from the current path
+  // Path format: /groupSlug/gameSlug/page
+  const pathSegments = currentPath.split('/').filter(Boolean);
+  const currentPage = pathSegments[2] || 'characters';
+  
+  // Get the equivalent page for the target game, default to characters
+  const equivalentPage = pageEquivalencyMap[targetGame]?.[currentPage] || 'characters';
+  return equivalentPage;
+}
 
 interface ClanHeaderProps {
   clanName: string;
@@ -26,8 +51,14 @@ export function ClanHeader({
   guildIconUrl,
 }: ClanHeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentTab = searchParams?.get('tab') || 'characters';
+  
+  const handleGameSwitch = (targetGameSlug: string) => {
+    const equivalentPage = getPageForGame(pathname || '', targetGameSlug);
+    router.push(`/${groupSlug}/${targetGameSlug}/${equivalentPage}?tab=${currentTab}`);
+  };
   
   return (
     <header className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 shrink-0 z-50">
@@ -67,7 +98,7 @@ export function ClanHeader({
                 {enabledGames.map((game) => (
                   <button
                     key={game.slug}
-                    onClick={() => router.push(`/${groupSlug}/${game.slug}?tab=${currentTab}`)}
+                    onClick={() => handleGameSwitch(game.slug)}
                     className={`px-2 py-1 rounded text-sm transition-colors ${
                       gameSlug === game.slug
                         ? 'bg-slate-700 text-white'
