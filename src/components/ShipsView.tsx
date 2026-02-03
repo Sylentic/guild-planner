@@ -367,8 +367,8 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                           )}
                                         </div>
                                         {manufacturerLogo && (
-                                          <div className="mt-3 flex items-center justify-center">
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-16 w-auto object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                          <div className="mt-3 flex w-full items-center justify-center">
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto" title={shipData.manufacturer} />
                                           </div>
                                         )}
                                         <div className="flex items-center gap-2 mt-2">
@@ -437,8 +437,8 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                           )}
                                         </div>
                                         {manufacturerLogo && (
-                                          <div className="mt-3 flex items-center justify-center">
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-16 w-auto object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                          <div className="mt-3 flex w-full items-center justify-center">
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto" title={shipData.manufacturer} />
                                           </div>
                                         )}
                                         <div className="flex items-center gap-2 mt-2">

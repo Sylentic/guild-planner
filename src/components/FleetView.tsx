@@ -454,11 +454,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                             )}
                                           </div>
                                           {manufacturerLogo && (
-                                            <div className="mt-3 flex items-center justify-center">
+                                            <div className="mt-3 flex w-full items-center justify-center">
                                               <img 
                                                 src={manufacturerLogo} 
                                                 alt={shipData.manufacturer}
-                                                className="h-16 w-auto object-contain brightness-0 invert opacity-100"
+                                                className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto"
                                                 title={shipData.manufacturer}
                                               />
                                             </div>
@@ -555,11 +555,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                               )}
                                             </div>
                                             {manufacturerLogo && (
-                                              <div className="mt-3 flex items-center justify-center">
+                                              <div className="mt-3 flex w-full items-center justify-center">
                                                 <img 
                                                   src={manufacturerLogo} 
                                                   alt={shipData.manufacturer}
-                                                  className="h-16 w-auto object-contain brightness-0 invert opacity-100"
+                                                  className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto"
                                                   title={shipData.manufacturer}
                                                 />
                                               </div>
