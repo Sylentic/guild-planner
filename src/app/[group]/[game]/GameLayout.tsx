@@ -15,6 +15,7 @@ import { GroupHeader } from './GroupHeader';
 import { ClanTabNav } from '@/components/ClanTabNav';
 import { InlineFooter } from '@/components/Footer';
 import { Users, Clock, UserPlus, Loader2 } from 'lucide-react';
+import { getAllGames } from '@/lib/games';
 
 interface GameLayoutProps {
   params: Promise<{ group: string; game: string }>;
@@ -128,10 +129,11 @@ export function GameLayout({ params, children, activeTab, characterCount = 0 }: 
     );
   }
 
-  const enabledGames = [
-    { slug: 'aoc', name: 'Ashes of Creation', icon: '⚔️' },
-    { slug: 'starcitizen', name: 'Star Citizen', icon: '🚀' },
-  ];
+  const enabledGames = getAllGames().map(game => ({
+    slug: game.id,
+    name: game.name,
+    icon: game.icon
+  }));
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
