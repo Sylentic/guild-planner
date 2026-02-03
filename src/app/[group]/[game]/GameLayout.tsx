@@ -20,9 +20,10 @@ interface GameLayoutProps {
   params: Promise<{ group: string; game: string }>;
   children: ReactNode;
   activeTab: Tab;
+  characterCount?: number;
 }
 
-export function GameLayout({ params, children, activeTab }: GameLayoutProps) {
+export function GameLayout({ params, children, activeTab, characterCount = 0 }: GameLayoutProps) {
   const { group: groupSlug, game: gameSlug } = use(params);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -129,7 +130,7 @@ export function GameLayout({ params, children, activeTab }: GameLayoutProps) {
 
   const enabledGames = [
     { slug: 'aoc', name: 'Ashes of Creation', icon: '⚔️' },
-    { slug: 'star-citizen', name: 'Star Citizen', icon: '🚀' },
+    { slug: 'starcitizen', name: 'Star Citizen', icon: '🚀' },
   ];
 
   return (
@@ -139,7 +140,7 @@ export function GameLayout({ params, children, activeTab }: GameLayoutProps) {
         groupSlug={groupSlug}
         gameSlug={gameSlug}
         enabledGames={enabledGames}
-        characterCount={0}
+        characterCount={characterCount}
         role={membership.role || ''}
         displayName={displayName}
         onSignOut={signOut}

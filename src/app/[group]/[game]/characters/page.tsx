@@ -29,7 +29,7 @@ export default function CharactersPage({ params }: { params: Promise<{ group: st
   }
 
   return (
-    <GameLayout params={params} activeTab="characters">
+    <GameLayout params={params} activeTab="characters" characterCount={characters.length}>
       <CharactersTab
         groupId={group.id}
         characters={characters}

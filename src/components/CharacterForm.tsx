@@ -321,6 +321,7 @@ export function CharacterForm({
                   <div className="grid grid-cols-3 gap-2">
                     {getClassesByFaction(formData.ror_faction as any).map((rorClass) => {
                       const isSelected = formData.ror_class === rorClass.id;
+                      const factionColor = formData.ror_faction ? ROR_FACTIONS[formData.ror_faction as keyof typeof ROR_FACTIONS]?.color : undefined;
                       return (
                         <button
                           key={rorClass.id}
@@ -331,7 +332,7 @@ export function CharacterForm({
                               ? 'ring-2 ring-offset-2 ring-offset-slate-900 text-white'
                               : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                           }`}
-                          style={isSelected ? { backgroundColor: ROR_FACTIONS[formData.ror_faction as any].color } : undefined}
+                          style={isSelected && factionColor ? { backgroundColor: factionColor } : undefined}
                         >
                           {rorClass.name}
                         </button>
