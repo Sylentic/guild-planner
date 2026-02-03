@@ -149,8 +149,9 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
 
   // Load character ships
   useEffect(() => {
+    console.log('ShipsView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
-  }, [groupId]);
+  }, [groupId, characters]);
 
   const loadCharacterShips = async () => {
     setLoading(true);
@@ -162,12 +163,16 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
         shipsByCharacter[char.id] = [];
       });
 
+      console.log('Loading ships for character IDs:', characters.map(c => c.id));
+
       // Only query if we have characters
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
           .select('*')
           .in('character_id', characters.map(c => c.id));
+
+        console.log('Character ships query result:', { data, fetchError });
 
         if (fetchError) {
           console.error('Error loading ships:', fetchError);
@@ -176,6 +181,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
 
         // Populate ships data
         if (data) {
+          console.log('Found ships:', data);
           data.forEach(ship => {
             if (shipsByCharacter[ship.character_id]) {
               shipsByCharacter[ship.character_id].push(ship);
@@ -184,6 +190,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
         }
       }
 
+      console.log('Final characterShips state:', shipsByCharacter);
       setCharacterShips(shipsByCharacter);
     } catch (err) {
       console.error('Failed to load ships:', err);
