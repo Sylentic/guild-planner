@@ -58,5 +58,6 @@
   "057_add_welcome_message_toggles.sql",
   "058_add_ship_permissions.sql",
   "059_add_ror_to_games.sql",
-  "060_standardize_starcitizen_slug.sql"
+  "060_standardize_starcitizen_slug.sql",
+  "061_ror_event_role_requirements.sql"
 ]

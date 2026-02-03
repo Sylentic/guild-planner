@@ -143,6 +143,13 @@ export interface Event {
   melee_dps_max: number | null; // Maximum allowed (null = unlimited)
   allow_combined_dps: boolean; // If true, ignore individual ranged/melee maxes
   combined_dps_max: number | null; // Combined max for ranged + melee DPS
+  // RoR-specific role requirements
+  ror_tanks_min: number;
+  ror_tanks_max: number | null;
+  ror_healers_min: number;
+  ror_healers_max: number | null;
+  ror_dps_min: number;
+  ror_dps_max: number | null;
   is_public: boolean; // If true, public guests can RSVP
   allow_allied_signups: boolean; // If true, allied members can sign up
   is_cancelled: boolean;

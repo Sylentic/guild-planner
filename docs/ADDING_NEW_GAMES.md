@@ -14,35 +14,35 @@ Before you start implementing, answer these questions about your game:
 
 ### Structural Organisation
 
-4. **What are the main organisational units for characters?**
+1. **What are the main organisational units for characters?**
    * Examples: Professions (AoC), nothing special (Star Citizen), Factions + Classes (RoR)
    * This determines your config structure
 
-5. **What roles/specializations exist?**
+2. **What roles/specializations exist?**
    * Examples: Tank, DPS, Healer (RoR), Ship Role (Star Citizen)
    * Helps define character filtering and party composition
 
-6. **Does the game have faction systems?**
+3. **Does the game have faction systems?**
    * If yes, list them and their color schemes (e.g., Order=#blue, Destruction=#red)
    * This affects character creation and filtering
 
 ### Feature Management
 
-7. **Which tabs should be available for this game?**
+1. **Which tabs should be available for this game?**
    * Available tabs: economy, matrix, achievements, builds, siege, fleet, ships, characters, events, settings
    * Exclude tabs that don't make sense for your game
 
-8. **Are there any game-specific tab names?**
+2. **Are there any game-specific tab names?**
    * Example: Star Citizen shows "My Hangar" instead of "Fleet"
    * Use GAME\_TAB\_CUSTOMIZATION for this
 
-9. **What's the default party composition?**
+3. **What's the default party composition?**
    * Examples: AoC uses 1-2-2 (1 Tank, 2 Melee DPS, 2 Ranged DPS)
    * RoR uses 2-2-2 (2 Tank, 2 Melee DPS, 2 Ranged DPS + Healer as support)
 
-10. **Are there game-specific character filters needed?**
-    * Examples: Filter by class, faction, archetype, profession
-    * Affects the CharacterFilters component
+4. **Are there game-specific character filters needed?**
+   * Examples: Filter by class, faction, archetype, profession
+   * Affects the CharacterFilters component
 
 ## Step-by-Step Implementation
 
@@ -50,7 +50,7 @@ Before you start implementing, answer these questions about your game:
 
 Create the directory structure for your game:
 
-```
+```text
 src/games/{GAME_SLUG}/config/
 ├── index.ts          # Core config (enums, constants, utilities)
 └── game.ts           # Game registry entry
@@ -125,15 +125,15 @@ export const {GAME_SLUG_UPPERCASE}_CONFIG: GameConfig = {
 
 1. Add the game slug to the `GameId` type:
 
-```typescript
-export type GameId = 'aoc' | 'starcitizen' | 'ror' | '{GAME_SLUG}';
-```
+   ```typescript
+   export type GameId = 'aoc' | 'starcitizen' | 'ror' | '{GAME_SLUG}';
+   ```
 
 2. Import your game config:
 
-```typescript
-import { {GAME_SLUG_UPPERCASE}_CONFIG } from '@/games/{GAME_SLUG}/config/game';
-```
+   ```typescript
+   import { {GAME_SLUG_UPPERCASE}_CONFIG } from '@/games/{GAME_SLUG}/config/game';
+   ```
 
 3. Add it to the `GAMES` object:
 
@@ -275,7 +275,7 @@ const getGameRoute = (gameSlug: string) => {
 
 Here's a quick example of adding a hypothetical MMO called "New World":
 
-### Pre-Planning Answers:
+### Pre-Planning Answers
 
 1. Name: "New World"
 2. Slug: "newworld"
@@ -288,7 +288,7 @@ Here's a quick example of adding a hypothetical MMO called "New World":
 9. Default party: 3 tanks, 3 DPS, 4 healers
 10. Filters: By faction, by primary tradeskill
 
-### Implementation (Abbreviated):
+### Implementation (Abbreviated)
 
 **`src/games/newworld/config/index.ts`**:
 
