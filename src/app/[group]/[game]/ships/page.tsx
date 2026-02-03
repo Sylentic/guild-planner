@@ -16,13 +16,13 @@ export default function ShipsPage({ params }: { params: Promise<{ group: string;
   const canManage = membership?.role === 'admin' || membership?.role === 'officer';
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="matrix"><div /></GameLayout>;
+    return <GameLayout params={params} activeTab="ships"><div /></GameLayout>;
   }
 
   return (
-    <GameLayout params={params} activeTab="matrix">
+    <GameLayout params={params} activeTab="ships">
       <ShipsView
-        characters={characters}
+        characters={[]}
         userId={user.id}
         canManage={canManage}
         groupId={group.id}
