@@ -275,7 +275,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   }
 
   const playerCharacters = characters.filter(c => c.user_id === userId);
-  const allCharactersByOwner = characters.reduce((acc, char) => {
+  const allCharactersByOwner = playerCharacters.reduce((acc, char) => {
     const ownerUserId = char.user_id || 'unassigned';
     if (!acc[ownerUserId]) {
       acc[ownerUserId] = [];
