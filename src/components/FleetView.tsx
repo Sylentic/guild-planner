@@ -453,19 +453,20 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                               <span className="text-xs px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">Concept</span>
                                             )}
                                           </div>
-                                          <div className="mt-2 grid grid-cols-[48px,1fr] items-center gap-3">
+                                          <div className="mt-3 grid grid-cols-[64px,1fr] items-center gap-4">
                                             {manufacturerLogo && (
-                                              <div className="flex h-12 w-12 items-center justify-center">
+                                              <div className="flex h-16 w-16 items-center justify-center">
                                                 <img 
                                                   src={manufacturerLogo} 
                                                   alt={shipData.manufacturer}
-                                                  className="h-12 w-12 object-contain brightness-0 invert opacity-100"
+                                                  className="h-16 w-16 object-contain brightness-0 invert opacity-100"
                                                   title={shipData.manufacturer}
                                                 />
                                               </div>
                                             )}
-                                            <div className="min-w-0 leading-tight">
-                                              <p className="text-sm text-slate-300">{shipData.manufacturer}</p>
+                                            <div className="min-w-0 leading-snug">
+                                              <p className="text-[11px] uppercase tracking-wide text-slate-500">Manufacturer</p>
+                                              <p className="text-base text-slate-200">{shipData.manufacturer}</p>
                                             </div>
                                           </div>
                                         </div>
@@ -559,19 +560,20 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                                 <span className="text-xs px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">Concept</span>
                                               )}
                                             </div>
-                                            <div className="mt-2 grid grid-cols-[48px,1fr] items-center gap-3">
+                                            <div className="mt-3 grid grid-cols-[64px,1fr] items-center gap-4">
                                               {manufacturerLogo && (
-                                                <div className="flex h-12 w-12 items-center justify-center">
+                                                <div className="flex h-16 w-16 items-center justify-center">
                                                   <img 
                                                     src={manufacturerLogo} 
                                                     alt={shipData.manufacturer}
-                                                    className="h-12 w-12 object-contain brightness-0 invert opacity-100"
+                                                    className="h-16 w-16 object-contain brightness-0 invert opacity-100"
                                                     title={shipData.manufacturer}
                                                   />
                                                 </div>
                                               )}
-                                              <div className="min-w-0 leading-tight">
-                                                <p className="text-sm text-slate-300">{shipData.manufacturer}</p>
+                                              <div className="min-w-0 leading-snug">
+                                                <p className="text-[11px] uppercase tracking-wide text-slate-500">Manufacturer</p>
+                                                <p className="text-base text-slate-200">{shipData.manufacturer}</p>
                                               </div>
                                             </div>
                                           </div>
