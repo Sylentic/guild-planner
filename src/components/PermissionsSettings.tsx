@@ -243,7 +243,7 @@ export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSe
           <h3 className="text-lg font-semibold text-white">Role Permissions</h3>
           <p className="text-sm text-slate-400 mt-1">
             {canEditRole 
-              ? 'Customize what each role can do in your guild' 
+              ? 'Customise what each role can do in your guild' 
               : 'You do not have permission to manage permissions'}
           </p>
         </div>

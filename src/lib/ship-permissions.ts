@@ -48,7 +48,7 @@ export function canManageShips(
 
 /**
  * Determines if a user can delete a ship
- * Same rules as managing for now, but can be customized
+ * Same rules as managing for now, but can be customised
  */
 export function canDeleteShip(
   userRole: GroupRole,

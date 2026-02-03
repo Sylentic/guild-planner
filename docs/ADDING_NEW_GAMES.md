@@ -1,6 +1,6 @@
 # Adding a New Game to the Guild Profession Planner
 
-This guide walks through the process of adding a new game to the multi-game architecture. We'll use generic placeholders that you can customize for your game.
+This guide walks through the process of adding a new game to the multi-game architecture. We'll use generic placeholders that you can customise for your game.
 
 ## Pre-Planning Questions
 
@@ -12,9 +12,9 @@ Before you start implementing, answer these questions about your game:
 2. **What is the game slug/ID?** (e.g., "aoc", "starcitizen", "ror" - used in URLs and code)
 3. **What is a short description?** (e.g., "View members, events, and manage guild operations")
 
-### Structural Organization
+### Structural Organisation
 
-4. **What are the main organizational units for characters?**
+4. **What are the main organisational units for characters?**
    * Examples: Professions (AoC), nothing special (Star Citizen), Factions + Classes (RoR)
    * This determines your config structure
 
@@ -211,7 +211,7 @@ Add a section for your game with all UI strings:
 
 * Game name and description (in game list)
 * Role/class names (for filtering and display)
-* Tab names (if customized)
+* Tab names (if customised)
 * Feature-specific labels
 
 ***
@@ -280,7 +280,7 @@ Here's a quick example of adding a hypothetical MMO called "New World":
 1. Name: "New World"
 2. Slug: "newworld"
 3. Description: "Manage your settlement and trading company"
-4. Organizational units: Faction + Tradeskill specialization
+4. Organisational units: Faction + Tradeskill specialisation
 5. Roles: Combat roles (Tank, DPS, Healer) + Trade roles
 6. Factions: Marauders, Syndicate, Covenant
 7. Available tabs: All except ships and fleet

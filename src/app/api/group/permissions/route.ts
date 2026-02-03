@@ -86,12 +86,12 @@ export async function GET(request: NextRequest) {
     // Verify user is admin
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized - no auth header' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorised - no auth header' }, { status: 401 });
     }
 
     const token = authHeader.replace('Bearer ', '');
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized - no token' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorised - no token' }, { status: 401 });
     }
 
     // Create a client with the user's token to verify they exist

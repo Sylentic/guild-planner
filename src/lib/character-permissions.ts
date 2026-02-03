@@ -41,7 +41,7 @@ export function canEditCharacter(
 
 /**
  * Determines if a user can delete a specific character
- * Same rules as editing for now, but can be customized
+ * Same rules as editing for now, but can be customised
  */
 export function canDeleteCharacter(
   userRole: GroupRole,

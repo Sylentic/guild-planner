@@ -37,12 +37,12 @@ export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized - no auth header' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorised - no auth header' }, { status: 401 });
     }
 
     const token = authHeader.replace('Bearer ', '');
     if (!token) {
-      return NextResponse.json({ error: 'Unauthorized - no token' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorised - no token' }, { status: 401 });
     }
 
     const userClient = createClient(
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     const { data: { user }, error: authError } = await userClient.auth.getUser(token);
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized - invalid or expired token' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorised - invalid or expired token' }, { status: 401 });
     }
 
     const { data: membership } = await supabaseAdmin
