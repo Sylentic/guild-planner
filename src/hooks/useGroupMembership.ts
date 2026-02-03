@@ -234,51 +234,36 @@ export function useGroupMembership(groupId: string | null, userId: string | null
       .select();
     if (error) throw error;
 
-    // Fetch the clan's webhook URLs
+    // Fetch the clan's webhook URLs and welcome settings
     let webhookUrl = null;
+    let welcomeEnabled = true;
     try {
       const group = await supabase
         .from('groups')
-        .select('group_welcome_webhook_url, group_webhook_url')
+        .select('group_welcome_webhook_url, group_webhook_url, aoc_welcome_enabled, sc_welcome_enabled')
         .eq('id', groupIdForWebhook)
         .maybeSingle();
       webhookUrl = group.data?.group_welcome_webhook_url || group.data?.group_webhook_url;
+      welcomeEnabled = gameSlug === 'star-citizen' 
+        ? group.data?.sc_welcome_enabled ?? true
+        : group.data?.aoc_welcome_enabled ?? true;
     } catch (e) {
       // ignore, just don't send if not found
     }
 
 
-    // Enhanced onboarding message with checklist embed
-    if (webhookUrl && discordUsername) {
-      const checklist = [
-        ':white_check_mark: Set your main character in the planner',
-        ':white_check_mark: Fill out your professions and skills',
-        ':white_check_mark: Join upcoming events and RSVP',
-        ':white_check_mark: Read the guild rules and code of conduct',
-        ':white_check_mark: Introduce yourself in Discord',
-      ];
-      const embed = {
-        title: '🎉 Welcome to the Guild!',
-        description: `Welcome <@${discordUsername}>! We’re excited to have you join us. Here’s how to get started:`,
-        color: 0x22c55e, // green
-        fields: [
-          {
-            name: 'Onboarding Checklist',
-            value: checklist.join('\n'),
-          },
-          {
-            name: 'Need Help?',
-            value: 'Ask in this channel or contact an officer for assistance.',
-          },
-        ],
-      };
+    // Enhanced onboarding message with game-specific checklist embed
+    if (webhookUrl && discordUsername && welcomeEnabled) {
+      const embed = getWelcomeEmbed(discordUsername);
       fetch('/api/discord', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           webhookUrl,
           payload: {
-            content: `🎉 Welcome <@${discordUsername}> to the guild!`,
+            content: gameSlug === 'star-citizen' 
+              ? `🚀 Welcome <@${discordUsername}> to the squadron!`
+              : `🎉 Welcome <@${discordUsername}> to the guild!`,
             embeds: [embed],
           },
         }),

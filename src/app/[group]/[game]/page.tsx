@@ -560,6 +560,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
               {membership?.role === 'admin' && group && (
                 <ClanSettings
                   groupId={group.id}
+                  gameSlug={gameSlug}
                   currentWebhookUrl={group.group_webhook_url || ''}
                   currentWelcomeWebhookUrl={group.group_welcome_webhook_url || ''}
                   notifyOnEvents={group.notify_on_events ?? true}
@@ -567,6 +568,8 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
                   announcementRoleId={group.discord_announcement_role_id || ''}
                   scAnnouncementRoleId={group.sc_announcement_role_id || ''}
                   scEventsRoleId={group.sc_events_role_id || ''}
+                  aocWelcomeEnabled={group.aoc_welcome_enabled ?? true}
+                  scWelcomeEnabled={group.sc_welcome_enabled ?? true}
                 />
               )}
               

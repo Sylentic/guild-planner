@@ -44,6 +44,8 @@ export interface Clan {
   sc_announcement_role_id?: string;
   sc_events_role_id?: string;
   group_icon_url?: string;
+  aoc_welcome_enabled?: boolean;
+  sc_welcome_enabled?: boolean;
 }
 
 // Race and Archetype types (match database ENUMs)

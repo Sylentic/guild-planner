@@ -22,6 +22,8 @@ interface ClanSettingsProps {
   announcementRoleId?: string;
   scAnnouncementRoleId?: string;
   scEventsRoleId?: string;
+  aocWelcomeEnabled?: boolean;
+  scWelcomeEnabled?: boolean;
   onUpdate?: () => void;
 }
 
@@ -39,6 +41,8 @@ export function ClanSettings({
   announcementRoleId = '',
   scAnnouncementRoleId = '',
   scEventsRoleId = '',
+  aocWelcomeEnabled = true,
+  scWelcomeEnabled = true,
   onUpdate,
 }: ClanSettingsProps) {
   const { loading } = usePermissions(groupId);
@@ -55,6 +59,8 @@ export function ClanSettings({
   const [roleId, setRoleId] = useState(announcementRoleId);
   const [scAnnouncementRole, setScAnnouncementRole] = useState(scAnnouncementRoleId);
   const [scEventsRole, setScEventsRole] = useState(scEventsRoleId);
+  const [aocWelcomeEnabledState, setAocWelcomeEnabledState] = useState(aocWelcomeEnabled);
+  const [scWelcomeEnabledState, setScWelcomeEnabledState] = useState(scWelcomeEnabled);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -83,6 +89,8 @@ export function ClanSettings({
           discord_announcement_role_id: roleId.trim() || null,
           sc_announcement_role_id: scAnnouncementRole.trim() || null,
           sc_events_role_id: scEventsRole.trim() || null,
+          aoc_welcome_enabled: aocWelcomeEnabledState,
+          sc_welcome_enabled: scWelcomeEnabledState,
         })
         .eq('id', groupId)
         .select();
@@ -193,8 +201,127 @@ export function ClanSettings({
         </p>
       </div>
 
-      {/* Announcement Role ID */}
+      {/* Game-specific section header */}
+      <div className="border-t border-slate-700 pt-6">
+        <h4 className="text-base font-semibold text-slate-300 mb-4">
+          {gameSlug === 'star-citizen' ? '🚀 Star Citizen Settings' : '⚔️ Ashes of Creation Settings'}
+        </h4>
+      </div>
+
+      {/* Game-specific announcement role ID */}
       <div>
+        <label htmlFor="discord-game-role-id" className="block text-sm font-medium text-slate-300 mb-2">
+          {gameSlug === 'star-citizen' ? 'Star Citizen Announcement Role ID' : 'AoC Announcement Role ID'} (Optional)
+        </label>
+        <input
+          id="discord-game-role-id"
+          type="text"
+          value={gameSlug === 'star-citizen' ? scAnnouncementRole : roleId}
+          onChange={(e) => gameSlug === 'star-citizen' ? setScAnnouncementRole(e.target.value.replace(/[^0-9]/g, '')) : setRoleId(e.target.value.replace(/[^0-9]/g, ''))}
+          placeholder="123456789012345678"
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+        <p className="text-xs text-slate-500 mt-1">
+          {gameSlug === 'star-citizen' 
+            ? 'Enter the numeric Discord Role ID to ping when posting Star Citizen announcements.'
+            : 'Enter the numeric Discord Role ID to ping when posting AoC announcements. Right-click a role > Copy ID (Developer Mode must be enabled).'
+          }
+        </p>
+      </div>
+
+      {gameSlug === 'star-citizen' && (
+        <>
+          {/* Star Citizen Events Role ID */}
+          <div>
+            <label htmlFor="sc-events-role-id" className="block text-sm font-medium text-slate-300 mb-2">
+              Star Citizen Events Role ID (Optional)
+            </label>
+            <input
+              id="sc-events-role-id"
+              type="text"
+              value={scEventsRole}
+              onChange={(e) => setScEventsRole(e.target.value.replace(/[^0-9]/g, ''))}
+              placeholder="123456789012345678"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <p className="text-xs text-slate-500 mt-1">
+              Enter the numeric Discord Role ID to ping when posting Star Citizen events.
+            </p>
+          </div>
+        </>
+      )}
+
+      {/* Welcome Messages Toggle */}
+      <div className="border-t border-slate-700 pt-4">
+        <label className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg cursor-pointer hover:bg-slate-800 transition-colors">
+          <div className="flex items-center gap-3">
+            {gameSlug === 'star-citizen' ? scWelcomeEnabledState : aocWelcomeEnabledState ? (
+              <Bell size={18} className="text-green-400" />
+            ) : (
+              <BellOff size={18} className="text-slate-500" />
+            )}
+            <div>
+              <span className="text-white text-sm font-medium">
+                {gameSlug === 'star-citizen' ? '🚀 Welcome Squadron Members' : '🎉 Welcome Guild Members'}
+              </span>
+              <p className="text-xs text-slate-500">
+                {gameSlug === 'star-citizen' 
+                  ? 'Send welcome messages to new squadron members'
+                  : 'Send welcome messages to new guild members'
+                }
+              </p>
+            </div>
+          </div>
+          <input
+            type="checkbox"
+            checked={gameSlug === 'star-citizen' ? scWelcomeEnabledState : aocWelcomeEnabledState}
+            onChange={(e) => gameSlug === 'star-citizen' ? setScWelcomeEnabledState(e.target.checked) : setAocWelcomeEnabledState(e.target.checked)}
+            className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-purple-500 focus:ring-purple-500 cursor-pointer"
+          />
+        </label>
+      </div>
+
+      {/* Announcement Role ID - HIDDEN SECTION */}
+      {gameSlug === 'aoc' && (
+        <div style={{ display: 'none' }}>
+          <label htmlFor="discord-role-id-legacy" className="block text-sm font-medium text-slate-300 mb-2">
+            Announcement Role ID (AoC) (Optional)
+          </label>
+          <input
+            id="discord-role-id-legacy"
+            type="text"
+            value={roleId}
+            onChange={(e) => setRoleId(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="123456789012345678"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <p className="text-xs text-slate-500 mt-1">
+            Enter the numeric Discord Role ID to ping when posting AoC announcements. Right-click a role {'>'} Copy ID (Developer Mode must be enabled).
+          </p>
+        </div>
+      )}
+
+      {gameSlug === 'star-citizen' && (
+        <div style={{ display: 'none' }}>
+          <label htmlFor="sc-announcement-role-id-legacy" className="block text-sm font-medium text-slate-300 mb-2">
+            Star Citizen Announcement Role ID (Optional)
+          </label>
+          <input
+            id="sc-announcement-role-id-legacy"
+            type="text"
+            value={scAnnouncementRole}
+            onChange={(e) => setScAnnouncementRole(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="123456789012345678"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <p className="text-xs text-slate-500 mt-1">
+            Enter the numeric Discord Role ID to ping when posting Star Citizen announcements.
+          </p>
+        </div>
+      )}
+
+      {/* Announcement Role ID */}
+      <div style={{ display: 'none' }}>
         <label htmlFor="discord-role-id" className="block text-sm font-medium text-slate-300 mb-2">
           Announcement Role ID (AoC) (Optional)
         </label>
@@ -211,41 +338,6 @@ export function ClanSettings({
         </p>
       </div>
 
-      {/* Star Citizen Announcement Role ID */}
-      <div>
-        <label htmlFor="sc-announcement-role-id" className="block text-sm font-medium text-slate-300 mb-2">
-          Announcement Role ID (Star Citizen) (Optional)
-        </label>
-        <input
-          id="sc-announcement-role-id"
-          type="text"
-          value={scAnnouncementRole}
-          onChange={(e) => setScAnnouncementRole(e.target.value.replace(/[^0-9]/g, ''))}
-          placeholder="123456789012345678"
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-        <p className="text-xs text-slate-500 mt-1">
-          Enter the numeric Discord Role ID to ping when posting Star Citizen announcements.
-        </p>
-      </div>
-
-      {/* Star Citizen Events Role ID */}
-      <div>
-        <label htmlFor="sc-events-role-id" className="block text-sm font-medium text-slate-300 mb-2">
-          Events Role ID (Star Citizen) (Optional)
-        </label>
-        <input
-          id="sc-events-role-id"
-          type="text"
-          value={scEventsRole}
-          onChange={(e) => setScEventsRole(e.target.value.replace(/[^0-9]/g, ''))}
-          placeholder="123456789012345678"
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-        <p className="text-xs text-slate-500 mt-1">
-          Enter the numeric Discord Role ID to ping when posting Star Citizen events.
-        </p>
-      </div>
 
       {/* Test button */}
       {webhookUrl && isValidWebhookUrl(webhookUrl) && (

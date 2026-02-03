@@ -54,5 +54,6 @@
   "053_add_character_ships.sql",
   "054_add_game_specific_roles.sql",
   "055_add_game_specific_webhooks.sql",
-  "056_add_ship_role_permissions.sql"
+  "056_add_ship_role_permissions.sql",
+  "057_add_welcome_message_toggles.sql"
 ]
