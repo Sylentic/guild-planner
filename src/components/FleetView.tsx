@@ -473,19 +473,19 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                     
                                       <div className="space-y-1 text-xs">
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Role:</span>
+                                          <span className="text-slate-400">{t('fleet.role')}:</span>
                                           <span>{normalizeRole(shipData.role)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Size:</span>
+                                          <span className="text-slate-400">{t('fleet.size')}:</span>
                                           <span>{formatSize(shipData.size)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Crew:</span>
+                                          <span className="text-slate-400">{t('fleet.crew')}:</span>
                                           <span>{shipData.crew.min}-{shipData.crew.max}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Cargo:</span>
+                                          <span className="text-slate-400">{t('fleet.cargo')}:</span>
                                           <span>{shipData.cargo} SCU</span>
                                         </div>
                                       </div>
@@ -512,7 +512,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                           return shipData && shipData.size === 'vehicle';
                         }).length > 0 && (
                           <div className="space-y-3">
-                            <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ground Vehicles</h5>
+                            <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('fleet.vehiclesSection')}</h5>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                               {ships.filter(s => {
                                 const shipData = getShipData(s.ship_id);
@@ -573,11 +573,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                         </div>
                                         <div className="grid grid-cols-2 gap-2 text-xs">
                                           <div>
-                                            <span className="text-slate-400">Role:</span>
+                                            <span className="text-slate-400">{t('fleet.role')}:</span>
                                             <span className="ml-1 text-white">{normalizeRole(shipData.role)}</span>
                                           </div>
                                           <div>
-                                            <span className="text-slate-400">Crew:</span>
+                                            <span className="text-slate-400">{t('fleet.crew')}:</span>
                                             <span className="ml-1 text-white">
                                               {shipData.crew.min === shipData.crew.max
                                                 ? shipData.crew.min
