@@ -51,7 +51,7 @@ export function InlineFooter({ variant = 'default' }: { variant?: 'default' | 'm
             </svg>
           </a>
           <span>{new Date().getFullYear()} Some Rights Reserved</span>
-          <span>Based on <a href="https://github.com/igonzalezespi/aoc-guild-profession-planner" target="_blank" className="text-orange-400 hover:text-orange-300 transition-colors inline-flex items-center gap-1" rel="noopener noreferrer">AoC Guild Profession Planner</a> by Iván González Espí</span>
+          <span>Based on <a href="https://github.com/igonzalezespi/aoc-guild-profession-planner" target="_blank" className="text-orange-400 hover:text-orange-300 transition-colors inline-flex items-center gap-1" rel="noopener noreferrer">Guild Planner</a> by Iván González Espí</span>
         </div>
         <div className="text-[9px] md:text-[10px] text-slate-500 hidden md:block">
           <span title={BUILD_TIMESTAMP}>Build: {buildDate}</span>

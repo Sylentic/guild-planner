@@ -1,7 +1,7 @@
 {
-  "name": "AoC Guild Profession Planner",
+  "name": "Guild Planner",
   "short_name": "Guild Planner",
-  "description": "Plan and coordinate professions for your Ashes of Creation guild",
+  "description": "Manage your guild, coordinate your team, and track everything across multiple games",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

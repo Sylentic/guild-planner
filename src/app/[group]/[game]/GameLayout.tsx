@@ -14,6 +14,7 @@ import { ClanLoginScreen } from '@/components/ClanLoginScreen';
 import { GroupHeader } from './GroupHeader';
 import { ClanTabNav } from '@/components/ClanTabNav';
 import { InlineFooter } from '@/components/Footer';
+import { DynamicFavicon } from '@/components/DynamicFavicon';
 import { Users, Clock, UserPlus, Loader2 } from 'lucide-react';
 import { getAllGames } from '@/lib/games';
 
@@ -137,6 +138,7 @@ export function GameLayout({ params, children, activeTab, characterCount = 0 }: 
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
+      <DynamicFavicon iconUrl={guildIconUrl} />
       <GroupHeader
         clanName={group?.name || ''}
         groupSlug={groupSlug}

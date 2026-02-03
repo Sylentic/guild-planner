@@ -21,8 +21,8 @@ const cinzel = Cinzel({
 });
 
 export const metadata: Metadata = {
-  title: "AoC Guild Planner",
-  description: "Plan and coordinate professions for your Ashes of Creation guild",
+  title: "Guild Planner",
+  description: "Manage your guild, coordinate your team, and track everything across multiple games",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

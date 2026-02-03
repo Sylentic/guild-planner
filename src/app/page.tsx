@@ -47,7 +47,7 @@ export default function Home() {
         const clans = await getUserGroups(user.id);
         setUserClans(clans as UserClan[]);
       } catch (err) {
-        console.error('Error fetching user clans:', err);
+        console.error('Error fetching user groups:', err);
       } finally {
         setClansLoading(false);
       }

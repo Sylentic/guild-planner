@@ -204,7 +204,7 @@ export function ClanSettings({
       {/* Game-specific section header */}
       <div className="border-t border-slate-700 pt-6">
         <h4 className="text-base font-semibold text-slate-300 mb-4">
-          {gameSlug === 'starcitizen' ? '🚀 Star Citizen Settings' : '⚔️ Ashes of Creation Settings'}
+          {gameSlug === 'starcitizen' ? '🚀 Star Citizen Settings' : gameSlug === 'ror' ? '⚔️ Return of Reckoning Settings' : gameSlug === 'aoc' ? '⚔️ Ashes of Creation Settings' : '⚙️ Game Settings'}
         </h4>
       </div>
 

@@ -16,19 +16,19 @@ export function LandingHero() {
       </h1>
       
       <p className="text-lg text-slate-300 mb-12 max-w-2xl mx-auto">
-        Manage your guild, coordinate your team, and track everything — whether you're in Ashes of Creation, Star Citizen, or any game you love.
+        Manage your guild, coordinate your team, and track everything — supporting multiple games with powerful organization tools.
       </p>
 
       {/* Game Icons */}
       <div className="flex items-center justify-center gap-12 mb-16 flex-wrap">
         <div className="flex flex-col items-center gap-3">
           <div className="text-5xl">⚔️</div>
-          <span className="text-sm text-slate-400 font-medium">Ashes of Creation</span>
+          <span className="text-sm text-slate-400 font-medium">MMO RPGs</span>
         </div>
         <div className="text-slate-700">|</div>
         <div className="flex flex-col items-center gap-3">
           <div className="text-5xl">🚀</div>
-          <span className="text-sm text-slate-400 font-medium">Star Citizen</span>
+          <span className="text-sm text-slate-400 font-medium">Space Games</span>
         </div>
         <div className="text-slate-700">|</div>
         <div className="flex flex-col items-center gap-3">

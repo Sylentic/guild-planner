@@ -197,7 +197,7 @@ export function useGroupMembership(groupId: string | null, userId: string | null
             inline: false,
           },
         ],
-        footer: { text: 'AoC Guild Profession Planner' },
+        footer: { text: 'Guild Planner' },
         timestamp: new Date().toISOString(),
       };
     }
