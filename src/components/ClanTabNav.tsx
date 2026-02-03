@@ -1,46 +1,39 @@
 import { BottomNav } from '@/components/BottomNav';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Tab, TAB_LIST } from './tabs';
+import { usePathname } from 'next/navigation';
+import { Tab } from './tabs';
 
 interface ClanTabNavProps {
   canManage: boolean;
-  onTabChange?: (tab: Tab) => void;
   initialTab?: Tab;
   gameSlug?: string;
+  groupSlug: string;
 }
 
-export function ClanTabNav({ canManage, onTabChange, initialTab = 'characters', gameSlug = 'aoc' }: ClanTabNavProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export function ClanTabNav({ canManage, initialTab = 'characters', gameSlug = 'aoc', groupSlug }: ClanTabNavProps) {
   const pathname = usePathname();
-  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
-
-  // Sync with URL
-  useEffect(() => {
-    const tabParam = searchParams?.get('tab');
-    if (tabParam && (TAB_LIST as readonly string[]).includes(tabParam)) {
-      setActiveTab(tabParam as Tab);
-    }
-  }, [searchParams]);
-
-  const handleTabChange = (tab: Tab) => {
-    setActiveTab(tab);
-    const params = new URLSearchParams(searchParams?.toString() ?? '');
-    params.set('tab', tab);
-    if (tab !== 'more' && params.has('subTab')) {
-      params.delete('subTab');
-    }
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    if (onTabChange) onTabChange(tab);
+  
+  // Determine active tab from pathname
+  const getActiveTabFromPath = (): Tab => {
+    if (pathname.includes('/characters')) return 'characters';
+    if (pathname.includes('/events')) return 'events';
+    if (pathname.includes('/parties')) return 'parties';
+    if (pathname.includes('/matrix')) return 'matrix';
+    if (pathname.includes('/manage') || pathname.includes('/settings')) return 'manage';
+    if (pathname.includes('/siege')) return 'siege';
+    if (pathname.includes('/economy')) return 'economy';
+    if (pathname.includes('/ships') || pathname.includes('/fleet')) return 'matrix'; // Reuse matrix slot for ships
+    if (pathname.includes('/more') || pathname.includes('/builds') || pathname.includes('/achievements') || pathname.includes('/alliances')) return 'more';
+    return initialTab;
   };
+
+  const activeTab = getActiveTabFromPath();
 
   return (
     <BottomNav
       activeTab={activeTab}
-      onTabChange={handleTabChange}
       canManage={canManage}
       gameSlug={gameSlug}
+      groupSlug={groupSlug}
     />
   );
 }

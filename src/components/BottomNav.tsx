@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Skeleton } from './ui/Skeleton';
 
@@ -9,13 +10,27 @@ import { Tab, GAME_TAB_EXCLUSIONS } from './tabs';
 
 interface BottomNavProps {
   activeTab: Tab;
-  onTabChange: (tab: Tab) => void;
   canManage: boolean;
   gameSlug?: string;
+  groupSlug: string;
 }
 
-export function BottomNav({ activeTab, onTabChange, canManage, gameSlug = 'aoc' }: BottomNavProps) {
+export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }: BottomNavProps) {
   const { t } = useLanguage();
+  
+  const getTabPath = (tab: Tab): string => {
+    const basePath = `/${groupSlug}/${gameSlug}`;
+    switch (tab) {
+      case 'characters': return `${basePath}/characters`;
+      case 'events': return `${basePath}/events`;
+      case 'matrix': return gameSlug === 'star-citizen' ? `${basePath}/ships` : `${basePath}/matrix`;
+      case 'economy': return `${basePath}/economy`;
+      case 'more': return `${basePath}/more`;
+      case 'manage': return `${basePath}/settings`;
+      default: return `${basePath}/characters`;
+    }
+  };
+  
   const NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
     { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
     { tab: 'matrix', icon: Grid3X3, labelKey: gameSlug === 'star-citizen' ? 'nav.ships' : 'nav.matrix' },
@@ -44,10 +59,10 @@ export function BottomNav({ activeTab, onTabChange, canManage, gameSlug = 'aoc' 
         {visibleItems.map(({ tab, icon: Icon, labelKey }) => {
           const isActive = activeTab === tab;
           return (
-            <button
+            <Link
               key={tab}
-              onClick={() => onTabChange(tab)}
-              className="relative flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer transition-all duration-200"
+              href={getTabPath(tab)}
+              className="relative flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200"
               style={{
                 color: isActive ? '#fb923c' : '#94a3b8',
                 background: isActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
@@ -77,7 +92,7 @@ export function BottomNav({ activeTab, onTabChange, canManage, gameSlug = 'aoc' 
               >
                 {t(labelKey)}
               </span>
-            </button>
+            </Link>
           );
         })}
       </div>

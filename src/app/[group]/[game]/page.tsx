@@ -51,10 +51,19 @@ const ALL_AVAILABLE_GAMES = [
 
 export default function GameGroupPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
-  const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
+  
+  // Redirect to /characters as the default view
+  useEffect(() => {
+    router.replace(`/${groupSlug}/${gameSlug}/characters`);
+  }, [groupSlug, gameSlug, router]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+    </div>
+  );
+}
   
   // Use state for activeTab, but let ClanTabNav manage URL sync
   const [activeTab, setActiveTab] = useState<Tab>('characters');
