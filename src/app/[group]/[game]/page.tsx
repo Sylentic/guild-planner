@@ -41,13 +41,6 @@ import { ClanLoginScreen } from '@/components/ClanLoginScreen';
 import { ClanCreateScreen } from '@/components/ClanCreateScreen';
 import { getGroupGames } from '@/lib/group-games';
 
-// Game definitions
-const ALL_AVAILABLE_GAMES = [
-  { slug: 'aoc', name: 'Ashes of Creation', icon: '⚔️' },
-  { slug: 'starcitizen', name: 'Star Citizen', icon: '🚀' },
-  { slug: 'ror', name: 'Return of Reckoning', icon: '⚔️' },
-];
-
 // Tab type now imported from ClanTabNav
 
 export default function GameGroupPage({ params }: { params: Promise<{ group: string; game: string }> }) {

@@ -9,18 +9,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { getGroupGames, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
+import { getAllGames } from '@/lib/games';
 import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
 import { InlineFooter } from '@/components/Footer';
-
-// All available games that can be added to a group
-const ALL_AVAILABLE_GAMES = [
-  { slug: 'aoc', name: 'Ashes of Creation', icon: '⚔️' },
-  { slug: 'starcitizen', name: 'Star Citizen', icon: '🚀' },
-  { slug: 'ror', name: 'Return of Reckoning', icon: '⚔️' },
-  // { slug: 'bdo', name: 'Black Desert Online', icon: '🗡️' },
-];
 
 
 export default function GroupPage({ params }: { params: Promise<{ group: string }> }) {
@@ -28,6 +21,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const router = useRouter();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   const { t } = useLanguage();
+  const ALL_AVAILABLE_GAMES = getAllGames().map(g => ({ slug: g.id, name: g.name, icon: g.icon }));
 
   const [groupId, setGroupId] = useState<string | null>(null);
   const [groupData, setGroupData] = useState<any>(null);
