@@ -907,6 +907,26 @@
     "settings_view_permissions": {
       "name": "View Permissions",
       "description": "View the guild's permission structure"
+    },
+    "ships_create": {
+      "name": "Create Ship",
+      "description": "Add ships to characters"
+    },
+    "ships_edit_own": {
+      "name": "Edit Own Ships",
+      "description": "Edit ships on your own characters"
+    },
+    "ships_edit_any": {
+      "name": "Edit Any Ship",
+      "description": "Edit ships on any character"
+    },
+    "ships_delete_own": {
+      "name": "Delete Own Ships",
+      "description": "Delete ships from your own characters"
+    },
+    "ships_delete_any": {
+      "name": "Delete Any Ship",
+      "description": "Delete ships from any character"
     }
   }
 }

@@ -904,6 +904,26 @@
     "settings_view_permissions": {
       "name": "Ver Permisos",
       "description": "Ver la estructura de permisos del clan"
+    },
+    "ships_create": {
+      "name": "Crear Nave",
+      "description": "Agregar naves a los personajes"
+    },
+    "ships_edit_own": {
+      "name": "Editar Propias Naves",
+      "description": "Editar naves en tus propios personajes"
+    },
+    "ships_edit_any": {
+      "name": "Editar Cualquier Nave",
+      "description": "Editar naves en cualquier personaje"
+    },
+    "ships_delete_own": {
+      "name": "Eliminar Propias Naves",
+      "description": "Eliminar naves de tus propios personajes"
+    },
+    "ships_delete_any": {
+      "name": "Eliminar Cualquier Nave",
+      "description": "Eliminar naves de cualquier personaje"
     }
   }
 }
