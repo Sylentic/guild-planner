@@ -6,8 +6,8 @@ import manufacturersData from './star-citizen-manufacturers.json';
 
 export interface Manufacturer {
   name: string;
-  logo: string | null;
   code: string | null;
+  logoFile?: string | null;
 }
 
 /**
@@ -17,7 +17,9 @@ export function getManufacturerLogo(manufacturerName: string): string | null {
   const manufacturer = manufacturersData.manufacturers.find(
     m => m.name === manufacturerName
   );
-  return manufacturer?.logo || null;
+  if (!manufacturer?.logoFile) return null;
+
+  return `${manufacturersData.localBase}${manufacturer.logoFile}`;
 }
 
 /**

@@ -6,6 +6,7 @@ export const TAB_LIST = [
   'parties',
   'matrix',
   'fleet',
+  'ships',
   'manage',
   'siege',
   'economy',

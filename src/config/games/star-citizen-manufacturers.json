@@ -1,101 +1,104 @@
 {
-  "lastUpdated": "2026-02-03T11:15:24.570Z",
-  "source": "https://robertsspaceindustries.com/ship-matrix",
   "manufacturers": [
     {
+      "logoFile": "aegisdynamics_monochrome_completed_2_1-3b972131.svg",
       "name": "Aegis Dynamics",
-      "logo": "https://robertsspaceindustries.com/media/z4ioxeze11o3hr/logo/Aegis_Logo.png",
       "code": "AEGS"
     },
     {
+      "logoFile": "anvilaerospace_monochrome_completed_2_1-bb770602.svg",
       "name": "Anvil Aerospace",
-      "logo": "https://robertsspaceindustries.com/media/txhzevx6s17m4r/logo/Anvil_Logo.png",
       "code": "ANVL"
     },
     {
+      "logoFile": "aopoa_monochrome_completed_2_1-cbac6f83.svg",
       "name": "Aopoa",
-      "logo": "https://robertsspaceindustries.com/media/m7xgd8eghus4ar/logo/Aopoa_Logo.png",
       "code": "XNAA"
     },
     {
+      "logoFile": "argoastronautics_monochrome_completed_2_1-9ac9c70b.svg",
       "name": "Argo Astronautics",
-      "logo": "https://robertsspaceindustries.com/media/mfvgeneqcc7khr/logo/ARGO_Logo.png",
       "code": "ARGO"
     },
     {
+      "logoFile": "banu_monochrome_completed_2_1-b570b7e1.svg",
       "name": "Banu",
-      "logo": "https://robertsspaceindustries.com/media/oqf2g7g7t3ttar/logo/Banu_Logo.png",
       "code": "BANU"
     },
     {
+      "logoFile": "consolidatedoutland_monochrome_completed_2_1-00f113bc.svg",
       "name": "Consolidated Outland",
-      "logo": "https://robertsspaceindustries.com/media/5ubymzqrfp20gr/logo/CO_Logo.png",
       "code": "CNOU"
     },
     {
+      "logoFile": "crusaderindustries_monochrome_completed_2_1-3ab22d02.svg",
       "name": "Crusader Industries",
-      "logo": "https://robertsspaceindustries.com/media/qcdj1phfyctc6r/logo/Crusader_Logo.png",
       "code": "CRUS"
     },
     {
+      "logoFile": "drake_monochrome_completed_2_1-4110ec1d.svg",
       "name": "Drake Interplanetary",
-      "logo": "https://robertsspaceindustries.com/media/2g62ywllvk2f1r/logo/Drake_logo.png",
       "code": "DRAK"
     },
     {
+      "logoFile": "esperia_monochrome_completed_2_1-291a8bb2.svg",
       "name": "Esperia",
-      "logo": "https://robertsspaceindustries.com/media/kkad2w34u0ejir/logo/Esperia_Logo.png",
       "code": "ESPR"
     },
     {
+      "logoFile": "gatac_monochrome_completed_2_1-f196d80d.svg",
       "name": "Gatac Manufacture",
-      "logo": "https://robertsspaceindustries.com/media/2wifj4j8q1mdpr/logo/Gatac_Logo.png",
       "code": "GAMA"
     },
     {
+      "logoFile": "greysmarket_monochrome_completed_2_1-43d53201.svg",
       "name": "Grey's Market",
-      "logo": "https://cdn.robertsspaceindustries.com/orion-v3/logoratios/greysmarket_monochrome_completed_2_1-43d53201.svg",
       "code": "GREY"
     },
     {
+      "logoFile": "greycatindustrial_monochrome_completed_2_1-2f5e46b8.svg",
       "name": "Greycat Industrial",
-      "logo": "https://robertsspaceindustries.com/media/k8vsj8oo0e6iir/logo/Greycat_Logo.png",
       "code": "GRIN"
     },
     {
+      "logoFile": "kruger_monochrome_completed_2_1-202942e3.svg",
       "name": "Kruger Intergalactic",
-      "logo": "https://robertsspaceindustries.com/media/7duwvqqr0s5p3r/logo/Kruger_logo.png",
       "code": "KRIG"
     },
     {
+      "logoFile": "misc_monochrome_completed_2_1-9cec9817.svg",
       "name": "MISC",
-      "logo": "https://robertsspaceindustries.com/media/0bfruuxq5n1mor/logo/MISC_Logo.png",
       "code": "MISC"
     },
     {
+      "logoFile": "mirai_monochrome_completed_2_1-d3456431.svg",
       "name": "Mirai",
-      "logo": "https://robertsspaceindustries.com/media/epkp1tquy1xrir/logo/Mirai_logo.png",
       "code": "MRAI"
     },
     {
+      "logoFile": "originjumpworks_monochrome_completed_2_1-06ee292d.svg",
       "name": "Origin Jumpworks",
-      "logo": "https://robertsspaceindustries.com/media/h0pqev5c00j70r/logo/ORIG_Logo.png",
       "code": "ORIG"
     },
     {
+      "logoFile": "robertsspaceindustries_monochrome_completed_2_1-44bc92ca.svg",
       "name": "Roberts Space Industries",
-      "logo": "https://robertsspaceindustries.com/media/c5v6y3t8e5yphr/logo/RSI_Logo.png",
       "code": "RSI"
     },
     {
+      "logoFile": "tumbril_monochrome_completed_2_1-c80c4eee.svg",
       "name": "Tumbril",
-      "logo": "https://robertsspaceindustries.com/media/g49sf4h2yvdrer/logo/Tumbril_Logo.png",
       "code": "TMBL"
     },
     {
+      "logoFile": null,
       "name": "Vanduul",
-      "logo": "https://robertsspaceindustries.com/media/s6a5p3z7ek5lar/logo/Vanduul_Logo.png",
       "code": "VNCL"
     }
-  ]
+  ],
+  "note": "Manufacturer logos are stored locally under /public/images/manufacturers. Vanduul logo URL not provided in the extracted list.",
+  "localBase": "/images/manufacturers/",
+  "cdnBase": "https://cdn.robertsspaceindustries.com/orion-v3/logoratios/",
+  "source": "https://robertsspaceindustries.com/en/pledge/ships",
+  "lastUpdated": "2026-02-03T12:00:00.000Z"
 }

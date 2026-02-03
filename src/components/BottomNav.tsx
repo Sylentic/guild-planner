@@ -2,9 +2,9 @@
 import Link from 'next/link';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Skeleton } from './ui/Skeleton';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal, Sword, Trophy, BookOpen, Handshake, Hammer, TrendingUp } from 'lucide-react';
+import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal, Sword, Trophy, BookOpen, Handshake, Hammer, TrendingUp, Ship } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 import { Tab, GAME_TAB_EXCLUSIONS } from './tabs';
@@ -29,6 +29,21 @@ const MORE_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string }[] = [
 export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }: BottomNavProps) {
   const { t } = useLanguage();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+  
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    if (showMoreMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showMoreMenu]);
   
   const getTabPath = (tab: Tab): string => {
     const basePath = `/${groupSlug}/${gameSlug}`;
@@ -42,6 +57,7 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
       case 'alliances': return `${basePath}/alliances`;
       case 'builds': return `${basePath}/builds`;
       case 'economy': return `${basePath}/economy`;
+      case 'ships': return `${basePath}/ships`;
       case 'more': return `${basePath}/more`;
       case 'manage': return `${basePath}/settings`;
       default: return `${basePath}/characters`;
@@ -63,7 +79,14 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
   });
 
   // Check if any more items are visible (not excluded)
-  const visibleMoreItems = MORE_ITEMS.filter(item => !excludedTabs.includes(item.tab));
+  let visibleMoreItems = MORE_ITEMS.filter(item => !excludedTabs.includes(item.tab));
+  // Add Ships Overview for Star Citizen
+  if (gameSlug === 'star-citizen') {
+    visibleMoreItems = [
+      { tab: 'ships' as Tab, icon: Ship, labelKey: 'nav.ships' },
+      ...visibleMoreItems,
+    ];
+  }
   const isMoreItemActive = visibleMoreItems.some(item => item.tab === activeTab) || activeTab === 'more';
   
   // Always show More button, but determine if it's a dropdown or direct link
@@ -123,7 +146,7 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
 
         {/* "More" menu button */}
         {showMoreButton && (
-          <div className="relative flex-1">
+          <div ref={moreMenuRef} className="relative flex-1">
             {hasMoreDropdown ? (
               <button
                 onClick={() => setShowMoreMenu(!showMoreMenu)}
