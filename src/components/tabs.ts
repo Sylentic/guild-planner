@@ -5,6 +5,7 @@ export const TAB_LIST = [
   'events',
   'parties',
   'matrix',
+  'fleet',
   'manage',
   'siege',
   'economy',

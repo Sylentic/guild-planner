@@ -275,15 +275,8 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
     );
   }
 
+  // FleetView shows only the current user's characters (personal fleet management)
   const playerCharacters = characters.filter(c => c.user_id === userId);
-  const allCharactersByOwner = playerCharacters.reduce((acc, char) => {
-    const ownerUserId = char.user_id || 'unassigned';
-    if (!acc[ownerUserId]) {
-      acc[ownerUserId] = [];
-    }
-    acc[ownerUserId].push(char);
-    return acc;
-  }, {} as Record<string, CharacterWithProfessions[]>);
 
   return (
     <div className="space-y-6">
@@ -397,16 +390,14 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
         </div>
       )}
 
-      {/* Ships by Character Owner */}
-      <div className="space-y-6">
-        {Object.entries(allCharactersByOwner).map(([ownerUserId, chars]) => {
-          const ownerName = ownerUserId === userId ? 'Your Characters' : chars[0]?.user_id ? `${chars[0].user_id}'s Characters` : 'Unassigned Characters';
-          
-          return (
-            <div key={ownerUserId} className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-300">{ownerName}</h3>
-              
-              {chars.map(char => {
+      {/* Ships by Character */}
+      <div className="space-y-4">
+        {playerCharacters.length === 0 ? (
+          <div className="text-center py-12 text-slate-400">
+            <p>No characters found. Add a character to start managing your fleet.</p>
+          </div>
+        ) : (
+          playerCharacters.map(char => {
                 const ships = characterShips[char.id] || [];
                 return (
                   <div key={char.id} className="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
@@ -498,7 +489,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                         </div>
                                       </div>
                                     </div>
-                                    {canManage && ownerUserId === userId && (
+                                  {canManage && (
                                       <button
                                         onClick={() => handleDeleteShip(ship.id)}
                                         className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
@@ -615,10 +606,8 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                     )}
                   </div>
                 );
-              })}
-            </div>
-          );
-        })}
+          })
+        )}
       </div>
 
       {/* Empty State */}

@@ -66,8 +66,9 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
   const visibleMoreItems = MORE_ITEMS.filter(item => !excludedTabs.includes(item.tab));
   const isMoreItemActive = visibleMoreItems.some(item => item.tab === activeTab) || activeTab === 'more';
   
-  // For games without specific more items, navigate to /more page directly
+  // Always show More button, but determine if it's a dropdown or direct link
   const hasMoreDropdown = visibleMoreItems.length > 0;
+  const showMoreButton = true; // Always show for all games
   
   return (
     <nav 
@@ -120,12 +121,13 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
           );
         })}
 
-        {/* "More" menu button - only show if there are dropdown items */}
-        {hasMoreDropdown && (
+        {/* "More" menu button */}
+        {showMoreButton && (
           <div className="relative flex-1">
-            <button
-              onClick={() => setShowMoreMenu(!showMoreMenu)}
-              className="relative w-full h-full flex flex-col items-center justify-center gap-1 transition-all duration-200"
+            {hasMoreDropdown ? (
+              <button
+                onClick={() => setShowMoreMenu(!showMoreMenu)}
+                className="relative w-full h-full flex flex-col items-center justify-center gap-1 transition-all duration-200"
               style={{
                 color: isMoreItemActive ? '#fb923c' : '#94a3b8',
                 background: isMoreItemActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
@@ -156,9 +158,44 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
                 {t('nav.more')}
               </span>
             </button>
+            ) : (
+              <Link
+                href={getTabPath('more')}
+                className="relative w-full h-full flex flex-col items-center justify-center gap-1 transition-all duration-200"
+                style={{
+                  color: isMoreItemActive ? '#fb923c' : '#94a3b8',
+                  background: isMoreItemActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
+                }}
+              >
+                {/* Active indicator bar */}
+                {isMoreItemActive && (
+                  <span 
+                    className="absolute top-0 w-10 h-0.5 rounded-full bg-orange-400"
+                    style={{ left: '50%', transform: 'translateX(-50%)' }}
+                  />
+                )}
+                <MoreHorizontal 
+                  size={24} 
+                  strokeWidth={isMoreItemActive ? 2.5 : 1.8}
+                  style={{
+                    filter: isMoreItemActive ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.4))' : 'none',
+                  }}
+                />
+                <span 
+                  className="font-medium"
+                  style={{ 
+                    fontSize: '10px',
+                    letterSpacing: '0.02em',
+                    opacity: isMoreItemActive ? 1 : 0.8,
+                  }}
+                >
+                  {t('nav.more')}
+                </span>
+              </Link>
+            )}
 
             {/* Dropdown menu for more items */}
-            {showMoreMenu && (
+            {hasMoreDropdown && showMoreMenu && (
               <div 
                 className="absolute bottom-full left-0 right-0 mb-2 bg-slate-900 border border-slate-700 rounded-lg shadow-xl overflow-hidden z-50"
               >
