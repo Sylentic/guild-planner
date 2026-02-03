@@ -368,7 +368,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70" title={shipData.manufacturer} />
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-7 w-auto brightness-0 invert opacity-100 drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]" title={shipData.manufacturer} />
                                           )}
                                           <p className="text-xs text-slate-400">{shipData.manufacturer}</p>
                                         </div>
@@ -439,7 +439,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70" title={shipData.manufacturer} />
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-7 w-auto brightness-0 invert opacity-100 drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]" title={shipData.manufacturer} />
                                           )}
                                           <p className="text-xs text-slate-400">{shipData.manufacturer}</p>
                                         </div>

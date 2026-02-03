@@ -458,7 +458,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                               <img 
                                                 src={manufacturerLogo} 
                                                 alt={shipData.manufacturer}
-                                                className="h-6 w-auto brightness-0 invert opacity-70"
+                                                className="h-7 w-auto brightness-0 invert opacity-100 drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]"
                                                 title={shipData.manufacturer}
                                               />
                                             )}
@@ -560,7 +560,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                                 <img 
                                                   src={manufacturerLogo} 
                                                   alt={shipData.manufacturer}
-                                                  className="h-6 w-auto brightness-0 invert opacity-70"
+                                                  className="h-7 w-auto brightness-0 invert opacity-100 drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]"
                                                   title={shipData.manufacturer}
                                                 />
                                               )}
