@@ -345,7 +345,12 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
               className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
               <option value="">{t('fleet.selectShip')}</option>
-              {shipsData.ships.map(ship => (
+              {shipsData.ships.filter(ship => {
+                // Filter out ships already added for the selected character
+                if (!selectedCharacter) return true;
+                const existingShips = characterShips[selectedCharacter] || [];
+                return !existingShips.some(cs => cs.ship_id === ship.id);
+              }).map(ship => (
                 <option key={ship.id} value={ship.id}>
                   {ship.name} ({ship.manufacturer}) - {ship.role}
                 </option>
