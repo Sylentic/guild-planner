@@ -266,7 +266,7 @@ export function EventsList({
           <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <p>{t('event.noEvents')}</p>
           {canManage && (
-            <p className="text-sm mt-2">{t('siege.noUpcomingDesc')}</p>
+            <p className="text-sm mt-2">{t('event.createEventDesc')}</p>
           )}
         </div>
       ) : (

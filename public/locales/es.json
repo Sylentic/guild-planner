@@ -149,6 +149,7 @@
     "duration": "Duración",
     "upcomingEvents": "Próximos Eventos",
     "noEvents": "No hay eventos programados",
+    "createEventDesc": "Crea un evento para organizar a tu grupo.",
     "rsvp": "Confirmar asistencia",
     "attending": "Asistiré",
     "maybe": "Quizás",

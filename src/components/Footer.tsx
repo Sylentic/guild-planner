@@ -31,7 +31,7 @@ export function InlineFooter({ variant = 'default' }: { variant?: 'default' | 'm
       <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2 text-[10px] md:text-xs text-slate-400 py-4">
         <div className="flex items-center gap-3 justify-center flex-wrap">
           <a
-            href="https://github.com/igonzalezespi"
+            href="https://github.com/pandamonium-gaming"
             target="_blank"
             rel="noopener noreferrer"
             className="text-orange-400 hover:text-orange-300 transition-colors inline-flex items-center gap-1"

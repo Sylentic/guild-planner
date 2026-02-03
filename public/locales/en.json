@@ -149,6 +149,7 @@
     "duration": "Duration",
     "upcomingEvents": "Upcoming Events",
     "noEvents": "No events scheduled",
+    "createEventDesc": "Create an event to organize your group.",
     "rsvp": "RSVP",
     "attending": "Attending",
     "maybe": "Maybe",
