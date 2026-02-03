@@ -455,11 +455,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           </div>
                                           <div className="flex items-center gap-2 mt-1">
                                             {manufacturerLogo && (
-                                              <div className="flex h-8 w-8 items-center justify-center">
+                                              <div className="flex h-10 w-10 items-center justify-center">
                                                 <img 
                                                   src={manufacturerLogo} 
                                                   alt={shipData.manufacturer}
-                                                  className="h-8 w-8 object-contain brightness-0 invert opacity-100"
+                                                  className="h-10 w-10 object-contain brightness-0 invert opacity-100"
                                                   title={shipData.manufacturer}
                                                 />
                                               </div>
@@ -561,11 +561,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                             </div>
                                             <div className="flex items-center gap-2 mt-1">
                                               {manufacturerLogo && (
-                                                <div className="flex h-8 w-8 items-center justify-center">
+                                                <div className="flex h-10 w-10 items-center justify-center">
                                                   <img 
                                                     src={manufacturerLogo} 
                                                     alt={shipData.manufacturer}
-                                                    className="h-8 w-8 object-contain brightness-0 invert opacity-100"
+                                                    className="h-10 w-10 object-contain brightness-0 invert opacity-100"
                                                     title={shipData.manufacturer}
                                                   />
                                                 </div>

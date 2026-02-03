@@ -368,8 +368,8 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <div className="flex h-8 w-8 items-center justify-center">
-                                              <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-8 w-8 object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                            <div className="flex h-10 w-10 items-center justify-center">
+                                              <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-10 w-10 object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
                                             </div>
                                           )}
                                           <div className="flex flex-col leading-tight">
@@ -443,8 +443,8 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <div className="flex h-8 w-8 items-center justify-center">
-                                              <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-8 w-8 object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                            <div className="flex h-10 w-10 items-center justify-center">
+                                              <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-10 w-10 object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
                                             </div>
                                           )}
                                           <div className="flex flex-col leading-tight">
