@@ -312,35 +312,6 @@ export function CharacterForm({
 
           {isStarCitizen && (
             <>
-              <div className="border-t border-slate-700 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowShipsSection(!showShipsSection)}
-                  className="w-full flex items-center justify-between p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <Ship className="w-5 h-5 text-blue-400" />
-                    <span className="font-medium text-white">Ships</span>
-                    {formData.ships && formData.ships.length > 0 && (
-                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded">
-                        {formData.ships.length}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-slate-400">{showShipsSection ? '−' : '+'}</span>
-                </button>
-                
-                {showShipsSection && (
-                  <div className="mt-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                    <ShipSelector
-                      selectedShips={formData.ships || []}
-                      onChange={(ships) => setFormData({ ...formData, ships })}
-                      includeVehicles={false}
-                    />
-                  </div>
-                )}
-              </div>
-
               <div>
                 <button
                   type="button"

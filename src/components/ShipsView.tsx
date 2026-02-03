@@ -301,18 +301,36 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
     );
   }
 
-  // ShipsView shows all guild characters and their ships (guild-wide overview by character)
-  // Group all ships by character for character-based overview
-  const charactersByOwner = guildCharacters.reduce((acc, char) => {
-    const ownerUserId = char.user_id || 'unassigned';
-    if (!acc[ownerUserId]) {
-      acc[ownerUserId] = [];
-    }
-    acc[ownerUserId].push(char);
-    return acc;
-  }, {} as Record<string, CharacterWithProfessions[]>);
+  // ShipsView shows all guild ships grouped by ship type/role (ship-centric overview)
+  // Collect all ships with their owner info
+  const allShipsWithOwners = Object.values(characterShips).flat().map(ship => {
+    const character = guildCharacters.find(c => c.id === ship.character_id);
+    return {
+      ...ship,
+      characterName: character?.name || 'Unknown',
+      userId: character?.user_id || 'unknown',
+    };
+  });
 
-  const allShips = Object.values(characterShips).flat();
+  // Group ships by type (ship vs vehicle) and role
+  const shipsByRole: Record<string, typeof allShipsWithOwners> = {};
+  const vehiclesByRole: Record<string, typeof allShipsWithOwners> = {};
+
+  allShipsWithOwners.forEach(ship => {
+    const shipData = getShipData(ship.ship_id);
+    if (!shipData) return;
+
+    const isVehicle = shipData.size === 'vehicle';
+    const normalizedRole = normalizeRole(shipData.role);
+    const targetObj = isVehicle ? vehiclesByRole : shipsByRole;
+
+    if (!targetObj[normalizedRole]) {
+      targetObj[normalizedRole] = [];
+    }
+    targetObj[normalizedRole].push(ship);
+  });
+
+  const allShips = allShipsWithOwners;
 
   return (
     <div className="space-y-6">
@@ -322,7 +340,7 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
           <Ship className="w-6 h-6 text-cyan-400" />
           <div>
             <h2 className="text-2xl font-bold text-white">Ships Overview</h2>
-            <p className="text-sm text-slate-400">Guild ships by character</p>
+            <p className="text-sm text-slate-400">Guild ships by type and role</p>
           </div>
         </div>
         <div className="text-right">
@@ -339,7 +357,7 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
         </div>
       )}
 
-      {/* Ships by Character */}
+      {/* Ships by Role */}
       {allShips.length === 0 ? (
         <div className="text-center py-12">
           <Ship className="w-12 h-12 text-slate-600 mx-auto mb-4" />
@@ -347,173 +365,182 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
           <p className="text-sm text-slate-500 mt-2">Ships will appear here once members add them to their characters</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {Object.entries(charactersByOwner).map(([ownerUserId, chars]) => {
-            const totalShips = chars.reduce((sum, char) => sum + (characterShips[char.id]?.length || 0), 0);
-            if (totalShips === 0) return null;
-            
-            return (
-              <div key={ownerUserId} className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-300">
-                  {chars[0]?.user_id || 'Member'}'s Characters
-                  <span className="ml-2 text-sm text-slate-500">({totalShips} ship{totalShips !== 1 ? 's' : ''})</span>
-                </h3>
+        <div className="space-y-8">
+          {/* Ships Section */}
+          {Object.keys(shipsByRole).length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-cyan-400 flex items-center gap-2">
+                <Ship className="w-5 h-5" />
+                Ships
+              </h3>
+              {Object.entries(shipsByRole).sort(([a], [b]) => a.localeCompare(b)).map(([role, roleShips]) => {
+                const RoleIcon = getRoleIcon(role);
+                const roleColor = getRoleColor(role);
                 
-                {chars.map(char => {
-                  const ships = characterShips[char.id] || [];
-                  if (ships.length === 0) return null;
-                  
-                  return (
-                    <div key={char.id} className="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-4">{char.name}</h4>
-                      
-                      <div className="space-y-6">
-                        {/* Ships Section */}
-                        {ships.filter(s => {
-                          const shipData = getShipData(s.ship_id);
-                          return shipData && shipData.size !== 'vehicle';
-                        }).length > 0 && (
-                          <div className="space-y-3">
-                            <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ships</h5>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                              {ships.filter(s => {
-                                const shipData = getShipData(s.ship_id);
-                                return shipData && shipData.size !== 'vehicle';
-                              }).map(ship => {
-                                const shipData = getShipData(ship.ship_id);
-                                if (!shipData) return null;
+                // Group by ship_id to show unique ships and their owners
+                const shipGroups: Record<string, typeof roleShips> = {};
+                roleShips.forEach(ship => {
+                  if (!shipGroups[ship.ship_id]) {
+                    shipGroups[ship.ship_id] = [];
+                  }
+                  shipGroups[ship.ship_id].push(ship);
+                });
 
-                                const ownershipColor = {
-                                  'pledged': 'border-green-500/30',
-                                  'in-game': 'border-cyan-500/30',
-                                  'loaner': 'border-blue-500/30',
-                                }[ship.ownership_type];
-
-                                const isConcept = shipData.productionStatus !== 'flight-ready';
-                                const RoleIcon = getRoleIcon(shipData.role);
-                                const roleColor = getRoleColor(shipData.role);
-                                const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
-
-                                return (
-                                  <div
-                                    key={ship.id}
-                                    className={`p-3 bg-slate-800 border ${ownershipColor} rounded-lg`}
-                                  >
-                                    <div className="flex items-start justify-between gap-2">
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <h5 className="font-semibold text-white truncate">{shipData.name}</h5>
-                                          {isConcept && (
-                                            <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">
-                                              Concept
-                                            </span>
-                                          )}
-                                        </div>
-                                        {manufacturerLogo && (
-                                          <div className="mt-3 flex w-full items-center justify-center">
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto" title={shipData.manufacturer} />
-                                          </div>
-                                        )}
-                                        <div className="flex items-center gap-2 mt-2">
-                                          <div className={`p-1.5 rounded ${roleColor}`}>
-                                            <RoleIcon className="w-3 h-3" />
-                                          </div>
-                                          <span className="text-xs text-slate-400">{shipData.role}</span>
-                                        </div>
-                                      </div>
-                                      {canManage && (
-                                        <button
-                                          onClick={() => handleDeleteShip(ship.id)}
-                                          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                                          title="Remove ship"
-                                        >
-                                          <Trash2 className="w-4 h-4" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Ground Vehicles Section */}
-                        {ships.filter(s => {
-                          const shipData = getShipData(s.ship_id);
-                          return shipData && shipData.size === 'vehicle';
-                        }).length > 0 && (
-                          <div className="space-y-3">
-                            <h5 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ground Vehicles</h5>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                              {ships.filter(s => {
-                                const shipData = getShipData(s.ship_id);
-                                return shipData && shipData.size === 'vehicle';
-                              }).map(ship => {
-                                const shipData = getShipData(ship.ship_id);
-                                if (!shipData) return null;
-
-                                const ownershipColor = {
-                                  'pledged': 'border-green-500/30',
-                                  'in-game': 'border-cyan-500/30',
-                                  'loaner': 'border-blue-500/30',
-                                }[ship.ownership_type];
-
-                                const isConcept = shipData.productionStatus !== 'flight-ready';
-                                const RoleIcon = getRoleIcon(shipData.role);
-                                const roleColor = getRoleColor(shipData.role);
-                                const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
-
-                                return (
-                                  <div
-                                    key={ship.id}
-                                    className={`p-3 bg-slate-800 border ${ownershipColor} rounded-lg`}
-                                  >
-                                    <div className="flex items-start justify-between gap-2">
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <h5 className="font-semibold text-white truncate">{shipData.name}</h5>
-                                          {isConcept && (
-                                            <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">
-                                              Concept
-                                            </span>
-                                          )}
-                                        </div>
-                                        {manufacturerLogo && (
-                                          <div className="mt-3 flex w-full items-center justify-center">
-                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-20 w-auto object-contain brightness-0 invert opacity-100 mx-auto" title={shipData.manufacturer} />
-                                          </div>
-                                        )}
-                                        <div className="flex items-center gap-2 mt-2">
-                                          <div className={`p-1.5 rounded ${roleColor}`}>
-                                            <RoleIcon className="w-3 h-3" />
-                                          </div>
-                                          <span className="text-xs text-slate-400">{shipData.role}</span>
-                                        </div>
-                                      </div>
-                                      {canManage && (
-                                        <button
-                                          onClick={() => handleDeleteShip(ship.id)}
-                                          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                                          title="Remove vehicle"
-                                        >
-                                          <Trash2 className="w-4 h-4" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
+                return (
+                  <div key={role} className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-2 rounded ${roleColor}`}>
+                        <RoleIcon className="w-4 h-4" />
                       </div>
+                      <h4 className="text-lg font-semibold text-white">{role}</h4>
+                      <span className="text-sm text-slate-500">({roleShips.length})</span>
                     </div>
-                  );
-                })}
-              </div>
-            );
-          })}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(shipGroups).map(([shipId, ships]) => {
+                        const shipData = getShipData(shipId);
+                        if (!shipData) return null;
+
+                        const isConcept = shipData.productionStatus !== 'flight-ready';
+                        const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
+
+                        return (
+                          <div
+                            key={shipId}
+                            className="p-4 bg-slate-800 border border-slate-700 rounded-lg"
+                          >
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h5 className="font-semibold text-white flex-1">{shipData.name}</h5>
+                                {isConcept && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">
+                                    Concept
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {manufacturerLogo && (
+                                <div className="flex w-full items-center justify-center py-2">
+                                  <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-16 w-auto object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                </div>
+                              )}
+
+                              <div className="pt-2 border-t border-slate-700">
+                                <p className="text-xs text-slate-400 mb-2">Owned by:</p>
+                                <div className="space-y-1">
+                                  {ships.map(ship => (
+                                    <div key={ship.id} className="flex items-center justify-between text-sm">
+                                      <span className="text-slate-300">{ship.characterName}</span>
+                                      <span className={`text-xs px-2 py-0.5 rounded ${
+                                        ship.ownership_type === 'pledged' ? 'bg-green-500/20 text-green-400' :
+                                        ship.ownership_type === 'in-game' ? 'bg-cyan-500/20 text-cyan-400' :
+                                        'bg-blue-500/20 text-blue-400'
+                                      }`}>
+                                        {ship.ownership_type === 'pledged' ? 'Pledged' :
+                                         ship.ownership_type === 'in-game' ? 'In-Game' : 'Loaner'}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Ground Vehicles Section */}
+          {Object.keys(vehiclesByRole).length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-amber-400 flex items-center gap-2">
+                <Truck className="w-5 h-5" />
+                Ground Vehicles
+              </h3>
+              {Object.entries(vehiclesByRole).sort(([a], [b]) => a.localeCompare(b)).map(([role, roleShips]) => {
+                const RoleIcon = getRoleIcon(role);
+                const roleColor = getRoleColor(role);
+                
+                // Group by ship_id to show unique vehicles and their owners
+                const vehicleGroups: Record<string, typeof roleShips> = {};
+                roleShips.forEach(ship => {
+                  if (!vehicleGroups[ship.ship_id]) {
+                    vehicleGroups[ship.ship_id] = [];
+                  }
+                  vehicleGroups[ship.ship_id].push(ship);
+                });
+
+                return (
+                  <div key={role} className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`p-2 rounded ${roleColor}`}>
+                        <RoleIcon className="w-4 h-4" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-white">{role}</h4>
+                      <span className="text-sm text-slate-500">({roleShips.length})</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {Object.entries(vehicleGroups).map(([shipId, ships]) => {
+                        const shipData = getShipData(shipId);
+                        if (!shipData) return null;
+
+                        const isConcept = shipData.productionStatus !== 'flight-ready';
+                        const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
+
+                        return (
+                          <div
+                            key={shipId}
+                            className="p-4 bg-slate-800 border border-slate-700 rounded-lg"
+                          >
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h5 className="font-semibold text-white flex-1">{shipData.name}</h5>
+                                {isConcept && (
+                                  <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded">
+                                    Concept
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {manufacturerLogo && (
+                                <div className="flex w-full items-center justify-center py-2">
+                                  <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-16 w-auto object-contain brightness-0 invert opacity-100" title={shipData.manufacturer} />
+                                </div>
+                              )}
+
+                              <div className="pt-2 border-t border-slate-700">
+                                <p className="text-xs text-slate-400 mb-2">Owned by:</p>
+                                <div className="space-y-1">
+                                  {ships.map(ship => (
+                                    <div key={ship.id} className="flex items-center justify-between text-sm">
+                                      <span className="text-slate-300">{ship.characterName}</span>
+                                      <span className={`text-xs px-2 py-0.5 rounded ${
+                                        ship.ownership_type === 'pledged' ? 'bg-green-500/20 text-green-400' :
+                                        ship.ownership_type === 'in-game' ? 'bg-cyan-500/20 text-cyan-400' :
+                                        'bg-blue-500/20 text-blue-400'
+                                      }`}>
+                                        {ship.ownership_type === 'pledged' ? 'Pledged' :
+                                         ship.ownership_type === 'in-game' ? 'In-Game' : 'Loaner'}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
