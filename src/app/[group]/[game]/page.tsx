@@ -512,6 +512,7 @@ export default function GameGroupPage({ params }: { params: Promise<{ group: str
               userId={user.id}
               characters={characters}
               isOfficer={canManageMembers}
+              gameSlug={gameSlug}
             />
           ) : activeTab === 'manage' && canManageMembers ? (
             <div className="space-y-6">

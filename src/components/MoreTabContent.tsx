@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Handshake, Hammer, Swords, Castle } from 'lucide-react';
+import { Trophy, Handshake, Hammer, Swords, Castle, Rocket } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CharacterWithProfessions } from '@/lib/types';
@@ -11,36 +11,46 @@ import { AchievementAdminPanel } from './AchievementAdminPanel';
 import { AllianceView } from './AllianceView';
 import { BuildLibrary } from './BuildLibrary';
 import { SiegeTabContent } from './SiegeTabContent';
+import { ShipsView } from './ShipsView';
 import { useParties } from '@/hooks/useParties';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useAlliances } from '@/hooks/useAlliances';
 import { useBuilds } from '@/hooks/useBuilds';
 
-type MoreSubTab = 'parties' | 'siege' | 'achievements' | 'builds' | 'alliances';
+type MoreSubTab = 'parties' | 'siege' | 'achievements' | 'builds' | 'alliances' | 'ships';
 
 interface MoreTabContentProps {
   groupId: string;
   userId: string;
   characters: CharacterWithProfessions[];
   isOfficer: boolean;
+  gameSlug?: string;
 }
 
-export function MoreTabContent({ groupId, userId, characters, isOfficer }: MoreTabContentProps) {
+export function MoreTabContent({ groupId, userId, characters, isOfficer, gameSlug = 'aoc' }: MoreTabContentProps) {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // Always initialize with default, let useEffect handle URL sync
-  const [subTab, setSubTab] = useState<MoreSubTab>('parties');
+  // Filter sub-tabs based on game
+  const allowedSubTabs: MoreSubTab[] = gameSlug === 'star-citizen'
+    ? ['ships'] // Only ships for Star Citizen
+    : ['parties', 'siege', 'achievements', 'builds', 'alliances']; // AoC tabs
+
+  // Always initialize with default for the game
+  const defaultSubTab = gameSlug === 'star-citizen' ? 'ships' : 'parties';
+  const [subTab, setSubTab] = useState<MoreSubTab>(defaultSubTab);
 
   // Sync state with URL parameter on mount and when searchParams changes
   useEffect(() => {
     const subTabParam = searchParams?.get('subTab');
-    if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
+    if (subTabParam && allowedSubTabs.includes(subTabParam as MoreSubTab)) {
       setSubTab(subTabParam as MoreSubTab);
+    } else {
+      setSubTab(defaultSubTab);
     }
-  }, [searchParams]);
+  }, [searchParams, gameSlug]);
 
   // Update URL when sub-tab changes
   const handleSubTabChange = (newSubTab: MoreSubTab) => {
@@ -84,13 +94,17 @@ export function MoreTabContent({ groupId, userId, characters, isOfficer }: MoreT
     copyBuild,
   } = useBuilds(groupId);
 
-  const SUB_TABS = [
-    { id: 'parties', icon: Swords, label: t('nav.parties') },
-    { id: 'siege', icon: Castle, label: t('nav.siege') },
-    { id: 'achievements', icon: Trophy, label: t('achievements.title') },
-    { id: 'builds', icon: Hammer, label: t('builds.title') },
-    { id: 'alliances', icon: Handshake, label: t('alliance.title') },
-  ] as const;
+  const ALL_SUB_TABS = [
+    { id: 'parties' as const, icon: Swords, label: t('nav.parties'), games: ['aoc'] },
+    { id: 'siege' as const, icon: Castle, label: t('nav.siege'), games: ['aoc'] },
+    { id: 'achievements' as const, icon: Trophy, label: t('achievements.title'), games: ['aoc'] },
+    { id: 'builds' as const, icon: Hammer, label: t('builds.title'), games: ['aoc'] },
+    { id: 'alliances' as const, icon: Handshake, label: t('alliance.title'), games: ['aoc'] },
+    { id: 'ships' as const, icon: Rocket, label: 'Ships Overview', games: ['star-citizen'] },
+  ];
+
+  // Filter tabs based on current game
+  const SUB_TABS = ALL_SUB_TABS.filter(tab => tab.games.includes(gameSlug));
 
 
 
@@ -186,6 +200,15 @@ export function MoreTabContent({ groupId, userId, characters, isOfficer }: MoreT
             isOfficer={isOfficer}
           />
         )
+      )}
+
+      {subTab === 'ships' && (
+        <ShipsView
+          characters={characters}
+          userId={userId}
+          canManage={isOfficer}
+          groupId={groupId}
+        />
       )}
     </div>
   );
