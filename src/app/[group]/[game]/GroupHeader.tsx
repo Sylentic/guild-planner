@@ -82,7 +82,7 @@ export function GroupHeader({
               <img src={guildIconUrl} alt="Group Icon" className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800" />
             )}
             <Link
-              href="/"
+              href={`/${groupSlug}`}
               className="hover:opacity-80 transition-opacity cursor-pointer"
               title="Return to game selection"
             >
