@@ -150,13 +150,6 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load character ships
-  useEffect(() => {
-    console.log('ShipsView - characters:', characters, 'groupId:', groupId);
-    setGuildCharacters(characters);
-    loadCharacterShips();
-  }, [groupId, characters, gameSlug]);
-
   const loadCharacterShips = async () => {
     setLoading(true);
     setError(null);
@@ -165,32 +158,42 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
       const accessToken = session.data.session?.access_token;
 
       if (accessToken && groupId) {
-        const response = await fetch(`/api/group/ships-overview?group_id=${groupId}&game_slug=${gameSlug}`, {
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const overviewCharacters = (result.characters || []) as CharacterWithProfessions[];
-          const overviewShips = (result.ships || []) as CharacterShip[];
-
-          const shipsByCharacter: Record<string, CharacterShip[]> = {};
-          overviewCharacters.forEach(char => {
-            shipsByCharacter[char.id] = [];
+        try {
+          const response = await fetch(`/api/group/ships-overview?group_id=${groupId}&game_slug=${gameSlug}`, {
+            headers: {
+              authorization: `Bearer ${accessToken}`,
+            },
           });
 
-          overviewShips.forEach(ship => {
-            if (shipsByCharacter[ship.character_id]) {
-              shipsByCharacter[ship.character_id].push(ship);
-            }
-          });
+          console.log('Ships overview API response status:', response.status);
 
-          setGuildCharacters(overviewCharacters);
-          setCharacterShips(shipsByCharacter);
-          setLoading(false);
-          return;
+          if (response.ok) {
+            const result = await response.json();
+            console.log('Ships overview API result:', result);
+            const overviewCharacters = (result.characters || []) as CharacterWithProfessions[];
+            const overviewShips = (result.ships || []) as CharacterShip[];
+
+            const shipsByCharacter: Record<string, CharacterShip[]> = {};
+            overviewCharacters.forEach(char => {
+              shipsByCharacter[char.id] = [];
+            });
+
+            overviewShips.forEach(ship => {
+              if (shipsByCharacter[ship.character_id]) {
+                shipsByCharacter[ship.character_id].push(ship);
+              }
+            });
+
+            setGuildCharacters(overviewCharacters);
+            setCharacterShips(shipsByCharacter);
+            setLoading(false);
+            return;
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Ships overview API error:', response.status, errorData);
+          }
+        } catch (apiError) {
+          console.error('Ships overview API fetch error:', apiError);
         }
       }
 
@@ -234,6 +237,12 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
       setLoading(false);
     }
   };
+
+  // Load character ships
+  useEffect(() => {
+    console.log('ShipsView - characters:', characters, 'groupId:', groupId);
+    loadCharacterShips();
+  }, [groupId, characters, gameSlug]);
 
   const getShipData = (shipId: string): ShipData | undefined => {
     return shipsData.ships.find(s => s.id === shipId);
