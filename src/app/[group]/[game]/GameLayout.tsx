@@ -3,6 +3,7 @@
 import { use, ReactNode } from 'react';
 import { Tab } from '@/components/tabs';
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupData } from '@/hooks/useGroupData';
@@ -23,6 +24,8 @@ interface GameLayoutProps {
 
 export function GameLayout({ params, children, activeTab }: GameLayoutProps) {
   const { group: groupSlug, game: gameSlug } = use(params);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   const { t } = useLanguage();
 
@@ -46,12 +49,13 @@ export function GameLayout({ params, children, activeTab }: GameLayoutProps) {
   }
 
   if (!user) {
+    const redirectPath = `${pathname || `/${groupSlug}/${gameSlug}`}${searchParams?.toString() ? `?${searchParams.toString()}` : ''}`;
     return (
       <ClanLoginScreen
         title={t('group.loginRequired')}
         message={t('group.signInToAccess', { name: groupSlug })}
         onSignIn={() => {
-          localStorage.setItem('authRedirectTo', `/${groupSlug}/${gameSlug}`);
+          localStorage.setItem('authRedirectTo', redirectPath);
           signIn();
         }}
         signInLabel={t('common.continueWithDiscord')}

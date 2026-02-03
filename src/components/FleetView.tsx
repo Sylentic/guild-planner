@@ -140,7 +140,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
 
   useEffect(() => {
     loadCharacterShips();
-  }, [groupId]);
+  }, [groupId, characters]);
 
   const loadCharacterShips = async () => {
     setLoading(true);
