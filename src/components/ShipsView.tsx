@@ -368,10 +368,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <div className="img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70"
-                                                title={shipData.manufacturer}
-                                              />
-                                            </div>
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70" title={shipData.manufacturer} />
                                           )}
                                           <p className="text-xs text-slate-400">{shipData.manufacturer}</p>
                                         </div>
@@ -442,10 +439,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
                                         </div>
                                         <div className="flex items-center gap-2 mt-1">
                                           {manufacturerLogo && (
-                                            <div className="img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70"
-                                                title={shipData.manufacturer}
-                                              />
-                                            </div>
+                                            <img src={manufacturerLogo} alt={shipData.manufacturer} className="h-6 w-auto brightness-0 invert opacity-70" title={shipData.manufacturer} />
                                           )}
                                           <p className="text-xs text-slate-400">{shipData.manufacturer}</p>
                                         </div>
@@ -484,4 +478,5 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
     </div>
   );
 }
+
 
