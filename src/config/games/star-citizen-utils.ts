@@ -8,6 +8,7 @@ export interface Manufacturer {
   name: string;
   code: string | null;
   logoFile?: string | null;
+  multicolorFile?: string | null;
 }
 
 /**

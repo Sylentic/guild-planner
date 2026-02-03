@@ -2,101 +2,120 @@
   "manufacturers": [
     {
       "logoFile": "aegisdynamics_monochrome_completed_2_1-3b972131.svg",
+      "multicolorFile": "aegisdynamics_multicolor_completed_2_1-b4e2cb5c.svg",
       "name": "Aegis Dynamics",
       "code": "AEGS"
     },
     {
       "logoFile": "anvilaerospace_monochrome_completed_2_1-bb770602.svg",
+      "multicolorFile": "anvilaerospace_multicolor_completed_2_1-1b1a6a1e.svg",
       "name": "Anvil Aerospace",
       "code": "ANVL"
     },
     {
       "logoFile": "aopoa_monochrome_completed_2_1-cbac6f83.svg",
+      "multicolorFile": "aopoa_multicolor_completed_2_1-534df28a.svg",
       "name": "Aopoa",
       "code": "XNAA"
     },
     {
       "logoFile": "argoastronautics_monochrome_completed_2_1-9ac9c70b.svg",
+      "multicolorFile": "argoastronautics_multicolor_completed_2_1-c66249d9.svg",
       "name": "Argo Astronautics",
       "code": "ARGO"
     },
     {
       "logoFile": "banu_monochrome_completed_2_1-b570b7e1.svg",
+      "multicolorFile": "banu_multicolor_completed_2_1-9b2afa8f.svg",
       "name": "Banu",
       "code": "BANU"
     },
     {
       "logoFile": "consolidatedoutland_monochrome_completed_2_1-00f113bc.svg",
+      "multicolorFile": "consolidatedoutland_multicolor_completed_2_1-ff2dc3a3.svg",
       "name": "Consolidated Outland",
       "code": "CNOU"
     },
     {
       "logoFile": "crusaderindustries_monochrome_completed_2_1-3ab22d02.svg",
+      "multicolorFile": "crusaderindustries_multicolor_completed_2_1-780022d7.svg",
       "name": "Crusader Industries",
       "code": "CRUS"
     },
     {
       "logoFile": "drake_monochrome_completed_2_1-4110ec1d.svg",
+      "multicolorFile": "drake_multicolor_completed_2_1-88ac4939.svg",
       "name": "Drake Interplanetary",
       "code": "DRAK"
     },
     {
       "logoFile": "esperia_monochrome_completed_2_1-291a8bb2.svg",
+      "multicolorFile": "esperia_multicolor_completed_2_1-3e32f619.svg",
       "name": "Esperia",
       "code": "ESPR"
     },
     {
       "logoFile": "gatac_monochrome_completed_2_1-f196d80d.svg",
+      "multicolorFile": "gatac_multicolor_completed_2_1-80f90438.svg",
       "name": "Gatac Manufacture",
       "code": "GAMA"
     },
     {
       "logoFile": "greysmarket_monochrome_completed_2_1-43d53201.svg",
+      "multicolorFile": null,
       "name": "Grey's Market",
       "code": "GREY"
     },
     {
       "logoFile": "greycatindustrial_monochrome_completed_2_1-2f5e46b8.svg",
+      "multicolorFile": "greycatindustrial_multicolor_completed_2_1-fb5c3831.svg",
       "name": "Greycat Industrial",
       "code": "GRIN"
     },
     {
       "logoFile": "kruger_monochrome_completed_2_1-202942e3.svg",
+      "multicolorFile": "kruger_multicolor_completed_2_1-01043dc6.svg",
       "name": "Kruger Intergalactic",
       "code": "KRIG"
     },
     {
       "logoFile": "misc_monochrome_completed_2_1-9cec9817.svg",
+      "multicolorFile": "misc_multicolor_completed_2_1-6673bb8b.svg",
       "name": "MISC",
       "code": "MISC"
     },
     {
       "logoFile": "mirai_monochrome_completed_2_1-d3456431.svg",
+      "multicolorFile": "mirai_multicolor_completed_2_1-ed1e0bda.svg",
       "name": "Mirai",
       "code": "MRAI"
     },
     {
       "logoFile": "originjumpworks_monochrome_completed_2_1-06ee292d.svg",
+      "multicolorFile": "originjumpworks_multicolor_completed_2_1-63727177.svg",
       "name": "Origin Jumpworks",
       "code": "ORIG"
     },
     {
       "logoFile": "robertsspaceindustries_monochrome_completed_2_1-44bc92ca.svg",
+      "multicolorFile": "robertsspaceindustries_multicolor_completed_2_1-e982f1ef.svg",
       "name": "Roberts Space Industries",
       "code": "RSI"
     },
     {
       "logoFile": "tumbril_monochrome_completed_2_1-c80c4eee.svg",
+      "multicolorFile": "tumbril_multicolor_completed_2_1-79b32b56.svg",
       "name": "Tumbril",
       "code": "TMBL"
     },
     {
       "logoFile": null,
+      "multicolorFile": null,
       "name": "Vanduul",
       "code": "VNCL"
     }
   ],
-  "note": "Manufacturer logos are stored locally under /public/images/manufacturers. Vanduul logo URL not provided in the extracted list.",
+  "note": "Manufacturer logos are stored locally under /public/images/manufacturers. Multicolor files are downloaded for optional use. Vanduul and Grey's Market multicolor logos were not provided in the extracted list.",
   "localBase": "/images/manufacturers/",
   "cdnBase": "https://cdn.robertsspaceindustries.com/orion-v3/logoratios/",
   "source": "https://robertsspaceindustries.com/en/pledge/ships",
