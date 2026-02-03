@@ -26,6 +26,7 @@ export default function MatrixPage({ params }: { params: Promise<{ group: string
           userId={user.id}
           canManage={canManageMembers}
           groupId={group.id}
+          gameSlug={gameSlug}
         />
       ) : (
         <ClanMatrix members={characters} />

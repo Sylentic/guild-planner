@@ -39,6 +39,7 @@ interface ShipsViewProps {
   userId: string;
   canManage: boolean;
   groupId: string;
+  gameSlug?: string;
 }
 
 // Normalize and group ship roles into logical categories
@@ -143,22 +144,57 @@ function getRoleColor(role: string) {
   return 'text-slate-400 bg-slate-500/10';
 }
 
-export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewProps) {
+export function ShipsView({ characters, userId, canManage, groupId, gameSlug = 'aoc' }: ShipsViewProps) {
   const [characterShips, setCharacterShips] = useState<Record<string, CharacterShip[]>>({});
+  const [guildCharacters, setGuildCharacters] = useState<CharacterWithProfessions[]>(characters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load character ships
   useEffect(() => {
     console.log('ShipsView - characters:', characters, 'groupId:', groupId);
+    setGuildCharacters(characters);
     loadCharacterShips();
-  }, [groupId, characters]);
+  }, [groupId, characters, gameSlug]);
 
   const loadCharacterShips = async () => {
     setLoading(true);
     setError(null);
     try {
-      // Initialize empty ships for all characters
+      const session = await supabase.auth.getSession();
+      const accessToken = session.data.session?.access_token;
+
+      if (accessToken && groupId) {
+        const response = await fetch(`/api/group/ships-overview?group_id=${groupId}&game_slug=${gameSlug}`, {
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const overviewCharacters = (result.characters || []) as CharacterWithProfessions[];
+          const overviewShips = (result.ships || []) as CharacterShip[];
+
+          const shipsByCharacter: Record<string, CharacterShip[]> = {};
+          overviewCharacters.forEach(char => {
+            shipsByCharacter[char.id] = [];
+          });
+
+          overviewShips.forEach(ship => {
+            if (shipsByCharacter[ship.character_id]) {
+              shipsByCharacter[ship.character_id].push(ship);
+            }
+          });
+
+          setGuildCharacters(overviewCharacters);
+          setCharacterShips(shipsByCharacter);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fallback to client-side query if API is unavailable
       const shipsByCharacter: Record<string, CharacterShip[]> = {};
       characters.forEach(char => {
         shipsByCharacter[char.id] = [];
@@ -166,7 +202,6 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
 
       console.log('Loading ships for character IDs:', characters.map(c => c.id));
 
-      // Only query if we have characters
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
@@ -180,7 +215,6 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
           throw fetchError;
         }
 
-        // Populate ships data
         if (data) {
           console.log('Found ships:', data);
           data.forEach(ship => {
@@ -191,7 +225,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
         }
       }
 
-      console.log('Final characterShips state:', shipsByCharacter);
+      setGuildCharacters(characters);
       setCharacterShips(shipsByCharacter);
     } catch (err) {
       console.error('Failed to load ships:', err);
@@ -260,7 +294,7 @@ export function ShipsView({ characters, userId, canManage, groupId }: ShipsViewP
 
   // ShipsView shows all guild characters and their ships (guild-wide overview by character)
   // Group all ships by character for character-based overview
-  const charactersByOwner = characters.reduce((acc, char) => {
+  const charactersByOwner = guildCharacters.reduce((acc, char) => {
     const ownerUserId = char.user_id || 'unassigned';
     if (!acc[ownerUserId]) {
       acc[ownerUserId] = [];

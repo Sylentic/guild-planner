@@ -209,6 +209,7 @@ export function MoreTabContent({ groupId, userId, characters, isOfficer, gameSlu
           userId={userId}
           canManage={isOfficer}
           groupId={groupId}
+          gameSlug={gameSlug}
         />
       )}
     </div>

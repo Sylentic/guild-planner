@@ -26,6 +26,7 @@ export default function ShipsPage({ params }: { params: Promise<{ group: string;
         userId={user.id}
         canManage={canManage}
         groupId={group.id}
+        gameSlug={gameSlug}
       />
     </GameLayout>
   );
