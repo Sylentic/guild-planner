@@ -63,7 +63,7 @@ export function useBuilds(groupId: string | null): UseBuildsReturn {
 
       // Filter based on visibility
       if (user && groupId) {
-        query = query.or(`visibility.eq.public,created_by.eq.${user.id},and(visibility.eq.guild,clan_id.eq.${groupId})`);
+        query = query.or(`visibility.eq.public,created_by.eq.${user.id},and(visibility.eq.guild,group_id.eq.${groupId})`);
       } else if (user) {
         query = query.or(`visibility.eq.public,created_by.eq.${user.id}`);
       } else {

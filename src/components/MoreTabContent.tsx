@@ -86,13 +86,14 @@ export function MoreTabContent({ groupId, userId, characters, isOfficer, gameSlu
     leaveAlliance,
   } = useAlliances(groupId);
 
+  // Only load builds for AoC
   const {
     builds,
     loading: buildsLoading,
     createBuild,
     likeBuild,
     copyBuild,
-  } = useBuilds(groupId);
+  } = useBuilds(gameSlug === 'aoc' ? groupId : null);
 
   const ALL_SUB_TABS = [
     { id: 'parties' as const, icon: Swords, label: t('nav.parties'), games: ['aoc'] },
