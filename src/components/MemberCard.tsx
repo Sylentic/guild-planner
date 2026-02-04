@@ -365,7 +365,7 @@ export function CharacterCard({
           {subscriberTier && (
             <div className="flex items-center justify-center mb-4">
               <div 
-                className="inline-flex items-center px-4 py-2 rounded-lg border-2"
+                className="inline-flex items-center px-4 py-2 rounded-lg border-2 gap-2"
                 style={{
                   borderColor: SUBSCRIBER_COLORS[subscriberTier].primary,
                   backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
@@ -374,6 +374,12 @@ export function CharacterCard({
                 <div className="h-6">
                   {subscriberTier === 'centurion' ? <CenturionSVG /> : <ImperatorSVG />}
                 </div>
+                <span
+                  className="text-sm font-semibold whitespace-nowrap"
+                  style={{ color: SUBSCRIBER_COLORS[subscriberTier].primary }}
+                >
+                  {SUBSCRIBER_TIERS[subscriberTier].label}
+                </span>
               </div>
             </div>
           )}
