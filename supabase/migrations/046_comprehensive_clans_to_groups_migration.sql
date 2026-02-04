@@ -54,6 +54,7 @@ ALTER TABLE alliances RENAME COLUMN leader_clan_id TO leader_group_id;
 ALTER TABLE loot_systems RENAME COLUMN clan_id TO group_id;
 ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
 ALTER TABLE group_permission_overrides RENAME COLUMN clan_id TO group_id;
+ALTER TABLE recruitment_applications RENAME COLUMN clan_id TO group_id;
 
 -- 9. Update guest_event_rsvps allied_clan_id column
 ALTER TABLE guest_event_rsvps RENAME COLUMN allied_clan_id TO allied_group_id;
