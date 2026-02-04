@@ -7,7 +7,7 @@ import { AlertCircle, LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader, 
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { GameIcon } from '@/components/common/GameIcon';
-import { getGroupBySlug } from '@/lib/auth';
+import { createGroup, getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
 import { getGroupGames, getGroupGamesWithStatus, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
@@ -36,6 +36,8 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const [loadingGames, setLoadingGames] = useState(false);
   const [addingGame, setAddingGame] = useState<string | null>(null);
   const [removingGame, setRemovingGame] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   // Fetch group data
   useEffect(() => {
@@ -144,6 +146,25 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
 
   const displayName = profile?.display_name || profile?.discord_username || 'User';
 
+  // Create group handler
+  const handleCreateGroup = async () => {
+    if (!user) return;
+    
+    setCreating(true);
+    setCreateError(null);
+    
+    try {
+      const displayGroupName = groupSlug.charAt(0).toUpperCase() + groupSlug.slice(1).replace(/-/g, ' ');
+      await createGroup(groupSlug, displayGroupName, user.id);
+      window.location.reload();
+    } catch (err: any) {
+      console.error('Error creating group:', err);
+      setCreateError(err.code === '23505' ? 'This group name is already taken' : (err.message || 'Failed to create group'));
+    } finally {
+      setCreating(false);
+    }
+  };
+
   // Loading state
   if (loading || authLoading) {
     return <ClanLoadingScreen message={t('common.loading')} />;
@@ -179,23 +200,44 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     );
   }
 
-  // Group doesn't exist
+  // Group doesn't exist - offer to create it
   if (!groupExists) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="text-center max-w-md mx-auto p-6">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">{t('group.notFound')}</h2>
+          <Plus className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-white mb-2">Create "{groupSlug}"?</h2>
           <p className="text-slate-400 mb-6">
-            {t('group.doesNotExist', { name: groupSlug })}
+            This group doesn't exist yet. Would you like to create it?
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-colors cursor-pointer"
-          >
-            <Home className="w-5 h-5" />
-            {t('common.returnHome')}
-          </Link>
+          
+          {createError && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+              {createError}
+            </div>
+          )}
+          
+          <div className="flex gap-3 justify-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-white transition-colors cursor-pointer"
+            >
+              <Home className="w-5 h-5" />
+              {t('common.returnHome')}
+            </Link>
+            <button
+              onClick={handleCreateGroup}
+              disabled={creating}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-lg text-white transition-colors cursor-pointer"
+            >
+              {creating ? (
+                <Loader className="w-5 h-5 animate-spin" />
+              ) : (
+                <Plus className="w-5 h-5" />
+              )}
+              {creating ? 'Creating...' : 'Create Group'}
+            </button>
+          </div>
         </div>
       </div>
     );
