@@ -3,7 +3,7 @@ import { GameConfig } from '@/lib/games';
 export const ROR_CONFIG: GameConfig = {
   id: 'ror',
   name: 'Return of Reckoning',
-  description: 'PvP-focused fantasy MMO with faction-based warfare',
+  description: 'Warband coordination and RvR event planning',
   icon: '⚔️',
   iconUrl: '/images/games/ror-icon.svg',
   features: {
