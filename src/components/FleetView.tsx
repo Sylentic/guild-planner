@@ -540,11 +540,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           } : undefined}
                                         >
                                           {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
-                                            <div className="w-6 h-6 flex items-center justify-center">
+                                            <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
                                               {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
-                                          {badge.label}
+                                          <span className="leading-none">{badge.label}</span>
                                         </span>
                                       </div>
                                       {manufacturerLogo && (
@@ -648,11 +648,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           } : undefined}
                                         >
                                           {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
-                                            <div className="w-6 h-6 flex items-center justify-center">
+                                            <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
                                               {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
-                                          {badge.label}
+                                          <span className="leading-none">{badge.label}</span>
                                         </span>
                                       </div>
                                       {manufacturerLogo && (
