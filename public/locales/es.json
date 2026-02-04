@@ -57,8 +57,10 @@
     "ships": "Naves del Gremio",
     "guild-ships": "Naves del Gremio",
     "manage": "Gestionar",
-    "siege": "Siege",
+    "siege": "Asedio",
     "economy": "Economía",
+    "achievements": "Logros",
+    "builds": "Construcciones",
     "more": "Más"
   },
   "auth": {
