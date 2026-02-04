@@ -7,6 +7,7 @@ import { SUBSCRIBER_COLORS, SUBSCRIBER_TIERS } from '@/games/starcitizen/config/
 import { CenturionSVG, ImperatorSVG } from './SubscriberIcons';
 import { getRankSummary, checkRankLimits, PROFESSIONS_BY_TIER, TIER_CONFIG } from '@/lib/professions';
 import { RACES, ARCHETYPES, getClassName, RaceId, ArchetypeId } from '@/lib/characters';
+import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, RORRole } from '@/games/returnofreckooning/config';
 import { ProfessionSelector } from './ProfessionSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -58,6 +59,11 @@ export function CharacterCard({
 
   const subscriberTier = character.subscriber_tier || null;
   const subscriberSince = character.subscriber_since ? new Date(character.subscriber_since) : null;
+
+  // Get RoR character info
+  const rorFaction = character.ror_faction ? ROR_FACTIONS[character.ror_faction as keyof typeof ROR_FACTIONS] : null;
+  const rorClass = character.ror_class ? ROR_CLASSES.find(c => c.id === character.ror_class) : null;
+  const rorRole = rorClass ? ROR_ROLE_CONFIG[rorClass.role] : null;
 
   const handleSave = async () => {
     if (editName.trim() && editName !== character.name) {
@@ -169,19 +175,36 @@ export function CharacterCard({
                       {SUBSCRIBER_TIERS[subscriberTier].label}
                     </span>
                   )}
+                  {gameSlug === 'ror' && rorRole && (
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-600 flex items-center gap-1 ${rorRole.color}`}
+                    >
+                      <span>{rorRole.icon}</span>
+                      {rorRole.label}
+                    </span>
+                  )}
                 </div>
                 {/* Race and Class info */}
-                <div className="flex items-center gap-2 mt-0.5 text-sm">
-                  {raceInfo && (
-                    <span className="text-slate-400">{raceInfo.name}</span>
-                  )}
-                  {className && (
-                    <>
-                      {raceInfo && <span className="text-slate-600">•</span>}
-                      <span style={{ color: primaryInfo?.color }}>{className}</span>
-                    </>
-                  )}
-                </div>
+                {gameSlug === 'aoc' && (
+                  <div className="flex items-center gap-2 mt-0.5 text-sm">
+                    {raceInfo && (
+                      <span className="text-slate-400">{raceInfo.name}</span>
+                    )}
+                    {className && (
+                      <>
+                        {raceInfo && <span className="text-slate-600">•</span>}
+                        <span style={{ color: primaryInfo?.color }}>{className}</span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {gameSlug === 'ror' && rorClass && rorFaction && (
+                  <div className="flex items-center gap-2 mt-0.5 text-sm">
+                    <span className={rorFaction.color}>{rorFaction.name}</span>
+                    <span className="text-slate-600">•</span>
+                    <span className="text-slate-300">{rorClass.name}</span>
+                  </div>
+                )}
                 {/* Main/Alt relationship */}
                 {mainCharacterName && (
                   <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">
@@ -306,6 +329,33 @@ export function CharacterCard({
               <div>readOnly: {String(readOnly)}</div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Expanded content - Non-profession content for Return of Reckoning */}
+      {isExpanded && gameSlug === 'ror' && (
+        <div className="border-t border-slate-800 p-4 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Faction</div>
+              <div className={`text-sm font-medium ${rorFaction?.color || 'text-slate-200'}`}>
+                {rorFaction?.name || '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Class</div>
+              <div className="text-sm text-slate-200">
+                {rorClass?.name || '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Role</div>
+              <div className={`text-sm font-medium flex items-center gap-1.5 ${rorRole?.color || 'text-slate-200'}`}>
+                {rorRole && <span className="text-base">{rorRole.icon}</span>}
+                {rorRole?.label || '—'}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
