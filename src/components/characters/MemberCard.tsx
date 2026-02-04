@@ -11,6 +11,7 @@ import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, RORRole } from '@/games/ret
 import { ProfessionSelector } from '@/components/game-specific/ProfessionSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
 import starcitizen from '@/games/starcitizen/config/roles.json';
+import { getGameConfig } from '@/config';
 
 interface CharacterCardProps {
   character: CharacterWithProfessions;
@@ -60,6 +61,15 @@ export function CharacterCard({
 
   const subscriberTier = character.subscriber_tier || null;
   const subscriberSince = character.subscriber_since ? new Date(character.subscriber_since) : null;
+
+  // Get game config for Star Citizen ranks
+  const gameConfig = gameSlug ? getGameConfig(gameSlug) : null;
+  const gameRanks = (gameConfig as any)?.ranks || [];
+  
+  // Get Star Citizen rank name from ID
+  const scRankName = character.rank && gameSlug === 'starcitizen'
+    ? gameRanks.find((r: any) => r.id === character.rank)?.name || character.rank
+    : character.rank;
 
   // Get Star Citizen role names from IDs
   const scRoleNames = character.preferred_role && character.preferred_role.length > 0
@@ -398,7 +408,7 @@ export function CharacterCard({
             <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
               <div className="text-xs text-slate-500">Rank</div>
               <div className="text-sm text-slate-200">
-                {character.rank || '—'}
+                {scRankName || '—'}
               </div>
             </div>
             <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
