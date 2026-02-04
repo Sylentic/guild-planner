@@ -23,7 +23,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const router = useRouter();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   const { t } = useLanguage();
-  const ALL_AVAILABLE_GAMES = getAllGames().map(g => ({ slug: g.id, name: g.name, icon: g.icon, iconUrl: g.iconUrl }));
+  const ALL_AVAILABLE_GAMES = getAllGames().map(g => ({ slug: g.id, name: g.name, icon: g.icon, iconUrl: g.iconUrl, description: g.description }));
 
   const [groupId, setGroupId] = useState<string | null>(null);
   const [groupData, setGroupData] = useState<any>(null);
@@ -304,36 +304,37 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               )}
 
               {/* Content */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <button
-                    onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                    className="flex-1 text-left group/link cursor-pointer"
-                  >
-                    <div className="mb-3">
-                      <GameIcon 
-                        icon={game.icon}
-                        iconUrl={game.iconUrl}
-                        alt={game.name}
-                        size={80}
-                      />
-                    </div>
-                    <h3 className="text-lg font-semibold text-white group-hover/link:text-cyan-400 transition-colors">
-                      {game.name}
-                    </h3>
-                  </button>
-                  <button
-                    onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                    className="text-slate-500 hover:text-cyan-400 transition-colors transform group-hover:translate-x-1 self-center"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
+              <div className="relative flex items-center gap-4">
                 <button
                   onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                  className="text-sm text-slate-400 hover:text-slate-300 cursor-pointer w-full text-left"
+                  className="shrink-0 group/icon cursor-pointer"
                 >
-                  View members, events, and manage group operations
+                  <GameIcon 
+                    icon={game.icon}
+                    iconUrl={game.iconUrl}
+                    alt={game.name}
+                    size={96}
+                    className="group-hover/icon:scale-105 transition-transform"
+                  />
+                </button>
+                
+                <button
+                  onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
+                  className="flex-1 text-left cursor-pointer min-w-0"
+                >
+                  <h3 className="text-xl font-semibold text-white hover:text-cyan-400 transition-colors mb-1">
+                    {game.name}
+                  </h3>
+                  <p className="text-sm text-slate-400 hover:text-slate-300 transition-colors">
+                    {game.description}
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
+                  className="shrink-0 text-slate-500 hover:text-cyan-400 transition-all transform group-hover:translate-x-1"
+                >
+                  <ChevronRight className="w-6 h-6" />
                 </button>
               </div>
 
