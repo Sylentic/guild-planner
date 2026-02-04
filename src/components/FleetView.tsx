@@ -540,7 +540,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           } : undefined}
                                         >
                                           {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
-                                            <div className="w-5 h-5">
+                                            <div className="w-6 h-6 flex items-center justify-center">
                                               {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
@@ -648,7 +648,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           } : undefined}
                                         >
                                           {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
-                                            <div className="w-5 h-5">
+                                            <div className="w-6 h-6 flex items-center justify-center">
                                               {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
