@@ -96,6 +96,15 @@
     "errorLoading": "Error Loading Clan",
     "creator": "creator"
   },
+  "group": {
+    "applicationPending": "Application Pending",
+    "pendingApproval": "Your application to join {{name}} is pending review by an admin or officer.",
+    "notFound": "Group Not Found",
+    "doesNotExist": "The group '{{name}}' doesn't exist.",
+    "errorLoading": "Error Loading Group",
+    "connectionError": "Connection Error",
+    "connectionErrorMessage": "Unable to connect to the group service. This might be due to a slow connection or server issue."
+  },
   "character": {
     "addCharacter": "Add Character",
     "editCharacter": "Edit Character",

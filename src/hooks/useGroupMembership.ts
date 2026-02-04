@@ -206,20 +206,22 @@ export function useGroupMembership(groupId: string | null, userId: string | null
   const acceptMember = async (membershipId: string) => {
     if (!userId) throw new Error('Not authenticated');
 
-    // Get the member info (to get user_id and discord_username)
-
+    // Get the member info (to get user_id, discord_username, and discord_id for mentions)
     const { data: memberData, error: memberFetchError } = await supabase
       .from('group_members')
-      .select('user_id, group_id, users!clan_members_user_id_fkey(discord_username)')
+      .select('user_id, group_id, users!clan_members_user_id_fkey(discord_username, discord_id)')
       .eq('id', membershipId)
       .maybeSingle();
     if (memberFetchError || !memberData) throw memberFetchError || new Error('Member not found');
 
-    type UserWithDiscord = { discord_username?: string };
+    type UserWithDiscord = { discord_username?: string; discord_id?: string };
     const users = memberData.users as UserWithDiscord[] | UserWithDiscord | undefined;
     const discordUsername = Array.isArray(users)
       ? users[0]?.discord_username
       : users?.discord_username;
+    const discordId = Array.isArray(users)
+      ? users[0]?.discord_id
+      : users?.discord_id;
     const groupIdForWebhook = memberData.group_id;
 
     // Update the member's role
@@ -234,36 +236,43 @@ export function useGroupMembership(groupId: string | null, userId: string | null
       .select();
     if (error) throw error;
 
-    // Fetch the clan's webhook URLs and welcome settings
+    // Fetch the group's webhook URLs, welcome settings, and name
     let webhookUrl = null;
     let welcomeEnabled = true;
+    let groupName = 'the group';
     try {
       const group = await supabase
         .from('groups')
-        .select('group_welcome_webhook_url, group_webhook_url, aoc_welcome_enabled, sc_welcome_enabled')
+        .select('name, group_welcome_webhook_url, group_webhook_url, aoc_welcome_enabled, sc_welcome_enabled')
         .eq('id', groupIdForWebhook)
         .maybeSingle();
       webhookUrl = group.data?.group_welcome_webhook_url || group.data?.group_webhook_url;
       welcomeEnabled = gameSlug === 'starcitizen' 
         ? group.data?.sc_welcome_enabled ?? true
         : group.data?.aoc_welcome_enabled ?? true;
+      groupName = group.data?.name || 'the group';
     } catch (e) {
       // ignore, just don't send if not found
     }
 
-
     // Enhanced onboarding message with game-specific checklist embed
-    if (webhookUrl && discordUsername && welcomeEnabled) {
-      const embed = getWelcomeEmbed(discordUsername);
+    if (webhookUrl && discordId && welcomeEnabled) {
+      const embed = getWelcomeEmbed(discordUsername || 'member');
+      
+      let welcomeMessage = `🎉 <@${discordId}> Your request to join **${groupName}** has been approved!`;
+      if (gameSlug === 'starcitizen') {
+        welcomeMessage = `🚀 <@${discordId}> Your request to join **${groupName}** squadron has been approved!`;
+      } else if (gameSlug === 'ror') {
+        welcomeMessage = `⚔️ <@${discordId}> Your request to join **${groupName}** warband has been approved!`;
+      }
+      
       fetch('/api/discord', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           webhookUrl,
           payload: {
-            content: gameSlug === 'star-citizen' 
-              ? `🚀 Welcome <@${discordUsername}> to the squadron!`
-              : `🎉 Welcome <@${discordUsername}> to the guild!`,
+            content: welcomeMessage,
             embeds: [embed],
           },
         }),

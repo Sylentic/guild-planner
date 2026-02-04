@@ -6,14 +6,17 @@ import { FleetView } from '@/components/FleetView';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { usePermissions } from '@/hooks/usePermissions';
 
 export default function FleetPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
   const { user } = useAuthContext();
   const { group, characters } = useGroupData(groupSlug, gameSlug);
   const { membership } = useGroupMembership(group?.id || null, user?.id || null);
+  const { hasPermission } = usePermissions(group?.id);
 
-  const canManage = membership?.role === 'admin' || membership?.role === 'officer';
+  // Check if user has permission to create ships (add ships to their own characters)
+  const canManage = hasPermission('ships_create');
 
   if (!group || !user) {
     return <GameLayout params={params} activeTab="matrix"><div /></GameLayout>;
