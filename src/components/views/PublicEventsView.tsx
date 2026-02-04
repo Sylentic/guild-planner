@@ -41,7 +41,7 @@ export function PublicEventsView() {
             user:users(id, display_name)
           ),
           guest_event_rsvps(*),
-          clan:clan_id(id, name, slug)
+          clan:group_id(id, name, slug)
         `
         )
         .eq('is_public', true)

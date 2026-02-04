@@ -305,7 +305,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
 
               {/* Content */}
               <div className="relative">
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
                     className="flex-1 text-left group/link cursor-pointer"
@@ -324,7 +324,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                   </button>
                   <button
                     onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                    className="text-slate-500 hover:text-cyan-400 transition-colors transform group-hover:translate-x-1"
+                    className="text-slate-500 hover:text-cyan-400 transition-colors transform group-hover:translate-x-1 self-center"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
