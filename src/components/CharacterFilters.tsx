@@ -185,7 +185,7 @@ export function CharacterFiltersBar({
             </div>
           )}
         </div>
-      )}}
+      )}
 
       {/* Results count and clear */}
       <div className="flex items-center justify-between text-sm">

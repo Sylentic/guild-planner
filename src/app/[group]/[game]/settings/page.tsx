@@ -33,7 +33,7 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
     removeMember,
   } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
 
-  const { hasPermission } = usePermissions(group?.id || null);
+  const { hasPermission } = usePermissions(group?.id || undefined);
   const canViewPermissions = hasPermission('settings_view_permissions');
   const canEditPermissions = hasPermission('settings_edit_permissions');
   const canEditSettings = hasPermission('settings_edit');

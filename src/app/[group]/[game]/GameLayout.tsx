@@ -46,6 +46,8 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
     apply,
   } = useGroupMembership(group?.id || null, user?.id || null);
 
+  const { hasPermission } = usePermissions(group?.id || undefined);
+
   const displayName = profile?.display_name || user?.email || 'User';
   const guildIconUrl = group?.group_icon_url || undefined;
 
