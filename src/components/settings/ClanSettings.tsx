@@ -81,7 +81,7 @@ export function ClanSettings({
       announcementRoleId: aocAnnouncementRoleId || announcementRoleId,
       eventsRoleId: aocEventsRoleId,
     },
-    starcitizen: {
+    sc: {
       webhookUrl: currentScWebhookUrl,
       eventsWebhookUrl: currentScEventsWebhookUrl,
       announcementRoleId: scAnnouncementRoleId,
@@ -92,6 +92,12 @@ export function ClanSettings({
       eventsWebhookUrl: currentRorEventsWebhookUrl,
       announcementRoleId: rorAnnouncementRoleId,
       eventsRoleId: rorEventsRoleId,
+    },
+    cc: {
+      webhookUrl: '',
+      eventsWebhookUrl: '',
+      announcementRoleId: '',
+      eventsRoleId: '',
     },
   });
 
