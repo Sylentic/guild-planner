@@ -112,6 +112,22 @@ export function ClanSettings({
   const [testResult, setTestResult] = useState<{ success: boolean; message: string; game?: string } | null>(null);
   const { t } = useLanguage();
 
+  const normalizeGameId = (id: string): GameId => {
+    if (id === 'starcitizen' || id === 'star-citizen') return 'sc';
+    return id as GameId;
+  };
+
+  const getGameConfig = (id: string) => {
+    const gameId = normalizeGameId(id);
+    const config = gameConfig[gameId] || {
+      webhookUrl: '',
+      eventsWebhookUrl: '',
+      announcementRoleId: '',
+      eventsRoleId: '',
+    };
+    return { gameId, config };
+  };
+
   const updateGameConfig = (gameId: GameId, field: string, value: string) => {
     setGameConfig(prev => ({
       ...prev,
@@ -282,10 +298,12 @@ export function ClanSettings({
           Game-Specific Discord Webhooks & Roles
         </h4>
 
-        {games.map((game) => (
+        {games.map((game) => {
+          const { gameId, config } = getGameConfig(game.id);
+          return (
           <div key={game.id} className="bg-slate-800/30 border border-slate-700 rounded-lg p-4 space-y-4">
             <h5 className="font-semibold text-slate-200">
-              {getGameIcon(game.id as GameId)} {game.name}
+              {getGameIcon(gameId)} {game.name}
             </h5>
 
             {/* General Webhook */}
@@ -296,16 +314,16 @@ export function ClanSettings({
               <input
                 id={`webhook-${game.id}`}
                 type="url"
-                value={gameConfig[game.id as GameId].webhookUrl}
-                onChange={(e) => updateGameConfig(game.id as GameId, 'webhookUrl', e.target.value)}
+                value={config.webhookUrl}
+                onChange={(e) => updateGameConfig(gameId, 'webhookUrl', e.target.value)}
                 placeholder="https://discord.com/api/webhooks/..."
                 className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                  gameConfig[game.id as GameId].webhookUrl && !isValidWebhookUrl(gameConfig[game.id as GameId].webhookUrl) 
+                  config.webhookUrl && !isValidWebhookUrl(config.webhookUrl) 
                     ? 'border-red-500' 
                     : 'border-slate-600'
                 }`}
               />
-              {gameConfig[game.id as GameId].webhookUrl && !isValidWebhookUrl(gameConfig[game.id as GameId].webhookUrl) && (
+              {config.webhookUrl && !isValidWebhookUrl(config.webhookUrl) && (
                 <p className="text-xs text-red-400 mt-1">Invalid Discord webhook URL</p>
               )}
               <p className="text-xs text-slate-500 mt-1">
@@ -321,16 +339,16 @@ export function ClanSettings({
               <input
                 id={`events-webhook-${game.id}`}
                 type="url"
-                value={gameConfig[game.id as GameId].eventsWebhookUrl}
-                onChange={(e) => updateGameConfig(game.id as GameId, 'eventsWebhookUrl', e.target.value)}
+                value={config.eventsWebhookUrl}
+                onChange={(e) => updateGameConfig(gameId, 'eventsWebhookUrl', e.target.value)}
                 placeholder="https://discord.com/api/webhooks/... (leave empty to use general webhook)"
                 className={`w-full px-3 py-2 bg-slate-800 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                  gameConfig[game.id as GameId].eventsWebhookUrl && !isValidWebhookUrl(gameConfig[game.id as GameId].eventsWebhookUrl) 
+                  config.eventsWebhookUrl && !isValidWebhookUrl(config.eventsWebhookUrl) 
                     ? 'border-red-500' 
                     : 'border-slate-600'
                 }`}
               />
-              {gameConfig[game.id as GameId].eventsWebhookUrl && !isValidWebhookUrl(gameConfig[game.id as GameId].eventsWebhookUrl) && (
+              {config.eventsWebhookUrl && !isValidWebhookUrl(config.eventsWebhookUrl) && (
                 <p className="text-xs text-red-400 mt-1">Invalid Discord webhook URL</p>
               )}
               <p className="text-xs text-slate-500 mt-1">
@@ -346,8 +364,8 @@ export function ClanSettings({
               <input
                 id={`announcement-role-${game.id}`}
                 type="text"
-                value={gameConfig[game.id as GameId].announcementRoleId}
-                onChange={(e) => updateGameConfig(game.id as GameId, 'announcementRoleId', e.target.value.replace(/[^0-9]/g, ''))}
+                value={config.announcementRoleId}
+                onChange={(e) => updateGameConfig(gameId, 'announcementRoleId', e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="123456789012345678"
                 className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
@@ -364,8 +382,8 @@ export function ClanSettings({
               <input
                 id={`events-role-${game.id}`}
                 type="text"
-                value={gameConfig[game.id as GameId].eventsRoleId}
-                onChange={(e) => updateGameConfig(game.id as GameId, 'eventsRoleId', e.target.value.replace(/[^0-9]/g, ''))}
+                value={config.eventsRoleId}
+                onChange={(e) => updateGameConfig(gameId, 'eventsRoleId', e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="123456789012345678"
                 className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
@@ -375,14 +393,14 @@ export function ClanSettings({
             </div>
 
             {/* Test Button */}
-            {(gameConfig[game.id as GameId].eventsWebhookUrl || gameConfig[game.id as GameId].webhookUrl) && 
-             (isValidWebhookUrl(gameConfig[game.id as GameId].eventsWebhookUrl) || isValidWebhookUrl(gameConfig[game.id as GameId].webhookUrl)) && (
+            {(config.eventsWebhookUrl || config.webhookUrl) && 
+             (isValidWebhookUrl(config.eventsWebhookUrl) || isValidWebhookUrl(config.webhookUrl)) && (
               <button
-                onClick={() => handleTest(game.id as GameId)}
-                disabled={testing === game.id}
+                onClick={() => handleTest(gameId)}
+                disabled={testing === gameId}
                 className="flex items-center gap-2 px-3 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg transition-colors disabled:opacity-50 cursor-pointer border border-purple-500/30 text-sm"
               >
-                {testing === game.id ? (
+                {testing === gameId ? (
                   <>
                     <Loader2 size={14} className="animate-spin" />
                     Testing...
@@ -397,7 +415,7 @@ export function ClanSettings({
             )}
 
             {/* Test Result for this game */}
-            {testResult?.game === game.id && (
+            {testResult?.game === gameId && (
               <div className={`flex items-start gap-2 p-3 rounded-lg ${
                 testResult.success 
                   ? 'bg-green-500/10 border border-green-500/30 text-green-400' 
@@ -408,7 +426,8 @@ export function ClanSettings({
               </div>
             )}
           </div>
-        ))}
+        );
+        })}
       </div>
 
       {/* Test result for legacy webhook */}
