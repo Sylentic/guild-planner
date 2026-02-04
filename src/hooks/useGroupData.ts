@@ -138,12 +138,14 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
     // If setting as main, first unmark any other main characters for this user
     const targetUserId = data.user_id !== undefined ? data.user_id : (user?.id || null);
+    const targetGameSlug = gameSlug || 'aoc';
     if (data.is_main && targetUserId) {
       await supabase
         .from('members')
         .update({ is_main: false })
         .eq('group_id', group.id)
         .eq('user_id', targetUserId)
+        .eq('game_slug', targetGameSlug)
         .eq('is_main', true);
     }
 
@@ -254,12 +256,14 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
     // If setting as main, first unmark any other main characters for the target user
     if (data.is_main === true) {
       const targetUserId = (data as any).user_id ?? character.user_id;
+      const targetGameSlug = (character as any)?.game_slug || gameSlug || (data as any).game_slug || 'aoc';
       if (targetUserId) {
         await supabase
           .from('members')
           .update({ is_main: false })
           .eq('group_id', group?.id || '')
           .eq('user_id', targetUserId)
+          .eq('game_slug', targetGameSlug)
           .eq('is_main', true)
           .neq('id', id); // Don't update the character we're about to update
       }
