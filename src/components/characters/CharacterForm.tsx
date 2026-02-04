@@ -29,7 +29,7 @@ interface CharacterFormData {
   secondary_archetype: Archetype | null;
   level: number;
   is_main: boolean;
-  preferred_role?: string | null;
+  preferred_role?: string[] | null;
   rank?: string | null;
   ror_faction?: string | null;
   ror_class?: string | null;
@@ -72,7 +72,7 @@ export function CharacterForm({
     secondary_archetype: initialData?.secondary_archetype || null,
     level: initialData?.level || 1,
     is_main: initialData?.is_main || false,
-    preferred_role: initialData?.preferred_role || null,
+    preferred_role: initialData?.preferred_role || [],
     rank: initialData?.rank || null,
     ror_faction: (initialData as any)?.ror_faction || null,
     ror_class: (initialData as any)?.ror_class || null,
@@ -405,21 +405,28 @@ export function CharacterForm({
             </>
           )}
 
-          {!isAoC && gameRoles.length > 0 && (
+          {gameSlug === 'starcitizen' && gameRoles.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Preferred Role</label>
-              <select
-                value={formData.preferred_role || ''}
-                onChange={(e) => setFormData({ ...formData, preferred_role: e.target.value || null })}
-                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <option value="">Select a role...</option>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Preferred Roles</label>
+              <div className="space-y-2">
                 {gameRoles.map((role: any) => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
+                  <label key={role.id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={(formData.preferred_role || []).includes(role.id)}
+                      onChange={(e) => {
+                        const currentRoles = formData.preferred_role || [];
+                        const newRoles = e.target.checked
+                          ? [...currentRoles, role.id]
+                          : currentRoles.filter(r => r !== role.id);
+                        setFormData({ ...formData, preferred_role: newRoles.length > 0 ? newRoles : null });
+                      }}
+                      className="w-4 h-4 bg-slate-800 border-slate-600 rounded text-orange-500 focus:ring-2 focus:ring-orange-500"
+                    />
+                    <span className="text-sm text-slate-300">{role.name}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
           )}
 

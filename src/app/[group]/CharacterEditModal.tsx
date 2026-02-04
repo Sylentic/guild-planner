@@ -24,7 +24,7 @@ export function CharacterEditModal({ editingCharacter, onSubmit, onCancel }: Cha
         subscriber_ships_month: (editingCharacter as any)?.subscriber_ships_month || null,
         ror_faction: (editingCharacter as any)?.ror_faction || null,
         ror_class: (editingCharacter as any)?.ror_class || null,
-        preferred_role: (editingCharacter as any)?.preferred_role || null,
+        preferred_role: (editingCharacter as any)?.preferred_role || [],
         rank: (editingCharacter as any)?.rank || null,
       }}
       onSubmit={async (data) => {

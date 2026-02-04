@@ -41,7 +41,7 @@ export function PublicEventsView() {
             user:users(id, display_name)
           ),
           guest_event_rsvps(*),
-          clan:clan_id(id, name, slug)
+          clan:group_id(id, name, slug)
         `
         )
         .eq('is_public', true)
@@ -108,12 +108,12 @@ export function PublicEventsView() {
 
   // Group events by clan
   const eventsByClans = events.reduce((acc, event) => {
-    const clanName = event.clan?.name || 'Unknown Guild';
-    const clanSlug = event.clan?.slug || '';
-    if (!acc[clanName]) {
-      acc[clanName] = { slug: clanSlug, events: [] };
+    const groupName = event.clan?.name || 'Unknown Group';
+    const groupSlug = event.clan?.slug || '';
+    if (!acc[groupName]) {
+      acc[groupName] = { slug: groupSlug, events: [] };
     }
-    acc[clanName].events.push(event);
+    acc[groupName].events.push(event);
     return acc;
   }, {} as Record<string, { slug: string; events: EventWithClanInfo[] }>);
 
@@ -139,7 +139,7 @@ export function PublicEventsView() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-white mb-2">Public Events</h1>
-        <p className="text-slate-400">Explore upcoming events across all guilds</p>
+        <p className="text-slate-400">Explore upcoming events across all groups</p>
       </div>
 
       {Object.entries(eventsByClans).map(([clanName, { slug, events: clanEvents }]) => (
@@ -155,7 +155,7 @@ export function PublicEventsView() {
               <Link
                 href={`/${slug}/public-events`}
                 className="px-3 py-1 text-sm bg-slate-700 hover:bg-slate-600 active:bg-slate-500 text-slate-100 rounded transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500"
-                title="View all events for this guild"
+                title="View all events for this group"
               >
                 View All
               </Link>
