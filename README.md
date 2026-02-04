@@ -33,11 +33,20 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 4. Apply database migrations:
 
    ```bash
+   # Login to Supabase
+   npx supabase login
+
    # Link to your Supabase project (migrations are in supabase/migrations/)
    npx supabase link --project-ref your-project-ref
 
    # Apply all migrations to remote database
    npx supabase db push
+   ```
+
+   If required at any point you can reset the database with:
+
+   ```bash
+   npx supabase db reset --linked`
    ```
 
 5. Run `npm run dev`
