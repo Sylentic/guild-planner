@@ -6,14 +6,17 @@ import { ShipsView } from '@/components/ShipsView';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useAuthContext } from '@/components/AuthProvider';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { usePermissions } from '@/hooks/usePermissions';
 
 export default function ShipsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
   const { user } = useAuthContext();
   const { group, characters } = useGroupData(groupSlug, gameSlug);
   const { membership } = useGroupMembership(group?.id || null, user?.id || null);
+  const { hasPermission } = usePermissions(group?.id);
 
-  const canManage = membership?.role === 'admin' || membership?.role === 'officer';
+  // Check if user can view ships (officers and admins can see all guild ships)
+  const canManage = hasPermission('ships_edit_any');
 
   if (!group || !user) {
     return <GameLayout params={params} activeTab="ships"><div /></GameLayout>;

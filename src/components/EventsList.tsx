@@ -22,7 +22,6 @@ interface EventsListProps {
   gameSlug?: string;
   userId: string;
   characters: CharacterWithProfessions[];
-  canManage: boolean;
   onCreateEvent: (event: Omit<Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => Promise<void>;
   onUpdateEvent: (id: string, updates: Partial<EventWithRsvps>) => Promise<void>;
   onCancelEvent: (id: string) => Promise<void>;
@@ -42,7 +41,6 @@ export function EventsList({
   gameSlug = 'aoc',
   userId,
   characters,
-  canManage,
   onCreateEvent,
   onUpdateEvent,
   onCancelEvent,
@@ -65,7 +63,11 @@ export function EventsList({
   // Check permissions
   const { loading } = usePermissions(groupId);
   const canCreateEvent = hasPermission('events_create');
+  const canEditAnyEvent = hasPermission('events_edit_any');
+  const canDeleteAnyEvent = hasPermission('events_delete_any');
   const canCreateAnnouncement = hasPermission('announcements_create');
+  const canEditAnnouncement = hasPermission('announcements_edit');
+  const canDeleteAnnouncement = hasPermission('announcements_delete');
 
   // Copy announcement link to clipboard
   const copyAnnouncementLink = async (announcementId: string) => {
@@ -138,23 +140,23 @@ export function EventsList({
                   >
                     <ExternalLink size={14} />
                   </button>
-                  {canManage && (
-                    <>
-                      <button
-                        onClick={() => setEditingAnnouncement(announcement)}
-                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
-                        title="Edit announcement"
-                      >
-                        <Edit2 size={14} />
-                      </button>
-                      <button
-                        onClick={() => onDeleteAnnouncement(announcement.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
-                        title="Delete announcement"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </>
+                  {canEditAnnouncement && (
+                    <button
+                      onClick={() => setEditingAnnouncement(announcement)}
+                      className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                      title="Edit announcement"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                  )}
+                  {canDeleteAnnouncement && (
+                    <button
+                      onClick={() => onDeleteAnnouncement(announcement.id)}
+                      className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
+                      title="Delete announcement"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   )}
                 </div>
               </div>
@@ -190,16 +192,17 @@ export function EventsList({
                   >
                     <ExternalLink size={14} />
                   </button>
-                  {canManage && (
-                    <>
-                      <button
-                        onClick={() => setEditingAnnouncement(announcement)}
-                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
-                        title="Edit announcement"
-                        aria-label="Edit announcement"
-                      >
+                  {canEditAnnouncement && (
+                    <button
+                      onClick={() => setEditingAnnouncement(announcement)}
+                      className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded cursor-pointer"
+                      title="Edit announcement"
+                      aria-label="Edit announcement"
+                    >
                         <Edit2 size={14} />
                       </button>
+                  )}
+                  {canDeleteAnnouncement && (
                       <button
                         onClick={() => onDeleteAnnouncement(announcement.id)}
                         className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded cursor-pointer"
@@ -208,7 +211,6 @@ export function EventsList({
                       >
                         <Trash2 size={14} />
                       </button>
-                    </>
                   )}
                 </div>
               </div>
@@ -265,7 +267,7 @@ export function EventsList({
         <div className="text-center py-12 text-slate-500">
           <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <p>{t('event.noEvents')}</p>
-          {canManage && (
+          {canCreateEvent && (
             <p className="text-sm mt-2">{t('event.createEventDesc')}</p>
           )}
         </div>
@@ -280,10 +282,10 @@ export function EventsList({
               userId={userId}
               characters={characters}
               onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
-              onEdit={canManage ? () => setEditingEvent(event) : undefined}
-              onCancel={canManage ? () => onCancelEvent(event.id) : undefined}
-              onDelete={canManage ? () => onDeleteEvent(event.id) : undefined}
-              canManage={canManage}
+              onEdit={canEditAnyEvent ? () => setEditingEvent(event) : undefined}
+              onCancel={canDeleteAnyEvent ? () => onCancelEvent(event.id) : undefined}
+              onDelete={canDeleteAnyEvent ? () => onDeleteEvent(event.id) : undefined}
+              canManage={canEditAnyEvent || canDeleteAnyEvent}
             />
           ))}
         </div>

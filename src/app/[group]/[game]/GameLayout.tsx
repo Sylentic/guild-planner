@@ -8,6 +8,7 @@ import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { usePermissions } from '@/hooks/usePermissions';
 import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/ClanLoginScreen';
@@ -162,7 +163,7 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
 
       <div className="shrink-0">
         <ClanTabNav
-          canManage={membership.role === 'admin' || membership.role === 'officer'}
+          canManage={hasPermission('settings_edit')}
           initialTab={activeTab}
           gameSlug={gameSlug}
           groupSlug={groupSlug}

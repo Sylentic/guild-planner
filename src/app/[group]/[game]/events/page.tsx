@@ -43,7 +43,6 @@ export default function EventsPage({ params }: { params: Promise<{ group: string
         gameSlug={gameSlug}
         userId={user.id}
         characters={characters}
-        canManage={canManageMembers}
         onCreateEvent={async (eventData, sendDiscordNotification) => {
           await createEvent(eventData, sendDiscordNotification);
         }}

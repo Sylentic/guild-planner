@@ -8,6 +8,7 @@ import { useAuthContext } from '@/components/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { usePermissions } from '@/hooks/usePermissions';
 import { getGroupGames, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
 import { getAllGames } from '@/lib/games';
 import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
@@ -123,14 +124,16 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     }
   };
 
-  // Get membership info to check if user is admin
+  // Get membership info to check permissions
   const {
     membership,
     loading: membershipLoading,
   } = useGroupMembership(groupId, user?.id || null);
 
+  const { hasPermission } = usePermissions(groupId || undefined);
+  const canEditSettings = hasPermission('settings_edit');
+
   const displayName = profile?.display_name || profile?.discord_username || 'User';
-  const isAdmin = membership?.role === 'admin';
 
   // Loading state
   if (loading || authLoading) {
@@ -226,7 +229,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
             <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
             <p className="text-slate-400 text-sm">Click on a game to view your group's information for that game.</p>
           </div>
-          {isAdmin && (
+          {canEditSettings && (
             <button
               onClick={() => setShowAddGame(!showAddGame)}
               className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors cursor-pointer"
@@ -239,7 +242,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         </div>
 
         {/* Add game dialog */}
-        {showAddGame && isAdmin && (
+        {showAddGame && canEditSettings && (
           <div className="mb-6 p-4 bg-slate-800/50 border border-slate-700 rounded-lg">
             <h3 className="text-white font-semibold mb-4">Add a game to this group:</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -302,7 +305,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               </div>
 
               {/* Admin delete button */}
-              {isAdmin && (
+              {canEditSettings && (
                 <button
                   onClick={() => handleRemoveGame(game.slug)}
                   disabled={removingGame === game.slug}
@@ -323,7 +326,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         {enabledGames.length === 0 && (
           <div className="text-center py-12">
             <p className="text-slate-400 mb-4">No games enabled for this group yet.</p>
-            {isAdmin && (
+            {canEditSettings && (
               <button
                 onClick={() => setShowAddGame(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"

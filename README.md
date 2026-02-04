@@ -1,14 +1,26 @@
-# AoC Guild Planner
+# Guild Planner
 
-Guild artisan profession planner for Ashes of Creation.
+A comprehensive guild management and planning tool supporting multiple MMOs.
+
+> **Inspired by** the original [AoC Guild Profession Planner](https://github.com/Artugio/AoC-guild-profession-planner) by Artugio
+
+## Supported Games
+
+- **Ashes of Creation** - Track all 22 professions (Gathering → Processing → Crafting)
+- **Star Citizen** - Manage squadrons and ship hangars
+- **Return of Reckoning** - Coordinate warband activities
 
 ## Features
 
-- 🪓 Track all 22 professions (Gathering → Processing → Crafting)
-- 👥 Manage guild members with profession assignments
-- 📊 Guild coverage matrix to see productive strength
+- 🎮 Multi-game support with game-specific features
+- 👥 Guild/Squadron/Warband management with role-based permissions
+- 📊 Guild coverage matrix (AoC) and fleet overview (Star Citizen)
+- 🛢️ Guild bank, caravan, and economy tracking
+- 📅 Event scheduling with RSVP system
+- 🔐 Customizable role-based permissions per group
+- ⚙️ Discord integration for notifications and recruitment
 - ☁️ Cloud persistence - data syncs across all devices
-- 🔗 URL-based routing - bookmark your clan page
+- 🔗 URL-based routing - share group pages with easy access
 
 ## Quick Start
 
