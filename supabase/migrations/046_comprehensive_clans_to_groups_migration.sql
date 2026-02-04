@@ -41,28 +41,39 @@ ALTER INDEX idx_clan_members_clan_id RENAME TO idx_group_members_group_id;
 ALTER INDEX idx_clan_achievements_clan RENAME TO idx_group_achievements_group;
 ALTER INDEX idx_members_clan_id RENAME TO idx_members_group_id;
 
--- 8. Update foreign key columns in other tables that reference clans
-ALTER TABLE events RENAME COLUMN clan_id TO group_id;
-ALTER TABLE parties RENAME COLUMN clan_id TO group_id;
-ALTER TABLE freeholds RENAME COLUMN clan_id TO group_id;
-ALTER TABLE guild_banks RENAME COLUMN clan_id TO group_id;
-ALTER TABLE caravan_events RENAME COLUMN clan_id TO group_id;
+-- 8. Rename clan_permission_overrides table to group_permission_overrides
+ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
+
+-- 9. Update foreign key columns in other tables that reference clans
+-- Only rename clan_id in tables that actually have this column
+-- (verified by checking each table's CREATE TABLE definition)
+-- Note: clan_achievements, clan_members, members already handled in steps 3, 5, 5b, 6
+ALTER TABLE achievement_notifications RENAME COLUMN clan_id TO group_id;
 ALTER TABLE activity_log RENAME COLUMN clan_id TO group_id;
-ALTER TABLE announcements RENAME COLUMN clan_id TO group_id;
+ALTER TABLE alliance_event_participation RENAME COLUMN clan_id TO group_id;
 ALTER TABLE alliance_members RENAME COLUMN clan_id TO group_id;
 ALTER TABLE alliances RENAME COLUMN leader_clan_id TO leader_group_id;
-ALTER TABLE loot_systems RENAME COLUMN clan_id TO group_id;
-ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
+ALTER TABLE announcements RENAME COLUMN clan_id TO group_id;
+ALTER TABLE builds RENAME COLUMN clan_id TO group_id;
+ALTER TABLE caravan_events RENAME COLUMN clan_id TO group_id;
+ALTER TABLE events RENAME COLUMN clan_id TO group_id;
+ALTER TABLE freeholds RENAME COLUMN clan_id TO group_id;
 ALTER TABLE group_permission_overrides RENAME COLUMN clan_id TO group_id;
+ALTER TABLE guild_banks RENAME COLUMN clan_id TO group_id;
+ALTER TABLE inactivity_alerts RENAME COLUMN clan_id TO group_id;
+ALTER TABLE loot_systems RENAME COLUMN clan_id TO group_id;
+ALTER TABLE member_activity_summary RENAME COLUMN clan_id TO group_id;
+ALTER TABLE parties RENAME COLUMN clan_id TO group_id;
 ALTER TABLE recruitment_applications RENAME COLUMN clan_id TO group_id;
+ALTER TABLE siege_events RENAME COLUMN clan_id TO group_id;
 
--- 9. Update guest_event_rsvps allied_clan_id column
+-- 10. Update guest_event_rsvps allied_clan_id column
 ALTER TABLE guest_event_rsvps RENAME COLUMN allied_clan_id TO allied_group_id;
 
--- 10. Update constraint references
+-- 11. Update constraint references
 ALTER TABLE groups RENAME CONSTRAINT valid_game TO groups_valid_game;
 
--- 10b. Fix foreign key constraint for guest_event_rsvps
+-- 12. Fix foreign key constraint for guest_event_rsvps
 ALTER TABLE guest_event_rsvps DROP CONSTRAINT IF EXISTS guest_event_rsvps_allied_clan_id_fkey;
 ALTER TABLE guest_event_rsvps 
   ADD CONSTRAINT guest_event_rsvps_allied_group_id_fkey 
