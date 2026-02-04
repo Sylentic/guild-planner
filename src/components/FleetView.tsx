@@ -33,7 +33,7 @@ interface CharacterShip {
   id: string;
   character_id: string;
   ship_id: string;
-  ownership_type: 'pledged' | 'in-game' | 'loaner';
+  ownership_type: 'pledged' | 'in-game' | 'loaner' | 'subscriber';
   notes?: string | null;
   created_at: string;
 }
@@ -133,10 +133,35 @@ function getRoleColor(role: string) {
   return 'text-slate-400 bg-slate-500/10';
 }
 
-// Detect if ship is a subscriber perk based on notes
+// Detect if ship is a subscriber perk based on ownership type or notes
 function getOwnershipBadge(ship: CharacterShip) {
-  if (ship.ownership_type === 'loaner' && ship.notes?.includes('subscriber')) {
+  // Handle new subscriber ownership type
+  if (ship.ownership_type === 'subscriber') {
     // Extract tier from notes like "centurion subscriber perk (2026-01)"
+    const match = ship.notes?.match(/(centurion|imperator)\s+subscriber/i);
+    if (match) {
+      const tier = match[1].toLowerCase() as 'centurion' | 'imperator';
+      const colors = SUBSCRIBER_COLORS[tier];
+      return {
+        label: tier.charAt(0).toUpperCase() + tier.slice(1),
+        bgColor: colors.bg,
+        borderColor: colors.border,
+        textColor: colors.primary,
+        isBadge: true,
+      };
+    }
+    // Fallback if notes don't match expected format
+    return {
+      label: 'Subscriber',
+      bgColor: 'bg-amber-500/10',
+      borderColor: 'border-amber-500/30',
+      textColor: 'text-amber-400',
+      isBadge: false,
+    };
+  }
+  
+  // Also check for legacy loaner ships with subscriber notes
+  if (ship.ownership_type === 'loaner' && ship.notes?.includes('subscriber')) {
     const match = ship.notes.match(/(centurion|imperator)\s+subscriber/i);
     if (match) {
       const tier = match[1].toLowerCase() as 'centurion' | 'imperator';
@@ -179,7 +204,7 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const [selectedShip, setSelectedShip] = useState<string | null>(null);
-  const [ownershipType, setOwnershipType] = useState<'pledged' | 'in-game' | 'loaner'>('pledged');
+  const [ownershipType, setOwnershipType] = useState<'pledged' | 'in-game' | 'loaner' | 'subscriber'>('pledged');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -482,9 +507,17 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                 const RoleIcon = getRoleIcon(shipData.role);
                                 const roleColor = getRoleColor(shipData.role);
                                 const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
+                                const isSubscriber = ship.ownership_type === 'subscriber';
 
                                 return (
-                                  <div key={ship.id} className="flex items-center gap-3 border border-slate-700 rounded-lg p-3 bg-slate-800/50">
+                                  <div 
+                                    key={ship.id} 
+                                    className={`flex items-center gap-3 rounded-lg p-3 transition-all ${
+                                      isSubscriber 
+                                        ? 'border-2 border-amber-500/60 bg-slate-800/70 shadow-lg shadow-amber-500/20' 
+                                        : 'border border-slate-700 bg-slate-800/50'
+                                    }`}
+                                  >
                                     <div className={`p-2 rounded-lg ${roleColor} flex-shrink-0`}>
                                       <RoleIcon className="w-5 h-5" />
                                     </div>
@@ -509,7 +542,9 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                           )}
                                         </div>
                                         <span 
-                                          className={`text-xs px-2 py-1 rounded border whitespace-nowrap ml-2 flex items-center gap-1 ${badge.textColor} border-current`}
+                                          className={`text-xs px-3 py-1.5 rounded border whitespace-nowrap ml-2 flex items-center gap-1.5 font-semibold ${badge.textColor} border-current ${
+                                            badge.isBadge ? 'shadow-lg shadow-yellow-500/20 ring-1 ring-offset-0 ring-current' : ''
+                                          }`}
                                           style={badge.isBadge ? {
                                             backgroundColor: badge.bgColor,
                                             borderColor: badge.borderColor,
@@ -587,11 +622,16 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                 const RoleIcon = getRoleIcon(shipData.role);
                                 const roleColor = getRoleColor(shipData.role);
                                 const manufacturerLogo = getManufacturerLogo(shipData.manufacturer);
+                                const isSubscriber = ship.ownership_type === 'subscriber';
 
                                 return (
                                   <div
                                     key={ship.id}
-                                    className="flex items-center justify-between p-3 bg-slate-800 border border-slate-700 rounded-lg"
+                                    className={`flex items-center gap-3 rounded-lg p-3 transition-all ${
+                                      isSubscriber 
+                                        ? 'border-2 border-amber-500/60 bg-slate-800/70 shadow-lg shadow-amber-500/20' 
+                                        : 'border border-slate-700 bg-slate-800/50'
+                                    }`}
                                   >
                                     <div className="flex items-center gap-3 flex-1">
                                       <div className={`p-2 rounded-lg ${roleColor} flex-shrink-0`}>
@@ -618,7 +658,9 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                             )}
                                           </div>
                                           <span 
-                                            className={`text-xs px-2 py-1 rounded border whitespace-nowrap ml-2 flex items-center gap-1 ${badge.textColor} border-current`}
+                                            className={`text-xs px-3 py-1.5 rounded border whitespace-nowrap ml-2 flex items-center gap-1.5 font-semibold ${badge.textColor} border-current ${
+                                              badge.isBadge ? 'shadow-lg shadow-yellow-500/20 ring-1 ring-offset-0 ring-current' : ''
+                                            }`}
                                             style={badge.isBadge ? {
                                               backgroundColor: badge.bgColor,
                                               borderColor: badge.borderColor,

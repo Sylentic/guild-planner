@@ -491,6 +491,9 @@ export function CharacterForm({
                       subscriber_since: e.target.value ? new Date(e.target.value).toISOString() : null 
                     })}
                     className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    style={{
+                      colorScheme: 'dark',
+                    }}
                   />
                 </div>
               )}
