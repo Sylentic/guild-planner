@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Clan, CharacterWithProfessions, RankLevel, Race, Archetype } from '@/lib/types';
 import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
 import { GroupRole } from '@/lib/permissions';
+import { syncSubscriberShips, updateSubscriberTier } from '@/lib/subscriberShips';
 
 // Character data for creating/updating
 export interface CharacterData {
@@ -159,7 +160,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       game_slug: gameSlug || 'aoc',
     };
 
-    const { error: insertError } = await supabase
+    const { data: insertedData, error: insertError } = await supabase
       .from('members')
       .insert(insertPayload)
       .select();
@@ -168,6 +169,18 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       console.error('Error adding character:', insertError);
       setError(insertError.message);
       throw insertError;
+    }
+
+    // Handle subscriber tier for Star Citizen new character creation
+    if (targetGameSlug === 'starcitizen' && data.subscriber_tier && insertedData && insertedData.length > 0) {
+      try {
+        const characterId = insertedData[0].id;
+        console.log(`New subscriber character created with tier: ${data.subscriber_tier}`);
+        await syncSubscriberShips(supabase, characterId, data.subscriber_tier);
+      } catch (err) {
+        console.error('Error syncing subscriber ships for new character:', err);
+        // Don't throw - character was created successfully
+      }
     }
 
     await fetchData();
@@ -294,6 +307,44 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       console.error('Error updating character:', updateError);
       setError(updateError.message);
       throw updateError;
+    }
+
+    // Handle subscriber tier changes for Star Citizen
+    if (effectiveGame === 'starcitizen') {
+      const oldTier = (character as any)?.subscriber_tier;
+      const newTier = updateData.subscriber_tier as 'centurion' | 'imperator' | null | undefined;
+
+      if (newTier && newTier !== oldTier) {
+        // User selected a subscriber tier
+        try {
+          if (oldTier) {
+            // Tier changed
+            console.log(`Subscriber tier changed from ${oldTier} to ${newTier}`);
+            await updateSubscriberTier(supabase, id, oldTier as any, newTier);
+          } else {
+            // New tier assignment
+            console.log(`Subscriber tier set to ${newTier}`);
+            await syncSubscriberShips(supabase, id, newTier);
+          }
+        } catch (err) {
+          console.error('Error syncing subscriber ships:', err);
+          // Don't throw - let the update succeed even if ship sync fails
+        }
+      } else if (!newTier && oldTier) {
+        // Tier was removed - remove subscriber ships
+        try {
+          console.log(`Subscriber tier removed (was ${oldTier})`);
+          const { getSubscriberShips } = await import('@/games/starcitizen/config/subscriber-ships');
+          const { removeSubscriberShips } = await import('@/lib/subscriberShips');
+          const shipsToRemove = getSubscriberShips(oldTier);
+          if (shipsToRemove && shipsToRemove.length > 0) {
+            await removeSubscriberShips(supabase, id, shipsToRemove);
+          }
+        } catch (err) {
+          console.error('Error removing subscriber ships:', err);
+          // Don't throw - let the update succeed
+        }
+      }
     }
 
     await fetchData();
