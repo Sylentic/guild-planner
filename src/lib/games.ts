@@ -9,6 +9,7 @@ export interface GameConfig {
   name: string;
   description: string;
   icon: string;
+  iconUrl?: string; // Optional image URL for proper game icons
   features: Record<string, boolean>;
 }
 

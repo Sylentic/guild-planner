@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Hammer, Search, Heart, Copy, Eye, Plus, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useArchiveStatus } from '@/contexts/ArchiveStatusContext';
 import { BuildWithDetails } from '@/lib/types';
 import { BuildData } from '@/hooks/useBuilds';
 import { getClassName, getArchetypeById, archetypesConfig } from '@/config';
@@ -21,6 +22,7 @@ export function BuildLibrary({
   onCopy,
 }: BuildLibraryProps) {
   const { t } = useLanguage();
+  const { isGameArchived } = useArchiveStatus();
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [archetypeFilter, setArchetypeFilter] = useState<string>('all');
@@ -106,7 +108,13 @@ export function BuildLibrary({
         </h2>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-medium transition-colors"
+          disabled={isGameArchived}
+          title={isGameArchived ? "Cannot create builds in an archived game" : undefined}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            isGameArchived
+              ? 'bg-cyan-600/30 text-cyan-300/50 cursor-not-allowed'
+              : 'bg-cyan-600 hover:bg-cyan-500 text-white'
+          }`}
         >
           <Plus className="w-4 h-4" />
           {t('builds.createBuild')}

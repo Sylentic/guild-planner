@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Home, Settings, LogOut, Archive } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
+import { GameIcon } from '@/components/common/GameIcon';
 
 // Map pages that only exist in specific games to their equivalents in other games
 const pageEquivalencyMap: Record<string, Record<string, string>> = {
@@ -36,7 +37,7 @@ interface GroupHeaderProps {
   clanName: string;
   groupSlug: string;
   gameSlug: string;
-  enabledGames: Array<{ slug: string; name: string; icon: string; archived: boolean }>;
+  enabledGames: Array<{ slug: string; name: string; icon: string; iconUrl?: string; archived: boolean }>;
   characterCount: number;
   role: string;
   displayName: string;
@@ -107,14 +108,19 @@ export function GroupHeader({
                   <button
                     key={game.slug}
                     onClick={() => handleGameSwitch(game.slug)}
-                    className={`relative px-2 py-1 rounded text-sm transition-colors ${
+                    className={`relative px-2 py-1 rounded text-sm transition-colors flex items-center gap-1.5 ${
                       gameSlug === game.slug
                         ? 'bg-slate-700 text-white'
                         : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
                     } ${game.archived ? 'opacity-60' : ''}`}
                     title={game.archived ? `${game.name} (Archived)` : game.name}
                   >
-                    <span className="mr-1">{game.icon}</span>
+                    <GameIcon 
+                      icon={game.icon}
+                      iconUrl={game.iconUrl}
+                      alt={game.name}
+                      size={32}
+                    />
                     <span className="hidden md:inline">{game.name}</span>
                     {game.archived && (
                       <Archive className="inline-block w-3 h-3 ml-1 text-orange-400" />

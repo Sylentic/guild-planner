@@ -11,6 +11,7 @@ import { AnnouncementForm } from '@/components/forms/AnnouncementForm';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/contexts/ToastContext';
 import { usePermissions } from '@/hooks/usePermissions';
+import { useArchiveStatus } from '@/contexts/ArchiveStatusContext';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 interface EventsListProps {
@@ -59,15 +60,16 @@ export function EventsList({
   const { t } = useLanguage();
   const { showToast } = useToast();
   const { hasPermission } = usePermissions(groupId);
+  const { isGameArchived } = useArchiveStatus();
   
   // Check permissions
   const { loading } = usePermissions(groupId);
-  const canCreateEvent = hasPermission('events_create');
-  const canEditAnyEvent = hasPermission('events_edit_any');
-  const canDeleteAnyEvent = hasPermission('events_delete_any');
-  const canCreateAnnouncement = hasPermission('announcements_create');
-  const canEditAnnouncement = hasPermission('announcements_edit');
-  const canDeleteAnnouncement = hasPermission('announcements_delete');
+  const canCreateEvent = hasPermission('events_create') && !isGameArchived;
+  const canEditAnyEvent = hasPermission('events_edit_any') && !isGameArchived;
+  const canDeleteAnyEvent = hasPermission('events_delete_any') && !isGameArchived;
+  const canCreateAnnouncement = hasPermission('announcements_create') && !isGameArchived;
+  const canEditAnnouncement = hasPermission('announcements_edit') && !isGameArchived;
+  const canDeleteAnnouncement = hasPermission('announcements_delete') && !isGameArchived;
 
   // Copy announcement link to clipboard
   const copyAnnouncementLink = async (announcementId: string) => {

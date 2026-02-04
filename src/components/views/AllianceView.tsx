@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Handshake, Users, Plus, Crown, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useArchiveStatus } from '@/contexts/ArchiveStatusContext';
 import { AllianceWithMembers } from '@/lib/types';
 import { AllianceData } from '@/hooks/useAlliances';
 import { AllianceForm } from '@/components/forms/AllianceForm';
@@ -26,6 +27,7 @@ export function AllianceView({
   isOfficer,
 }: AllianceViewProps) {
   const { t } = useLanguage();
+  const { isGameArchived } = useArchiveStatus();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
@@ -61,7 +63,13 @@ export function AllianceView({
           {onCreateAlliance && isOfficer && (
             <button
               onClick={() => setShowCreateForm(true)}
-              className="inline-flex items-center gap-2 px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors"
+              disabled={isGameArchived}
+              title={isGameArchived ? "Cannot create alliances in an archived game" : undefined}
+              className={`inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
+                isGameArchived
+                  ? 'bg-purple-500/30 text-purple-300/50 cursor-not-allowed'
+                  : 'bg-purple-500 hover:bg-purple-600 text-white'
+              }`}
             >
               <Plus className="w-4 h-4" />
               {t('alliance.createAlliance')}

@@ -7,6 +7,7 @@ export const AOC_CONFIG = {
   name: 'Ashes of Creation',
   description: 'Guild profession planning and coordination',
   icon: '⚔️',
+  iconUrl: '/images/games/aoc-icon.svg',
   features: {
     professions: true,
     characters: true,

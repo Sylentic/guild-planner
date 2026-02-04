@@ -9,12 +9,15 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
+import { useGameArchiveStatus } from '@/hooks/useGameArchiveStatus';
 import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/screens/ClanErrorScreen';
 import { ClanLoginScreen } from '@/components/screens/ClanLoginScreen';
 import { GroupHeader } from './GroupHeader';
 import { ClanTabNav } from '@/components/layout/ClanTabNav';
 import { InlineFooter } from '@/components/layout/Footer';
+import { ArchivedGameBanner } from '@/components/common/ArchivedGameBanner';
+import { ArchiveStatusProvider } from '@/contexts/ArchiveStatusContext';
 import { DynamicFavicon } from '@/components/common/DynamicFavicon';
 import { Users, Clock, UserPlus, Loader2 } from 'lucide-react';
 import { getAllGames } from '@/lib/games';
@@ -49,7 +52,9 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
 
   const { hasPermission } = usePermissions(group?.id || undefined);
 
-  const [enabledGames, setEnabledGames] = useState<Array<{ slug: string; name: string; icon: string; archived: boolean }>>([]);
+  const { isArchived: isGameArchived } = useGameArchiveStatus(groupSlug, gameSlug);
+
+  const [enabledGames, setEnabledGames] = useState<Array<{ slug: string; name: string; icon: string; iconUrl?: string; archived: boolean }>>([]);
 
   const displayName = profile?.display_name || user?.email || 'User';
   const guildIconUrl = group?.group_icon_url || undefined;
@@ -69,6 +74,7 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
             slug: game.id,
             name: game.name,
             icon: game.icon,
+            iconUrl: game.iconUrl,
             archived: status?.archived || false
           };
         })
@@ -165,36 +171,43 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
 
   const resolvedCharacterCount = characterCount ?? characters.length;
 
+  // Get current game name for the banner
+  const currentGame = enabledGames.find(g => g.slug === gameSlug);
+  const gameName = currentGame?.name || gameSlug;
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <DynamicFavicon iconUrl={guildIconUrl} />
-      <GroupHeader
-        clanName={group?.name || ''}
-        groupSlug={groupSlug}
-        gameSlug={gameSlug}
-        enabledGames={enabledGames}
-        characterCount={resolvedCharacterCount}
-        role={membership.role || ''}
-        displayName={displayName}
-        onSignOut={signOut}
-        guildIconUrl={guildIconUrl}
-      />
-
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
-          {children}
-        </div>
-      </main>
-
-      <div className="shrink-0">
-        <ClanTabNav
-          canManage={hasPermission('settings_edit')}
-          initialTab={activeTab}
-          gameSlug={gameSlug}
+    <ArchiveStatusProvider isGameArchived={isGameArchived}>
+      <div className="h-screen flex flex-col overflow-hidden">
+        <DynamicFavicon iconUrl={guildIconUrl} />
+        {isGameArchived && <ArchivedGameBanner gameName={gameName} />}
+        <GroupHeader
+          clanName={group?.name || ''}
           groupSlug={groupSlug}
+          gameSlug={gameSlug}
+          enabledGames={enabledGames}
+          characterCount={resolvedCharacterCount}
+          role={membership.role || ''}
+          displayName={displayName}
+          onSignOut={signOut}
+          guildIconUrl={guildIconUrl}
         />
-        <InlineFooter variant="matching" />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
+            {children}
+          </div>
+        </main>
+
+        <div className="shrink-0">
+          <ClanTabNav
+            canManage={hasPermission('settings_edit')}
+            initialTab={activeTab}
+            gameSlug={gameSlug}
+            groupSlug={groupSlug}
+          />
+          <InlineFooter variant="matching" />
+        </div>
       </div>
-    </div>
+    </ArchiveStatusProvider>
   );
 }

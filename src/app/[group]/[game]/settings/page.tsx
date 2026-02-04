@@ -93,11 +93,21 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
             gameSlug={gameSlug}
             currentWebhookUrl={group.group_webhook_url || ''}
             currentWelcomeWebhookUrl={group.group_welcome_webhook_url || ''}
+            currentAocWebhookUrl={group.aoc_webhook_url || ''}
+            currentAocEventsWebhookUrl={group.aoc_events_webhook_url || ''}
+            currentScWebhookUrl={group.sc_webhook_url || ''}
+            currentScEventsWebhookUrl={group.sc_events_webhook_url || ''}
+            currentRorWebhookUrl={group.ror_webhook_url || ''}
+            currentRorEventsWebhookUrl={group.ror_events_webhook_url || ''}
             notifyOnEvents={group.notify_on_events ?? true}
             notifyOnAnnouncements={group.notify_on_announcements ?? true}
             announcementRoleId={group.discord_announcement_role_id || ''}
+            aocAnnouncementRoleId={group.aoc_announcement_role_id || ''}
+            aocEventsRoleId={group.aoc_events_role_id || ''}
             scAnnouncementRoleId={group.sc_announcement_role_id || ''}
             scEventsRoleId={group.sc_events_role_id || ''}
+            rorAnnouncementRoleId={group.ror_announcement_role_id || ''}
+            rorEventsRoleId={group.ror_events_role_id || ''}
             aocWelcomeEnabled={group.aoc_welcome_enabled ?? true}
             scWelcomeEnabled={group.sc_welcome_enabled ?? true}
           />

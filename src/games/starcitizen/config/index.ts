@@ -6,6 +6,7 @@ export const STARCITIZEN_CONFIG = {
   name: 'Star Citizen',
   description: 'Fleet management and pilot coordination',
   icon: '🚀',
+  iconUrl: '/images/games/sc-icon.svg',
   features: {
     ships: true,
     pilots: true,

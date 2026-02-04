@@ -4,6 +4,7 @@ import { CharacterFiltersBar, filterCharacters, DEFAULT_FILTERS } from "@/compon
 import { CharacterCard } from "@/components/characters/MemberCard";
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { useAuthContext } from '@/components/auth/AuthProvider';
+import { useArchiveStatus } from '@/contexts/ArchiveStatusContext';
 import { roleHasPermission, GroupRole } from '@/lib/permissions';
 import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
 import { CharacterWithProfessions } from "@/lib/types";
@@ -35,6 +36,7 @@ export function CharactersTab({
   gameSlug = 'aoc',
 }: CharactersTabProps) {
   const { user } = useAuthContext();
+  const { isGameArchived } = useArchiveStatus();
   const clanMembership = useGroupMembership(groupId, user?.id || null);
   const userRole = clanMembership.membership?.role || 'pending';
 
@@ -93,7 +95,12 @@ export function CharactersTab({
 
   return (
     <div className="space-y-4">
-      <AddCharacterButton onAdd={addCharacter} gameSlug={gameSlug} />
+      <AddCharacterButton 
+        onAdd={addCharacter} 
+        gameSlug={gameSlug}
+        disabled={isGameArchived}
+        disabledReason="Cannot add characters to an archived game"
+      />
       {characters.length > 0 && (
         <CharacterFiltersBar
           filters={characterFilters}
@@ -110,8 +117,8 @@ export function CharactersTab({
       ) : (
         filterCharacters(characters, characterFilters).map((character) => {
           // Check if user can edit this character
-          const canEdit = getUserCanEditCharacter(character);
-          const canDelete = getUserCanDeleteCharacter(character);
+          const canEdit = getUserCanEditCharacter(character) && !isGameArchived;
+          const canDelete = getUserCanDeleteCharacter(character) && !isGameArchived;
           
           // Get main character name if this is an alt
           const mainCharacter = character.is_main ? null : characters.find(c => c.user_id === character.user_id && c.is_main);

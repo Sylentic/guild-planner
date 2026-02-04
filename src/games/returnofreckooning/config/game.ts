@@ -5,6 +5,7 @@ export const ROR_CONFIG: GameConfig = {
   name: 'Return of Reckoning',
   description: 'PvP-focused fantasy MMO with faction-based warfare',
   icon: '⚔️',
+  iconUrl: '/images/games/ror-icon.svg',
   features: {
     characters: true,
     events: true,

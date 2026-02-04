@@ -59,6 +59,8 @@
     "manage": "Manage",
     "siege": "Siege",
     "economy": "Economy",
+    "achievements": "Achievements",
+    "builds": "Builds",
     "more": "More"
   },
   "auth": {
