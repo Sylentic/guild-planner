@@ -111,7 +111,11 @@
     "doesNotExist": "El grupo '{{name}}' no existe.",
     "errorLoading": "Error Cargando el Grupo",
     "connectionError": "Error de Conexión",
-    "connectionErrorMessage": "No se pudo conectar al servicio del grupo. Esto puede deberse a una conexión lenta o un problema del servidor."
+    "connectionErrorMessage": "No se pudo conectar al servicio del grupo. Esto puede deberse a una conexión lenta o un problema del servidor.",
+    "getStarted": "Comenzar",
+    "addGameToStart": "Agrega un juego para comenzar a organizar el contenido de tu grupo.",
+    "noGamesContactAdmin": "Aún no se han habilitado juegos para este grupo. Contacta a un administrador para agregar uno.",
+    "addYourFirstGame": "Agregar Tu Primer Juego"
   },
   "character": {
     "addCharacter": "Añadir Personaje",

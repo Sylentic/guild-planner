@@ -4617,4 +4617,7 @@ INSERT INTO sc_loaner_matrix (pledged_ship, loaner_ship, loaner_type) VALUES ('X
 -- Zeus Mk II MR
 INSERT INTO sc_loaner_matrix (pledged_ship, loaner_ship, loaner_type) VALUES ('Zeus Mk II MR', 'Zeus Mk II ES', 'primary');
 
+-- Track this migration
+INSERT INTO migration_history (filename) VALUES ('000_baseline.sql') ON CONFLICT DO NOTHING;
+
 COMMIT;

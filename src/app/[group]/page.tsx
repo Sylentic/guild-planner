@@ -396,11 +396,11 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         {enabledGames.length === 0 && (
           <div className="text-center py-16 px-4">
             <div className="max-w-md mx-auto bg-slate-800/50 border border-slate-700 rounded-lg p-8">
-              <h3 className="text-xl font-semibold text-white mb-3">Get Started</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">{t('group.getStarted')}</h3>
               <p className="text-slate-400 mb-6">
                 {canEditSettings 
-                  ? "Add a game to start organizing your group's content." 
-                  : "No games have been enabled for this group yet. Contact an admin to add one."}
+                  ? t('group.addGameToStart') 
+                  : t('group.noGamesContactAdmin')}
               </p>
               {canEditSettings && (
                 <button
@@ -408,7 +408,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                   className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
                 >
                   <Plus className="w-5 h-5" />
-                  Add Your First Game
+                  {t('group.addYourFirstGame')}
                 </button>
               )}
             </div>
