@@ -1,3 +1,21 @@
+// Star icon extracted from Centurion badge
+export function CenturionStarSVG() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-full h-full">
+      <path fill="#54ADF7" d="M12.887 6.076l1.458.33c.24.065.24.404 0 .47l-1.459.329a.34.34 0 0 0-.252.224l-.4 1.556c-.066.24-.406.24-.471 0l-.401-1.556a.34.34 0 0 0-.253-.224l-1.458-.33c-.24-.065-.24-.404 0-.47l1.458-.329a.34.34 0 0 0 .253-.224l.4-1.556c.066-.239.406-.239.471 0l.401 1.556c.034.109.13.194.252.224"/>
+    </svg>
+  );
+}
+
+// Star icon extracted from Imperator badge
+export function ImperatorStarSVG() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-full h-full">
+      <path fill="#DBAF70" d="M12.527 6.343l1.544.326c.253.065.253.4 0 .465l-1.544.326a.36.36 0 0 0-.267.222l-.424 1.54c-.07.236-.429.236-.498 0l-.425-1.54a.36.36 0 0 0-.267-.222l-1.544-.326a.238.238 0 0 1 0-.465l1.544-.326a.36.36 0 0 0 .267-.221l.425-1.54c.07-.236.428-.236.498 0l.424 1.54a.36.36 0 0 0 .267.221"/>
+    </svg>
+  );
+}
+
 export function CenturionSVG() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="16 17 124 26" className="w-full h-full">
@@ -21,3 +39,4 @@ export function ImperatorSVG() {
     </svg>
   );
 }
+

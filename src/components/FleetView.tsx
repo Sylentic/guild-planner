@@ -12,7 +12,7 @@ import shipsData from '@/config/games/star-citizen-ships.json';
 import { getManufacturerLogo } from '@/config/games/star-citizen-utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SUBSCRIBER_COLORS } from '@/games/starcitizen/config/subscriber-ships';
-import { CenturionSVG, ImperatorSVG } from './SubscriberIcons';
+import { CenturionStarSVG, ImperatorStarSVG } from './SubscriberIcons';
 
 interface ShipData {
   id: string;
@@ -539,14 +539,9 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                             color: badge.textColor,
                                           } : undefined}
                                         >
-                                          {badge.label === 'Centurion' && (
-                                            <div className="w-8 h-4">
-                                              <CenturionSVG />
-                                            </div>
-                                          )}
-                                          {badge.label === 'Imperator' && (
-                                            <div className="w-8 h-4">
-                                              <ImperatorSVG />
+                                          {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
+                                            <div className="w-3 h-3">
+                                              {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
                                           {badge.label}
@@ -652,14 +647,9 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
                                             color: badge.textColor,
                                           } : undefined}
                                         >
-                                          {badge.label === 'Centurion' && (
-                                            <div className="w-8 h-4">
-                                              <CenturionSVG />
-                                            </div>
-                                          )}
-                                          {badge.label === 'Imperator' && (
-                                            <div className="w-8 h-4">
-                                              <ImperatorSVG />
+                                          {(badge.label === 'Centurion' || badge.label === 'Imperator') && (
+                                            <div className="w-3 h-3">
+                                              {badge.label === 'Centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                                             </div>
                                           )}
                                           {badge.label}

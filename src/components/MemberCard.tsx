@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash2, Edit2, Check, X, AlertTriangle, Star } from 'lucide-react';
 import { CharacterWithProfessions, RankLevel, RANK_COLORS } from '@/lib/types';
 import { SUBSCRIBER_COLORS, SUBSCRIBER_TIERS } from '@/games/starcitizen/config/subscriber-ships';
-import { CenturionSVG, ImperatorSVG } from './SubscriberIcons';
+import { CenturionStarSVG, ImperatorStarSVG, CenturionSVG, ImperatorSVG } from './SubscriberIcons';
 import { getRankSummary, checkRankLimits, PROFESSIONS_BY_TIER, TIER_CONFIG } from '@/lib/professions';
 import { RACES, ARCHETYPES, getClassName, RaceId, ArchetypeId } from '@/lib/characters';
 import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, RORRole } from '@/games/returnofreckooning/config';
@@ -162,17 +162,17 @@ export function CharacterCard({
                   )}
                   {gameSlug === 'starcitizen' && subscriberTier && (
                     <span
-                      className="text-base font-bold px-4 py-1.5 rounded-md border-2 flex items-center gap-2.5 shadow-lg"
+                      className="text-xs font-bold px-2 py-0.5 rounded border-2 flex items-center gap-1"
                       style={{
                         borderColor: SUBSCRIBER_COLORS[subscriberTier].primary,
                         color: SUBSCRIBER_COLORS[subscriberTier].primary,
                         backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
                       }}
                     >
-                      <div className="w-20 h-10">
-                        {subscriberTier === 'centurion' ? <CenturionSVG /> : <ImperatorSVG />}
+                      <div className="w-3 h-3">
+                        {subscriberTier === 'centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                       </div>
-                      <span className="whitespace-nowrap">{SUBSCRIBER_TIERS[subscriberTier].label}</span>
+                      {SUBSCRIBER_TIERS[subscriberTier].label}
                     </span>
                   )}
                   {gameSlug === 'ror' && rorRole && (
@@ -362,6 +362,21 @@ export function CharacterCard({
       {/* Expanded content - Non-profession content for Star Citizen */}
       {isExpanded && gameSlug === 'starcitizen' && (
         <div className="border-t border-slate-800 p-4 space-y-4">
+          {subscriberTier && (
+            <div className="flex items-center justify-center mb-4">
+              <div 
+                className="inline-flex items-center px-4 py-2 rounded-lg border-2"
+                style={{
+                  borderColor: SUBSCRIBER_COLORS[subscriberTier].primary,
+                  backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
+                }}
+              >
+                <div className="h-6">
+                  {subscriberTier === 'centurion' ? <CenturionSVG /> : <ImperatorSVG />}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
               <div className="text-xs text-slate-500">Subscriber Tier</div>
