@@ -15,7 +15,7 @@ export interface CharacterFilters {
   maxLevel: number;
   hasProfessions: boolean | null; // null = any, true = has some, false = none
   // Star Citizen filters
-  scRole: string | ''; // preferred_role
+  scRole: string | ''; // preferred_role (checks if array includes this role)
   subscriberTier: string | ''; // subscriber_tier (centurion | imperator)
   // Return of Reckoning filters
   rorFaction: string | ''; // ror_faction
@@ -348,7 +348,7 @@ export function filterCharacters<T extends {
   professions: unknown[];
   user_id?: string | null;
   is_main?: boolean;
-  preferred_role?: string | null;
+  preferred_role?: string[] | null;
   subscriber_tier?: string | null;
   ror_faction?: string | null;
   ror_class?: string | null;
@@ -407,8 +407,10 @@ export function filterCharacters<T extends {
     }
 
     // Star Citizen role filter
-    if (filters.scRole && char.preferred_role !== filters.scRole) {
-      return false;
+    if (filters.scRole) {
+      if (!char.preferred_role || !char.preferred_role.includes(filters.scRole)) {
+        return false;
+      }
     }
 
     // Star Citizen subscriber tier filter

@@ -77,7 +77,7 @@ export interface Character {
   secondary_archetype: Archetype | null;
   level: number;
   is_main: boolean;
-  preferred_role?: string | null;
+  preferred_role?: string[] | null;
   rank?: string | null;
   ror_faction?: string | null;
   ror_class?: string | null;

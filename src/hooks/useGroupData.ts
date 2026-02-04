@@ -16,7 +16,7 @@ export interface CharacterData {
   level?: number;
   is_main?: boolean;
   user_id?: string | null; // Allow setting user_id for ownership
-  preferred_role?: string | null;
+  preferred_role?: string[] | null;
   rank?: string | null;
   ror_faction?: string | null;
   ror_class?: string | null;

@@ -20,7 +20,7 @@ export function CharacterEditModal({ editingCharacter, onSubmit, onCancel, gameS
         secondary_archetype: editingCharacter.secondary_archetype,
         level: editingCharacter.level,
         is_main: editingCharacter.is_main,
-        preferred_role: (editingCharacter as any)?.preferred_role,
+        preferred_role: (editingCharacter as any)?.preferred_role || [],
         rank: (editingCharacter as any)?.rank,
         subscriber_tier: (editingCharacter as any)?.subscriber_tier || null,
         subscriber_since: (editingCharacter as any)?.subscriber_since || null,

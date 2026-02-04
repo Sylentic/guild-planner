@@ -65,5 +65,6 @@
   "064_main_character_per_game.sql",
   "065_add_subscriber_ownership_type.sql",
   "066_sync_existing_subscriber_ships.sql",
-  "067_add_group_games_archived.sql"
+  "067_add_group_games_archived.sql",
+  "068_change_preferred_role_to_array.sql"
 ]

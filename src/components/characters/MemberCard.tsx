@@ -10,6 +10,7 @@ import { RACES, ARCHETYPES, getClassName, RaceId, ArchetypeId } from '@/lib/char
 import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, RORRole } from '@/games/returnofreckooning/config';
 import { ProfessionSelector } from '@/components/game-specific/ProfessionSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
+import starcitizen from '@/games/starcitizen/config/roles.json';
 
 interface CharacterCardProps {
   character: CharacterWithProfessions;
@@ -59,6 +60,16 @@ export function CharacterCard({
 
   const subscriberTier = character.subscriber_tier || null;
   const subscriberSince = character.subscriber_since ? new Date(character.subscriber_since) : null;
+
+  // Get Star Citizen role names from IDs
+  const scRoleNames = character.preferred_role && character.preferred_role.length > 0
+    ? character.preferred_role
+        .map(roleId => {
+          const role = starcitizen.pilot_roles.find(r => r.id === roleId);
+          return role ? role.name : null;
+        })
+        .filter(Boolean)
+    : null;
 
   // Get RoR character info
   const rorFaction = character.ror_faction ? ROR_FACTIONS[character.ror_faction as keyof typeof ROR_FACTIONS] : null;
@@ -384,6 +395,18 @@ export function CharacterCard({
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Rank</div>
+              <div className="text-sm text-slate-200">
+                {character.rank || '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Preferred Roles</div>
+              <div className="text-sm text-slate-200">
+                {scRoleNames && scRoleNames.length > 0 ? scRoleNames.join(', ') : '—'}
+              </div>
+            </div>
             <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
               <div className="text-xs text-slate-500">Subscriber Tier</div>
               <div className="text-sm text-slate-200">
