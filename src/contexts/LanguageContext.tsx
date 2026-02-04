@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-type Language = 'en' | 'es';
+type Language = 'en-GB' | 'es';
 
 interface Translations {
   [key: string]: string | Translations;
@@ -19,12 +19,16 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 // Detect browser language
 function detectBrowserLanguage(): Language {
-  if (typeof window === 'undefined') return 'en';
+  if (typeof window === 'undefined') return 'en-GB';
   
-  const browserLang = navigator.language || (navigator as { userLanguage?: string }).userLanguage || 'en';
-  const langCode = browserLang.split('-')[0].toLowerCase();
+  const browserLang = navigator.language || (navigator as { userLanguage?: string }).userLanguage || 'en-GB';
+  const langCode = browserLang.toLowerCase();
   
-  return langCode === 'es' ? 'es' : 'en';
+  // Match en-GB, en-gb, or just 'en' to British English
+  if (langCode.startsWith('en')) return 'en-GB';
+  if (langCode.startsWith('es')) return 'es';
+  
+  return 'en-GB'; // Default fallback
 }
 
 // Get nested value from object using dot notation
@@ -50,7 +54,7 @@ function interpolate(str: string, params?: Record<string, string | number>): str
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('en-GB');
   const [translations, setTranslations] = useState<Translations>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -118,7 +122,7 @@ export function useLanguage() {
 
 // Language options for UI
 export const LANGUAGES = [
-  { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
+  { code: 'en-GB' as Language, name: 'English (UK)', flag: '🇬🇧' },
   { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
 ];
 

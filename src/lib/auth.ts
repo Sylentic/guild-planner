@@ -41,15 +41,8 @@ export interface ClanMembership {
  * Sign in with Discord OAuth
  */
 export async function signInWithDiscord(redirectTo?: string) {
-  // Detect if user is on dev domain and route through intermediary
-  const isDev = typeof window !== 'undefined' && 
-                window.location.hostname === 'dev.gp.pandamonium-gaming.com';
-  
-  // Always use production callback URL (since that's what Supabase is configured for)
-  // The API redirect route will handle routing back to dev if needed
-  const callbackUrl = isDev 
-    ? 'https://aoc.pandamonium-gaming.com/api/auth-redirect?dev=true'
-    : 'https://aoc.pandamonium-gaming.com/auth/callback';
+  const baseUrl = getURL();
+  const callbackUrl = `${baseUrl}auth/callback`;
   
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
@@ -219,6 +212,8 @@ export async function updateMemberRole(membershipId: string, newRole: 'admin' | 
  * Create a new clan (user becomes admin/creator)
  */
 export async function createGroup(slug: string, name: string, userId: string) {
+  console.log(`[createGroup] Creating group: slug=${slug}, name=${name}, userId=${userId}`);
+  
   // Create clan
   const { data: clan, error: clanError } = await supabase
     .from('groups')
@@ -226,6 +221,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
     .select()
     .single();
   
+  console.log(`[createGroup] Groups insert result:`, { clan, error: clanError });
   if (clanError) throw clanError;
   
   // Add creator as admin
@@ -241,6 +237,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
     })
     .select();
   
+  console.log(`[createGroup] Member insert result:`, { error: memberError });
   if (memberError) throw memberError;
   
   return clan;

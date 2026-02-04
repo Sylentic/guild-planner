@@ -99,7 +99,7 @@ export function useGroupMembership(groupId: string | null, userId: string | null
           is_creator,
           applied_at,
           approved_at,
-          users!clan_members_user_id_fkey(display_name, discord_username, discord_avatar)
+          users!group_members_user_id_fkey(display_name, discord_username, discord_avatar)
         `)
         .eq('group_id', groupId)
         .order('role');
@@ -209,7 +209,7 @@ export function useGroupMembership(groupId: string | null, userId: string | null
     // Get the member info (to get user_id, discord_username, and discord_id for mentions)
     const { data: memberData, error: memberFetchError } = await supabase
       .from('group_members')
-      .select('user_id, group_id, users!clan_members_user_id_fkey(discord_username, discord_id)')
+      .select('user_id, group_id, users!group_members_user_id_fkey(discord_username, discord_id)')
       .eq('id', membershipId)
       .maybeSingle();
     if (memberFetchError || !memberData) throw memberFetchError || new Error('Member not found');

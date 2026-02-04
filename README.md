@@ -25,10 +25,33 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 ## Quick Start
 
 1. Clone the repository
+
 2. Copy `.env.example` to `.env.local` and add your Supabase credentials
+
 3. Run `npm install`
-4. Run `npm run dev`
-5. Open `http://localhost:3000`
+
+4. Apply database migrations:
+
+   ```bash
+   # Login to Supabase
+   npx supabase login
+
+   # Link to your Supabase project (migrations are in supabase/migrations/)
+   npx supabase link --project-ref your-project-ref
+
+   # Apply all migrations to remote database
+   npx supabase db push
+   ```
+
+   If required at any point you can reset the database with:
+
+   ```bash
+   npx supabase db reset --linked`
+   ```
+
+5. Run `npm run dev`
+
+6. Open `http://localhost:3000`
 
 ## Deployment
 
