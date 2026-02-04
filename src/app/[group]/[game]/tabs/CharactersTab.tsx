@@ -100,6 +100,7 @@ export function CharactersTab({
           onChange={setCharacterFilters}
           characterCount={characters.length}
           filteredCount={filterCharacters(characters, characterFilters).length}
+          gameSlug={gameSlug}
         />
       )}
       {characters.length === 0 ? (

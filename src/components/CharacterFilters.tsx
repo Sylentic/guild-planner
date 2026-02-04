@@ -19,6 +19,7 @@ interface CharacterFiltersProps {
   onChange: (filters: CharacterFilters) => void;
   characterCount: number;
   filteredCount: number;
+  gameSlug?: string;
 }
 
 export const DEFAULT_FILTERS: CharacterFilters = {
@@ -35,6 +36,7 @@ export function CharacterFiltersBar({
   onChange,
   characterCount,
   filteredCount,
+  gameSlug = 'aoc',
 }: CharacterFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useLanguage();
@@ -99,82 +101,91 @@ export function CharacterFiltersBar({
       {/* Expanded filters */}
       {isExpanded && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
-          {/* Race filter */}
-          <div>
-            <label htmlFor="filter-race" className="text-xs text-slate-400 mb-1 block">{t('filters.race')}</label>
-            <select
-              id="filter-race"
-              value={filters.race}
-              onChange={(e) => onChange({ ...filters, race: e.target.value as RaceId | '' })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-            >
-              <option value="">{t('filters.allRaces')}</option>
-              {Object.entries(RACES).map(([id, race]) => (
-                <option key={id} value={id}>{race.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Archetype filter */}
-          <div>
-            <label htmlFor="filter-archetype" className="text-xs text-slate-400 mb-1 block">{t('filters.class')}</label>
-            <select
-              id="filter-archetype"
-              value={filters.archetype}
-              onChange={(e) => onChange({ ...filters, archetype: e.target.value as ArchetypeId | '' })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-            >
-              <option value="">{t('filters.allArchetypes')}</option>
-              {Object.entries(ARCHETYPES).map(([id, arch]) => (
-                <option key={id} value={id}>{arch.icon} {arch.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Level range */}
-          <div>
-            <label className="text-xs text-slate-400 mb-1 block">{t('filters.levelRange')}</label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="1"
-                max="50"
-                value={filters.minLevel}
-                onChange={(e) => onChange({ ...filters, minLevel: parseInt(e.target.value) || 1 })}
-                className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                aria-label={t('filters.minLevel')}
-              />
-              <span className="text-slate-500">-</span>
-              <input
-                type="number"
-                min="1"
-                max="50"
-                value={filters.maxLevel}
-                onChange={(e) => onChange({ ...filters, maxLevel: parseInt(e.target.value) || 50 })}
-                className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
-                aria-label={t('filters.maxLevel')}
-              />
+          {/* Race filter - AoC only */}
+          {gameSlug === 'aoc' && (
+            <div>
+              <label htmlFor="filter-race" className="text-xs text-slate-400 mb-1 block">{t('filters.race')}</label>
+              <select
+                id="filter-race"
+                value={filters.race}
+                onChange={(e) => onChange({ ...filters, race: e.target.value as RaceId | '' })}
+                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+              >
+                <option value="">{t('filters.allRaces')}</option>
+                {Object.entries(RACES).map(([id, race]) => (
+                  <option key={id} value={id}>{race.name}</option>
+                ))}
+              </select>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label htmlFor="filter-professions" className="text-xs text-slate-400 mb-1 block">{t('filters.professions')}</label>
-            <select
-              id="filter-professions"
-              value={filters.hasProfessions === null ? '' : filters.hasProfessions ? 'yes' : 'no'}
-              onChange={(e) => onChange({ 
-                ...filters, 
-                hasProfessions: e.target.value === '' ? null : e.target.value === 'yes' 
-              })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
-            >
-              <option value="">{t('common.all')}</option>
-              <option value="yes">{t('filters.hasProfessions')}</option>
-              <option value="no">{t('filters.noProfessions')}</option>
-            </select>
-          </div>
+          {/* Archetype filter - AoC only */}
+          {gameSlug === 'aoc' && (
+            <div>
+              <label htmlFor="filter-archetype" className="text-xs text-slate-400 mb-1 block">{t('filters.class')}</label>
+              <select
+                id="filter-archetype"
+                value={filters.archetype}
+                onChange={(e) => onChange({ ...filters, archetype: e.target.value as ArchetypeId | '' })}
+                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+              >
+                <option value="">{t('filters.allArchetypes')}</option>
+                {Object.entries(ARCHETYPES).map(([id, arch]) => (
+                  <option key={id} value={id}>{arch.icon} {arch.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Level range - AoC only */}
+          {gameSlug === 'aoc' && (
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">{t('filters.levelRange')}</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={filters.minLevel}
+                  onChange={(e) => onChange({ ...filters, minLevel: parseInt(e.target.value) || 1 })}
+                  className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  aria-label={t('filters.minLevel')}
+                />
+                <span className="text-slate-500">-</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={filters.maxLevel}
+                  onChange={(e) => onChange({ ...filters, maxLevel: parseInt(e.target.value) || 50 })}
+                  className="w-16 px-2 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  aria-label={t('filters.maxLevel')}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Professions filter - AoC only */}
+          {gameSlug === 'aoc' && (
+            <div>
+              <label htmlFor="filter-professions" className="text-xs text-slate-400 mb-1 block">{t('filters.professions')}</label>
+              <select
+                id="filter-professions"
+                value={filters.hasProfessions === null ? '' : filters.hasProfessions ? 'yes' : 'no'}
+                onChange={(e) => onChange({ 
+                  ...filters, 
+                  hasProfessions: e.target.value === '' ? null : e.target.value === 'yes' 
+                })}
+                className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+              >
+                <option value="">{t('common.all')}</option>
+                <option value="yes">{t('filters.hasProfessions')}</option>
+                <option value="no">{t('filters.noProfessions')}</option>
+              </select>
+            </div>
+          )}
         </div>
-      )}
+      )}}
 
       {/* Results count and clear */}
       <div className="flex items-center justify-between text-sm">

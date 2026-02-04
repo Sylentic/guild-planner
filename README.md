@@ -2,7 +2,7 @@
 
 A comprehensive guild management and planning tool supporting multiple MMOs.
 
-> **Inspired by** the original [AoC Guild Profession Planner](https://github.com/Artugio/AoC-guild-profession-planner) by Artugio
+> **Inspired by** the original [AoC Guild Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
 
 ## Supported Games
 
