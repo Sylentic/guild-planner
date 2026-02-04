@@ -45,6 +45,32 @@ CREATE TABLE users (
 ALTER TABLE groups ADD CONSTRAINT fk_groups_created_by 
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
 
+-- =====================================================
+-- TRIGGER: Auto-create user record on auth signup
+-- =====================================================
+
+-- Function to handle new user creation
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, discord_id, discord_username, discord_avatar, display_name)
+  VALUES (
+    NEW.id,
+    NEW.raw_user_meta_data->>'provider_id',
+    NEW.raw_user_meta_data->>'user_name',
+    NEW.raw_user_meta_data->>'avatar_url',
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'user_name')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to call the function when a new user signs up
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION handle_new_user();
+
 -- Group memberships with status and roles
 CREATE TABLE group_members (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -237,9 +263,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger to auto-create user profile
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+-- (Already created above after users table definition)
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('001_initial_schema.sql');

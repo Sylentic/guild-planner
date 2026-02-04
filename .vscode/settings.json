@@ -15,5 +15,6 @@
         "Move-Item": true,
         "git checkout": true,
         "npx supabase": true
-    }
+    },
+    "codeQL.githubDatabase.download": "never"
 }

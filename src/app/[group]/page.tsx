@@ -30,7 +30,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const [groupExists, setGroupExists] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enabledGames, setEnabledGames] = useState<string[]>(ALL_AVAILABLE_GAMES.map(g => g.slug)); // Default to all games
+  const [enabledGames, setEnabledGames] = useState<string[]>([]); // Start empty, load from database
   const [gamesWithStatus, setGamesWithStatus] = useState<Array<{ slug: string; archived: boolean }>>([]);
   const [showAddGame, setShowAddGame] = useState(false);
   const [loadingGames, setLoadingGames] = useState(false);
@@ -82,19 +82,12 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     setLoadingGames(true);
     try {
       const gamesStatus = await getGroupGamesWithStatus(gid);
-      // If games are configured, use them; otherwise show all available games
-      if (gamesStatus.length > 0) {
-        setEnabledGames(gamesStatus.map(g => g.game_slug));
-        setGamesWithStatus(gamesStatus.map(g => ({ slug: g.game_slug, archived: g.archived })));
-      } else {
-        setEnabledGames(ALL_AVAILABLE_GAMES.map(g => g.slug));
-        setGamesWithStatus(ALL_AVAILABLE_GAMES.map(g => ({ slug: g.slug, archived: false })));
-      }
+      setEnabledGames(gamesStatus.map(g => g.game_slug));
+      setGamesWithStatus(gamesStatus.map(g => ({ slug: g.game_slug, archived: g.archived })));
     } catch (err) {
       console.error('Error loading group games:', err);
-      // On error, show all games by default
-      setEnabledGames(ALL_AVAILABLE_GAMES.map(g => g.slug));
-      setGamesWithStatus(ALL_AVAILABLE_GAMES.map(g => ({ slug: g.slug, archived: false })));
+      setEnabledGames([]);
+      setGamesWithStatus([]);
     } finally {
       setLoadingGames(false);
     }
@@ -401,17 +394,24 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         </div>
 
         {enabledGames.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-slate-400 mb-4">No games enabled for this group yet.</p>
-            {canEditSettings && (
-              <button
-                onClick={() => setShowAddGame(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Add a Game
-              </button>
-            )}
+          <div className="text-center py-16 px-4">
+            <div className="max-w-md mx-auto bg-slate-800/50 border border-slate-700 rounded-lg p-8">
+              <h3 className="text-xl font-semibold text-white mb-3">Get Started</h3>
+              <p className="text-slate-400 mb-6">
+                {canEditSettings 
+                  ? "Add a game to start organizing your group's content." 
+                  : "No games have been enabled for this group yet. Contact an admin to add one."}
+              </p>
+              {canEditSettings && (
+                <button
+                  onClick={() => setShowAddGame(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
+                >
+                  <Plus className="w-5 h-5" />
+                  Add Your First Game
+                </button>
+              )}
+            </div>
           </div>
         )}
       </main>
