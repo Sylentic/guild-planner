@@ -132,6 +132,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const {
     membership,
     loading: membershipLoading,
+    apply,
   } = useGroupMembership(groupId, user?.id || null);
 
   const { hasPermission } = usePermissions(groupId || undefined);
@@ -266,8 +267,59 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      {/* Not a member - show apply button */}
+      {!membershipLoading && !membership && (
+        <main className="max-w-2xl mx-auto px-4 py-16">
+          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
+            <Shield className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-3">Join {groupData?.name || groupSlug}</h2>
+            <p className="text-slate-400 mb-6">
+              Apply to join this group to access games and participate in activities.
+            </p>
+            <button
+              onClick={apply}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
+            >
+              <Plus className="w-5 h-5" />
+              Apply to Join
+            </button>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Return Home
+              </Link>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* Pending approval */}
+      {!membershipLoading && membership?.role === 'pending' && (
+        <main className="max-w-2xl mx-auto px-4 py-16">
+          <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-8 text-center">
+            <Loader className="w-16 h-16 text-yellow-400 mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold text-white mb-3">Application Pending</h2>
+            <p className="text-slate-400 mb-6">
+              Your application to join {groupData?.name || groupSlug} is pending approval by an admin.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Return Home
+              </Link>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* Member - show games */}
+      {!membershipLoading && membership && membership.role !== 'pending' && (
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
@@ -422,6 +474,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           <InlineFooter variant="matching" />
         </div>
       </footer>
+      )}
     </div>
   );
 }

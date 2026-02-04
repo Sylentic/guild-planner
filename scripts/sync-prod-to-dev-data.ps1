@@ -1,10 +1,13 @@
 #!/usr/bin/env pwsh
 # Sync production data into dev using data-only dump/restore.
-# Assumes switch-env.ps1 updates .env.local for prod/dev.
+# Can use either:
+#   1) DATABASE_URL with psql (requires PostgreSQL client tools)
+#   2) SUPABASE_PROJECT_REF with Supabase CLI
 
 param(
   [string]$DumpFile = ".tmp/prod-data.sql",
-  [switch]$ResetDev
+  [switch]$ResetDev,
+  [switch]$UsePsql  # Force psql method if available
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,27 +28,12 @@ function Import-EnvFile {
   }
 }
 
-function Get-DbUrl {
-  $candidates = @('DATABASE_URL', 'SUPABASE_DB_URL', 'SUPABASE_DB_CONNECTION')
-  foreach ($key in $candidates) {
-    $val = [Environment]::GetEnvironmentVariable($key, "Process")
-    if ($val) { return $val }
-  }
-  return $null
-}
+# 1) Load prod env and dump data
+Write-Host "Loading prod environment..." -ForegroundColor Cyan
+Import-EnvFile ".env.local.prod"
 
-function Ensure-Psql {
-  if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
-    throw "psql not found in PATH. Install PostgreSQL client tools or add psql to PATH."
-  }
-}
-
-# 1) Switch to prod and dump data
-Write-Host "Switching to prod environment..." -ForegroundColor Cyan
-./switch-env.ps1 -Environment prod | Out-Null
-Import-EnvFile ".env.local"
-$prodDbUrl = Get-DbUrl
-if (-not $prodDbUrl) { throw "Could not find a database URL in .env.local" }
+$prodRef = [Environment]::GetEnvironmentVariable("SUPABASE_PROJECT_REF", "Process")
+$prodDbUrl = [Environment]::GetEnvironmentVariable("DATABASE_URL", "Process")
 
 $dumpDir = Split-Path $DumpFile -Parent
 if ($dumpDir -and -not (Test-Path $dumpDir)) {
@@ -53,23 +41,59 @@ if ($dumpDir -and -not (Test-Path $dumpDir)) {
 }
 
 Write-Host "Dumping prod data to $DumpFile..." -ForegroundColor Cyan
-npx supabase db dump --linked --data-only | Out-File -FilePath $DumpFile -Encoding utf8
 
-# 2) Switch to dev and restore data
-Write-Host "Switching to dev environment..." -ForegroundColor Cyan
-./switch-env.ps1 -Environment dev | Out-Null
-Import-EnvFile ".env.local"
-$devDbUrl = Get-DbUrl
-if (-not $devDbUrl) { throw "Could not find a database URL in .env.local" }
+if ($prodRef) {
+  # Use project ref method
+  npx supabase db dump --project-ref $prodRef --data-only | Out-File -FilePath $DumpFile -Encoding utf8
+} elseif ($prodDbUrl -and $prodDbUrl -notmatch '\[YOUR-PASSWORD\]') {
+  # Use psql method
+  if (-not (Get-Command pg_dump -ErrorAction SilentlyContinue)) {
+    throw "pg_dump not found. Install PostgreSQL client tools or add SUPABASE_PROJECT_REF to .env.local.prod"
+  }
+  pg_dump $prodDbUrl --data-only | Out-File -FilePath $DumpFile -Encoding utf8
+} else {
+  throw "Neither SUPABASE_PROJECT_REF nor valid DATABASE_URL found in .env.local.prod"
+}
+
+# 2) Load dev env and restore
+Write-Host "Loading dev environment..." -ForegroundColor Cyan
+Import-EnvFile ".env.local.dev"
+
+$devRef = [Environment]::GetEnvironmentVariable("SUPABASE_PROJECT_REF", "Process")
+$devDbUrl = [Environment]::GetEnvironmentVariable("DATABASE_URL", "Process")
 
 if ($ResetDev) {
   Write-Host "Resetting dev database..." -ForegroundColor Yellow
-  npx supabase db reset --linked --yes
+  if ($devRef) {
+    npx supabase db reset --project-ref $devRef --yes
+  } else {
+    Write-Host "Warning: No project ref, attempting reset with linked project..." -ForegroundColor Yellow
+    npx supabase db reset --linked --yes
+  }
 }
 
-Ensure-Psql
-
 Write-Host "Restoring data into dev..." -ForegroundColor Cyan
-psql $devDbUrl -f $DumpFile
+
+if ($UsePsql -and $devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]') {
+  # Use psql method
+  if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
+    throw "psql not found. Install PostgreSQL client tools."
+  }
+  psql $devDbUrl -f $DumpFile
+} elseif ($devRef) {
+  # Use Supabase CLI method
+  Get-Content $DumpFile | npx supabase db execute --project-ref $devRef
+} elseif ($devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]') {
+  # Fallback to psql
+  if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
+    throw "psql not found and no SUPABASE_PROJECT_REF. Install PostgreSQL client tools or add project ref to .env.local.dev"
+  }
+  psql $devDbUrl -f $DumpFile
+} else {
+  throw "Neither SUPABASE_PROJECT_REF nor valid DATABASE_URL found in .env.local.dev"
+}
+
+Write-Host "Data sync complete." -ForegroundColor Green
+Get-Content $DumpFile | npx supabase db execute --linked
 
 Write-Host "Data sync complete." -ForegroundColor Green

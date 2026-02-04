@@ -208,6 +208,18 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const playerCharacters = characters.filter(c => c.user_id === userId);
+
+  useEffect(() => {
+    if (!showAddForm || selectedCharacter || playerCharacters.length === 0) return;
+    const mainCharacter = playerCharacters.find(c => c.is_main);
+    if (mainCharacter) {
+      setSelectedCharacter(mainCharacter.id);
+    } else if (playerCharacters.length === 1) {
+      setSelectedCharacter(playerCharacters[0].id);
+    }
+  }, [showAddForm, selectedCharacter, playerCharacters]);
+
   useEffect(() => {
     console.log('FleetView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
@@ -345,7 +357,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   }
 
   // FleetView shows only the current user's characters (personal fleet management)
-  const playerCharacters = characters.filter(c => c.user_id === userId);
 
   return (
     <div className="space-y-6">
