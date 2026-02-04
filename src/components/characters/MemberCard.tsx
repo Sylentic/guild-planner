@@ -76,7 +76,7 @@ export function CharacterCard({
     ? character.preferred_role
         .map(roleId => {
           const role = gameRoles.find((r: any) => r.id === roleId);
-          return role ? role.name : null;
+          return role ? role.name : roleId;
         })
         .filter(Boolean)
     : null;
@@ -190,7 +190,7 @@ export function CharacterCard({
                         backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
                       }}
                     >
-                      <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                      <div className="w-7 h-7 flex items-center justify-center flex-shrink-0 translate-y-[1px]">
                         {subscriberTier === 'centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
                       </div>
                       <span className="leading-none">{SUBSCRIBER_TIERS[subscriberTier].label}</span>
