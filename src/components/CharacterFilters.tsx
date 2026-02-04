@@ -232,8 +232,8 @@ export function CharacterFiltersBar({
                 className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
               >
                 <option value="">All Factions</option>
-                <option value="Destruction">Destruction</option>
-                <option value="Order">Order</option>
+                <option value="destruction">Destruction</option>
+                <option value="order">Order</option>
               </select>
             </div>
           )}
