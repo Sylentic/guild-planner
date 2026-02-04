@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 
 /**
  * Get all enabled games for a group
+ * Returns all available games if none have been explicitly configured
  */
 export async function getGroupGames(groupId: string): Promise<string[]> {
   try {
@@ -12,10 +13,13 @@ export async function getGroupGames(groupId: string): Promise<string[]> {
       .order('created_at');
 
     if (error) throw error;
-    return data?.map(row => row.game_slug) || ['aoc']; // Default to AoC if no games
+    
+    // If games are configured, return them; otherwise return empty array
+    // (The calling code will handle showing all games if array is empty)
+    return data?.map(row => row.game_slug) || [];
   } catch (err) {
     console.error('Error fetching group games:', err);
-    return ['aoc']; // Default fallback
+    return []; // Return empty array, let caller decide default behavior
   }
 }
 

@@ -28,7 +28,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const [groupExists, setGroupExists] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enabledGames, setEnabledGames] = useState<string[]>(['aoc']); // Default to AoC
+  const [enabledGames, setEnabledGames] = useState<string[]>(ALL_AVAILABLE_GAMES.map(g => g.slug)); // Default to all games
   const [showAddGame, setShowAddGame] = useState(false);
   const [loadingGames, setLoadingGames] = useState(false);
   const [addingGame, setAddingGame] = useState<string | null>(null);
@@ -77,10 +77,12 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     setLoadingGames(true);
     try {
       const games = await getGroupGames(gid);
-      setEnabledGames(games.length > 0 ? games : ['aoc']);
+      // If games are configured, use them; otherwise show all available games
+      setEnabledGames(games.length > 0 ? games : ALL_AVAILABLE_GAMES.map(g => g.slug));
     } catch (err) {
       console.error('Error loading group games:', err);
-      setEnabledGames(['aoc']);
+      // On error, show all games by default
+      setEnabledGames(ALL_AVAILABLE_GAMES.map(g => g.slug));
     } finally {
       setLoadingGames(false);
     }
