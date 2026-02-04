@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, X, Check } from 'lucide-react';
-import { ROLE_CONFIG, ClanRole } from '@/lib/permissions';
+import { ROLE_CONFIG, GroupRole } from '@/lib/permissions';
 
 
 interface AddMemberFormProps {
@@ -91,3 +91,4 @@ export function AddMemberForm({ onAdd }: AddMemberFormProps) {
     </form>
   );
 }
+

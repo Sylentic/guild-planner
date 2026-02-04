@@ -18,14 +18,14 @@ import { CharacterWithProfessions } from '@/lib/types';
 type SiegeSubTab = 'roster' | 'nodes' | 'dkp' | 'loot';
 
 interface SiegeTabContentProps {
-  clanId: string;
+  groupId: string;
   characters: CharacterWithProfessions[];
   userId?: string;
 }
 
-export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentProps) {
+export function SiegeTabContent({ groupId, characters, userId }: SiegeTabContentProps) {
   const { t } = useLanguage();
-  const { hasPermission } = usePermissions(clanId);
+  const { hasPermission } = usePermissions(groupId);
   const [subTab, setSubTab] = useState<SiegeSubTab>('roster');
   const [showEventForm, setShowEventForm] = useState(false);
   
@@ -35,19 +35,19 @@ export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentP
     createSiege,
     signUp,
     withdraw,
-  } = useSiegeEvents(clanId);
+  } = useSiegeEvents(groupId);
 
   const {
     leaderboard,
     lootHistory,
     loading: lootLoading,
     distributeLoot,
-  } = useLootSystem(clanId);
+  } = useLootSystem(groupId);
 
   const {
     distribution,
     loading: nodesLoading,
-  } = useNodeCitizenships(clanId);
+  } = useNodeCitizenships(groupId);
 
   const SUB_TABS = [
     { id: 'roster', icon: Shield, label: t('siege.roster') },
@@ -76,7 +76,7 @@ export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentP
   };
 
   // Permission checks
-  const { loading } = usePermissions(clanId);
+  const { loading } = usePermissions(groupId);
   const canCreateSiege = hasPermission('siege_create_event');
   const canEditRosters = hasPermission('siege_edit_rosters');
   const canDistributeLoot = hasPermission('siege_edit_rosters');
@@ -180,3 +180,4 @@ export function SiegeTabContent({ clanId, characters, userId }: SiegeTabContentP
     </div>
   );
 }
+

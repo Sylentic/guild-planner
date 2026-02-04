@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get clan
     const { data: clan, error: clanError } = await supabaseAdmin
-      .from('clans')
+      .from('groups')
       .select('id, name, slug, is_public, recruitment_open, recruitment_message, public_description')
       .eq('slug', clanSlug)
       .single();
@@ -45,16 +45,16 @@ export async function GET(request: NextRequest) {
 
     // Get member count (approved members = not pending)
     const { count: memberCount } = await supabaseAdmin
-      .from('clan_members')
+      .from('group_members')
       .select('*', { count: 'exact', head: true })
-      .eq('clan_id', clan.id)
+      .eq('group_id', clan.id)
       .in('role', ['admin', 'officer', 'member']);
 
     // Get upcoming events count
     const { count: eventCount } = await supabaseAdmin
       .from('events')
       .select('*', { count: 'exact', head: true })
-      .eq('clan_id', clan.id)
+      .eq('group_id', clan.id)
       .eq('is_cancelled', false)
       .gte('starts_at', new Date().toISOString());
 
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     const { count: characterCount } = await supabaseAdmin
       .from('members')
       .select('*', { count: 'exact', head: true })
-      .eq('clan_id', clan.id);
+      .eq('group_id', clan.id);
 
     return NextResponse.json({
       clan,
@@ -75,3 +75,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
+

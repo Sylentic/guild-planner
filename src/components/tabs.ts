@@ -5,6 +5,8 @@ export const TAB_LIST = [
   'events',
   'parties',
   'matrix',
+  'fleet',
+  'ships',
   'manage',
   'siege',
   'economy',
@@ -15,3 +17,25 @@ export const TAB_LIST = [
 ] as const;
 
 export type Tab = typeof TAB_LIST[number];
+
+// Allowlist of tabs available for each game (fail-safe approach)
+// Any tab not in the allowlist will be hidden for that game
+export const GAME_TAB_ALLOWLIST: Record<string, Tab[]> = {
+  'aoc': ['characters', 'events', 'matrix', 'manage', 'parties', 'siege', 'economy', 'achievements', 'alliances', 'builds'],
+  'starcitizen': ['characters', 'events', 'matrix', 'manage', 'ships'],
+  'ror': ['characters', 'events', 'manage', 'parties', 'alliances'],
+};
+
+// Tab icons and purposes for different games
+export const GAME_TAB_CUSTOMIZATION: Record<string, Partial<Record<Tab, string>>> = {
+  'starcitizen': {
+    matrix: 'Ships', // Matrix shows ships for SC
+  },
+};
+
+// Legacy: map old exclusion key to new allowlist
+export const GAME_TAB_EXCLUSIONS: Record<string, Tab[]> = {
+  'starcitizen': ['economy', 'achievements', 'alliances', 'builds', 'parties', 'siege'],
+  'ror': ['economy', 'matrix', 'achievements', 'builds', 'siege', 'fleet', 'ships'],
+};
+

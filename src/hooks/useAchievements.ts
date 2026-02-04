@@ -20,14 +20,14 @@ interface UseAchievementsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useAchievements(clanId: string | null): UseAchievementsReturn {
+export function useAchievements(groupId: string | null): UseAchievementsReturn {
   const [achievements, setAchievements] = useState<ClanAchievementWithDefinition[]>([]);
   const [definitions, setDefinitions] = useState<AchievementDefinition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -47,9 +47,9 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
 
       // Fetch clan achievements
       const { data: clanAchievements, error: achieveError } = await supabase
-        .from('clan_achievements')
+        .from('group_achievements')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('created_at');
 
       if (achieveError) {
@@ -59,7 +59,7 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
 
       console.log('Fetched achievements:', {
         count: clanAchievements?.length,
-        clanId,
+        groupId,
         data: clanAchievements?.map(a => ({
           id: a.id,
           achievement_id: a.achievement_id,
@@ -83,7 +83,7 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
         }
         return {
           id: `pending-${def.id}`,
-          clan_id: clanId,
+          group_id: groupId,
           achievement_id: def.id,
           current_value: 0,
           is_unlocked: false,
@@ -100,7 +100,7 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
@@ -116,7 +116,7 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
   };
 
   const updateProgress = async (achievementId: string, value: number) => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const def = definitions.find((d) => d.id === achievementId);
     if (!def) throw new Error('Achievement not found');
@@ -125,9 +125,9 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
     const { data: { user } } = await supabase.auth.getUser();
 
     const { error: upsertError } = await supabase
-      .from('clan_achievements')
+      .from('group_achievements')
       .upsert({
-        clan_id: clanId,
+        group_id: groupId,
         achievement_id: achievementId,
         current_value: value,
         is_unlocked: isUnlocked,
@@ -135,7 +135,7 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
         first_contributor_id: isUnlocked ? user?.id : null,
         updated_at: new Date().toISOString(),
       }, {
-        onConflict: 'clan_id,achievement_id',
+        onConflict: 'group_id,achievement_id',
       });
 
     if (upsertError) throw upsertError;
@@ -154,3 +154,4 @@ export function useAchievements(clanId: string | null): UseAchievementsReturn {
     refresh: fetchData,
   };
 }
+

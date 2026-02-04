@@ -8,12 +8,12 @@ import { supabase } from '@/lib/supabase';
 import { RecruitmentApplication } from '@/lib/types';
 
 interface RecruitmentSettingsProps {
-  clanId: string;
-  clanSlug: string;
+  groupId: string;
+  groupSlug: string;
 }
 
-export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsProps) {
-  const { loading } = usePermissions(clanId);
+export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsProps) {
+  const { loading } = usePermissions(groupId);
   const [isPublic, setIsPublic] = useState(false);
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
   const [recruitmentMessage, setRecruitmentMessage] = useState('');
@@ -32,12 +32,12 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
       if (!isMounted) return;
       setError(null);
       try {
-        console.log('[RecruitmentSettings] Fetching clan settings for:', clanId);
+        console.log('[RecruitmentSettings] Fetching clan settings for:', groupId);
         // Fetch clan settings
         const { data: clanData, error: clanError } = await supabase
-          .from('clans')
+          .from('groups')
           .select('is_public, recruitment_open, recruitment_message, public_description')
-          .eq('id', clanId)
+          .eq('id', groupId)
           .single();
         if (!isMounted) return;
         if (clanError) {
@@ -57,7 +57,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
         const { data: appsData, error: appsError } = await supabase
           .from('recruitment_applications')
           .select('*')
-          .eq('clan_id', clanId)
+          .eq('group_id', groupId)
           .order('created_at', { ascending: false });
 
         if (!isMounted) return;
@@ -82,7 +82,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
       }
     }
 
-    if (clanId) {
+    if (groupId) {
       fetchData();
     } else {
       setLocalLoading(false);
@@ -91,7 +91,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
     return () => {
       isMounted = false;
     };
-  }, [clanId]);
+  }, [groupId]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -108,9 +108,9 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
       console.log('[RecruitmentSettings] Update data:', updateData);
 
       const { error: updateError } = await supabase
-        .from('clans')
+        .from('groups')
         .update(updateData)
-        .eq('id', clanId)
+        .eq('id', groupId)
         .select();
 
       if (updateError) {
@@ -176,7 +176,7 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
           </h3>
           {isPublic && (
             <a
-              href={`/${clanSlug}/public`}
+              href={`/${groupSlug}/public`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-sm text-orange-400 hover:text-orange-300"
@@ -356,3 +356,4 @@ export function RecruitmentSettings({ clanId, clanSlug }: RecruitmentSettingsPro
     </div>
   );
 }
+

@@ -26,3 +26,4 @@ export function MigrationBanner({ isAdmin }: { isAdmin: boolean }) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-// Service Worker for AoC Guild Planner PWA
+// Service Worker for Guild Planner PWA
 const CACHE_NAME = 'guild-planner-v2';
 
 // Static assets to cache immediately on install

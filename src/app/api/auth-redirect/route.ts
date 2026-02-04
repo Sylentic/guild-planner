@@ -16,3 +16,4 @@ export async function GET(request: NextRequest) {
   // Redirect to production callback
   return NextResponse.redirect('https://aoc.pandamonium-gaming.com/auth/callback', 307);
 }
+

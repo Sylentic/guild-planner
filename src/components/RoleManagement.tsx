@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { ChevronDown, Shield } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useClanMembership } from '@/hooks/useClanMembership';
-import { ClanRole, ROLE_CONFIG, getRoleHierarchy } from '@/lib/permissions';
+import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { GroupRole, ROLE_CONFIG, getRoleHierarchy } from '@/lib/permissions';
 
 export interface ClanMember {
   id: string;
   user_id: string;
-  role: ClanRole;
+  role: GroupRole;
   user?: {
     display_name: string;
     discord_username?: string;
@@ -17,38 +17,38 @@ export interface ClanMember {
 }
 
 interface RoleManagementProps {
-  clanId: string;
+  groupId: string;
   members: ClanMember[];
-  userRole: ClanRole;
-  onRoleChange?: (userId: string, newRole: ClanRole) => Promise<void>;
+  userRole: GroupRole;
+  onRoleChange?: (userId: string, newRole: GroupRole) => Promise<void>;
 }
 
-export function RoleManagement({ clanId, members, userRole, onRoleChange }: RoleManagementProps) {
+export function RoleManagement({ groupId, members, userRole, onRoleChange }: RoleManagementProps) {
   const { t } = useLanguage();
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const [message, setMessage] = useState<{ userId: string; type: 'success' | 'error'; text: string } | null>(null);
-  const { updateRole } = useClanMembership(clanId, null);
+  const { updateRole } = useGroupMembership(groupId, null);
 
   const hierarchy = getRoleHierarchy();
   const canManage = userRole === 'admin' || userRole === 'officer';
 
   // Get available roles to promote/demote to
-  const getAvailableRoles = (): ClanRole[] => {
+  const getAvailableRoles = (): GroupRole[] => {
     // Allow assigning any role except 'pending'.
     // Use the order from ROLE_CONFIG for display.
-    return (Object.keys(ROLE_CONFIG) as ClanRole[])
+    return (Object.keys(ROLE_CONFIG) as GroupRole[])
       .filter(role => role !== 'pending');
   };
 
-  const handleRoleChange = async (memberId: string, userId: string, newRole: ClanRole) => {
+  const handleRoleChange = async (memberId: string, userId: string, newRole: GroupRole) => {
     if (!canManage) return;
 
     setIsUpdating(userId);
     setMessage(null);
 
     try {
-      // Use the updateRole hook from useClanMembership
+      // Use the updateRole hook from useGroupMembership
       await updateRole(memberId, newRole);
       setMessage({ userId, type: 'success', text: `Role updated to ${ROLE_CONFIG[newRole].label}` });
       setExpandedUserId(null);
@@ -172,3 +172,4 @@ export function RoleManagement({ clanId, members, userRole, onRoleChange }: Role
     </div>
   );
 }
+

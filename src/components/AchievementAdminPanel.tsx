@@ -8,13 +8,13 @@ import { supabase } from '@/lib/supabase';
 
 interface AchievementAdminPanelProps {
   achievements: ClanAchievementWithDefinition[];
-  clanId: string;
+  groupId: string;
   onRefresh: () => Promise<void>;
 }
 
 export function AchievementAdminPanel({
   achievements,
-  clanId,
+  groupId,
   onRefresh,
 }: AchievementAdminPanelProps) {
   const { t } = useLanguage();
@@ -26,13 +26,13 @@ export function AchievementAdminPanel({
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const response = await fetch('/api/clan/achievements/sync', {
+      const response = await fetch('/api/group/achievements/sync', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ clanId }),
+        body: JSON.stringify({ clanId: groupId }),
       });
 
       if (!response.ok) {
@@ -107,3 +107,4 @@ export function AchievementAdminPanel({
     </div>
   );
 }
+

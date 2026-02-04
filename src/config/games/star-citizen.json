@@ -1,0 +1,132 @@
+{
+  "name": "Star Citizen",
+  "slug": "star-citizen",
+  "icon": "🚀",
+  "roles": [
+    {
+      "id": "miner",
+      "name": "Miner",
+      "description": "Resource extraction and refining"
+    },
+    {
+      "id": "trader",
+      "name": "Trader",
+      "description": "Cargo hauling and trading"
+    },
+    {
+      "id": "bounty-hunter",
+      "name": "Bounty Hunter",
+      "description": "Combat and bounty contracts"
+    },
+    {
+      "id": "explorer",
+      "name": "Explorer",
+      "description": "Exploration and scanning"
+    },
+    {
+      "id": "combat-pilot",
+      "name": "Combat Pilot",
+      "description": "Fighter and combat operations"
+    },
+    {
+      "id": "transport-pilot",
+      "name": "Transport Pilot",
+      "description": "Personnel and cargo transport"
+    },
+    {
+      "id": "medic",
+      "name": "Medic",
+      "description": "Medical support and rescue"
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "description": "Ship repair and maintenance"
+    },
+    {
+      "id": "salvager",
+      "name": "Salvager",
+      "description": "Salvage operations"
+    },
+    {
+      "id": "support",
+      "name": "Support",
+      "description": "General support roles"
+    }
+  ],
+  "ranks": [
+    {
+      "id": "lowlife",
+      "name": "Lowlife",
+      "description": "Entry level",
+      "hierarchy": 1
+    },
+    {
+      "id": "pirate",
+      "name": "Pirate",
+      "description": "Pirate rank",
+      "hierarchy": 2
+    },
+    {
+      "id": "enforcer",
+      "name": "Enforcer",
+      "description": "Enforcer rank",
+      "hierarchy": 3
+    },
+    {
+      "id": "captain",
+      "name": "Captain",
+      "description": "Captain rank",
+      "hierarchy": 4
+    },
+    {
+      "id": "vice-admiral",
+      "name": "Vice Admiral",
+      "description": "Vice Admiral rank",
+      "hierarchy": 5
+    },
+    {
+      "id": "admiral",
+      "name": "Admiral",
+      "description": "Admiral rank",
+      "hierarchy": 6
+    }
+  ],
+  "eventCategories": [
+    {
+      "id": "missions",
+      "name": "Missions",
+      "icon": "📋",
+      "color": "#3b82f6",
+      "description": "Contract and mission ops"
+    },
+    {
+      "id": "salvaging",
+      "name": "Salvaging",
+      "icon": "♻️",
+      "color": "#10b981",
+      "description": "Salvage operations"
+    },
+    {
+      "id": "pirating",
+      "name": "Pirating",
+      "icon": "🏴‍☠️",
+      "color": "#ef4444",
+      "description": "Piracy and raiding"
+    },
+    {
+      "id": "bounty_hunting",
+      "name": "Bounty Hunting",
+      "icon": "🎯",
+      "color": "#f97316",
+      "description": "Bounty hunting operations"
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "icon": "📅",
+      "color": "#6b7280",
+      "description": "Other activities"
+    }
+  ]
+}

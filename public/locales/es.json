@@ -51,7 +51,11 @@
     "characters": "Personajes",
     "events": "Eventos",
     "parties": "Grupos",
+    "alliances": "Alianzas",
     "matrix": "Matriz",
+    "fleet": "Mi Hangar",
+    "ships": "Naves del Gremio",
+    "guild-ships": "Naves del Gremio",
     "manage": "Gestionar",
     "siege": "Siege",
     "economy": "Economía",
@@ -146,6 +150,7 @@
     "duration": "Duración",
     "upcomingEvents": "Próximos Eventos",
     "noEvents": "No hay eventos programados",
+    "createEventDesc": "Crea un evento para organizar a tu grupo.",
     "rsvp": "Confirmar asistencia",
     "attending": "Asistiré",
     "maybe": "Quizás",
@@ -358,19 +363,19 @@
     "allRightsReserved": "Todos los derechos reservados"
   },
   "home": {
-    "title": "AoC Guild Planner",
-    "subtitle": "Planifica y gestiona las profesiones artesanales de tu clan para Ashes of Creation",
+    "title": "Planificador Multigame de Clanes",
+    "subtitle": "Gestiona tu clan en cualquier juego - Ashes of Creation, Star Citizen y más",
     "enterClanPlaceholder": "Nombre de tu clan...",
     "loggedInHint": "Podrás crear o unirte a este clan",
     "notLoggedInHint": "Inicia sesión con Discord para crear o unirte a clanes",
     "yourClans": "Tus Clanes",
     "noClans": "Aún no te has unido a ningún clan. ¡Escribe un nombre de clan arriba para empezar!",
-    "feature1Title": "Seguimiento de las 22 Profesiones",
-    "feature1Desc": "Recolección, Procesamiento y Fabricación con cadenas de dependencia completas",
-    "feature2Title": "Gestiona los Miembros del Clan",
-    "feature2Desc": "Asigna rangos desde Aprendiz hasta Gran Maestro",
-    "feature3Title": "Matriz de Cobertura del Clan",
-    "feature3Desc": "Visualiza la capacidad productiva de tu clan de un vistazo"
+    "featureMemberTitle": "Seguimiento de Miembros",
+    "featureMemberDesc": "Rastrear miembros, roles y permisos en toda tu organización",
+    "featureSyncTitle": "Sincronización en Tiempo Real",
+    "featureSyncDesc": "Todos los cambios se sincronizan instantáneamente en todo tu clan",
+    "featureInsightsTitle": "Informes e Insights",
+    "featureInsightsDesc": "Obtén información útil sobre la actividad de tu clan"
   },
   "nodes": {
     "title": "Ciudadanía de Nodo",
@@ -717,8 +722,54 @@
     "never": "Nunca",
     "noActivityData": "Sin Datos de Actividad",
     "noActivityDesc": "El seguimiento de actividad aparecerá aquí cuando los miembros empiecen a participar."
+  },  "fleet": {
+    "title": "Mi Hangar",
+    "titlePlural": "Mis Hangares",
+    "subtitle": "Gestionar naves por personaje",
+    "addShip": "Añadir Nave",
+    "totalShips": "Naves Totales",
+    "noShips": "Aún no hay naves en la flota",
+    "noShipsYet": "Aún no se han añadido naves",
+    "selectCharacter": "Seleccionar un personaje...",
+    "selectShip": "Seleccionar una nave...",
+    "ownershipType": "Tipo de Propiedad",
+    "pledged": "Prometida",
+    "inGame": "Compra en Juego",
+    "loaner": "Prestada",
+    "character": "Personaje",
+    "ship": "Nave",
+    "shipsSection": "Naves",
+    "vehiclesSection": "Vehículos Terrestres",
+    "role": "Rol",
+    "size": "Tamaño",
+    "crew": "Tripulación",
+    "cargo": "Carga",
+    "concept": "Concepto",
+    "removeShip": "Eliminar nave",
+    "removeVehicle": "Eliminar vehículo",
+    "migrationRequired": "Migración de Base de Datos Requerida",
+    "migrationMessage": "La función de seguimiento de naves requiere una migración de base de datos. Por favor, ejecute las últimas migraciones para habilitar esta función."
   },
-  "achievements": {
+  "ships": {
+    "title": "Naves del Gremio",
+    "subtitle": "Naves del gremio por tipo y rol",
+    "overview": "Vista General de Naves",
+    "totalShips": "Naves Totales",
+    "shipsSection": "Naves",
+    "vehiclesSection": "Vehículos Terrestres",
+    "owner": "Propietario",
+    "owners": "Propietarios",
+    "role": "Rol",
+    "size": "Tamaño",
+    "crew": "Tripulación",
+    "cargo": "Carga",
+    "concept": "Concepto",
+    "pledged": "Prometida",
+    "inGame": "En Juego",
+    "loaner": "Prestada",
+    "migrationRequired": "Migración de Base de Datos Requerida",
+    "migrationMessage": "La función de seguimiento de naves requiere una migración de base de datos. Por favor, ejecute las últimas migraciones para habilitar esta función."
+  },  "achievements": {
     "title": "Logros",
     "guildAchievements": "Logros del Clan",
     "unlocked": "Desbloqueado",
@@ -903,6 +954,65 @@
     "settings_view_permissions": {
       "name": "Ver Permisos",
       "description": "Ver la estructura de permisos del clan"
+    },
+    "ships_create": {
+      "name": "Crear Nave",
+      "description": "Agregar naves a los personajes"
+    },
+    "ships_edit_own": {
+      "name": "Editar Propias Naves",
+      "description": "Editar naves en tus propios personajes"
+    },
+    "ships_edit_any": {
+      "name": "Editar Cualquier Nave",
+      "description": "Editar naves en cualquier personaje"
+    },
+    "ships_delete_own": {
+      "name": "Eliminar Propias Naves",
+      "description": "Eliminar naves de tus propios personajes"
+    },
+    "ships_delete_any": {
+      "name": "Eliminar Cualquier Nave",
+      "description": "Eliminar naves de cualquier personaje"
+    }
+  },
+  "ror": {
+    "factions": {
+      "order": "Orden",
+      "destruction": "Destrucción"
+    },
+    "roles": {
+      "tank": "Tanque",
+      "melee-dps": "DPS Cuerpo a Cuerpo",
+      "skirmish-dps": "DPS Escaramuza",
+      "ranged-dps": "DPS a Distancia",
+      "healer": "Curador"
+    },
+    "classes": {
+      "ironbreaker": "Ironbreaker",
+      "slayer": "Slayer",
+      "runepriest": "Runepriest",
+      "engineer": "Engineer",
+      "knight-blazing-sun": "Caballero del Sol Ardiente",
+      "witch-hunter": "Cazador de Brujas",
+      "warrior-priest": "Sacerdote Guerrero",
+      "bright-wizard": "Mago Brillante",
+      "swordmaster": "Maestro de la Espada",
+      "white-lion": "León Blanco",
+      "archmage": "Archimago",
+      "shadow-warrior": "Guerrero Sombra",
+      "black-orc": "Orco Negro",
+      "choppa": "Choppa",
+      "shaman": "Chamán",
+      "squig-herder": "Cuidador de Squigs",
+      "chosen": "Elegido",
+      "marauder": "Merodeador",
+      "zealot": "Zealot",
+      "magus": "Magus",
+      "black-guard": "Guardia Negro",
+      "witch-elf": "Elfa Bruja",
+      "disciple-khaine": "Discípulo de Khaine",
+      "sorceress": "Hechicera"
     }
   }
 }

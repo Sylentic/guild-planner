@@ -6,7 +6,7 @@ import { Announcement } from '@/lib/events';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AnnouncementFormProps {
-  clanId: string;
+  groupId: string;
   userId: string;
   initialData?: Partial<Announcement>;
   onSubmit: (announcement: Omit<Announcement, 'id' | 'created_at' | 'updated_at'>, sendDiscordNotification: boolean) => Promise<void>;
@@ -15,7 +15,7 @@ interface AnnouncementFormProps {
 }
 
 export function AnnouncementForm({
-  clanId,
+  groupId,
   userId,
   initialData,
   onSubmit,
@@ -47,7 +47,7 @@ export function AnnouncementForm({
 
     try {
       await onSubmit({
-        clan_id: clanId,
+        group_id: groupId,
         created_by: userId,
         title: title.trim(),
         content: content.trim(),
@@ -168,3 +168,4 @@ export function AnnouncementForm({
     </div>
   );
 }
+

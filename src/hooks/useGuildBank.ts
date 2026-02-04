@@ -52,7 +52,7 @@ interface UseGuildBankReturn {
   refresh: () => Promise<void>;
 }
 
-export function useGuildBank(clanId: string | null): UseGuildBankReturn {
+export function useGuildBank(groupId: string | null): UseGuildBankReturn {
   const [bank, setBank] = useState<GuildBank | null>(null);
   const [inventory, setInventory] = useState<BankInventoryWithResource[]>([]);
   const [transactions, setTransactions] = useState<BankTransactionWithDetails[]>([]);
@@ -63,7 +63,7 @@ export function useGuildBank(clanId: string | null): UseGuildBankReturn {
 
   // Fetch all bank data
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -76,7 +76,7 @@ export function useGuildBank(clanId: string | null): UseGuildBankReturn {
       const { data: bankData, error: bankError } = await supabase
         .from('guild_banks')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .maybeSingle();
 
       if (bankError) throw bankError;
@@ -169,7 +169,7 @@ export function useGuildBank(clanId: string | null): UseGuildBankReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
@@ -177,11 +177,11 @@ export function useGuildBank(clanId: string | null): UseGuildBankReturn {
 
   // Initialize bank for clan
   const initializeBank = async (): Promise<GuildBank> => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data, error: createError } = await supabase
       .from('guild_banks')
-      .insert({ clan_id: clanId })
+      .insert({ group_id: groupId })
       .select()
       .single();
 
@@ -419,3 +419,4 @@ export function useGuildBank(clanId: string | null): UseGuildBankReturn {
     refresh: fetchData,
   };
 }
+

@@ -156,3 +156,4 @@ export function GuestSignupForm({ eventId, alliedClanId, onSuccess }: GuestSignu
     </div>
   );
 }
+

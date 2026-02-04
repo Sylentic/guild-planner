@@ -1,0 +1,47 @@
+{
+  "gathering": [
+    { "id": "mining", "name": "Mining", "icon": "⛏️", "dependencies": [] },
+    { "id": "lumberjacking", "name": "Lumberjacking", "icon": "🪓", "dependencies": [] },
+    { "id": "herbalism", "name": "Herbalism", "icon": "🌿", "dependencies": [] },
+    { "id": "fishing", "name": "Fishing", "icon": "🎣", "dependencies": [] },
+    { "id": "hunting", "name": "Hunting", "icon": "🏹", "dependencies": [] }
+  ],
+  "processing": [
+    { "id": "metalworking", "name": "Metalworking", "icon": "⚙️", "dependencies": ["mining"] },
+    { "id": "lumber_milling", "name": "Lumber Milling", "icon": "🪚", "dependencies": ["lumberjacking"] },
+    { "id": "stonemasonry", "name": "Stonemasonry", "icon": "🧱", "dependencies": ["mining"] },
+    { "id": "weaving", "name": "Weaving", "icon": "🧵", "dependencies": ["herbalism", "farming"] },
+    { "id": "tanning", "name": "Tanning", "icon": "🦴", "dependencies": ["hunting"] },
+    { "id": "alchemy", "name": "Alchemy", "icon": "⚗️", "dependencies": ["herbalism"] },
+    { "id": "farming", "name": "Farming", "icon": "🌾", "dependencies": ["herbalism"] },
+    { "id": "animal_husbandry", "name": "Animal Husbandry", "icon": "🐴", "dependencies": ["hunting"] },
+    { "id": "cooking", "name": "Cooking", "icon": "🍳", "dependencies": ["fishing", "farming", "animal_husbandry"] }
+  ],
+  "crafting": [
+    { "id": "weapon_smithing", "name": "Weapon Smithing", "icon": "⚔️", "dependencies": ["metalworking", "lumber_milling"] },
+    { "id": "armor_smithing", "name": "Armor Smithing", "icon": "🛡️", "dependencies": ["metalworking", "weaving", "tanning"] },
+    { "id": "leatherworking", "name": "Leatherworking", "icon": "👜", "dependencies": ["tanning"] },
+    { "id": "tailoring", "name": "Tailoring", "icon": "👘", "dependencies": ["weaving", "tanning"] },
+    { "id": "jewelcrafting", "name": "Jewelcrafting", "icon": "💎", "dependencies": ["stonemasonry", "metalworking"] },
+    { "id": "carpentry", "name": "Carpentry", "icon": "🪑", "dependencies": ["lumber_milling", "metalworking"] },
+    { "id": "arcane_engineering", "name": "Arcane Engineering", "icon": "🔮", "dependencies": ["lumber_milling", "metalworking", "jewelcrafting"] },
+    { "id": "scribe", "name": "Scribe", "icon": "📜", "dependencies": ["lumber_milling", "alchemy", "tanning"] }
+  ],
+  "tiers": {
+    "gathering": { "label": "Gathering", "icon": "🪓", "color": "text-amber-400" },
+    "processing": { "label": "Processing", "icon": "⚙️", "color": "text-cyan-400" },
+    "crafting": { "label": "Crafting", "icon": "🔨", "color": "text-rose-400" }
+  },
+  "ranks": {
+    "1": { "name": "Apprentice", "short": "A", "color": "text-green-400" },
+    "2": { "name": "Journeyman", "short": "J", "color": "text-blue-400" },
+    "3": { "name": "Master", "short": "M", "color": "text-purple-400" },
+    "4": { "name": "Grandmaster", "short": "GM", "color": "text-orange-400" }
+  },
+  "limits": {
+    "4": 2,
+    "3": 3,
+    "2": 4,
+    "1": 5
+  }
+}

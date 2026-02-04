@@ -98,3 +98,4 @@ export function useGameTranslations() {
 
 // Export keys for direct use
 export { ARCHETYPE_KEYS, RACE_KEYS, PROFESSION_KEYS, RANK_KEYS, PARTY_ROLE_KEYS };
+

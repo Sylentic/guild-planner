@@ -18,11 +18,8 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      // Check if there's a redirect URL in localStorage
-      const redirectTo = localStorage.getItem('authRedirectTo');
-      localStorage.removeItem('authRedirectTo');
-
-      router.push(redirectTo || '/');
+      // Redirect to home - getURL() already ensures we're on the correct domain
+      router.push('/');
     };
 
     handleCallback();
@@ -37,3 +34,4 @@ export default function AuthCallbackPage() {
     </div>
   );
 }
+

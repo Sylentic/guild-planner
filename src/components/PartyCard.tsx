@@ -51,7 +51,7 @@ export function PartyCard({
   onEdit,
 }: PartyCardProps) {
   // Use permissions for this party's clan
-  const { loading, hasPermission, isLeadership, isAdmin } = usePermissions(party.clan_id);
+  const { loading, hasPermission, isLeadership, isAdmin } = usePermissions(party.group_id);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
   const [selectedRole, setSelectedRole] = useState<PartyRole>('ranged_dps');
@@ -311,3 +311,4 @@ export function PartyCard({
     </div>
   );
 }
+

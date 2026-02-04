@@ -39,7 +39,7 @@ export async function submitGuestRsvp(data: GuestRsvpRequest) {
       .from('guest_event_rsvps')
       .insert({
         event_id: data.eventId,
-        allied_clan_id: data.alliedClanId,
+        allied_group_id: data.alliedClanId,
         guest_name: data.guestName,
         class_id: data.classId,
         role: data.role,
@@ -59,3 +59,4 @@ export async function submitGuestRsvp(data: GuestRsvpRequest) {
     return { error: err instanceof Error ? err.message : 'Failed to submit RSVP' };
   }
 }
+

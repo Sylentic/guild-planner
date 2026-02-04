@@ -51,7 +51,7 @@ export const RACES = {
   renkai: { 
     name: "Ren'Kai", 
     parentRace: 'Kaivek Orc', 
-    description: 'Honor-bound warriors, masters of martial arts',
+    description: 'Honour-bound warriors, masters of martial arts',
     color: '#8b0000' 
   },
   vek: { 
@@ -236,3 +236,4 @@ export function getArchetypeInfo(archetypeId: ArchetypeId) {
 // Level constants
 export const MAX_LEVEL = 50;
 export const SECONDARY_ARCHETYPE_LEVEL = 25;
+

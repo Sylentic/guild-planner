@@ -168,7 +168,7 @@ export function PublicEventsView() {
                 key={event.id}
                 event={event}
                 timezone="UTC"
-                clanId={event.clan_id}
+                groupId={event.group_id}
                 userId="" // Anonymous user
                 characters={[]}
                 onRsvp={() => {
@@ -183,3 +183,4 @@ export function PublicEventsView() {
     </div>
   );
 }
+

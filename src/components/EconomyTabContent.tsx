@@ -13,11 +13,11 @@ import { CaravanListView } from './CaravanListView';
 type EconomySubTab = 'bank' | 'freeholds' | 'caravans';
 
 interface EconomyTabContentProps {
-  clanId: string;
+  groupId: string;
   isOfficer: boolean;
 }
 
-export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps) {
+export function EconomyTabContent({ groupId, isOfficer }: EconomyTabContentProps) {
   const { t } = useLanguage();
   const [subTab, setSubTab] = useState<EconomySubTab>('bank');
 
@@ -30,14 +30,14 @@ export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps)
     initializeBank,
     deposit,
     withdraw,
-  } = useGuildBank(clanId);
+  } = useGuildBank(groupId);
 
   const {
     freeholds,
     loading: freeholdsLoading,
     createFreehold,
     addBuilding,
-  } = useFreeholds(clanId);
+  } = useFreeholds(groupId);
 
   const {
     upcomingCaravans,
@@ -45,7 +45,7 @@ export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps)
     createCaravan,
     signUpAsEscort,
     withdrawEscort,
-  } = useCaravans(clanId);
+  } = useCaravans(groupId);
 
   const SUB_TABS = [
     { id: 'bank', icon: Warehouse, label: t('bank.title') },
@@ -136,3 +136,4 @@ export function EconomyTabContent({ clanId, isOfficer }: EconomyTabContentProps)
     </div>
   );
 }
+

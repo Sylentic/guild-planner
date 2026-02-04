@@ -2,23 +2,23 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from './useAuth';
-import { useClanMembership } from './useClanMembership';
-import { ClanRole, roleHasPermission, canManageRole, DEFAULT_ROLE_PERMISSIONS } from '@/lib/permissions';
+import { useGroupMembership } from './useGroupMembership';
+import { GroupRole, roleHasPermission, canManageRole, DEFAULT_ROLE_PERMISSIONS } from '@/lib/permissions';
 
 export interface RolePermissions {
-  role: ClanRole;
+  role: GroupRole;
   permissions: Set<string>;
 }
 
-export function usePermissions(clanId?: string) {
+export function usePermissions(groupId ?: string) {
   const { user } = useAuth();
-  const { membership } = useClanMembership(clanId || null, user?.id || null);
+  const { membership } = useGroupMembership(groupId || null, user?.id || null);
   const [customPermissions, setCustomPermissions] = useState<Record<string, boolean> | null>(null);
   const [loading, setLoading] = useState(false);
   
   // Fetch custom permission overrides from the server
   useEffect(() => {
-    if (!clanId || !user) return;
+    if (!groupId || !user) return;
 
     const fetchPermissions = async () => {
       setLoading(true);
@@ -26,8 +26,8 @@ export function usePermissions(clanId?: string) {
         const { data: { session } } = await (await import('@/lib/supabase')).supabase.auth.getSession();
         if (!session) return;
 
-        // Include clan_id as a query parameter
-        const response = await fetch(`/api/clan/permissions?clan_id=${encodeURIComponent(clanId!)}` , {
+        // Include group_id as a query parameter
+        const response = await fetch(`/api/group/permissions?group_id=${encodeURIComponent(groupId!)}` , {
           headers: {
             'Authorization': `Bearer ${session.access_token}`,
           },
@@ -55,7 +55,7 @@ export function usePermissions(clanId?: string) {
     };
 
     fetchPermissions();
-  }, [clanId, user, membership?.role]);
+  }, [groupId, user, membership?.role]);
   
   // Check if current user has a specific permission
   // First checks custom overrides, then falls back to default role permissions
@@ -72,17 +72,17 @@ export function usePermissions(clanId?: string) {
     }
 
     // Fall back to default role permissions
-    const userRole = membership.role as ClanRole;
+    const userRole = membership.role as GroupRole;
     return roleHasPermission(userRole, permission);
   }, [user, membership, customPermissions]);
 
   // Get current user's role
-  const getUserRole = useCallback((): ClanRole => {
-    return (membership?.role as ClanRole) ?? 'pending';
+  const getUserRole = useCallback((): GroupRole => {
+    return (membership?.role as GroupRole) ?? 'pending';
   }, [membership]);
 
   // Check if user can manage another role
-  const canManage = useCallback((targetRole: ClanRole): boolean => {
+  const canManage = useCallback((targetRole: GroupRole): boolean => {
     const userRole = getUserRole();
     return canManageRole(userRole, targetRole);
   }, [getUserRole]);
@@ -120,3 +120,4 @@ export function usePermissions(clanId?: string) {
     loading,
   };
 }
+

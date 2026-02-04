@@ -3,14 +3,15 @@
 import { useState } from 'react';
 import { Plus, Sword } from 'lucide-react';
 import { CharacterForm } from './CharacterForm';
-import { CharacterData } from '@/hooks/useClanData';
+import { CharacterData } from '@/hooks/useGroupData';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AddCharacterButtonProps {
   onAdd: (data: CharacterData) => Promise<void>;
+  gameSlug?: string;
 }
 
-export function AddCharacterButton({ onAdd }: AddCharacterButtonProps) {
+export function AddCharacterButton({ onAdd, gameSlug = 'aoc' }: AddCharacterButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useLanguage();
 
@@ -36,6 +37,7 @@ export function AddCharacterButton({ onAdd }: AddCharacterButtonProps) {
         <CharacterForm
           onSubmit={handleSubmit}
           onCancel={() => setIsModalOpen(false)}
+          gameSlug={gameSlug}
         />
       )}
     </>
@@ -44,3 +46,4 @@ export function AddCharacterButton({ onAdd }: AddCharacterButtonProps) {
 
 // Legacy export for backward compatibility
 export { AddCharacterButton as AddMemberButton };
+

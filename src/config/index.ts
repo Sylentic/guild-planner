@@ -4,56 +4,75 @@
  * This file exports all game data from JSON configuration files.
  * These configs are designed to be easily modifiable by external contributors
  * via Pull Requests without touching application code.
+ * 
+ * Game-specific configs are now organized under config/games/ directory.
  */
 
-import professionsData from './professions.json';
-import archetypesData from './archetypes.json';
-import racesData from './races.json';
+import aocGameData from './games/aoc.json';
+import starCitizenGameData from './games/star-citizen.json';
 import itemRaritiesData from './itemRarities.json';
-import supplyChainData from './supplyChain.json';
 
-// Re-export with proper typing
-export const professionsConfig = professionsData;
-export const archetypesConfig = archetypesData;
-export const racesConfig = racesData;
+// Re-export game configs
+export const aocConfig = aocGameData;
+export const starCitizenConfig = starCitizenGameData;
+
+// Legacy exports for backward compatibility (map to AoC game config)
+export const professionsConfig = aocGameData.professions;
+export const archetypesConfig = aocGameData.archetypes;
+export const racesConfig = aocGameData.races;
+
+// Shared configs (not game-specific)
 export const itemRaritiesConfig = itemRaritiesData;
-export const supplyChainConfig = supplyChainData;
+export const supplyChainConfig = aocGameData.supplyChain;
+
+// Helper to get game config by slug
+export function getGameConfig(gameSlug: string) {
+  switch (gameSlug) {
+    case 'aoc':
+      return aocConfig;
+    case 'star-citizen':
+      return starCitizenConfig;
+    default:
+      return aocConfig; // fallback to AoC
+  }
+}
 
 // Type definitions derived from config
 export type ProfessionId = 
-  | typeof professionsData.gathering[number]['id']
-  | typeof professionsData.processing[number]['id']
-  | typeof professionsData.crafting[number]['id'];
+  | typeof aocGameData.professions.gathering[number]['id']
+  | typeof aocGameData.professions.processing[number]['id']
+  | typeof aocGameData.professions.crafting[number]['id'];
 
-export type ArchetypeId = typeof archetypesData.list[number]['id'];
-export type RaceId = typeof racesData.list[number]['id'];
+export type ArchetypeId = typeof aocGameData.archetypes.list[number]['id'];
+export type RaceId = typeof aocGameData.races.list[number]['id'];
 export type RarityId = typeof itemRaritiesData.list[number]['id'];
 
 // Helper functions
 export function getProfessionById(id: string) {
   const allProfessions = [
-    ...professionsData.gathering,
-    ...professionsData.processing,
-    ...professionsData.crafting,
+    ...aocGameData.professions.gathering,
+    ...aocGameData.professions.processing,
+    ...aocGameData.professions.crafting,
   ];
   return allProfessions.find(p => p.id === id);
 }
 
 export function getArchetypeById(id: string) {
-  return archetypesData.list.find(a => a.id === id);
+  return aocGameData.archetypes.list.find(a => a.id === id);
 }
 
 export function getRaceById(id: string) {
-  return racesData.list.find(r => r.id === id);
+  return aocGameData.races.list.find(r => r.id === id);
 }
 
 export function getClassName(primary: string, secondary: string): string | undefined {
-  const classes = archetypesData.classes as Record<string, Record<string, string>>;
+  const classes = aocGameData.archetypes.classes as Record<string, Record<string, string>>;
   return classes[primary]?.[secondary];
 }
 
 export function getSupplyChainForProfession(professionId: string) {
-  return supplyChainData.chains.filter(chain => 
+  return aocGameData.supplyChain.chains.filter(chain => 
     chain.flow.includes(professionId)
   );
 }
+

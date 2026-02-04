@@ -49,13 +49,13 @@ interface UseCaravansReturn {
   refresh: () => Promise<void>;
 }
 
-export function useCaravans(clanId: string | null): UseCaravansReturn {
+export function useCaravans(groupId: string | null): UseCaravansReturn {
   const [caravans, setCaravans] = useState<CaravanEventWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -74,7 +74,7 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
           ),
           caravan_waypoints (*)
         `)
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('departure_at', { ascending: true });
 
       if (fetchError) throw fetchError;
@@ -95,7 +95,7 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
@@ -108,7 +108,7 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
   );
 
   const createCaravan = async (data: CaravanData): Promise<string> => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -119,7 +119,7 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
     const { data: newCaravan, error: insertError } = await supabase
       .from('caravan_events')
       .insert({
-        clan_id: clanId,
+        group_id: groupId,
         created_by: user?.id,
         ...caravanData,
       })
@@ -240,3 +240,4 @@ export function useCaravans(clanId: string | null): UseCaravansReturn {
     refresh: fetchData,
   };
 }
+

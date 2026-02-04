@@ -1,46 +1,70 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Handshake, Hammer, Swords, Castle } from 'lucide-react';
+import { Trophy, Handshake, Hammer, Swords, Castle, Rocket } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CharacterWithProfessions } from '@/lib/types';
+import { getGame } from '@/lib/games';
 import { PartiesList } from './PartiesList';
 import { AchievementsView } from './AchievementsView';
 import { AchievementAdminPanel } from './AchievementAdminPanel';
 import { AllianceView } from './AllianceView';
 import { BuildLibrary } from './BuildLibrary';
 import { SiegeTabContent } from './SiegeTabContent';
+import { ShipsView } from './ShipsView';
 import { useParties } from '@/hooks/useParties';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useAlliances } from '@/hooks/useAlliances';
 import { useBuilds } from '@/hooks/useBuilds';
 
-type MoreSubTab = 'parties' | 'siege' | 'achievements' | 'builds' | 'alliances';
+type MoreSubTab = 'parties' | 'siege' | 'achievements' | 'builds' | 'alliances' | 'ships';
 
 interface MoreTabContentProps {
-  clanId: string;
+  groupId: string;
   userId: string;
   characters: CharacterWithProfessions[];
   isOfficer: boolean;
+  gameSlug?: string;
 }
 
-export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTabContentProps) {
+export function MoreTabContent({ groupId, userId, characters, isOfficer, gameSlug = 'aoc' }: MoreTabContentProps) {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  // Always initialize with default, let useEffect handle URL sync
-  const [subTab, setSubTab] = useState<MoreSubTab>('parties');
+  // Get game features dynamically
+  let gameFeatures = { parties: true, siege: true, achievements: true, builds: true, alliances: true, ships: false };
+  try {
+    const game = getGame(gameSlug as any);
+    gameFeatures = game.features as any;
+  } catch (e) {
+    // Fallback to defaults if game not found
+  }
+
+  // Filter sub-tabs based on game features
+  const allowedSubTabs: MoreSubTab[] = [];
+  if (gameFeatures.parties) allowedSubTabs.push('parties');
+  if (gameFeatures.siege) allowedSubTabs.push('siege');
+  if (gameFeatures.achievements) allowedSubTabs.push('achievements');
+  if (gameFeatures.builds) allowedSubTabs.push('builds');
+  if (gameFeatures.alliances) allowedSubTabs.push('alliances');
+  if (gameFeatures.ships) allowedSubTabs.push('ships');
+
+  // Always initialize with default available subtab for the game
+  const defaultSubTab: MoreSubTab = allowedSubTabs.length > 0 ? allowedSubTabs[0] : 'parties';
+  const [subTab, setSubTab] = useState<MoreSubTab>(defaultSubTab);
 
   // Sync state with URL parameter on mount and when searchParams changes
   useEffect(() => {
     const subTabParam = searchParams?.get('subTab');
-    if (subTabParam && ['parties', 'siege', 'achievements', 'builds', 'alliances'].includes(subTabParam)) {
+    if (subTabParam && allowedSubTabs.includes(subTabParam as MoreSubTab)) {
       setSubTab(subTabParam as MoreSubTab);
+    } else {
+      setSubTab(defaultSubTab);
     }
-  }, [searchParams]);
+  }, [searchParams, gameSlug]);
 
   // Update URL when sub-tab changes
   const handleSubTabChange = (newSubTab: MoreSubTab) => {
@@ -58,7 +82,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
     assignCharacter,
     removeFromRoster,
     toggleConfirmed,
-  } = useParties(clanId, characters);
+  } = useParties(groupId, characters);
 
   const {
     achievements,
@@ -66,7 +90,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
     totalPoints,
     loading: achievementsLoading,
     refresh: refreshAchievements,
-  } = useAchievements(clanId);
+  } = useAchievements(groupId);
 
   const {
     myAlliance,
@@ -74,23 +98,39 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
     createAlliance,
     inviteGuild,
     leaveAlliance,
-  } = useAlliances(clanId);
+  } = useAlliances(groupId);
 
+  // Only load builds for games that support it
   const {
     builds,
     loading: buildsLoading,
     createBuild,
     likeBuild,
     copyBuild,
-  } = useBuilds(clanId!);
+  } = useBuilds(gameFeatures.builds ? groupId : null);
 
-  const SUB_TABS = [
-    { id: 'parties', icon: Swords, label: t('nav.parties') },
-    { id: 'siege', icon: Castle, label: t('nav.siege') },
-    { id: 'achievements', icon: Trophy, label: t('achievements.title') },
-    { id: 'builds', icon: Hammer, label: t('builds.title') },
-    { id: 'alliances', icon: Handshake, label: t('alliance.title') },
-  ] as const;
+  // Define all possible tabs with their configurations
+  const ALL_SUB_TABS = [
+    { id: 'parties' as const, icon: Swords, label: t('nav.parties') },
+    { id: 'siege' as const, icon: Castle, label: t('nav.siege') },
+    { id: 'achievements' as const, icon: Trophy, label: t('achievements.title') },
+    { id: 'builds' as const, icon: Hammer, label: t('builds.title') },
+    { id: 'alliances' as const, icon: Handshake, label: t('alliance.title') },
+    { id: 'ships' as const, icon: Rocket, label: t('ships.overview') },
+  ];
+
+  // Filter tabs dynamically based on game features
+  const SUB_TABS = ALL_SUB_TABS.filter(tab => {
+    switch (tab.id) {
+      case 'parties': return gameFeatures.parties;
+      case 'siege': return gameFeatures.siege;
+      case 'achievements': return gameFeatures.achievements;
+      case 'builds': return gameFeatures.builds;
+      case 'alliances': return gameFeatures.alliances;
+      case 'ships': return gameFeatures.ships;
+      default: return false;
+    }
+  });
 
 
 
@@ -119,7 +159,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
         <PartiesList
           parties={parties}
           characters={characters}
-          clanId={clanId}
+          groupId={groupId}
           userId={userId}
           canManage={isOfficer}
           onCreateParty={createParty}
@@ -133,7 +173,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
 
       {subTab === 'siege' && (
         <SiegeTabContent
-          clanId={clanId}
+          groupId={groupId}
           characters={characters}
           userId={userId}
         />
@@ -147,7 +187,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
             {isOfficer && (
               <AchievementAdminPanel
                 achievements={achievements}
-                clanId={clanId}
+                groupId={groupId}
                 onRefresh={refreshAchievements}
               />
             )}
@@ -179,7 +219,7 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
         ) : (
           <AllianceView
             alliance={myAlliance}
-            clanId={clanId}
+            groupId={groupId}
             onCreateAlliance={isOfficer ? createAlliance : undefined}
             onInviteGuild={isOfficer ? inviteGuild : undefined}
             onLeave={leaveAlliance}
@@ -187,6 +227,17 @@ export function MoreTabContent({ clanId, userId, characters, isOfficer }: MoreTa
           />
         )
       )}
+
+      {subTab === 'ships' && (
+        <ShipsView
+          characters={[]}
+          userId={userId}
+          canManage={isOfficer}
+          groupId={groupId}
+          gameSlug={gameSlug}
+        />
+      )}
     </div>
   );
 }
+

@@ -2,40 +2,44 @@
 
 ## Prerequisites
 
-- GitHub account
-- Vercel account (free)
-- Supabase account (free)
-- Discord account (for OAuth)
+* GitHub account
+* Vercel account (free)
+* Supabase account (free)
+* Discord account (for OAuth)
 
----
+***
 
 ## Step 1: Create Supabase Project
 
 1. Go to [supabase.com](https://supabase.com) and sign in
 2. Click **New Project**
 3. Fill in:
-   - **Name**: `aoc-profession-planner`
-   - **Region**: Choose closest to your users
-   - **Database Password**: Save this securely
+   * **Name**: `aoc-profession-planner`
+   * **Region**: Choose closest to your users
+   * **Database Password**: Save this securely
 4. Wait for project to be created (~2 minutes)
 
 ### Create Database Tables
 
 1. Go to **SQL Editor** in the left sidebar
 2. Click **New Query**
-3. Run migrations in order:
-   - First: `supabase/migrations/001_initial_schema.sql`
-   - Then: `supabase/migrations/002_character_management.sql`
+3. Run all migrations in the `supabase/migrations/` folder in numeric order:
+   * `001_initial_schema.sql` - Core database tables
+   * `002_character_management.sql` - Character and profile tables
+   * ... (continue through all numbered migrations)
+   * Latest migration (per-game Discord, role requirements, etc.)
 4. Click **Run** for each migration
+
+**Tip**: Use `npx supabase db push` locally to apply all pending migrations automatically.
 
 ### Get API Keys
 
 1. Go to **Settings** → **API**
 2. Copy these values:
-   - **Project URL**: `https://xxxxx.supabase.co`
-   - **anon public key**: `eyJhbGciOiJI...`
+   * **Project URL**: `https://xxxxx.supabase.co`
+   * **anon public key**: `eyJhbGciOiJI...`
 
----
+***
 
 ## Step 2: Set Up Discord OAuth
 
@@ -47,10 +51,12 @@
 4. Go to **OAuth2** → **General**
 5. Copy **Client ID** and **Client Secret**
 6. Add redirect URI:
-   ```
+
+   ```text
    https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback
    ```
-   (Replace YOUR_PROJECT_ID with your Supabase project ID)
+
+   (Replace YOUR\_PROJECT\_ID with your Supabase project ID)
 
 ### Enable Discord in Supabase
 
@@ -59,7 +65,7 @@
 3. Paste **Client ID** and **Client Secret**
 4. Save
 
----
+***
 
 ## Step 3: Configure Environment Variables
 
@@ -78,13 +84,14 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 1. In Vercel project → **Settings** → **Environment Variables**
 2. Add these variables for all environments:
 
-| Name                            | Value                                                  |
-| ------------------------------- | ------------------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase URL                                      |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your anon key                                          |
-| `NEXT_PUBLIC_SITE_URL`          | Your Vercel URL (e.g., https://aoc-planner.vercel.app) |
+| Name                            | Value                              |
+| ------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase URL                  |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your anon key                      |
+| `NEXT_PUBLIC_SITE_URL`          | Your Vercel URL (e.g.,             |
+|                                 | <https://aoc-planner.vercel.app>)  |
 
----
+***
 
 ## Step 4: Deploy to Vercel
 
@@ -109,10 +116,10 @@ After deployment, add your Vercel URL to Discord OAuth:
 
 After initial setup:
 
-- Every push to `main` → Production deploy
-- Every pull request → Preview deploy
+* Every push to `main` → Production deploy
+* Every pull request → Preview deploy
 
----
+***
 
 ## Step 5: Verify Deployment
 
@@ -123,11 +130,11 @@ After initial setup:
 5. You should become the Admin of the new clan
 6. Try logging in with another Discord account to test the apply/accept flow
 
----
+***
 
 ## Authentication Flow
 
-```
+```text
 User visits /my-clan
        ↓
 Not logged in? → Redirect to /login → Discord OAuth
@@ -141,32 +148,32 @@ Pending member? → Wait for Admin/Officer approval
 Approved member → Full access to clan dashboard
 ```
 
----
+***
 
 ## Troubleshooting
 
-### "Invalid redirect_uri"
+### "Invalid redirect\_uri"
 
-- Check Discord Developer Portal redirect URIs match exactly
-- Include both Supabase callback and Vercel callback URLs
+* Check Discord Developer Portal redirect URIs match exactly
+* Include both Supabase callback and Vercel callback URLs
 
 ### User stuck in loading after Discord login
 
-- Check Supabase Auth logs for errors
-- Verify Site URL is set correctly in Supabase
+* Check Supabase Auth logs for errors
+* Verify Site URL is set correctly in Supabase
 
 ### Missing Supabase environment variables
 
-- Check that all env vars are set in Vercel
-- Redeploy after adding variables
+* Check that all env vars are set in Vercel
+* Redeploy after adding variables
 
 ### Data not persisting
 
-- Check Supabase → Table Editor to see if data is being saved
-- Check browser console for errors
-- Verify RLS policies are created (from schema.sql)
+* Check Supabase → Table Editor to see if data is being saved
+* Check browser console for errors
+* Verify RLS policies are created (from schema.sql)
 
----
+***
 
 ## Security Notes
 

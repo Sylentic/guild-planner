@@ -51,7 +51,11 @@
     "characters": "Characters",
     "events": "Events",
     "parties": "Parties",
+    "alliances": "Alliances",
     "matrix": "Matrix",
+    "fleet": "My Hangar",
+    "ships": "Guild Ships",
+    "guild-ships": "Guild Ships",
     "manage": "Manage",
     "siege": "Siege",
     "economy": "Economy",
@@ -60,7 +64,7 @@
   "auth": {
     "signInWithDiscord": "Sign in with Discord",
     "signingIn": "Signing in...",
-    "signInDescription": "Sign in with your Discord account to manage your guild's profession matrix, create events, and organize parties.",
+    "signInDescription": "Sign in with your Discord account to manage your guild's profession matrix, create events, and organise parties.",
     "welcome": "Welcome to Guild Planner",
     "pleaseSignIn": "Please sign in to access settings",
     "goToLogin": "Go to Login",
@@ -146,6 +150,7 @@
     "duration": "Duration",
     "upcomingEvents": "Upcoming Events",
     "noEvents": "No events scheduled",
+    "createEventDesc": "Create an event to organise your group.",
     "rsvp": "RSVP",
     "attending": "Attending",
     "maybe": "Maybe",
@@ -362,19 +367,19 @@
     "allRightsReserved": "All Rights Reserved"
   },
   "home": {
-    "title": "AoC Guild Planner",
-    "subtitle": "Plan and manage your guild's artisan professions for Ashes of Creation",
+    "title": "Multi-Game Guild Planner",
+    "subtitle": "Manage your guild across any game - Ashes of Creation, Star Citizen, and more",
     "enterClanPlaceholder": "Enter your clan name...",
     "loggedInHint": "You'll be able to create or join this clan",
     "notLoggedInHint": "Login with Discord to create or join clans",
     "yourClans": "Your Clans",
     "noClans": "You haven't joined any clans yet. Enter a clan name above to get started!",
-    "feature1Title": "Track All 22 Professions",
-    "feature1Desc": "Gathering, Processing, and Crafting with full dependency chains",
-    "feature2Title": "Manage Guild Members",
-    "feature2Desc": "Assign ranks from Apprentice to Grandmaster",
-    "feature3Title": "Guild Coverage Matrix",
-    "feature3Desc": "See your guild's productive strength at a glance"
+    "featureMemberTitle": "Member Tracking",
+    "featureMemberDesc": "Track members, roles, and permissions across your organization",
+    "featureSyncTitle": "Real-time Sync",
+    "featureSyncDesc": "All changes sync instantly across your entire guild",
+    "featureInsightsTitle": "Insights & Reports",
+    "featureInsightsDesc": "Get actionable insights about your guild's activity"
   },
   "nodes": {
     "title": "Node Citizenship",
@@ -453,7 +458,7 @@
     },
     "createEvent": "Create Event",
     "noUpcoming": "No Upcoming Sieges",
-    "noUpcomingDesc": "Create a siege event to organize your clan."
+    "noUpcomingDesc": "Create a siege event to organise your clan."
   },
   "loot": {
     "title": "Loot & DKP",
@@ -721,6 +726,54 @@
     "noActivityData": "No Activity Data",
     "noActivityDesc": "Activity tracking will appear here once members start participating."
   },
+  "fleet": {
+    "title": "My Hangar",
+    "titlePlural": "My Hangars",
+    "subtitle": "Manage ships by character",
+    "addShip": "Add Ship",
+    "totalShips": "Total Ships",
+    "noShips": "No ships in the fleet yet",
+    "noShipsYet": "No ships added yet",
+    "selectCharacter": "Select a character...",
+    "selectShip": "Select a ship...",
+    "ownershipType": "Ownership Type",
+    "pledged": "Pledged",
+    "inGame": "In-Game Purchase",
+    "loaner": "Loaner",
+    "character": "Character",
+    "ship": "Ship",
+    "shipsSection": "Ships",
+    "vehiclesSection": "Ground Vehicles",
+    "role": "Role",
+    "size": "Size",
+    "crew": "Crew",
+    "cargo": "Cargo",
+    "concept": "Concept",
+    "removeShip": "Remove ship",
+    "removeVehicle": "Remove vehicle",
+    "migrationRequired": "Database Migration Required",
+    "migrationMessage": "The ship tracking feature requires a database migration. Please run the latest migrations to enable this feature."
+  },
+  "ships": {
+    "title": "Guild Ships",
+    "subtitle": "Guild ships by type and role",
+    "overview": "Ships Overview",
+    "totalShips": "Total Ships",
+    "shipsSection": "Ships",
+    "vehiclesSection": "Ground Vehicles",
+    "owner": "Owner",
+    "owners": "Owners",
+    "role": "Role",
+    "size": "Size",
+    "crew": "Crew",
+    "cargo": "Cargo",
+    "concept": "Concept",
+    "pledged": "Pledged",
+    "inGame": "In-Game",
+    "loaner": "Loaner",
+    "migrationRequired": "Database Migration Required",
+    "migrationMessage": "The ship tracking feature requires a database migration. Please run the latest migrations to enable this feature."
+  },
   "achievements": {
     "title": "Achievements",
     "guildAchievements": "Guild Achievements",
@@ -906,6 +959,65 @@
     "settings_view_permissions": {
       "name": "View Permissions",
       "description": "View the guild's permission structure"
+    },
+    "ships_create": {
+      "name": "Create Ship",
+      "description": "Add ships to characters"
+    },
+    "ships_edit_own": {
+      "name": "Edit Own Ships",
+      "description": "Edit ships on your own characters"
+    },
+    "ships_edit_any": {
+      "name": "Edit Any Ship",
+      "description": "Edit ships on any character"
+    },
+    "ships_delete_own": {
+      "name": "Delete Own Ships",
+      "description": "Delete ships from your own characters"
+    },
+    "ships_delete_any": {
+      "name": "Delete Any Ship",
+      "description": "Delete ships from any character"
+    }
+  },
+  "ror": {
+    "factions": {
+      "order": "Order",
+      "destruction": "Destruction"
+    },
+    "roles": {
+      "tank": "Tank",
+      "melee-dps": "Melee DPS",
+      "skirmish-dps": "Skirmish DPS",
+      "ranged-dps": "Ranged DPS",
+      "healer": "Healer"
+    },
+    "classes": {
+      "ironbreaker": "Ironbreaker",
+      "slayer": "Slayer",
+      "runepriest": "Runepriest",
+      "engineer": "Engineer",
+      "knight-blazing-sun": "Knight of the Blazing Sun",
+      "witch-hunter": "Witch Hunter",
+      "warrior-priest": "Warrior Priest",
+      "bright-wizard": "Bright Wizard",
+      "swordmaster": "Swordmaster",
+      "white-lion": "White Lion",
+      "archmage": "Archmage",
+      "shadow-warrior": "Shadow Warrior",
+      "black-orc": "Black Orc",
+      "choppa": "Choppa",
+      "shaman": "Shaman",
+      "squig-herder": "Squig Herder",
+      "chosen": "Chosen",
+      "marauder": "Marauder",
+      "zealot": "Zealot",
+      "magus": "Magus",
+      "black-guard": "Black Guard",
+      "witch-elf": "Witch Elf",
+      "disciple-khaine": "Disciple of Khaine",
+      "sorceress": "Sorceress"
     }
   }
 }

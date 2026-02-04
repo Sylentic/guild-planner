@@ -10,3 +10,4 @@ export function ClanLoadingScreen({ message }: { message?: string }) {
     </div>
   );
 }
+

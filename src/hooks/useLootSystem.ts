@@ -67,7 +67,7 @@ interface UseLootSystemReturn {
   refresh: () => Promise<void>;
 }
 
-export function useLootSystem(clanId: string | null): UseLootSystemReturn {
+export function useLootSystem(groupId: string | null): UseLootSystemReturn {
   const [lootSystem, setLootSystem] = useState<LootSystem | null>(null);
   const [leaderboard, setLeaderboard] = useState<DKPPointsWithCharacter[]>([]);
   const [lootHistory, setLootHistory] = useState<LootHistoryWithDetails[]>([]);
@@ -76,7 +76,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
 
   // Fetch loot system and data
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -89,7 +89,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
       const { data: systemData, error: systemError } = await supabase
         .from('loot_systems')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .eq('is_active', true)
         .maybeSingle();
 
@@ -140,7 +140,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
           level: p.members.level,
           is_main: p.members.is_main,
           professions: [],
-          clan_id: clanId,
+          group_id: groupId,
           user_id: null,
           secondary_archetype: null,
           created_at: '',
@@ -201,7 +201,7 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   // Initial fetch
   useEffect(() => {
@@ -210,12 +210,12 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
 
   // Create loot system
   const createSystem = async (data: LootSystemData): Promise<LootSystem> => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data: newSystem, error: createError } = await supabase
       .from('loot_systems')
       .insert({
-        clan_id: clanId,
+        group_id: groupId,
         ...data,
         is_active: true,
       })
@@ -424,3 +424,4 @@ export function useLootSystem(clanId: string | null): UseLootSystemReturn {
     refresh: fetchData,
   };
 }
+

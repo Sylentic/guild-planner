@@ -290,3 +290,4 @@ export function ProfessionHealth({ members }: ProfessionHealthProps) {
     </div>
   );
 }
+

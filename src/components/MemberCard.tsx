@@ -3,8 +3,11 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash2, Edit2, Check, X, AlertTriangle, Star } from 'lucide-react';
 import { CharacterWithProfessions, RankLevel, RANK_COLORS } from '@/lib/types';
+import { SUBSCRIBER_COLORS, SUBSCRIBER_TIERS } from '@/games/starcitizen/config/subscriber-ships';
+import { CenturionStarSVG, ImperatorStarSVG, CenturionSVG, ImperatorSVG } from './SubscriberIcons';
 import { getRankSummary, checkRankLimits, PROFESSIONS_BY_TIER, TIER_CONFIG } from '@/lib/professions';
 import { RACES, ARCHETYPES, getClassName, RaceId, ArchetypeId } from '@/lib/characters';
+import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, RORRole } from '@/games/returnofreckooning/config';
 import { ProfessionSelector } from './ProfessionSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -17,6 +20,7 @@ interface CharacterCardProps {
   readOnly?: boolean;
   mainCharacterName?: string; // Name of the main character this alt belongs to
   altCharacters?: Array<{ id: string; name: string }>; // List of alts for this main character
+  gameSlug?: string; // Game slug to determine if professions should be shown
 }
 
 export function CharacterCard({ 
@@ -27,7 +31,8 @@ export function CharacterCard({
   onEdit,
   readOnly = false,
   mainCharacterName,
-  altCharacters = []
+  altCharacters = [],
+  gameSlug = 'aoc'
 }: CharacterCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -51,6 +56,14 @@ export function CharacterCard({
   const className = character.primary_archetype 
     ? getClassName(character.primary_archetype as ArchetypeId, character.secondary_archetype as ArchetypeId | null)
     : null;
+
+  const subscriberTier = character.subscriber_tier || null;
+  const subscriberSince = character.subscriber_since ? new Date(character.subscriber_since) : null;
+
+  // Get RoR character info
+  const rorFaction = character.ror_faction ? ROR_FACTIONS[character.ror_faction as keyof typeof ROR_FACTIONS] : null;
+  const rorClass = character.ror_class ? ROR_CLASSES.find(c => c.id === character.ror_class) : null;
+  const rorRole = rorClass ? ROR_ROLE_CONFIG[rorClass.role] : null;
 
   const handleSave = async () => {
     if (editName.trim() && editName !== character.name) {
@@ -147,19 +160,51 @@ export function CharacterCard({
                       Lv.{character.level}
                     </span>
                   )}
+                  {gameSlug === 'starcitizen' && subscriberTier && (
+                    <span
+                      className="text-sm font-bold px-2 py-0.5 rounded border-2 flex items-center gap-2 leading-none"
+                      style={{
+                        borderColor: SUBSCRIBER_COLORS[subscriberTier].primary,
+                        color: SUBSCRIBER_COLORS[subscriberTier].primary,
+                        backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
+                      }}
+                    >
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        {subscriberTier === 'centurion' ? <CenturionStarSVG /> : <ImperatorStarSVG />}
+                      </div>
+                      {SUBSCRIBER_TIERS[subscriberTier].label}
+                    </span>
+                  )}
+                  {gameSlug === 'ror' && rorRole && (
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-600 flex items-center gap-1 ${rorRole.color}`}
+                    >
+                      <span>{rorRole.icon}</span>
+                      {rorRole.label}
+                    </span>
+                  )}
                 </div>
                 {/* Race and Class info */}
-                <div className="flex items-center gap-2 mt-0.5 text-sm">
-                  {raceInfo && (
-                    <span className="text-slate-400">{raceInfo.name}</span>
-                  )}
-                  {className && (
-                    <>
-                      {raceInfo && <span className="text-slate-600">•</span>}
-                      <span style={{ color: primaryInfo?.color }}>{className}</span>
-                    </>
-                  )}
-                </div>
+                {gameSlug === 'aoc' && (
+                  <div className="flex items-center gap-2 mt-0.5 text-sm">
+                    {raceInfo && (
+                      <span className="text-slate-400">{raceInfo.name}</span>
+                    )}
+                    {className && (
+                      <>
+                        {raceInfo && <span className="text-slate-600">•</span>}
+                        <span style={{ color: primaryInfo?.color }}>{className}</span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {gameSlug === 'ror' && rorClass && rorFaction && (
+                  <div className="flex items-center gap-2 mt-0.5 text-sm">
+                    <span className={rorFaction.color}>{rorFaction.name}</span>
+                    <span className="text-slate-600">•</span>
+                    <span className="text-slate-300">{rorClass.name}</span>
+                  </div>
+                )}
                 {/* Main/Alt relationship */}
                 {mainCharacterName && (
                   <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">
@@ -179,10 +224,12 @@ export function CharacterCard({
 
           {/* Summary */}
           <div className="flex items-center gap-3 ml-4">
-            <span className="text-sm text-slate-400 hidden sm:inline">{summary}</span>
+            {gameSlug === 'aoc' && (
+              <span className="text-sm text-slate-400 hidden sm:inline">{summary}</span>
+            )}
 
             {/* Warning indicator */}
-            {warnings.length > 0 && (
+            {gameSlug === 'aoc' && warnings.length > 0 && (
               <div className="relative group">
                 <AlertTriangle size={16} className="text-yellow-500" />
                 <div className="absolute right-0 top-6 bg-slate-800 border border-slate-600 rounded p-2 text-xs text-yellow-400 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -249,8 +296,8 @@ export function CharacterCard({
         <div className="sm:hidden mt-2 text-sm text-slate-400">{summary}</div>
       </div>
 
-      {/* Expanded content */}
-      {isExpanded && (
+      {/* Expanded content - Professions only for AoC */}
+      {isExpanded && gameSlug === 'aoc' && (
         <div className="border-t border-slate-800 p-4 space-y-4">
           {(['gathering', 'processing', 'crafting'] as const).map((tier) => (
             <div key={tier}>
@@ -284,9 +331,100 @@ export function CharacterCard({
           )}
         </div>
       )}
+
+      {/* Expanded content - Non-profession content for Return of Reckoning */}
+      {isExpanded && gameSlug === 'ror' && (
+        <div className="border-t border-slate-800 p-4 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Faction</div>
+              <div className={`text-sm font-medium ${rorFaction?.color || 'text-slate-200'}`}>
+                {rorFaction?.name || '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Class</div>
+              <div className="text-sm text-slate-200">
+                {rorClass?.name || '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Role</div>
+              <div className={`text-sm font-medium flex items-center gap-1.5 ${rorRole?.color || 'text-slate-200'}`}>
+                {rorRole && <span className="text-base">{rorRole.icon}</span>}
+                {rorRole?.label || '—'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expanded content - Non-profession content for Star Citizen */}
+      {isExpanded && gameSlug === 'starcitizen' && (
+        <div className="border-t border-slate-800 p-4 space-y-4">
+          {subscriberTier && (
+            <div className="flex items-center justify-center mb-4">
+              <div 
+                className="inline-flex items-center px-4 py-2 rounded-lg border-2 gap-2"
+                style={{
+                  borderColor: SUBSCRIBER_COLORS[subscriberTier].primary,
+                  backgroundColor: SUBSCRIBER_COLORS[subscriberTier].bg,
+                }}
+              >
+                <div className="h-6">
+                  {subscriberTier === 'centurion' ? <CenturionSVG /> : <ImperatorSVG />}
+                </div>
+                <span
+                  className="text-sm font-semibold whitespace-nowrap"
+                  style={{ color: SUBSCRIBER_COLORS[subscriberTier].primary }}
+                >
+                  {SUBSCRIBER_TIERS[subscriberTier].label}
+                </span>
+              </div>
+            </div>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Subscriber Tier</div>
+              <div className="text-sm text-slate-200">
+                {subscriberTier ? SUBSCRIBER_TIERS[subscriberTier].label : 'None'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Subscriber Since</div>
+              <div className="text-sm text-slate-200">
+                {subscriberSince ? subscriberSince.toLocaleDateString('en-GB') : '—'}
+              </div>
+            </div>
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+              <div className="text-xs text-slate-500">Ships Synced For</div>
+              <div className="text-sm text-slate-200">
+                {character.subscriber_ships_month || '—'}
+              </div>
+            </div>
+            {subscriberTier && (
+              <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+                <div className="text-xs text-slate-500">Perks</div>
+                <div className="text-sm text-slate-200">
+                  {SUBSCRIBER_TIERS[subscriberTier].shipsPerMonth} ship(s)/month ·
+                  {` ${SUBSCRIBER_TIERS[subscriberTier].insurance}`}
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Debug info for editability - only show if window.DEBUG_PERMISSIONS is true */}
+          {typeof window !== 'undefined' && window.DEBUG_PERMISSIONS && (
+            <div className="text-xs text-slate-400 border-t border-slate-700 pt-2">
+              <div>user_id: {character.user_id}</div>
+              <div>readOnly: {String(readOnly)}</div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 // Legacy alias for backward compatibility
 export { CharacterCard as MemberCard };
+

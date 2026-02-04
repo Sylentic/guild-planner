@@ -8,3 +8,4 @@ export function IsAdminBannerWrapper() {
   const isAdmin = !!user;
   return <MigrationBanner isAdmin={isAdmin} />;
 }
+

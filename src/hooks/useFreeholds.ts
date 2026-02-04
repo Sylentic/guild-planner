@@ -42,13 +42,13 @@ interface UseFreeholdsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
+export function useFreeholds(groupId: string | null): UseFreeholdsReturn {
   const [freeholds, setFreeholds] = useState<FreeholdWithBuildings[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -65,7 +65,7 @@ export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
           users:owner_id (display_name),
           members:owner_character_id (name)
         `)
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('name');
 
       if (fetchError) throw fetchError;
@@ -84,7 +84,7 @@ export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
@@ -96,7 +96,7 @@ export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
   }) || null;
 
   const createFreehold = async (data: FreeholdData) => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -104,7 +104,7 @@ export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
     const { error: insertError } = await supabase
       .from('freeholds')
       .insert({
-        clan_id: clanId,
+        group_id: groupId,
         owner_id: user.id,
         ...data,
       });
@@ -179,3 +179,4 @@ export function useFreeholds(clanId: string | null): UseFreeholdsReturn {
     refresh: fetchData,
   };
 }
+

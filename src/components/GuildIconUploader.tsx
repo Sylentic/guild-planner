@@ -8,13 +8,13 @@ import { updateClanIconUrl } from '@/lib/auth';
 const GUILD_ICON_BUCKET = process.env.NEXT_PUBLIC_GUILD_ICON_BUCKET || 'guild-icons';
 
 interface GuildIconUploaderProps {
-  clanId: string;
+  groupId: string;
   currentUrl?: string;
   onUploaded?: (url: string) => void;
 }
 
 
-export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconUploaderProps) {
+export function GuildIconUploader({ groupId, currentUrl, onUploaded }: GuildIconUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [iconUrl, setIconUrl] = useState(currentUrl || '');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -46,11 +46,11 @@ export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconU
     setPreviewUrl(localUrl);
 
     if (!user || !session) {
-      setError('You must be logged in to upload a guild icon.');
+      setError('You must be logged in to upload a group icon.');
       return;
     }
     setUploading(true);
-    const filePath = `${clanId}/icon.png`;
+    const filePath = `${groupId}/icon.png`;
     const { error } = await supabase.storage
       .from(GUILD_ICON_BUCKET)
       .upload(filePath, file, { upsert: true });
@@ -61,7 +61,7 @@ export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconU
     }
     const { data } = supabase.storage.from(GUILD_ICON_BUCKET).getPublicUrl(filePath);
     if (data?.publicUrl) {
-      await updateClanIconUrl(clanId, data.publicUrl);
+      await updateClanIconUrl(groupId, data.publicUrl);
       setIconUrl(data.publicUrl);
       setSuccess('Icon uploaded successfully!');
       if (onUploaded) onUploaded(data.publicUrl);
@@ -78,7 +78,7 @@ export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconU
         {(previewUrl || iconUrl) && (
           <img
             src={previewUrl || iconUrl}
-            alt="Guild Icon Preview"
+            alt="Group Icon Preview"
             className="w-16 h-16 rounded-full border border-slate-700"
             style={{ objectFit: 'cover' }}
           />
@@ -106,3 +106,4 @@ export function GuildIconUploader({ clanId, currentUrl, onUploaded }: GuildIconU
     </div>
   );
 }
+

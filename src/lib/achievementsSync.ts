@@ -4,7 +4,7 @@ import supabaseAdmin from './supabaseAdmin';
  * Calculate and upsert achievement progress for a given clan.
  * Returns the number of achievements updated.
  */
-export async function syncClanAchievements(clanId: string): Promise<number> {
+export async function syncGroupAchievements(groupId: string): Promise<number> {
   // Helper function to check profession mastery
   async function checkProfessionMastery(
     tier: 'gathering' | 'processing' | 'crafting',
@@ -14,7 +14,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
     const { data: characters } = await supabaseAdmin
       .from('characters')
       .select('id, professions')
-      .eq('clan_id', clanId);
+      .eq('group_id', groupId);
 
     if (!characters || characters.length === 0) return 0;
 
@@ -50,16 +50,16 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
   const calculations: Record<string, () => Promise<number>> = {
     member_count: async () => {
       const { count } = await supabaseAdmin
-        .from('clan_members')
+        .from('group_members')
         .select('id', { count: 'exact', head: true })
-        .eq('clan_id', clanId);
+        .eq('group_id', groupId);
       return count || 0;
     },
     siege_wins: async () => {
       const { data: sieges } = await supabaseAdmin
         .from('siege_events')
         .select('id')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .eq('result', 'win');
       return sieges?.length || 0;
     },
@@ -67,7 +67,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const { data: bank } = await supabaseAdmin
         .from('guild_banks')
         .select('id')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .single();
       if (!bank) return 0;
       const { count } = await supabaseAdmin
@@ -81,7 +81,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const { count } = await supabaseAdmin
         .from('caravans')
         .select('id', { count: 'exact', head: true })
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .eq('status', 'completed');
       return count || 0;
     },
@@ -89,7 +89,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const { data: characters } = await supabaseAdmin
         .from('characters')
         .select('id, professions')
-        .eq('clan_id', clanId);
+        .eq('group_id', groupId);
       const grandmasters = new Set<string>();
       for (const char of characters || []) {
         if (char.professions) {
@@ -110,7 +110,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const { count } = await supabaseAdmin
         .from('events')
         .select('id', { count: 'exact', head: true })
-        .eq('clan_id', clanId);
+        .eq('group_id', groupId);
       return count || 0;
     },
     weekly_active: async () => {
@@ -119,7 +119,7 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const { data: activities } = await supabaseAdmin
         .from('activity_log')
         .select('user_id')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .gte('created_at', oneWeekAgo.toISOString());
       const uniqueUsers = new Set(activities?.map(a => a.user_id) || []);
       return uniqueUsers.size;
@@ -160,17 +160,17 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
       const currentValue = await calculation();
       const isUnlocked = currentValue >= def.requirement_value;
       const { error: upsertError } = await supabaseAdmin
-        .from('clan_achievements')
+        .from('group_achievements')
         .upsert(
           {
-            clan_id: clanId,
+            group_id: groupId,
             achievement_id: def.id,
             current_value: currentValue,
             is_unlocked: isUnlocked,
             unlocked_at: isUnlocked ? new Date().toISOString() : null,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: 'clan_id,achievement_id' }
+          { onConflict: 'group_id,achievement_id' }
         );
       if (!upsertError) updated++;
     } catch (err) {
@@ -179,3 +179,4 @@ export async function syncClanAchievements(clanId: string): Promise<number> {
   }
   return updated;
 }
+

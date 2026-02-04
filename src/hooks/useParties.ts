@@ -22,7 +22,7 @@ interface UsePartiesReturn {
 }
 
 export function useParties(
-  clanId: string | null,
+  groupId: string | null,
   characters: CharacterWithProfessions[]
 ): UsePartiesReturn {
   const [parties, setParties] = useState<PartyWithRoster[]>([]);
@@ -31,7 +31,7 @@ export function useParties(
 
   // Fetch parties with roster
   const fetchParties = useCallback(async () => {
-    if (!clanId) return;
+    if (!groupId) return;
 
     try {
       const { data: partiesData, error: partiesError } = await supabase
@@ -40,7 +40,7 @@ export function useParties(
           *,
           party_roster (*)
         `)
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('created_at', { ascending: false });
 
       if (partiesError) throw partiesError;
@@ -59,7 +59,7 @@ export function useParties(
       console.error('Error fetching parties:', err);
       setError(err instanceof Error ? err.message : 'Failed to load parties');
     }
-  }, [clanId, characters]);
+  }, [groupId, characters]);
 
   // Initial fetch
   useEffect(() => {
@@ -68,8 +68,8 @@ export function useParties(
       await fetchParties();
       setLoading(false);
     };
-    if (clanId) load();
-  }, [clanId, fetchParties]);
+    if (groupId) load();
+  }, [groupId, fetchParties]);
 
   // Create party
   const createParty = async (
@@ -246,3 +246,4 @@ export function useParties(
     refresh: fetchParties,
   };
 }
+

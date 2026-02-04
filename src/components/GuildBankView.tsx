@@ -294,7 +294,7 @@ export function GuildBankView({
                         {tx.resource?.name || (tx.gold_amount !== 0 ? t('bank.gold') : t('bank.adjustment'))}
                       </div>
                       <div className="text-xs text-slate-500">
-                        {tx.user?.display_name || t('bank.system')} • {txDate.toLocaleDateString(Intl.DateTimeFormat().resolvedOptions().timeZone)}
+                        {tx.user?.display_name || t('bank.system')} • {txDate.toLocaleDateString('en-GB', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}
                       </div>
                     </div>
                   </div>
@@ -328,3 +328,4 @@ export function GuildBankView({
     </>
   );
 }
+

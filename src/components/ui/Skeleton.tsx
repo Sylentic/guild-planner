@@ -124,3 +124,4 @@ export function SkeletonPage({ className }: SkeletonProps) {
     </div>
   );
 }
+

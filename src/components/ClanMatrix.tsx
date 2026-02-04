@@ -261,3 +261,4 @@ export function ClanMatrix({ members }: ClanMatrixProps) {
     </div>
   );
 }
+

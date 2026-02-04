@@ -26,15 +26,22 @@ interface UseEventsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useEvents(clanId: string | null, userId: string | null, clanSlug?: string): UseEventsReturn {
+export function useEvents(groupId: string | null, userId: string | null, gameSlug?: string, clanSlug?: string): UseEventsReturn {
   const [events, setEvents] = useState<EventWithRsvps[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Reset state when groupId or gameSlug changes (prevent stale data on route transition)
+  useEffect(() => {
+    setEvents([]);
+    setAnnouncements([]);
+    setLoading(true);
+  }, [groupId, gameSlug]);
+
   // Fetch all events with RSVPs
   const fetchEvents = useCallback(async () => {
-    if (!clanId) return;
+    if (!groupId) return;
 
     try {
       const { data: eventsData, error: eventsError } = await supabase
@@ -48,7 +55,8 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
           ),
           guest_event_rsvps (*)
         `)
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
+        .eq('game_slug', gameSlug || 'aoc')
         .gte('starts_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24h + future
         .order('starts_at', { ascending: true });
 
@@ -103,17 +111,17 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       console.error('Error fetching events:', err);
       setError(err instanceof Error ? err.message : 'Failed to load events');
     }
-  }, [clanId, userId]);
+  }, [groupId, userId]);
 
   // Fetch announcements
   const fetchAnnouncements = useCallback(async () => {
-    if (!clanId) return;
+    if (!groupId) return;
 
     try {
       const { data, error: annError } = await supabase
         .from('announcements')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(20);
@@ -123,7 +131,7 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     } catch (err) {
       console.error('Error fetching announcements:', err);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   // Fetch all data
   const fetchData = useCallback(async () => {
@@ -135,10 +143,10 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
 
   // Initial fetch
   useEffect(() => {
-    if (clanId) {
+    if (groupId) {
       fetchData();
     }
-  }, [clanId, fetchData]);
+  }, [groupId, fetchData]);
 
   // Create event
   const createEvent = async (
@@ -146,9 +154,14 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     sendDiscordNotification: boolean
   ): Promise<Event | null> => {
     console.log('Creating event with data:', event, 'sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
+    // Ensure game_slug is set
+    const eventWithGame = {
+      ...event,
+      game_slug: gameSlug || 'aoc'
+    };
     const { data, error: createError } = await supabase
       .from('events')
-      .insert(event)
+      .insert(eventWithGame)
       .select()
       .single();
     console.log('Created event result:', data, 'error:', createError);
@@ -164,15 +177,15 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
       console.log('Discord notification enabled, proceeding...');
       try {
         const { data: clanData } = await supabase
-          .from('clans')
-          .select('name, slug, discord_webhook_url, notify_on_events, discord_announcement_role_id')
-          .eq('id', event.clan_id)
+          .from('groups')
+          .select('name, slug, group_webhook_url, notify_on_events, discord_announcement_role_id')
+          .eq('id', event.group_id)
           .single();
 
-        if (clanData?.discord_webhook_url && clanData.notify_on_events !== false) {
+        if (clanData?.group_webhook_url && clanData.notify_on_events !== false) {
           console.log('Sending Discord notification for event:', data.title);
           await notifyNewEvent(
-            clanData.discord_webhook_url, 
+            clanData.group_webhook_url, 
             data, 
             clanData.name, 
             clanSlug || clanData.slug,
@@ -307,14 +320,14 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     if (sendDiscordNotification) {
       try {
         const { data: clanData } = await supabase
-          .from('clans')
-          .select('name, slug, discord_webhook_url, notify_on_announcements, discord_announcement_role_id')
-          .eq('id', announcement.clan_id)
+          .from('groups')
+          .select('name, slug, group_webhook_url, notify_on_announcements, discord_announcement_role_id')
+          .eq('id', announcement.group_id)
           .single();
 
-        if (clanData?.discord_webhook_url && clanData.notify_on_announcements !== false) {
+        if (clanData?.group_webhook_url && clanData.notify_on_announcements !== false) {
           await notifyAnnouncement(
-            clanData.discord_webhook_url, 
+            clanData.group_webhook_url, 
             data, 
             clanData.name,
             clanSlug || clanData.slug,
@@ -379,3 +392,4 @@ export function useEvents(clanId: string | null, userId: string | null, clanSlug
     refresh: fetchData,
   };
 }
+

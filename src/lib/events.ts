@@ -2,7 +2,7 @@
 // Event Types and Helpers
 // =====================================================
 
-export type EventType = 'raid' | 'siege' | 'gathering' | 'social' | 'farming_glint' | 'farming_materials' | 'farming_gear' | 'farming_other' | 'other';
+export type EventType = 'raid' | 'siege' | 'gathering' | 'social' | 'farming_glint' | 'farming_materials' | 'farming_gear' | 'farming_other' | 'other' | 'missions' | 'salvaging' | 'pirating' | 'bounty_hunting';
 export type RsvpStatus = 'attending' | 'maybe' | 'declined';
 
 // Event type display config
@@ -60,6 +60,30 @@ export const EVENT_TYPES: Record<EventType, {
     color: '#84cc16',
     description: 'Other farming activity'
   },
+  missions: { 
+    name: 'Missions', 
+    icon: '📋', 
+    color: '#3b82f6',
+    description: 'Contract and mission ops'
+  },
+  salvaging: { 
+    name: 'Salvaging', 
+    icon: '♻️', 
+    color: '#10b981',
+    description: 'Salvage operations'
+  },
+  pirating: { 
+    name: 'Pirating', 
+    icon: '🏴‍☠️', 
+    color: '#ef4444',
+    description: 'Piracy and raiding'
+  },
+  bounty_hunting: { 
+    name: 'Bounty Hunting', 
+    icon: '🎯', 
+    color: '#f97316',
+    description: 'Bounty hunting operations'
+  },
   other: { 
     name: 'Other', 
     icon: '📅', 
@@ -98,7 +122,7 @@ export const EVENT_ROLES: Record<EventRole, {
 // Database types
 export interface Event {
   id: string;
-  clan_id: string;
+  group_id: string;
   created_by: string | null;
   title: string;
   description: string | null;
@@ -119,6 +143,13 @@ export interface Event {
   melee_dps_max: number | null; // Maximum allowed (null = unlimited)
   allow_combined_dps: boolean; // If true, ignore individual ranged/melee maxes
   combined_dps_max: number | null; // Combined max for ranged + melee DPS
+  // RoR-specific role requirements
+  ror_tanks_min: number;
+  ror_tanks_max: number | null;
+  ror_healers_min: number;
+  ror_healers_max: number | null;
+  ror_dps_min: number;
+  ror_dps_max: number | null;
   is_public: boolean; // If true, public guests can RSVP
   allow_allied_signups: boolean; // If true, allied members can sign up
   is_cancelled: boolean;
@@ -148,7 +179,7 @@ export interface EventRsvp {
 export interface GuestEventRsvp {
   id: string;
   event_id: string;
-  allied_clan_id: string | null;
+  allied_group_id: string | null;
   guest_name: string;
   guest_email?: string | null;
   class_id: string | null;
@@ -178,7 +209,7 @@ export interface EventWithRsvps extends Event {
 
 export interface Announcement {
   id: string;
-  clan_id: string;
+  group_id: string;
   created_by: string | null;
   title: string;
   content: string;
@@ -225,7 +256,7 @@ export function formatEventTime(
     timeZone: timezone,
     ...options,
   };
-  return date.toLocaleString('en-US', defaultOptions);
+  return date.toLocaleString('en-GB', defaultOptions);
 }
 
 /**
@@ -233,7 +264,7 @@ export function formatEventTime(
  */
 export function formatEventDate(isoDate: string, timezone: string = 'UTC'): string {
   const date = new Date(isoDate);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-GB', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -246,7 +277,7 @@ export function formatEventDate(isoDate: string, timezone: string = 'UTC'): stri
  */
 export function formatTime(isoDate: string, timezone: string = 'UTC'): string {
   const date = new Date(isoDate);
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -308,3 +339,31 @@ export function utcToLocal(isoDate: string): string {
   // Format as YYYY-MM-DDTHH:mm for datetime-local input
   return date.toISOString().slice(0, 16);
 }
+/**
+ * Get event types for a specific game
+ */
+export function getEventTypesForGame(gameSlug: string): Record<string, { name: string; icon: string; color: string; description: string }> {
+  if (gameSlug === 'starcitizen') {
+    return {
+      missions: EVENT_TYPES.missions,
+      salvaging: EVENT_TYPES.salvaging,
+      pirating: EVENT_TYPES.pirating,
+      bounty_hunting: EVENT_TYPES.bounty_hunting,
+      other: EVENT_TYPES.other,
+    };
+  }
+  
+  // Default AoC event types
+  return {
+    raid: EVENT_TYPES.raid,
+    siege: EVENT_TYPES.siege,
+    gathering: EVENT_TYPES.gathering,
+    social: EVENT_TYPES.social,
+    farming_glint: EVENT_TYPES.farming_glint,
+    farming_materials: EVENT_TYPES.farming_materials,
+    farming_gear: EVENT_TYPES.farming_gear,
+    farming_other: EVENT_TYPES.farming_other,
+    other: EVENT_TYPES.other,
+  };
+}
+

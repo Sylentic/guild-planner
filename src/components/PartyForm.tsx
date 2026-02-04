@@ -8,7 +8,7 @@ interface PartyFormProps {
   initialData?: Partial<Party>;
   onSubmit: (data: Omit<Party, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
   onCancel: () => void;
-  clanId: string;
+  groupId: string;
   userId: string;
 }
 
@@ -16,7 +16,7 @@ export function PartyForm({
   initialData,
   onSubmit,
   onCancel,
-  clanId,
+  groupId,
   userId,
 }: PartyFormProps) {
   const [name, setName] = useState(initialData?.name || '');
@@ -37,7 +37,7 @@ export function PartyForm({
     setSaving(true);
     try {
       await onSubmit({
-        clan_id: clanId,
+        group_id: groupId,
         created_by: userId,
         name: name.trim(),
         description: description.trim() || undefined,
@@ -174,3 +174,4 @@ export function PartyForm({
     </div>
   );
 }
+

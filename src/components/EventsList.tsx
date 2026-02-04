@@ -17,8 +17,9 @@ interface EventsListProps {
   events: EventWithRsvps[];
   announcements: Announcement[];
   timezone: string;
-  clanId: string;
-  clanSlug?: string;
+  groupId: string;
+  groupSlug?: string;
+  gameSlug?: string;
   userId: string;
   characters: CharacterWithProfessions[];
   canManage: boolean;
@@ -36,8 +37,9 @@ export function EventsList({
   events,
   announcements,
   timezone, // Keep the timezone prop for backward compatibility
-  clanId,
-  clanSlug,
+  groupId,
+  groupSlug,
+  gameSlug = 'aoc',
   userId,
   characters,
   canManage,
@@ -58,16 +60,16 @@ export function EventsList({
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const { t } = useLanguage();
   const { showToast } = useToast();
-  const { hasPermission } = usePermissions(clanId);
+  const { hasPermission } = usePermissions(groupId);
   
   // Check permissions
-  const { loading } = usePermissions(clanId);
+  const { loading } = usePermissions(groupId);
   const canCreateEvent = hasPermission('events_create');
   const canCreateAnnouncement = hasPermission('announcements_create');
 
   // Copy announcement link to clipboard
   const copyAnnouncementLink = async (announcementId: string) => {
-    const url = `${window.location.origin}${window.location.pathname}?tab=events#announcement-${announcementId}`;
+    const url = `${window.location.origin}${window.location.pathname}#announcement-${announcementId}`;
     try {
       await navigator.clipboard.writeText(url);
       showToast('success', 'Link copied to clipboard!');
@@ -227,9 +229,9 @@ export function EventsList({
           )}
         </h3>
         <div className="flex gap-2">
-          {clanSlug && (
+          {groupSlug && (
             <Link
-              href={`/${clanSlug}/public-events`}
+              href={`/${groupSlug}/public-events`}
               className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border bg-slate-700/50 hover:bg-slate-600 text-slate-300 border-slate-600 cursor-pointer"
               title="View public events"
             >
@@ -264,7 +266,7 @@ export function EventsList({
           <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <p>{t('event.noEvents')}</p>
           {canManage && (
-            <p className="text-sm mt-2">{t('siege.noUpcomingDesc')}</p>
+            <p className="text-sm mt-2">{t('event.createEventDesc')}</p>
           )}
         </div>
       ) : (
@@ -274,7 +276,7 @@ export function EventsList({
               key={event.id}
               event={event}
               timezone={localTimezone}
-              clanId={clanId}
+              groupId={groupId}
               userId={userId}
               characters={characters}
               onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
@@ -290,8 +292,9 @@ export function EventsList({
       {/* Create Event Modal */}
       {showEventForm && (
         <EventForm
-          clanId={clanId}
+          groupId={groupId}
           userId={userId}
+          gameSlug={gameSlug}
           onSubmit={handleCreateEvent}
           onCancel={() => setShowEventForm(false)}
         />
@@ -300,8 +303,9 @@ export function EventsList({
       {/* Edit Event Modal */}
       {editingEvent && (
         <EventForm
-          clanId={clanId}
+          groupId={groupId}
           userId={userId}
+          gameSlug={gameSlug}
           initialData={editingEvent}
           onSubmit={handleEditEvent}
           onCancel={() => setEditingEvent(null)}
@@ -312,7 +316,7 @@ export function EventsList({
       {/* Create Announcement Modal */}
       {showAnnouncementForm && (
         <AnnouncementForm
-          clanId={clanId}
+          groupId={groupId}
           userId={userId}
           onSubmit={handleCreateAnnouncement}
           onCancel={() => setShowAnnouncementForm(false)}
@@ -322,7 +326,7 @@ export function EventsList({
       {/* Edit Announcement Modal */}
       {editingAnnouncement && (
         <AnnouncementForm
-          clanId={clanId}
+          groupId={groupId}
           userId={userId}
           initialData={editingAnnouncement}
           onSubmit={handleEditAnnouncement}
@@ -333,3 +337,4 @@ export function EventsList({
     </div>
   );
 }
+

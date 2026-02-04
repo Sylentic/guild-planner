@@ -155,7 +155,7 @@ export function SiegeEventForm({
                     onClick={() => setFormData({ ...formData, siege_type: type })}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                       isSelected
-                        ? `bg-slate-700 ring-2 ${config.isDefense ? 'ring-blue-500' : 'ring-red-500'}`
+                        ? `bg-slate-700 ring-2 ${config.isDefence ? 'ring-blue-500' : 'ring-red-500'}`
                         : 'bg-slate-800 hover:bg-slate-700'
                     }`}
                   >
@@ -295,3 +295,4 @@ export function SiegeEventForm({
     </div>
   );
 }
+

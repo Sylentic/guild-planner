@@ -11,11 +11,11 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { ChevronLeft } from 'lucide-react';
 
 interface PublicClanEventsViewProps {
-  clanId: string;
-  clanName: string;
+  groupId: string;
+  groupName: string;
 }
 
-export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewProps) {
+export function PublicClanEventsView({ groupId, groupName }: PublicClanEventsViewProps) {
   const { t } = useLanguage();
   const { error: showError } = useToast();
   const [events, setEvents] = useState<EventWithRsvps[]>([]);
@@ -23,7 +23,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
 
   useEffect(() => {
     fetchPublicEvents();
-  }, [clanId]);
+  }, [groupId]);
 
   async function fetchPublicEvents() {
     try {
@@ -41,7 +41,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
           guest_event_rsvps(*)
         `
         )
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .eq('is_public', true)
         .order('starts_at', { ascending: true });
 
@@ -126,10 +126,10 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">{clanName} - Public Events</h1>
+        <h1 className="text-2xl font-bold text-white mb-2">{groupName} - Public Events</h1>
         <p className="text-slate-300">
           {events.length === 0
-            ? `No public events scheduled for ${clanName}`
+            ? `No public events scheduled for ${groupName}`
             : `${events.length} public event${events.length !== 1 ? 's' : ''} available`}
         </p>
       </div>
@@ -145,7 +145,7 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
               key={event.id}
               event={event}
               timezone="UTC"
-              clanId={clanId}
+              groupId={groupId}
               userId="" // Anonymous user
               characters={[]}
               onRsvp={() => {
@@ -159,3 +159,4 @@ export function PublicClanEventsView({ clanId, clanName }: PublicClanEventsViewP
     </div>
   );
 }
+

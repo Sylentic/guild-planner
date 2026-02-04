@@ -121,3 +121,4 @@ export const LANGUAGES = [
   { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
   { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
 ];
+

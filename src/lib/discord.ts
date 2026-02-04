@@ -6,6 +6,13 @@
  */
 
 import { Event, Announcement, EVENT_TYPES } from './events';
+import {
+  getGameEventsWebhookUrl,
+  getGameWebhookUrl,
+  getGameEventsRoleId,
+  getGameAnnouncementRoleId,
+  GameId,
+} from './discordConfig';
 
 interface DiscordEmbed {
   title?: string;
@@ -71,7 +78,7 @@ export async function sendDiscordWebhook(
       body: JSON.stringify({
         webhookUrl,
         payload: {
-          username: payload.username || '⚔️ AoC Guild Planner',
+          username: payload.username || '⚔️ Guild Planner',
           avatar_url: payload.avatar_url,
           content: payload.content,
           embeds: payload.embeds,
@@ -106,7 +113,7 @@ export async function testDiscordWebhook(
       description: 'Your Discord webhook is working correctly. You will receive notifications for events and announcements from your guild.',
       color: COLORS.green,
       footer: {
-        text: 'AoC Guild Profession Planner',
+        text: 'Guild Planner',
       },
       timestamp: new Date().toISOString(),
     }],
@@ -129,7 +136,7 @@ export async function notifyNewEvent(
   
   // Build direct link to event
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
-  const eventUrl = `${baseUrl}/${clanSlug}?tab=events#event-${event.id}`;
+  const eventUrl = `${baseUrl}/${clanSlug}/events#event-${event.id}`;
   
   // Build content with role ping if provided
   let content = '🆕 **New Event Created!**';
@@ -246,7 +253,7 @@ export async function notifyAnnouncement(
 
   // Build direct link to announcement
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
-  const announcementUrl = `${baseUrl}/${clanSlug}?tab=events#announcement-${announcement.id}`;
+  const announcementUrl = `${baseUrl}/${clanSlug}/events#announcement-${announcement.id}`;
 
   return sendDiscordWebhook(webhookUrl, {
     content,
@@ -302,3 +309,69 @@ export async function notifyEventReminder(
     }],
   });
 }
+
+/**
+ * Game-Specific Notification Wrappers
+ * These functions automatically look up the right webhook and role for a game
+ */
+
+/**
+ * Send notification for a new event with automatic game-specific webhook/role lookup
+ */
+export async function notifyNewEventForGame(
+  gameSlug: GameId,
+  groupData: any,
+  event: Event,
+  clanName: string,
+  clanSlug: string
+): Promise<{ success: boolean; error?: string }> {
+  const webhookUrl = getGameEventsWebhookUrl(gameSlug, groupData);
+  const roleId = getGameEventsRoleId(gameSlug, groupData);
+
+  if (!webhookUrl) {
+    return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
+  }
+
+  return notifyNewEvent(webhookUrl, event, clanName, clanSlug, roleId);
+}
+
+/**
+ * Send announcement with automatic game-specific webhook/role lookup
+ */
+export async function notifyAnnouncementForGame(
+  gameSlug: GameId,
+  groupData: any,
+  announcement: Announcement,
+  clanName: string,
+  clanSlug: string
+): Promise<{ success: boolean; error?: string }> {
+  const webhookUrl = getGameWebhookUrl(gameSlug, groupData);
+  const roleId = getGameAnnouncementRoleId(gameSlug, groupData);
+
+  if (!webhookUrl) {
+    return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
+  }
+
+  return notifyAnnouncement(webhookUrl, announcement, clanName, clanSlug, roleId);
+}
+
+/**
+ * Send event reminder with automatic game-specific webhook lookup
+ */
+export async function notifyEventReminderForGame(
+  gameSlug: GameId,
+  groupData: any,
+  event: Event,
+  clanName: string,
+  minutesUntil: number
+): Promise<{ success: boolean; error?: string }> {
+  const webhookUrl = getGameEventsWebhookUrl(gameSlug, groupData);
+
+  if (!webhookUrl) {
+    return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
+  }
+
+  return notifyEventReminder(webhookUrl, event, clanName, minutesUntil);
+}
+
+

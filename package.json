@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "node scripts/generate-migration-list.js && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "update-ships": "node scripts/fetch-ships.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.93.2",

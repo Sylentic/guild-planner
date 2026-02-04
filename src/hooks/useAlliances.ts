@@ -19,20 +19,20 @@ interface UseAlliancesReturn {
   createAlliance: (data: AllianceData) => Promise<string>;
   updateAlliance: (id: string, data: Partial<AllianceData>) => Promise<void>;
   dissolveAlliance: (id: string) => Promise<void>;
-  inviteGuild: (allianceId: string, clanId: string) => Promise<void>;
+  inviteGuild: (allianceId: string, groupId: string) => Promise<void>;
   respondToInvite: (memberId: string, accept: boolean) => Promise<void>;
   leaveAlliance: (allianceId: string) => Promise<void>;
   updateMemberPermissions: (memberId: string, canInvite: boolean, canCreateEvents: boolean) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
-export function useAlliances(clanId: string | null): UseAlliancesReturn {
+export function useAlliances(groupId: string | null): UseAlliancesReturn {
   const [alliances, setAlliances] = useState<AllianceWithMembers[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -45,7 +45,7 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
       const { data: memberships, error: memberError } = await supabase
         .from('alliance_members')
         .select('alliance_id')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .in('status', ['active', 'pending']);
 
       if (memberError) throw memberError;
@@ -87,25 +87,25 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const myAlliance = alliances.find((a) =>
-    a.members.some((m) => m.clan_id === clanId && m.status === 'active')
+    a.members.some((m) => m.group_id === groupId && m.status === 'active')
   ) || null;
 
   const createAlliance = async (data: AllianceData): Promise<string> => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     // Create alliance
     const { data: newAlliance, error: createError } = await supabase
       .from('alliances')
       .insert({
         ...data,
-        leader_clan_id: clanId,
+        leader_group_id: groupId,
       })
       .select()
       .single();
@@ -117,7 +117,7 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
       .from('alliance_members')
       .insert({
         alliance_id: newAlliance.id,
-        clan_id: clanId,
+        group_id: groupId,
         status: 'active',
         is_founder: true,
         can_invite: true,
@@ -159,15 +159,15 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
   };
 
   const inviteGuild = async (allianceId: string, targetClanId: string) => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { error: insertError } = await supabase
       .from('alliance_members')
       .insert({
         alliance_id: allianceId,
-        clan_id: targetClanId,
+        group_id: targetClanId,
         status: 'pending',
-        invited_by: clanId,
+        invited_by: groupId,
       });
 
     if (insertError) throw insertError;
@@ -191,7 +191,7 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
   };
 
   const leaveAlliance = async (allianceId: string) => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { error: updateError } = await supabase
       .from('alliance_members')
@@ -200,7 +200,7 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
         left_at: new Date().toISOString(),
       })
       .eq('alliance_id', allianceId)
-      .eq('clan_id', clanId);
+      .eq('group_id', groupId);
 
     if (updateError) throw updateError;
     await fetchData();
@@ -231,3 +231,4 @@ export function useAlliances(clanId: string | null): UseAlliancesReturn {
     refresh: fetchData,
   };
 }
+

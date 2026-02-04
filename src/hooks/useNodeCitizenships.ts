@@ -25,7 +25,7 @@ interface UseNodeCitizenshipsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsReturn {
+export function useNodeCitizenships(groupId: string | null): UseNodeCitizenshipsReturn {
   const [citizenships, setCitizenships] = useState<NodeCitizenship[]>([]);
   const [distribution, setDistribution] = useState<NodeDistribution[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsR
 
   // Fetch all citizenships for clan members
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -51,7 +51,7 @@ export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsR
             clan_id
           )
         `)
-        .eq('members.clan_id', clanId);
+        .eq('members.clan_id', groupId);
 
       if (citizenshipError) throw citizenshipError;
 
@@ -77,7 +77,7 @@ export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsR
         const key = c.node_name;
         if (!distMap.has(key)) {
           distMap.set(key, {
-            clan_id: clanId,
+            group_id: groupId,
             node_name: c.node_name,
             node_type: c.node_type,
             node_stage: c.node_stage,
@@ -98,7 +98,7 @@ export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsR
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   // Initial fetch
   useEffect(() => {
@@ -162,3 +162,4 @@ export function useNodeCitizenships(clanId: string | null): UseNodeCitizenshipsR
     refresh: fetchData,
   };
 }
+

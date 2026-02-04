@@ -53,14 +53,14 @@ interface UseSiegeEventsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
+export function useSiegeEvents(groupId: string | null): UseSiegeEventsReturn {
   const [sieges, setSieges] = useState<SiegeEventWithRoster[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch all siege events with rosters
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -81,7 +81,7 @@ export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
             )
           )
         `)
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('starts_at', { ascending: true });
 
       if (siegeError) throw siegeError;
@@ -89,7 +89,7 @@ export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
       // Transform data
       const transformedSieges: SiegeEventWithRoster[] = (siegeData || []).map((siege) => ({
         id: siege.id,
-        clan_id: siege.clan_id,
+        group_id: siege.clan_id,
         title: siege.title,
         description: siege.description,
         siege_type: siege.siege_type as SiegeType,
@@ -141,7 +141,7 @@ export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   // Initial fetch
   useEffect(() => {
@@ -150,12 +150,12 @@ export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
 
   // Create siege event
   const createSiege = async (data: SiegeEventData): Promise<SiegeEvent> => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data: newSiege, error: createError } = await supabase
       .from('siege_events')
       .insert({
-        clan_id: clanId,
+        group_id: groupId,
         ...data,
       })
       .select()
@@ -276,3 +276,4 @@ export function useSiegeEvents(clanId: string | null): UseSiegeEventsReturn {
     refresh: fetchData,
   };
 }
+

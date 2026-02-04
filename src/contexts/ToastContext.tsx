@@ -138,3 +138,4 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
     </div>
   );
 }
+

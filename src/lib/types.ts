@@ -36,12 +36,16 @@ export interface Clan {
   slug: string;
   name: string;
   created_at: string;
-  discord_webhook_url?: string;
-  discord_welcome_webhook_url?: string;
+  group_webhook_url?: string;
+  group_welcome_webhook_url?: string;
   notify_on_events?: boolean;
   notify_on_announcements?: boolean;
   discord_announcement_role_id?: string;
-  guild_icon_url?: string;
+  sc_announcement_role_id?: string;
+  sc_events_role_id?: string;
+  group_icon_url?: string;
+  aoc_welcome_enabled?: boolean;
+  sc_welcome_enabled?: boolean;
 }
 
 // Race and Archetype types (match database ENUMs)
@@ -54,14 +58,22 @@ export type Archetype = 'tank' | 'cleric' | 'mage' | 'fighter' |
 // Character (formerly Member) - represents a game character
 export interface Character {
   id: string;
-  clan_id: string;
+  group_id: string;
   user_id: string | null;
+  game_slug?: string | null;
   name: string;
   race: Race | null;
   primary_archetype: Archetype | null;
   secondary_archetype: Archetype | null;
   level: number;
   is_main: boolean;
+  preferred_role?: string | null;
+  rank?: string | null;
+  ror_faction?: string | null;
+  ror_class?: string | null;
+  subscriber_tier?: 'centurion' | 'imperator' | null;
+  subscriber_since?: string | null;
+  subscriber_ships_month?: string | null;
   created_at: string;
 }
 
@@ -159,7 +171,7 @@ export type PartyRole = 'tank' | 'cleric' | 'bard' | 'ranged_dps' | 'melee_dps';
 
 export interface Party {
   id: string;
-  clan_id: string;
+  group_id: string;
   name: string;
   description?: string;
   tanks_needed: number;
@@ -196,7 +208,7 @@ export const PARTY_ROLES: Record<PartyRole, { name: string; icon: string; color:
 
 export interface RecruitmentApplication {
   id: string;
-  clan_id: string;
+  group_id: string;
   user_id?: string;
   discord_username: string;
   character_name?: string;
@@ -261,7 +273,7 @@ export interface CharacterWithCitizenship extends CharacterWithProfessions {
 
 // Node distribution stats (from the SQL view)
 export interface NodeDistribution {
-  clan_id: string;
+  group_id: string;
   node_name: string;
   node_type: NodeType;
   node_stage: NodeStage;
@@ -287,11 +299,11 @@ export type RosterStatus = 'signed_up' | 'confirmed' | 'checked_in' | 'no_show';
 export type SiegeResult = 'victory' | 'defeat' | 'draw' | null;
 
 // Siege type configuration
-export const SIEGE_TYPE_CONFIG: Record<SiegeType, { label: string; icon: string; color: string; isDefense: boolean }> = {
-  castle_attack: { label: 'Castle Attack', icon: '🏰', color: 'text-red-400', isDefense: false },
-  castle_defense: { label: 'Castle Defense', icon: '🛡️', color: 'text-blue-400', isDefense: true },
-  node_attack: { label: 'Node Attack', icon: '⚔️', color: 'text-orange-400', isDefense: false },
-  node_defense: { label: 'Node Defense', icon: '🏛️', color: 'text-green-400', isDefense: true },
+export const SIEGE_TYPE_CONFIG: Record<SiegeType, { label: string; icon: string; color: string; isDefence: boolean }> = {
+  castle_attack: { label: 'Castle Attack', icon: '🏰', color: 'text-red-400', isDefence: false },
+  castle_defense: { label: 'Castle Defence', icon: '🛡️', color: 'text-blue-400', isDefence: true },
+  node_attack: { label: 'Node Attack', icon: '⚔️', color: 'text-orange-400', isDefence: false },
+  node_defense: { label: 'Node Defence', icon: '🏛️', color: 'text-green-400', isDefence: true },
 };
 
 // Siege role configuration
@@ -307,7 +319,7 @@ export const SIEGE_ROLE_CONFIG: Record<SiegeRole, { label: string; icon: string;
 // Siege event interface
 export interface SiegeEvent {
   id: string;
-  clan_id: string;
+  group_id: string;
   title: string;
   description?: string;
   siege_type: SiegeType;
@@ -395,7 +407,7 @@ export const ITEM_RARITY_CONFIG: Record<ItemRarity, { label: string; color: stri
 // Loot system configuration
 export interface LootSystem {
   id: string;
-  clan_id: string;
+  group_id: string;
   system_type: LootSystemType;
   name: string;
   description?: string;
@@ -501,7 +513,7 @@ export const RESOURCE_CATEGORY_CONFIG: Record<ResourceCategory, { label: string;
 // Guild bank configuration
 export interface GuildBank {
   id: string;
-  clan_id: string;
+  group_id: string;
   name: string;
   description?: string;
   deposit_min_role: string;
@@ -603,7 +615,7 @@ export const FREEHOLD_SIZE_CONFIG: Record<FreeholdSize, { label: string; dimensi
 
 export interface Freehold {
   id: string;
-  clan_id: string;
+  group_id: string;
   owner_id: string;
   owner_character_id?: string;
   name: string;
@@ -645,7 +657,7 @@ export type CaravanStatus = 'planning' | 'recruiting' | 'ready' | 'in_transit' |
 
 export interface CaravanEvent {
   id: string;
-  clan_id: string;
+  group_id: string;
   created_by?: string;
   owner_character_id?: string;
   title: string;
@@ -707,7 +719,7 @@ export interface Alliance {
   id: string;
   name: string;
   description?: string;
-  leader_clan_id: string;
+  leader_group_id: string;
   is_public: boolean;
   max_guilds: number;
   formed_at: string;
@@ -717,7 +729,7 @@ export interface Alliance {
 export interface AllianceMember {
   id: string;
   alliance_id: string;
-  clan_id: string;
+  group_id: string;
   status: AllianceStatus;
   is_founder: boolean;
   can_invite: boolean;
@@ -743,7 +755,7 @@ export type ActivityType =
 
 export interface ActivityLog {
   id: string;
-  clan_id: string;
+  group_id: string;
   user_id?: string;
   character_id?: string;
   activity_type: ActivityType;
@@ -753,7 +765,7 @@ export interface ActivityLog {
 
 export interface MemberActivitySummary {
   id: string;
-  clan_id: string;
+  group_id: string;
   user_id: string;
   last_login_at?: string;
   last_activity_at?: string;
@@ -771,7 +783,7 @@ export interface MemberActivitySummary {
 
 export interface InactivityAlert {
   id: string;
-  clan_id: string;
+  group_id: string;
   user_id: string;
   days_inactive: number;
   alert_level: 'warning' | 'critical';
@@ -803,7 +815,7 @@ export interface AchievementDefinition {
 
 export interface ClanAchievement {
   id: string;
-  clan_id: string;
+  group_id: string;
   achievement_id: string;
   current_value: number;
   is_unlocked: boolean;
@@ -860,4 +872,5 @@ export interface BuildComment {
   updated_at: string;
   user?: { display_name: string };
 }
+
 

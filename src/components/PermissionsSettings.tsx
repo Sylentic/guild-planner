@@ -6,7 +6,7 @@ import { Check, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { 
-  ClanRole, 
+  GroupRole, 
   PERMISSIONS, 
   ROLE_CONFIG, 
   getAllPermissionCategories,
@@ -16,22 +16,22 @@ import {
 } from '@/lib/permissions';
 
 interface PermissionsSettingsProps {
-  clanId: string;
-  userRole: ClanRole;
-  onSave?: (rolePermissions: Record<ClanRole, Set<string>>) => Promise<void>;
+  groupId: string;
+  userRole: GroupRole;
+  onSave?: (rolePermissions: Record<GroupRole, Set<string>>) => Promise<void>;
 }
 
-export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSettingsProps) {
+export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSettingsProps) {
   const { t } = useLanguage();
   const { session } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<ClanRole>('member');
+  const [selectedRole, setSelectedRole] = useState<GroupRole>('member');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   
   // Track custom permissions for each role
-  const [customPermissions, setCustomPermissions] = useState<Record<ClanRole, Set<string>>>(() => {
-    const perms: Record<ClanRole, Set<string>> = {
+  const [customPermissions, setCustomPermissions] = useState<Record<GroupRole, Set<string>>>(() => {
+    const perms: Record<GroupRole, Set<string>> = {
       admin: new Set(DEFAULT_ROLE_PERMISSIONS.admin),
       officer: new Set(DEFAULT_ROLE_PERMISSIONS.officer),
       member: new Set(DEFAULT_ROLE_PERMISSIONS.member),
@@ -51,7 +51,7 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
     const loadPermissions = async () => {
       try {
         const response = await fetch(
-          `/api/clan/permissions?clan_id=${clanId}`,
+          `/api/group/permissions?group_id=${groupId}`,
           {
             headers: {
               'Authorization': `Bearer ${session.access_token}`,
@@ -74,7 +74,7 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
         }
 
         // Build Sets from boolean fields
-        const loaded: Record<ClanRole, Set<string>> = {
+        const loaded: Record<GroupRole, Set<string>> = {
           admin: new Set(),
           officer: new Set(),
           member: new Set(),
@@ -83,7 +83,7 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
         };
 
         permissions.forEach((perm: any) => {
-          const role = perm.role as ClanRole;
+          const role = perm.role as GroupRole;
           const perms = new Set<string>();
 
           // Check each permission field
@@ -109,17 +109,17 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
     };
 
     loadPermissions();
-  }, [session, clanId, userRole]);
+  }, [session, groupId, userRole]);
 
   const hierarchy = getRoleHierarchy();
   const canEditRole = userRole === 'admin';
 
   // Get roles that current user can manage
-  const manageableRoles = (Object.keys(ROLE_CONFIG) as ClanRole[])
+  const manageableRoles = (Object.keys(ROLE_CONFIG) as GroupRole[])
     .filter(role => hierarchy[userRole] > hierarchy[role])
     .sort((a, b) => hierarchy[b] - hierarchy[a]);
 
-  const togglePermission = (role: ClanRole, permissionId: string) => {
+  const togglePermission = (role: GroupRole, permissionId: string) => {
     if (!canEditRole || role === 'admin' || role === 'pending') return;
 
     setCustomPermissions(prev => {
@@ -157,18 +157,18 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
       });
 
       const payload = {
-        clanId,
+        groupId,
         rolePermissions,
       };
       
       console.log('Sending permissions:', {
-        clanId,
+        groupId,
         roles: Object.keys(rolePermissions),
         totalPermissions: Object.keys(PERMISSIONS).length,
         sampleRole: rolePermissions['member'] ? Object.keys(rolePermissions['member']).length + ' perms' : 'none'
       });
 
-      const response = await fetch('/api/clan/permissions', {
+      const response = await fetch('/api/group/permissions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
           <h3 className="text-lg font-semibold text-white">Role Permissions</h3>
           <p className="text-sm text-slate-400 mt-1">
             {canEditRole 
-              ? 'Customize what each role can do in your guild' 
+              ? 'Customise what each role can do in your guild' 
               : 'You do not have permission to manage permissions'}
           </p>
         </div>
@@ -381,3 +381,4 @@ export function PermissionsSettings({ clanId, userRole, onSave }: PermissionsSet
     </div>
   );
 }
+

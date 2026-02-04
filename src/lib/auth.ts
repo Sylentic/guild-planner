@@ -1,19 +1,19 @@
 // Get clan by ID (for webhook lookup)
-export async function getClanById(id: string) {
+export async function getGroupById(id: string) {
   const { data, error } = await supabase
-    .from('clans')
-    .select('id, slug, name, guild_icon_url, discord_webhook_url, discord_welcome_webhook_url')
+    .from('groups')
+    .select('id, slug, name, group_icon_url, group_webhook_url, group_welcome_webhook_url')
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 // Update the guild icon URL for a clan
-export async function updateClanIconUrl(clanId: string, url: string) {
+export async function updateClanIconUrl(groupId: string, url: string) {
   const { error } = await supabase
-    .from('clans')
-    .update({ guild_icon_url: url })
-    .eq('id', clanId);
+    .from('groups')
+    .update({ group_icon_url: url })
+    .eq('id', groupId);
   if (error) throw error;
 }
 import { supabase } from './supabase';
@@ -31,7 +31,7 @@ export interface UserProfile {
 }
 
 export interface ClanMembership {
-  clan_id: string;
+  group_id: string;
   role: UserRole;
   is_creator: boolean;
   approved_at: string | null;
@@ -143,11 +143,11 @@ export async function updateDisplayName(userId: string, displayName: string) {
 /**
  * Get user's membership in a specific clan
  */
-export async function getClanMembership(clanId: string, userId: string): Promise<ClanMembership | null> {
+export async function getGroupMembership(groupId: string, userId: string): Promise<ClanMembership | null> {
   const { data, error } = await supabase
-    .from('clan_members')
-    .select('clan_id, role, is_creator, approved_at')
-    .eq('clan_id', clanId)
+    .from('group_members')
+    .select('group_id, role, is_creator, approved_at')
+    .eq('group_id', groupId)
     .eq('user_id', userId)
     .maybeSingle();
   
@@ -159,11 +159,11 @@ export async function getClanMembership(clanId: string, userId: string): Promise
 /**
  * Apply to join a clan (creates pending membership)
  */
-export async function applyToClan(clanId: string, userId: string) {
+export async function applyToGroup(groupId: string, userId: string) {
   const { error } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .insert({
-      clan_id: clanId,
+      group_id: groupId,
       user_id: userId,
       role: 'pending',
     })
@@ -177,7 +177,7 @@ export async function applyToClan(clanId: string, userId: string) {
  */
 export async function acceptMember(membershipId: string, approvedBy: string) {
   const { error } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .update({
       role: 'member',
       approved_at: new Date().toISOString(),
@@ -194,7 +194,7 @@ export async function acceptMember(membershipId: string, approvedBy: string) {
  */
 export async function removeMember(membershipId: string) {
   const { error } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .delete()
     .eq('id', membershipId)
     .select();
@@ -207,7 +207,7 @@ export async function removeMember(membershipId: string) {
  */
 export async function updateMemberRole(membershipId: string, newRole: 'admin' | 'officer' | 'member') {
   const { error } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .update({ role: newRole })
     .eq('id', membershipId)
     .select();
@@ -218,10 +218,10 @@ export async function updateMemberRole(membershipId: string, newRole: 'admin' | 
 /**
  * Create a new clan (user becomes admin/creator)
  */
-export async function createClan(slug: string, name: string, userId: string) {
+export async function createGroup(slug: string, name: string, userId: string) {
   // Create clan
   const { data: clan, error: clanError } = await supabase
-    .from('clans')
+    .from('groups')
     .insert({ slug, name, created_by: userId })
     .select()
     .single();
@@ -230,9 +230,9 @@ export async function createClan(slug: string, name: string, userId: string) {
   
   // Add creator as admin
   const { error: memberError } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .insert({
-      clan_id: clan.id,
+      group_id: clan.id,
       user_id: userId,
       role: 'admin',
       is_creator: true,
@@ -249,10 +249,10 @@ export async function createClan(slug: string, name: string, userId: string) {
 /**
  * Check if a clan exists by slug
  */
-export async function getClanBySlug(slug: string) {
+export async function getGroupBySlug(slug: string) {
   const { data, error } = await supabase
-    .from('clans')
-    .select('id, slug, name, guild_icon_url')
+    .from('groups')
+    .select('id, slug, name, group_icon_url')
     .eq('slug', slug)
     .maybeSingle();
   
@@ -262,44 +262,45 @@ export async function getClanBySlug(slug: string) {
 }
 
 /**
- * Get all clans a user belongs to (approved members only)
+ * Get all groups a user belongs to (approved members only)
  */
-export async function getUserClans(userId: string): Promise<Array<{
+export async function getUserGroups(userId: string): Promise<Array<{
   id: string;
   slug: string;
   name: string;
   role: string;
   isCreator: boolean;
-  guild_icon_url?: string;
+  group_icon_url?: string;
 }>> {
   const { data, error } = await supabase
-    .from('clan_members')
+    .from('group_members')
     .select(`
       role,
       is_creator,
-      clans(id, slug, name, guild_icon_url)
+      groups(id, slug, name, group_icon_url)
     `)
     .eq('user_id', userId)
     .neq('role', 'pending');
   
   if (error) throw error;
   
-  // Transform to flat clan list with role info
+  // Transform to flat group list with role info
   return (data || [])
-    .filter(m => m.clans !== null)
+    .filter(m => m.groups !== null)
     .map(m => {
       // Supabase returns single object for one-to-many join
-      const clanData = m.clans as unknown as { id: string; slug: string; name: string; guild_icon_url?: string } | null;
-      if (!clanData) return null;
+      const groupData = m.groups as unknown as { id: string; slug: string; name: string; group_icon_url?: string } | null;
+      if (!groupData) return null;
       return {
-        id: clanData.id,
-        slug: clanData.slug,
-        name: clanData.name,
+        id: groupData.id,
+        slug: groupData.slug,
+        name: groupData.name,
         role: m.role as string,
         isCreator: m.is_creator as boolean,
-        guild_icon_url: clanData.guild_icon_url,
+        group_icon_url: groupData.group_icon_url,
       };
     })
     .filter((c): c is NonNullable<typeof c> => c !== null);
 }
+
 

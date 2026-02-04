@@ -188,3 +188,4 @@ function LootHistoryItem({
     </div>
   );
 }
+

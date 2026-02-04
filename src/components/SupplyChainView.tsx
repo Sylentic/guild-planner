@@ -242,3 +242,4 @@ export function SupplyChainView({ members }: SupplyChainViewProps) {
     </div>
   );
 }
+

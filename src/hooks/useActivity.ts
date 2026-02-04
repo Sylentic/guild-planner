@@ -19,14 +19,14 @@ interface UseActivityReturn {
   refresh: () => Promise<void>;
 }
 
-export function useActivity(clanId: string | null): UseActivityReturn {
+export function useActivity(groupId: string | null): UseActivityReturn {
   const [activitySummaries, setActivitySummaries] = useState<MemberActivitySummary[]>([]);
   const [inactivityAlerts, setInactivityAlerts] = useState<InactivityAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!clanId) {
+    if (!groupId) {
       setLoading(false);
       return;
     }
@@ -39,7 +39,7 @@ export function useActivity(clanId: string | null): UseActivityReturn {
       const { data: summaries, error: summaryError } = await supabase
         .from('member_activity_summary')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .order('total_activities_30d', { ascending: false });
 
       if (summaryError) throw summaryError;
@@ -49,7 +49,7 @@ export function useActivity(clanId: string | null): UseActivityReturn {
       const { data: alerts, error: alertError } = await supabase
         .from('inactivity_alerts')
         .select('*')
-        .eq('clan_id', clanId)
+        .eq('group_id', groupId)
         .eq('is_acknowledged', false)
         .order('days_inactive', { ascending: false });
 
@@ -61,7 +61,7 @@ export function useActivity(clanId: string | null): UseActivityReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
@@ -70,14 +70,14 @@ export function useActivity(clanId: string | null): UseActivityReturn {
   const inactiveMemberCount = activitySummaries.filter((s) => s.is_inactive).length;
 
   const logActivity = async (type: ActivityType, description?: string, characterId?: string) => {
-    if (!clanId) throw new Error('No clan selected');
+    if (!groupId) throw new Error('No clan selected');
 
     const { data: { user } } = await supabase.auth.getUser();
 
     const { error: insertError } = await supabase
       .from('activity_log')
       .insert({
-        clan_id: clanId,
+        group_id: groupId,
         user_id: user?.id,
         character_id: characterId,
         activity_type: type,
@@ -114,3 +114,4 @@ export function useActivity(clanId: string | null): UseActivityReturn {
     refresh: fetchData,
   };
 }
+

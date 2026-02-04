@@ -40,7 +40,7 @@ interface UseBuildsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useBuilds(clanId: string | null): UseBuildsReturn {
+export function useBuilds(groupId: string | null): UseBuildsReturn {
   const [builds, setBuilds] = useState<BuildWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,8 +62,8 @@ export function useBuilds(clanId: string | null): UseBuildsReturn {
         .order('likes_count', { ascending: false });
 
       // Filter based on visibility
-      if (user && clanId) {
-        query = query.or(`visibility.eq.public,created_by.eq.${user.id},and(visibility.eq.guild,clan_id.eq.${clanId})`);
+      if (user && groupId) {
+        query = query.or(`visibility.eq.public,created_by.eq.${user.id},and(visibility.eq.guild,group_id.eq.${groupId})`);
       } else if (user) {
         query = query.or(`visibility.eq.public,created_by.eq.${user.id}`);
       } else {
@@ -97,14 +97,14 @@ export function useBuilds(clanId: string | null): UseBuildsReturn {
     } finally {
       setLoading(false);
     }
-  }, [clanId]);
+  }, [groupId]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const myBuilds = builds.filter((b) => b.visibility === 'private' || b.creator);
-  const guildBuilds = builds.filter((b) => b.visibility === 'guild' && b.clan_id === clanId);
+  const guildBuilds = builds.filter((b) => b.visibility === 'guild' && b.clan_id === groupId);
   const publicBuilds = builds.filter((b) => b.visibility === 'public');
 
   const createBuild = async (data: BuildData): Promise<string> => {
@@ -115,7 +115,7 @@ export function useBuilds(clanId: string | null): UseBuildsReturn {
       .from('builds')
       .insert({
         created_by: user.id,
-        clan_id: clanId,
+        group_id: groupId,
         ...data,
       })
       .select()
@@ -157,7 +157,7 @@ export function useBuilds(clanId: string | null): UseBuildsReturn {
       .from('builds')
       .insert({
         created_by: user.id,
-        clan_id: clanId,
+        group_id: groupId,
         name: `${original.name} (Copy)`,
         description: original.description,
         primary_archetype: original.primary_archetype,
@@ -282,3 +282,4 @@ export function useBuilds(clanId: string | null): UseBuildsReturn {
     refresh: fetchData,
   };
 }
+

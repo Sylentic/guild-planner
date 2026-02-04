@@ -1,0 +1,20 @@
+{
+  "list": [
+    { "id": "kaelar", "name": "Kaelar", "parent": "Aela Humans", "icon": "👤" },
+    { "id": "vaelune", "name": "Vaelune", "parent": "Aela Humans", "icon": "👤" },
+    { "id": "empyrean", "name": "Empyrean", "parent": "Pyrian Elves", "icon": "🧝" },
+    { "id": "pyrai", "name": "Py'rai", "parent": "Pyrian Elves", "icon": "🧝" },
+    { "id": "dunir", "name": "Dünir", "parent": "Kaivek Orcs", "icon": "🧔" },
+    { "id": "nikua", "name": "Niküa", "parent": "Kaivek Orcs", "icon": "🧔" },
+    { "id": "renkai", "name": "Ren'kai", "parent": "Dünzenkell Dwarves", "icon": "⛏️" },
+    { "id": "vek", "name": "Vek", "parent": "Dünzenkell Dwarves", "icon": "⛏️" },
+    { "id": "tulnar", "name": "Tulnar", "parent": "Underrealm", "icon": "🦎" }
+  ],
+  "parentRaces": {
+    "Aela Humans": ["kaelar", "vaelune"],
+    "Pyrian Elves": ["empyrean", "pyrai"],
+    "Kaivek Orcs": ["dunir", "nikua"],
+    "Dünzenkell Dwarves": ["renkai", "vek"],
+    "Underrealm": ["tulnar"]
+  }
+}

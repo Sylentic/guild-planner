@@ -1,0 +1,182 @@
+{
+  "manufacturers": {
+    "crusader": {
+      "name": "Crusader Industries",
+      "icon": "🏭",
+      "ships": ["c1", "genesis", "star_lifter"]
+    },
+    "roberts": {
+      "name": "Roberts Space Industries",
+      "icon": "🏗️",
+      "ships": ["aurora", "constellation", "carrack", "javelin"]
+    },
+    "anvil": {
+      "name": "Anvil Aerospace",
+      "icon": "⚒️",
+      "ships": ["gladius", "super_hornet", "valkyrie"]
+    },
+    "origin": {
+      "name": "Origin Jumpworks",
+      "icon": "✨",
+      "ships": ["350r", "m50", "890_jump"]
+    },
+    "aegis": {
+      "name": "Aegis Dynamics",
+      "icon": "🛡️",
+      "ships": ["sabre", "retaliator", "idris"]
+    },
+    "drake": {
+      "name": "Drake Interplanetary",
+      "icon": "☠️",
+      "ships": ["cutlass", "caterpillar", "kraken"]
+    },
+    "rsi": {
+      "name": "torus_manufactured",
+      "icon": "🌀",
+      "ships": ["reclaimer", "orion", "hull_series"]
+    }
+  },
+  "categories": {
+    "fighter": {
+      "label": "Fighter",
+      "icon": "✈️",
+      "color": "text-red-400"
+    },
+    "exploration": {
+      "label": "Exploration",
+      "icon": "🔭",
+      "color": "text-blue-400"
+    },
+    "transport": {
+      "label": "Transport",
+      "icon": "📦",
+      "color": "text-amber-400"
+    },
+    "support": {
+      "label": "Support",
+      "icon": "🏥",
+      "color": "text-green-400"
+    },
+    "industrial": {
+      "label": "Industrial",
+      "icon": "⚙️",
+      "color": "text-cyan-400"
+    },
+    "military": {
+      "label": "Military",
+      "icon": "🎖️",
+      "color": "text-purple-400"
+    }
+  },
+  "ships": [
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "manufacturer": "roberts",
+      "category": "fighter",
+      "crew": 1,
+      "cargo": 6,
+      "roles": ["fighter", "starter"]
+    },
+    {
+      "id": "gladius",
+      "name": "Gladius",
+      "manufacturer": "anvil",
+      "category": "fighter",
+      "crew": 1,
+      "cargo": 8,
+      "roles": ["fighter", "interceptor"]
+    },
+    {
+      "id": "super_hornet",
+      "name": "Super Hornet",
+      "manufacturer": "anvil",
+      "category": "fighter",
+      "crew": 2,
+      "cargo": 12,
+      "roles": ["fighter", "multi_crew"]
+    },
+    {
+      "id": "cutlass",
+      "name": "Cutlass Black",
+      "manufacturer": "drake",
+      "category": "transport",
+      "crew": 2,
+      "cargo": 46,
+      "roles": ["transport", "multi_crew"]
+    },
+    {
+      "id": "carrack",
+      "name": "Carrack",
+      "manufacturer": "roberts",
+      "category": "exploration",
+      "crew": 5,
+      "cargo": 48,
+      "roles": ["exploration", "exploration_multi"]
+    },
+    {
+      "id": "caterpillar",
+      "name": "Caterpillar",
+      "manufacturer": "drake",
+      "category": "industrial",
+      "crew": 2,
+      "cargo": 192,
+      "roles": ["transport", "cargo"]
+    },
+    {
+      "id": "reclaimer",
+      "name": "Reclaimer",
+      "manufacturer": "rsi",
+      "category": "industrial",
+      "crew": 3,
+      "cargo": 0,
+      "roles": ["salvage", "industrial"]
+    },
+    {
+      "id": "890_jump",
+      "name": "890 Jump",
+      "manufacturer": "origin",
+      "category": "exploration",
+      "crew": 6,
+      "cargo": 96,
+      "roles": ["exploration", "exploration_luxury"]
+    },
+    {
+      "id": "idris",
+      "name": "Idris Frigate",
+      "manufacturer": "aegis",
+      "category": "military",
+      "crew": 15,
+      "cargo": 100,
+      "roles": ["military", "flagship"]
+    }
+  ],
+  "ranks": {
+    "1": {
+      "name": "Trainee",
+      "short": "T",
+      "color": "text-slate-400"
+    },
+    "2": {
+      "name": "Pilot",
+      "short": "P",
+      "color": "text-green-400"
+    },
+    "3": {
+      "name": "Veteran",
+      "short": "V",
+      "color": "text-blue-400"
+    },
+    "4": {
+      "name": "Elite",
+      "short": "E",
+      "color": "text-purple-400"
+    }
+  },
+  "limits": {
+    "4": 2,
+    "3": 4,
+    "2": 6,
+    "1": "unlimited"
+  }
+}

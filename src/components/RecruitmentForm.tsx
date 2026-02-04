@@ -6,15 +6,15 @@ import { supabase } from '@/lib/supabase';
 import { ARCHETYPES, ArchetypeId } from '@/lib/characters';
 
 interface RecruitmentFormProps {
-  clanId: string;
-  clanName: string;
+  groupId: string;
+  groupName: string;
   onClose: () => void;
   onSuccess: () => void;
 }
 
 export function RecruitmentForm({
-  clanId,
-  clanName,
+  groupId,
+  groupName,
   onClose,
   onSuccess,
 }: RecruitmentFormProps) {
@@ -40,7 +40,7 @@ export function RecruitmentForm({
     setError(null);
 
     const applicationData = {
-      clan_id: clanId,
+      group_id: groupId,
       discord_username: discordUsername.trim(),
       character_name: characterName.trim() || null,
       primary_class: primaryClass || null,
@@ -80,7 +80,7 @@ export function RecruitmentForm({
         {/* Header */}
         <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white">Apply to {clanName}</h2>
+            <h2 className="text-lg font-semibold text-white">Apply to {groupName}</h2>
             <p className="text-sm text-slate-400">Fill out the form to submit your application</p>
           </div>
           <button
@@ -223,3 +223,4 @@ export function RecruitmentForm({
     </div>
   );
 }
+

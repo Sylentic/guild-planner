@@ -17,7 +17,7 @@ interface ClanSearchDropdownProps {
   placeholder?: string;
   selectedClans?: Clan[];
   multiple?: boolean;
-  onRemove?: (clanId: string) => void;
+  onRemove?: (groupId: string) => void;
 }
 
 /**
@@ -50,7 +50,7 @@ export function ClanSearchDropdown({
       setIsLoading(true);
       try {
         const { data, error } = await supabase
-          .from('clans')
+          .from('groups')
           .select('id, name, slug')
           .ilike('name', `%${query}%`)
           .limit(10);
@@ -171,3 +171,4 @@ export function ClanSearchDropdown({
     </div>
   );
 }
+

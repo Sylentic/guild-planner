@@ -150,3 +150,4 @@ export function getRankSummary(professionRanks: { rank: RankLevel }[]): string {
   
   return `${counts[4]} GM | ${counts[3]} M | ${counts[2]} J | ${counts[1]} A`;
 }
+

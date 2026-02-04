@@ -1,9 +1,9 @@
 // Permission system for the Guild Planner
 // Defines all available permissions and their configuration
 
-export type ClanRole = 'admin' | 'officer' | 'member' | 'trial' | 'pending';
+export type GroupRole = 'admin' | 'officer' | 'member' | 'trial' | 'pending';
 
-export type PermissionCategory = 'characters' | 'guild_bank' | 'events' | 'parties' | 'siege' | 'announcements' | 'recruitment' | 'settings';
+export type PermissionCategory = 'characters' | 'guild_bank' | 'events' | 'parties' | 'siege' | 'ships' | 'announcements' | 'recruitment' | 'settings';
 
 export interface Permission {
   id: string;
@@ -174,6 +174,38 @@ export const PERMISSIONS = {
     description: 'Create new siege events'
   },
 
+  // Ships (Star Citizen)
+  'ships_create': {
+    id: 'ships_create',
+    category: 'ships' as PermissionCategory,
+    name: 'Add Ships',
+    description: 'Add ships to characters'
+  },
+  'ships_edit_own': {
+    id: 'ships_edit_own',
+    category: 'ships' as PermissionCategory,
+    name: 'Edit Own Ships',
+    description: 'Edit ships on your own characters'
+  },
+  'ships_edit_any': {
+    id: 'ships_edit_any',
+    category: 'ships' as PermissionCategory,
+    name: 'Edit Any Ships',
+    description: 'Edit ships on any character'
+  },
+  'ships_delete_own': {
+    id: 'ships_delete_own',
+    category: 'ships' as PermissionCategory,
+    name: 'Delete Own Ships',
+    description: 'Delete ships from your own characters'
+  },
+  'ships_delete_any': {
+    id: 'ships_delete_any',
+    category: 'ships' as PermissionCategory,
+    name: 'Delete Any Ships',
+    description: 'Delete ships from any character'
+  },
+
   // Announcements
   'announcements_create': {
     id: 'announcements_create',
@@ -237,7 +269,7 @@ export function getAllPermissionCategories(): PermissionCategory[] {
 
 // Default permissions for each role
 // Admin gets all permissions, Officer gets most, Member gets basic, Trial gets very limited
-export const DEFAULT_ROLE_PERMISSIONS: Record<ClanRole, Set<string>> = {
+export const DEFAULT_ROLE_PERMISSIONS: Record<GroupRole, Set<string>> = {
   admin: new Set([
     // All permissions for admins
     ...Object.keys(PERMISSIONS),
@@ -292,6 +324,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<ClanRole, Set<string>> = {
     // Siege
     'siege_create_event',
     'siege_edit_rosters',
+    // Ships
+    'ships_create',
+    'ships_edit_own',
+    'ships_delete_own',
     // Announcements
     'announcements_create',
   ]),
@@ -299,6 +335,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<ClanRole, Set<string>> = {
   trial: new Set([
     // Characters
     'characters_create',
+    // Ships
+    'ships_create',
+    'ships_edit_own',
+    'ships_delete_own',
     // Events
     // Can RSVP but not create
     // Guild Bank - read only
@@ -310,18 +350,18 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<ClanRole, Set<string>> = {
 };
 
 // Check if a role has a permission
-export function roleHasPermission(role: ClanRole, permission: string): boolean {
+export function roleHasPermission(role: GroupRole, permission: string): boolean {
   return DEFAULT_ROLE_PERMISSIONS[role]?.has(permission) ?? false;
 }
 
 // Get all permissions for a role
-export function getRolePermissions(role: ClanRole): Permission[] {
+export function getRolePermissions(role: GroupRole): Permission[] {
   const permIds = DEFAULT_ROLE_PERMISSIONS[role] ?? new Set();
   return Object.values(PERMISSIONS).filter(p => permIds.has(p.id));
 }
 
 // Role hierarchy: admin > officer > member > trial > pending
-export function getRoleHierarchy(): Record<ClanRole, number> {
+export function getRoleHierarchy(): Record<GroupRole, number> {
   return {
     admin: 5,
     officer: 4,
@@ -331,13 +371,13 @@ export function getRoleHierarchy(): Record<ClanRole, number> {
   };
 }
 
-export function canManageRole(userRole: ClanRole, targetRole: ClanRole): boolean {
+export function canManageRole(userRole: GroupRole, targetRole: GroupRole): boolean {
   const hierarchy = getRoleHierarchy();
   return hierarchy[userRole] > hierarchy[targetRole];
 }
 
 // Role display configuration
-export const ROLE_CONFIG: Record<ClanRole, { label: string; color: string; borderColor: string; description: string }> = {
+export const ROLE_CONFIG: Record<GroupRole, { label: string; color: string; borderColor: string; description: string }> = {
   admin: {
     label: 'Admin',
     color: 'text-amber-400', // legendary
@@ -369,3 +409,4 @@ export const ROLE_CONFIG: Record<ClanRole, { label: string; color: string; borde
     description: 'Application awaiting approval',
   }
 };
+
