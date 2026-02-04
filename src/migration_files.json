@@ -62,5 +62,6 @@
   "061_ror_event_role_requirements.sql",
   "062_ror_discord_webhooks_and_roles.sql",
   "063_add_star_citizen_subscriber_support.sql",
-  "064_main_character_per_game.sql"
+  "064_main_character_per_game.sql",
+  "065_add_subscriber_ownership_type.sql"
 ]

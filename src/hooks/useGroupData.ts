@@ -176,7 +176,17 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       try {
         const characterId = insertedData[0].id;
         console.log(`New subscriber character created with tier: ${data.subscriber_tier}`);
+        
+        const { getCurrentMonthKey } = await import('@/games/starcitizen/config/subscriber-ships');
+        const currentMonth = getCurrentMonthKey();
+        
         await syncSubscriberShips(supabase, characterId, data.subscriber_tier);
+        
+        // Set the subscriber_ships_month to track which month's ships we have
+        await supabase
+          .from('members')
+          .update({ subscriber_ships_month: currentMonth })
+          .eq('id', characterId);
       } catch (err) {
         console.error('Error syncing subscriber ships for new character:', err);
         // Don't throw - character was created successfully
@@ -212,6 +222,8 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
     if (effectiveGame === 'starcitizen') {
       if ('subscriber_tier' in data) payload.subscriber_tier = data.subscriber_tier ?? null;
+      if ('subscriber_since' in data) payload.subscriber_since = data.subscriber_since ?? null;
+      if ('subscriber_ships_month' in data) payload.subscriber_ships_month = data.subscriber_ships_month ?? null;
     }
 
     return payload;
@@ -317,6 +329,9 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       if (newTier && newTier !== oldTier) {
         // User selected a subscriber tier
         try {
+          const { getCurrentMonthKey } = await import('@/games/starcitizen/config/subscriber-ships');
+          const currentMonth = getCurrentMonthKey();
+
           if (oldTier) {
             // Tier changed
             console.log(`Subscriber tier changed from ${oldTier} to ${newTier}`);
@@ -326,6 +341,12 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
             console.log(`Subscriber tier set to ${newTier}`);
             await syncSubscriberShips(supabase, id, newTier);
           }
+
+          // Update subscriber_ships_month to track which month's ships we have
+          await supabase
+            .from('members')
+            .update({ subscriber_ships_month: currentMonth })
+            .eq('id', id);
         } catch (err) {
           console.error('Error syncing subscriber ships:', err);
           // Don't throw - let the update succeed even if ship sync fails
@@ -340,6 +361,12 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
           if (shipsToRemove && shipsToRemove.length > 0) {
             await removeSubscriberShips(supabase, id, shipsToRemove);
           }
+
+          // Clear subscriber_ships_month
+          await supabase
+            .from('members')
+            .update({ subscriber_ships_month: null })
+            .eq('id', id);
         } catch (err) {
           console.error('Error removing subscriber ships:', err);
           // Don't throw - let the update succeed
