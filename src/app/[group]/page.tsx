@@ -222,7 +222,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
-            <p className="text-slate-400 text-sm">Click on a game to view your guild's chapter</p>
+            <p className="text-slate-400 text-sm">Click on a game to view your group's information for that game.</p>
           </div>
           {isAdmin && (
             <button

@@ -12,6 +12,7 @@
         "git push": true,
         "Set-Content": true,
         "npx markdownlint-cli2": true,
-        "Move-Item": true
-    }
+        "Move-Item": true,
+        "git checkout": true
+}
 }
