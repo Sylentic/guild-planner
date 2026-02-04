@@ -1,16 +1,22 @@
 import { supabase } from '@/lib/supabase';
 
 /**
- * Get all enabled games for a group
+ * Get all enabled games for a group (excludes archived games by default)
  * Returns all available games if none have been explicitly configured
  */
-export async function getGroupGames(groupId: string): Promise<string[]> {
+export async function getGroupGames(groupId: string, includeArchived = false): Promise<string[]> {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('group_games')
       .select('game_slug')
-      .eq('group_id', groupId)
-      .order('created_at');
+      .eq('group_id', groupId);
+    
+    // Exclude archived games unless explicitly requested
+    if (!includeArchived) {
+      query = query.eq('archived', false);
+    }
+    
+    const { data, error } = await query.order('created_at');
 
     if (error) throw error;
     
@@ -55,6 +61,65 @@ export async function removeGameFromGroup(groupId: string, gameSlug: string): Pr
     return true;
   } catch (err) {
     console.error('Error removing game from group:', err);
+    return false;
+  }
+}
+
+/**
+ * Archive a game for a group (admin only)
+ * Archived games are hidden from the UI but all data is preserved
+ */
+export async function archiveGameForGroup(groupId: string, gameSlug: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('group_games')
+      .update({ archived: true })
+      .eq('group_id', groupId)
+      .eq('game_slug', gameSlug);
+
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error('Error archiving game for group:', err);
+    return false;
+  }
+}
+
+/**
+ * Unarchive a game for a group (admin only)
+ */
+export async function unarchiveGameForGroup(groupId: string, gameSlug: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('group_games')
+      .update({ archived: false })
+      .eq('group_id', groupId)
+      .eq('game_slug', gameSlug);
+
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error('Error unarchiving game for group:', err);
+    return false;
+  }
+}
+
+/**
+ * Check if a game is archived for a group
+ */
+export async function isGameArchived(groupId: string, gameSlug: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase
+      .from('group_games')
+      .select('archived')
+      .eq('group_id', groupId)
+      .eq('game_slug', gameSlug)
+      .single();
+
+    if (error) throw error;
+    return data?.archived || false;
+  } catch (err) {
+    console.error('Error checking if game is archived:', err);
     return false;
   }
 }

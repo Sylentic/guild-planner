@@ -12,6 +12,7 @@ import { GuildIconUploaderWrapper } from '../GuildIconUploaderWrapper';
 import { PermissionsSettings } from '@/components/PermissionsSettings';
 import { ClanSettings } from '@/components/ClanSettings';
 import { RecruitmentSettings } from '@/components/RecruitmentSettings';
+import { GameManagement } from '@/components/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
 
 export default function SettingsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
@@ -104,6 +105,10 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
 
         {membership.role === 'admin' && group && (
           <RecruitmentSettings groupId={group.id} groupSlug={groupSlug} />
+        )}
+
+        {membership.role === 'admin' && group && (
+          <GameManagement groupId={group.id} />
         )}
       </div>
     </GameLayout>
