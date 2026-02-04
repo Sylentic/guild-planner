@@ -181,7 +181,7 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
         <DynamicFavicon iconUrl={guildIconUrl} />
         {isGameArchived && <ArchivedGameBanner gameName={gameName} />}
         <GroupHeader
-          clanName={group?.name || ''}
+          groupName={group?.name || ''}
           groupSlug={groupSlug}
           gameSlug={gameSlug}
           enabledGames={enabledGames}

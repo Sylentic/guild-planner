@@ -26,7 +26,7 @@ interface UserClan {
 }
 
 export default function Home() {
-  const [clanName, setClanName] = useState('');
+  const [groupName, setGroupName] = useState('');
   const [userClans, setUserClans] = useState<UserClan[]>([]);
   const [clansLoading, setClansLoading] = useState(false);
   const router = useRouter();
@@ -60,8 +60,8 @@ export default function Home() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (clanName.trim()) {
-      const slug = clanName
+    if (groupName.trim()) {
+      const slug = groupName
         .toLowerCase()
         .trim()
         .replace(/[^a-z0-9]+/g, '-')
@@ -149,7 +149,7 @@ export default function Home() {
       <main className="flex-1 overflow-y-auto">
         <div className="flex flex-col items-center justify-center p-8 min-h-full">
           <LandingHero />
-          <LandingClanForm clanName={clanName} setClanName={setClanName} user={user} />
+          <LandingClanForm groupName={groupName} setGroupName={setGroupName} user={user} />
 
       {/* User's clans section - show for logged in users */}
       {user && (

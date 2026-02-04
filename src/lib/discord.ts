@@ -126,8 +126,8 @@ export async function testDiscordWebhook(
 export async function notifyNewEvent(
   webhookUrl: string,
   event: Event,
-  clanName: string,
-  clanSlug: string,
+  groupName: string,
+  groupSlug: string,
   roleId?: string | null
 ): Promise<{ success: boolean; error?: string }> {
   const eventType = EVENT_TYPES[event.event_type];
@@ -136,7 +136,7 @@ export async function notifyNewEvent(
   
   // Build direct link to event
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
-  const eventUrl = `${baseUrl}/${clanSlug}/events#event-${event.id}`;
+  const eventUrl = `${baseUrl}/${groupSlug}/events#event-${event.id}`;
   
   // Build content with role ping if provided
   let content = '🆕 **New Event Created!**';
@@ -228,7 +228,7 @@ export async function notifyNewEvent(
       url: eventUrl,
       fields,
       footer: {
-        text: clanName,
+        text: groupName,
       },
       timestamp: new Date().toISOString(),
     }],
@@ -241,8 +241,8 @@ export async function notifyNewEvent(
 export async function notifyAnnouncement(
   webhookUrl: string,
   announcement: Announcement,
-  clanName: string,
-  clanSlug: string,
+  groupName: string,
+  groupSlug: string,
   roleId?: string | null
 ): Promise<{ success: boolean; error?: string }> {
   // Build content with role ping if provided
@@ -253,7 +253,7 @@ export async function notifyAnnouncement(
 
   // Build direct link to announcement
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '');
-  const announcementUrl = `${baseUrl}/${clanSlug}/events#announcement-${announcement.id}`;
+  const announcementUrl = `${baseUrl}/${groupSlug}/events#announcement-${announcement.id}`;
 
   return sendDiscordWebhook(webhookUrl, {
     content,
@@ -265,7 +265,7 @@ export async function notifyAnnouncement(
       color: announcement.is_pinned ? COLORS.orange : COLORS.cyan,
       url: announcementUrl,
       footer: {
-        text: clanName,
+        text: groupName,
       },
       timestamp: new Date().toISOString(),
     }],
@@ -278,7 +278,7 @@ export async function notifyAnnouncement(
 export async function notifyEventReminder(
   webhookUrl: string,
   event: Event,
-  clanName: string,
+  groupName: string,
   minutesUntil: number
 ): Promise<{ success: boolean; error?: string }> {
   const eventType = EVENT_TYPES[event.event_type];
@@ -304,7 +304,7 @@ export async function notifyEventReminder(
         inline: true,
       }] : undefined,
       footer: {
-        text: clanName,
+        text: groupName,
       },
     }],
   });
@@ -322,8 +322,8 @@ export async function notifyNewEventForGame(
   gameSlug: GameId,
   groupData: any,
   event: Event,
-  clanName: string,
-  clanSlug: string
+  groupName: string,
+  groupSlug: string
 ): Promise<{ success: boolean; error?: string }> {
   const webhookUrl = getGameEventsWebhookUrl(gameSlug, groupData);
   const roleId = getGameEventsRoleId(gameSlug, groupData);
@@ -332,7 +332,7 @@ export async function notifyNewEventForGame(
     return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
   }
 
-  return notifyNewEvent(webhookUrl, event, clanName, clanSlug, roleId);
+  return notifyNewEvent(webhookUrl, event, groupName, groupSlug, roleId);
 }
 
 /**
@@ -342,8 +342,8 @@ export async function notifyAnnouncementForGame(
   gameSlug: GameId,
   groupData: any,
   announcement: Announcement,
-  clanName: string,
-  clanSlug: string
+  groupName: string,
+  groupSlug: string
 ): Promise<{ success: boolean; error?: string }> {
   const webhookUrl = getGameWebhookUrl(gameSlug, groupData);
   const roleId = getGameAnnouncementRoleId(gameSlug, groupData);
@@ -352,7 +352,7 @@ export async function notifyAnnouncementForGame(
     return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
   }
 
-  return notifyAnnouncement(webhookUrl, announcement, clanName, clanSlug, roleId);
+  return notifyAnnouncement(webhookUrl, announcement, groupName, groupSlug, roleId);
 }
 
 /**
@@ -362,7 +362,7 @@ export async function notifyEventReminderForGame(
   gameSlug: GameId,
   groupData: any,
   event: Event,
-  clanName: string,
+  groupName: string,
   minutesUntil: number
 ): Promise<{ success: boolean; error?: string }> {
   const webhookUrl = getGameEventsWebhookUrl(gameSlug, groupData);
@@ -371,7 +371,7 @@ export async function notifyEventReminderForGame(
     return { success: false, error: `No Discord webhook configured for ${gameSlug}` };
   }
 
-  return notifyEventReminder(webhookUrl, event, clanName, minutesUntil);
+  return notifyEventReminder(webhookUrl, event, groupName, minutesUntil);
 }
 
 

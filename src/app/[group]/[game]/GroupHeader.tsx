@@ -34,7 +34,7 @@ function getPageForGame(currentPath: string, targetGame: string): string {
 }
 
 interface GroupHeaderProps {
-  clanName: string;
+  groupName: string;
   groupSlug: string;
   gameSlug: string;
   enabledGames: Array<{ slug: string; name: string; icon: string; iconUrl?: string; archived: boolean }>;
@@ -46,7 +46,7 @@ interface GroupHeaderProps {
 }
 
 export function GroupHeader({
-  clanName,
+  groupName,
   groupSlug,
   gameSlug,
   enabledGames,
@@ -86,7 +86,7 @@ export function GroupHeader({
             >
               <div>
                 <h1 className="font-display text-base md:text-xl font-semibold text-white hover:text-cyan-400">
-                  {clanName || groupSlug}
+                  {groupName || groupSlug}
                 </h1>
                 <p className="text-slate-500 text-xs md:text-sm hidden sm:block">
                   {characterCount} characters •

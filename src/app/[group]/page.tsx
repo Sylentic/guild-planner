@@ -333,7 +333,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                   onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
                   className="text-sm text-slate-400 hover:text-slate-300 cursor-pointer w-full text-left"
                 >
-                  View members, events, and manage guild operations
+                  View members, events, and manage group operations
                 </button>
               </div>
 
