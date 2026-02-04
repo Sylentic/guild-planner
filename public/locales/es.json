@@ -96,6 +96,15 @@
     "errorLoading": "Error Cargando el Clan",
     "creator": "creador"
   },
+  "group": {
+    "applicationPending": "Solicitud Pendiente",
+    "pendingApproval": "Tu solicitud para unirte a {{name}} está pendiente de revisión por un admin u oficial.",
+    "notFound": "Grupo No Encontrado",
+    "doesNotExist": "El grupo '{{name}}' no existe.",
+    "errorLoading": "Error Cargando el Grupo",
+    "connectionError": "Error de Conexión",
+    "connectionErrorMessage": "No se pudo conectar al servicio del grupo. Esto puede deberse a una conexión lenta o un problema del servidor."
+  },
   "character": {
     "addCharacter": "Añadir Personaje",
     "editCharacter": "Editar Personaje",
