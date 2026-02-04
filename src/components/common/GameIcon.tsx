@@ -16,7 +16,7 @@ export function GameIcon({ icon, iconUrl, alt, size = 32, className = '' }: Game
         alt={alt}
         width={size}
         height={size}
-        className={`object-contain ${className}`}
+        className={`object-contain inline-block align-middle ${className}`}
         onError={(e) => {
           // Fallback to emoji if image fails to load
           const target = e.target as HTMLImageElement;
@@ -29,5 +29,5 @@ export function GameIcon({ icon, iconUrl, alt, size = 32, className = '' }: Game
     );
   }
   
-  return <span className={className} style={{ fontSize: `${size}px` }}>{icon}</span>;
+  return <span className={`inline-block align-middle ${className}`} style={{ fontSize: `${size}px` }}>{icon}</span>;
 }
