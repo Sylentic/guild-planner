@@ -320,6 +320,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
 
       {/* Member - show games */}
       {!membershipLoading && membership && membership.role !== 'pending' && (
+        <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
@@ -467,6 +468,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           </div>
         )}
       </main>
+      )}
 
       {/* Footer */}
       <footer className="mt-12 border-t border-slate-700 bg-slate-800/30">
@@ -474,7 +476,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           <InlineFooter variant="matching" />
         </div>
       </footer>
-      )}
     </div>
   );
 }

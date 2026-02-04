@@ -94,6 +94,3 @@ if ($UsePsql -and $devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]') {
 }
 
 Write-Host "Data sync complete." -ForegroundColor Green
-Get-Content $DumpFile | npx supabase db execute --linked
-
-Write-Host "Data sync complete." -ForegroundColor Green
