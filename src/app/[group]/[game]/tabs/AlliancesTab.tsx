@@ -1,7 +1,7 @@
 "use client";
 
 import { useAlliances } from '@/hooks/useAlliances';
-import { AllianceView } from '@/components/AllianceView';
+import { AllianceView } from '@/components/views/AllianceView';
 
 export interface AlliancesTabProps {
   groupId: string;

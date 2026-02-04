@@ -1,4 +1,4 @@
-import { PublicEventsView } from '@/components/PublicEventsView';
+import { PublicEventsView } from '@/components/views/PublicEventsView';
 
 export const metadata = {
   title: 'Public Events',

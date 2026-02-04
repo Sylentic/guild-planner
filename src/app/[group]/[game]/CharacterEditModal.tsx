@@ -1,5 +1,5 @@
 import { CharacterWithProfessions } from '@/lib/types';
-import { CharacterForm } from '@/components/CharacterForm';
+import { CharacterForm } from '@/components/characters/CharacterForm';
 import React from 'react';
 
 interface CharacterEditModalProps {

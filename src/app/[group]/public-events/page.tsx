@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { PublicClanEventsView } from '@/components/PublicClanEventsView';
+import { PublicClanEventsView } from '@/components/views/PublicClanEventsView';
 
 interface PageProps {
   params: Promise<{ group: string }>;

@@ -1,4 +1,4 @@
-import { SiegeTabContent } from '@/components/SiegeTabContent';
+import { SiegeTabContent } from '@/components/views/SiegeTabContent';
 import { CharacterWithProfessions } from '@/lib/types';
 
 export interface SiegeTabProps {

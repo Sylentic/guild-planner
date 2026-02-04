@@ -1,6 +1,6 @@
 "use client";
 
-import { EconomyTabContent } from '@/components/EconomyTabContent';
+import { EconomyTabContent } from '@/components/views/EconomyTabContent';
 
 export interface EconomyTabProps {
   groupId: string;

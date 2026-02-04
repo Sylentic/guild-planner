@@ -2,11 +2,11 @@
 
 import { use } from 'react';
 import { GameLayout } from '../GameLayout';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
-import { ClanMatrix } from '@/components/ClanMatrix';
-import { ShipsView } from '@/components/ShipsView';
+import { ClanMatrix } from '@/components/views/ClanMatrix';
+import { ShipsView } from '@/components/views/ShipsView';
 
 export default function MatrixPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);

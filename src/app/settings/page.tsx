@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Globe, Save, Check, ArrowLeft, User, Languages } from 'lucide-react';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import { COMMON_TIMEZONES } from '@/lib/events';
-import { InlineFooter } from '@/components/Footer';
+import { InlineFooter } from '@/components/layout/Footer';
 
 export default function SettingsPage() {
   const { user, profile, loading } = useAuthContext();

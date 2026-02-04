@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GuildIconUploader } from '@/components/GuildIconUploader';
+import { GuildIconUploader } from '@/components/game-specific/GuildIconUploader';
 
 interface GuildIconUploaderWrapperProps {
   groupId: string;

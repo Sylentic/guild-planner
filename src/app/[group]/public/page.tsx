@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Users, Briefcase, Calendar, ChevronRight, ExternalLink, Home } from 'lucide-react';
 import { Clan, PARTY_ROLES } from '@/lib/types';
 import { ARCHETYPES } from '@/lib/characters';
-import { RecruitmentForm } from '@/components/RecruitmentForm';
+import { RecruitmentForm } from '@/components/forms/RecruitmentForm';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PublicGroupData {

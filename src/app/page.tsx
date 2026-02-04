@@ -4,16 +4,16 @@ import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Sword, Hammer, Pickaxe, LogOut, User, Shield, Users, Settings, Loader2 } from 'lucide-react';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { InlineFooter } from '@/components/Footer';
+import { InlineFooter } from '@/components/layout/Footer';
 import { getUserGroups } from '@/lib/auth';
 
-import { LandingHero } from '@/components/LandingHero';
-import { LandingClanForm } from '@/components/LandingClanForm';
-import { LandingFeatureHighlights } from '@/components/LandingFeatureHighlights';
-import { GameSelector } from '@/components/GameSelector';
-import { GameSwitcher } from '@/components/GameSwitcher';
+import { LandingHero } from '@/components/landing/LandingHero';
+import { LandingClanForm } from '@/components/forms/LandingClanForm';
+import { LandingFeatureHighlights } from '@/components/landing/LandingFeatureHighlights';
+import { GameSelector } from '@/components/common/GameSelector';
+import { GameSwitcher } from '@/components/common/GameSwitcher';
 import { useGame } from '@/contexts/GameContext';
 
 interface UserClan {

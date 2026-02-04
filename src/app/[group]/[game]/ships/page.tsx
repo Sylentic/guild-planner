@@ -2,9 +2,9 @@
 
 import { use } from 'react';
 import { GameLayout } from '../GameLayout';
-import { ShipsView } from '@/components/ShipsView';
+import { ShipsView } from '@/components/views/ShipsView';
 import { useGroupData } from '@/hooks/useGroupData';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
 

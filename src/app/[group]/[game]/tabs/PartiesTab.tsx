@@ -1,5 +1,5 @@
 import { useParties } from '@/hooks/useParties';
-import { PartiesList } from '@/components/PartiesList';
+import { PartiesList } from '@/components/views/PartiesList';
 import { CharacterWithProfessions } from '@/lib/types';
 
 export interface PartiesTabProps {

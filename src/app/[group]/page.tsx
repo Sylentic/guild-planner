@@ -4,17 +4,17 @@ import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AlertCircle, LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader } from 'lucide-react';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
 import { getGroupGames, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
 import { getAllGames } from '@/lib/games';
-import { ClanLoadingScreen } from '@/components/ClanLoadingScreen';
-import { ClanErrorScreen } from '@/components/ClanErrorScreen';
-import { ClanLoginScreen } from '@/components/ClanLoginScreen';
-import { InlineFooter } from '@/components/Footer';
+import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
+import { ClanErrorScreen } from '@/components/screens/ClanErrorScreen';
+import { ClanLoginScreen } from '@/components/screens/ClanLoginScreen';
+import { InlineFooter } from '@/components/layout/Footer';
 
 
 export default function GroupPage({ params }: { params: Promise<{ group: string }> }) {

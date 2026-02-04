@@ -2,17 +2,17 @@
 
 import { use, useEffect, useState } from 'react';
 import { GameLayout } from '../GameLayout';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
 import { ManageTab } from '../tabs/ManageTab';
 import { GuildIconUploaderWrapper } from '../GuildIconUploaderWrapper';
-import { PermissionsSettings } from '@/components/PermissionsSettings';
-import { ClanSettings } from '@/components/ClanSettings';
-import { RecruitmentSettings } from '@/components/RecruitmentSettings';
-import { GameManagement } from '@/components/GameManagement';
+import { PermissionsSettings } from '@/components/settings/PermissionsSettings';
+import { ClanSettings } from '@/components/settings/ClanSettings';
+import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
+import { GameManagement } from '@/components/settings/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
 
 export default function SettingsPage({ params }: { params: Promise<{ group: string; game: string }> }) {

@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Cinzel } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/components/AuthProvider";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { GameProvider } from "@/contexts/GameContext";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/components/layout/Footer";
 import { Analytics } from "@vercel/analytics/next";
-import { IsAdminBannerWrapper } from '@/components/IsAdminBannerWrapper';
+import { IsAdminBannerWrapper } from '@/components/common/IsAdminBannerWrapper';
 
 const inter = Inter({
   variable: "--font-inter",

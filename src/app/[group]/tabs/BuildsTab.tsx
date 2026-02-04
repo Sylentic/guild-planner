@@ -1,7 +1,7 @@
 "use client";
 
 import { useBuilds } from '@/hooks/useBuilds';
-import { BuildLibrary } from '@/components/BuildLibrary';
+import { BuildLibrary } from '@/components/views/BuildLibrary';
 
 export interface BuildsTabProps {
   groupId: string;

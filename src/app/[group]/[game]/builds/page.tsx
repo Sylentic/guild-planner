@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { GameLayout } from '../GameLayout';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useGroupData } from '@/hooks/useGroupData';
 import { BuildsTab } from '../tabs/BuildsTab';
 

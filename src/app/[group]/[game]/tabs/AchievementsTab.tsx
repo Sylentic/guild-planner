@@ -1,6 +1,6 @@
 import { useAchievements } from '@/hooks/useAchievements';
-import { AchievementsView } from '@/components/AchievementsView';
-import { AchievementAdminPanel } from '@/components/AchievementAdminPanel';
+import { AchievementsView } from '@/components/views/AchievementsView';
+import { AchievementAdminPanel } from '@/components/views/AchievementAdminPanel';
 
 export interface AchievementsTabProps {
   groupId: string;

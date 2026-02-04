@@ -4,10 +4,10 @@ import { use, useState } from 'react';
 import { GameLayout } from '../GameLayout';
 import { CharactersTab } from '../tabs/CharactersTab';
 import { useGroupData } from '@/hooks/useGroupData';
-import { useAuthContext } from '@/components/AuthProvider';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { CharacterEditModal } from '../CharacterEditModal';
 import { CharacterWithProfessions } from '@/lib/types';
-import { DEFAULT_FILTERS, CharacterFilters } from '@/components/CharacterFilters';
+import { DEFAULT_FILTERS, CharacterFilters } from '@/components/characters/CharacterFilters';
 
 export default function CharactersPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
