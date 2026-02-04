@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * This route acts as an OAuth redirect intermediary.
- * Discord/Supabase redirects here (which is on the production domain),
- * and we redirect to the appropriate final destination based on the dev flag.
+ * Simple auth redirect passthrough.
+ * Supabase redirects here, we just pass through to auth/callback
+ * which will use getURL() to redirect to the correct domain.
  */
 export async function GET(request: NextRequest) {
-  const isDev = request.nextUrl.searchParams.get('dev') === 'true';
-  
-  if (isDev) {
-    // Redirect to dev domain callback
-    return NextResponse.redirect('https://dev.gp.pandamonium-gaming.com/auth/callback', 307);
-  }
-  
-  // Redirect to production callback
-  return NextResponse.redirect('https://aoc.pandamonium-gaming.com/auth/callback', 307);
+  // Redirect to the auth callback page
+  // The callback page uses getURL() to ensure we're on the correct domain
+  return NextResponse.redirect(new URL('/auth/callback', request.nextUrl.origin), 307);
 }
 
