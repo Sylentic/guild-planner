@@ -219,6 +219,8 @@ export async function updateMemberRole(membershipId: string, newRole: 'admin' | 
  * Create a new clan (user becomes admin/creator)
  */
 export async function createGroup(slug: string, name: string, userId: string) {
+  console.log(`[createGroup] Creating group: slug=${slug}, name=${name}, userId=${userId}`);
+  
   // Create clan
   const { data: clan, error: clanError } = await supabase
     .from('groups')
@@ -226,6 +228,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
     .select()
     .single();
   
+  console.log(`[createGroup] Groups insert result:`, { clan, error: clanError });
   if (clanError) throw clanError;
   
   // Add creator as admin
@@ -241,6 +244,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
     })
     .select();
   
+  console.log(`[createGroup] Member insert result:`, { error: memberError });
   if (memberError) throw memberError;
   
   return clan;

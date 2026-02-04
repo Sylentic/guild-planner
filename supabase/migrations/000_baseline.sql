@@ -1,10 +1,11 @@
--- Squashed baseline migration
--- Generated on 2026-02-04 21:34:02
+-- Baseline migration squashed from 68 migrations
+-- Generated: 2026-02-04 22:15:42
+-- Note: Migrations 046 and 047 excluded (clans→groups renaming already applied inline)
+
 
 -- =====================================================
 -- SOURCE: 001_initial_schema.sql
 -- =====================================================
-
 -- =====================================================
 -- AoC Guild Planner - Database Schema
 -- Phase 1: Authentication & Security
@@ -21,8 +22,8 @@ CREATE TABLE IF NOT EXISTS migration_history (
 -- CORE TABLES
 -- =====================================================
 
--- Clans table
-CREATE TABLE clans (
+-- groups table
+CREATE TABLE groups (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   slug VARCHAR(50) UNIQUE NOT NULL,
   name VARCHAR(100) NOT NULL,
@@ -40,14 +41,14 @@ CREATE TABLE users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Add foreign key to clans.created_by after users table exists
-ALTER TABLE clans ADD CONSTRAINT fk_clans_created_by 
+-- Add foreign key to groups.created_by after users table exists
+ALTER TABLE groups ADD CONSTRAINT fk_groups_created_by 
   FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
 
--- Clan memberships with status and roles
-CREATE TABLE clan_members (
+-- Group memberships with status and roles
+CREATE TABLE group_members (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  clan_id UUID REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   role VARCHAR(20) NOT NULL DEFAULT 'pending' 
     CHECK (role IN ('admin', 'officer', 'member', 'pending')),
@@ -55,13 +56,13 @@ CREATE TABLE clan_members (
   applied_at TIMESTAMPTZ DEFAULT NOW(),
   approved_at TIMESTAMPTZ,
   approved_by UUID REFERENCES users(id),
-  UNIQUE(clan_id, user_id)
+  UNIQUE(group_id, user_id)
 );
 
 -- Members table (game characters/players in clan)
 CREATE TABLE members (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  clan_id UUID REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,  -- Optional: link to app user
   name VARCHAR(100) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -80,24 +81,24 @@ CREATE TABLE member_professions (
 -- INDEXES
 -- =====================================================
 
-CREATE INDEX idx_members_clan_id ON members(clan_id);
+CREATE INDEX idx_members_clan_id ON members(group_id);
 CREATE INDEX idx_members_user_id ON members(user_id);
 CREATE INDEX idx_member_professions_member_id ON member_professions(member_id);
-CREATE INDEX idx_clans_slug ON clans(slug);
-CREATE INDEX idx_clan_members_clan_id ON clan_members(clan_id);
-CREATE INDEX idx_clan_members_user_id ON clan_members(user_id);
+CREATE INDEX idx_groups_slug ON groups(slug);
+CREATE INDEX idx_clan_members_clan_id ON group_members(group_id);
+CREATE INDEX idx_clan_members_user_id ON group_members(user_id);
 
 -- =====================================================
 -- HELPER FUNCTION
 -- =====================================================
 
 -- Function to check if user has an approved role in a clan (avoids recursion)
-CREATE OR REPLACE FUNCTION user_has_clan_role(check_clan_id UUID, check_user_id UUID, allowed_roles TEXT[])
+CREATE OR REPLACE FUNCTION user_has_clan_role(check_group_id UUID, check_user_id UUID, allowed_roles TEXT[])
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
-    SELECT 1 FROM clan_members 
-    WHERE clan_id = check_clan_id 
+    SELECT 1 FROM group_members 
+    WHERE group_id = check_group_id 
     AND user_id = check_user_id 
     AND role = ANY(allowed_roles)
   );
@@ -108,9 +109,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ROW LEVEL SECURITY
 -- =====================================================
 
-ALTER TABLE clans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE groups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE clan_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE group_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE member_professions ENABLE ROW LEVEL SECURITY;
 
@@ -124,32 +125,32 @@ CREATE POLICY "Users can update own profile" ON users
 CREATE POLICY "Auth can insert user on signup" ON users
   FOR INSERT WITH CHECK (id = auth.uid());
 
--- CLANS: Public read for checking if clan exists, full access for members
+-- groups: Public read for checking if clan exists, full access for members
 -- We need public read so users can check if a clan exists before creating/joining
-CREATE POLICY "Anyone can view clans" ON clans
+CREATE POLICY "Anyone can view groups" ON groups
   FOR SELECT USING (true);
 
-CREATE POLICY "Anyone can create clan" ON clans
+CREATE POLICY "Anyone can create clan" ON groups
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Admin can update clan" ON clans
+CREATE POLICY "Admin can update clan" ON groups
   FOR UPDATE USING (
     user_has_clan_role(id, auth.uid(), ARRAY['admin'])
   );
 
--- CLAN_MEMBERS: Simple policies to avoid recursion
+-- group_members: Simple policies to avoid recursion
 -- Users can view their own memberships
-CREATE POLICY "Users can view own membership" ON clan_members
+CREATE POLICY "Users can view own membership" ON group_members
   FOR SELECT USING (user_id = auth.uid());
 
--- Admins/Officers can view all members in their clans (uses SECURITY DEFINER function)
-CREATE POLICY "Clan managers can view members" ON clan_members
+-- Admins/Officers can view all members in their groups (uses SECURITY DEFINER function)
+CREATE POLICY "group managers can view members" ON group_members
   FOR SELECT USING (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
   );
 
 -- Anyone can apply to join a clan (insert as pending with own user_id)
-CREATE POLICY "Anyone can apply to clan" ON clan_members
+CREATE POLICY "Anyone can apply to clan" ON group_members
   FOR INSERT WITH CHECK (
     auth.uid() IS NOT NULL 
     AND user_id = auth.uid() 
@@ -157,7 +158,7 @@ CREATE POLICY "Anyone can apply to clan" ON clan_members
   );
 
 -- Special policy: Allow inserting as admin when creating clan (for the creator)
-CREATE POLICY "Creator becomes admin" ON clan_members
+CREATE POLICY "Creator becomes admin" ON group_members
   FOR INSERT WITH CHECK (
     auth.uid() IS NOT NULL 
     AND user_id = auth.uid() 
@@ -166,44 +167,44 @@ CREATE POLICY "Creator becomes admin" ON clan_members
   );
 
 -- Admin/Officer can update memberships (accept/reject)
-CREATE POLICY "Admin/Officer manage memberships" ON clan_members
+CREATE POLICY "Admin/Officer manage memberships" ON group_members
   FOR UPDATE USING (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Admin can delete memberships, users can leave
-CREATE POLICY "Admin can remove or user can leave" ON clan_members
+CREATE POLICY "Admin can remove or user can leave" ON group_members
   FOR DELETE USING (
     user_id = auth.uid()
-    OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin'])
+    OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin'])
   );
 
 -- MEMBERS: Approved clan members can view
 CREATE POLICY "Approved members can view members" ON members
   FOR SELECT USING (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
   );
 
 CREATE POLICY "Admin/Officer manage members" ON members
   FOR INSERT WITH CHECK (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 CREATE POLICY "Admin/Officer update members" ON members
   FOR UPDATE USING (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 CREATE POLICY "Admin/Officer delete members" ON members
   FOR DELETE USING (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- MEMBER_PROFESSIONS: Follow member access rules
 CREATE POLICY "View professions if can view member" ON member_professions
   FOR SELECT USING (
     member_id IN (
-      SELECT id FROM members WHERE user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      SELECT id FROM members WHERE user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -211,8 +212,8 @@ CREATE POLICY "Modify professions" ON member_professions
   FOR ALL USING (
     member_id IN (
       SELECT m.id FROM members m
-      WHERE user_has_clan_role(m.clan_id, auth.uid(), ARRAY['admin', 'officer'])
-      OR (user_has_clan_role(m.clan_id, auth.uid(), ARRAY['member']) AND m.user_id = auth.uid())
+      WHERE user_has_clan_role(m.group_id, auth.uid(), ARRAY['admin', 'officer'])
+      OR (user_has_clan_role(m.group_id, auth.uid(), ARRAY['member']) AND m.user_id = auth.uid())
     )
   );
 
@@ -246,7 +247,6 @@ INSERT INTO migration_history (filename) VALUES ('001_initial_schema.sql');
 -- =====================================================
 -- SOURCE: 002_character_management.sql
 -- =====================================================
-
 -- =====================================================
 -- Phase 2 Migration: Character Management
 -- Run this AFTER the initial schema.sql
@@ -307,7 +307,6 @@ INSERT INTO migration_history (filename) VALUES ('002_character_management.sql')
 -- =====================================================
 -- SOURCE: 003_events.sql
 -- =====================================================
-
 -- =====================================================
 -- 003_events.sql - Events, RSVPs, Announcements
 -- =====================================================
@@ -332,7 +331,7 @@ ALTER TABLE users
 -- Events table
 CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   created_by UUID REFERENCES users(id) ON DELETE SET NULL,
   title VARCHAR(100) NOT NULL,
   description TEXT,
@@ -358,10 +357,10 @@ CREATE TABLE IF NOT EXISTS event_rsvps (
   UNIQUE(event_id, user_id)
 );
 
--- Clan announcements
+-- Group announcements
 CREATE TABLE IF NOT EXISTS announcements (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   created_by UUID REFERENCES users(id) ON DELETE SET NULL,
   title VARCHAR(100) NOT NULL,
   content TEXT NOT NULL,
@@ -371,42 +370,42 @@ CREATE TABLE IF NOT EXISTS announcements (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_events_clan_id ON events(clan_id);
+CREATE INDEX IF NOT EXISTS idx_events_clan_id ON events(group_id);
 CREATE INDEX IF NOT EXISTS idx_events_starts_at ON events(starts_at);
 CREATE INDEX IF NOT EXISTS idx_event_rsvps_event_id ON event_rsvps(event_id);
 CREATE INDEX IF NOT EXISTS idx_event_rsvps_user_id ON event_rsvps(user_id);
-CREATE INDEX IF NOT EXISTS idx_announcements_clan_id ON announcements(clan_id);
-CREATE INDEX IF NOT EXISTS idx_announcements_pinned ON announcements(clan_id, is_pinned) WHERE is_pinned = TRUE;
+CREATE INDEX IF NOT EXISTS idx_announcements_clan_id ON announcements(group_id);
+CREATE INDEX IF NOT EXISTS idx_announcements_pinned ON announcements(group_id, is_pinned) WHERE is_pinned = TRUE;
 
 -- RLS Policies for events
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Clan members can view events"
+CREATE POLICY "Group members can view events"
   ON events FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial']));
 
 CREATE POLICY "Officers+ can create events"
   ON events FOR INSERT
-  WITH CHECK (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers+ can update events"
   ON events FOR UPDATE
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers+ can delete events"
   ON events FOR DELETE
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- RLS Policies for RSVPs
 ALTER TABLE event_rsvps ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Clan members can view RSVPs"
+CREATE POLICY "Group members can view RSVPs"
   ON event_rsvps FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM events e 
       WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
+      AND user_has_clan_role(e.group_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
     )
   );
 
@@ -417,7 +416,7 @@ CREATE POLICY "Members can RSVP"
     EXISTS (
       SELECT 1 FROM events e 
       WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
+      AND user_has_clan_role(e.group_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
     )
   );
 
@@ -432,21 +431,21 @@ CREATE POLICY "Users can delete own RSVP"
 -- RLS Policies for announcements
 ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Clan members can view announcements"
+CREATE POLICY "Group members can view announcements"
   ON announcements FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 CREATE POLICY "Officers+ can create announcements"
   ON announcements FOR INSERT
-  WITH CHECK (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers+ can update announcements"
   ON announcements FOR UPDATE
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers+ can delete announcements"
   ON announcements FOR DELETE
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Comments
 COMMENT ON TABLE events IS 'Clan events like raids, sieges, gatherings';
@@ -460,21 +459,20 @@ INSERT INTO migration_history (filename) VALUES ('003_events.sql');
 -- =====================================================
 -- SOURCE: 004_discord.sql
 -- =====================================================
-
 -- Migration 004: Discord Webhooks
 -- Adds webhook URL support for clan notifications
 
--- Add discord webhook URL to clans table
-ALTER TABLE clans ADD COLUMN discord_webhook_url TEXT;
+-- Add discord webhook URL to groups table
+ALTER TABLE groups ADD COLUMN group_webhook_url TEXT;
 
 -- Add notification preferences
-ALTER TABLE clans ADD COLUMN notify_on_events BOOLEAN DEFAULT true;
-ALTER TABLE clans ADD COLUMN notify_on_announcements BOOLEAN DEFAULT true;
+ALTER TABLE groups ADD COLUMN notify_on_events BOOLEAN DEFAULT true;
+ALTER TABLE groups ADD COLUMN notify_on_announcements BOOLEAN DEFAULT true;
 
 -- Comment for clarity
-COMMENT ON COLUMN clans.discord_webhook_url IS 'Discord webhook URL for clan notifications';
-COMMENT ON COLUMN clans.notify_on_events IS 'Whether to send Discord notifications for new events';
-COMMENT ON COLUMN clans.notify_on_announcements IS 'Whether to send Discord notifications for announcements';
+COMMENT ON COLUMN groups.group_webhook_url IS 'Discord webhook URL for clan notifications';
+COMMENT ON COLUMN groups.notify_on_events IS 'Whether to send Discord notifications for new events';
+COMMENT ON COLUMN groups.notify_on_announcements IS 'Whether to send Discord notifications for announcements';
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('004_discord.sql');
@@ -482,7 +480,6 @@ INSERT INTO migration_history (filename) VALUES ('004_discord.sql');
 -- =====================================================
 -- SOURCE: 005_parties.sql
 -- =====================================================
-
 -- Migration 005: Parties, Recruitment & Public Profiles
 -- Adds party system, recruitment, and public clan features
 
@@ -493,7 +490,7 @@ INSERT INTO migration_history (filename) VALUES ('004_discord.sql');
 -- Party templates table
 CREATE TABLE parties (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
   -- Role requirements (how many of each role needed)
@@ -519,7 +516,7 @@ CREATE TABLE party_roster (
 );
 
 -- Indexes for parties
-CREATE INDEX idx_parties_clan ON parties(clan_id);
+CREATE INDEX idx_parties_group ON parties(group_id);
 CREATE INDEX idx_party_roster_party ON party_roster(party_id);
 CREATE INDEX idx_party_roster_character ON party_roster(character_id);
 
@@ -527,70 +524,23 @@ CREATE INDEX idx_party_roster_character ON party_roster(character_id);
 ALTER TABLE parties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE party_roster ENABLE ROW LEVEL SECURITY;
 
--- Anyone in clan can view parties
-CREATE POLICY "Clan members can view parties"
-  ON parties FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM clan_members cm
-      WHERE cm.clan_id = parties.clan_id
-      AND cm.user_id = auth.uid()
-      AND cm.role IN ('admin', 'officer', 'member')
-    )
-  );
-
--- Officers+ can manage parties
-CREATE POLICY "Officers can manage parties"
-  ON parties FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM clan_members cm
-      WHERE cm.clan_id = parties.clan_id
-      AND cm.user_id = auth.uid()
-      AND cm.role IN ('admin', 'officer')
-    )
-  );
-
--- Roster policies
-CREATE POLICY "Clan members can view roster"
-  ON party_roster FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM parties p
-      JOIN clan_members cm ON cm.clan_id = p.clan_id
-      WHERE p.id = party_roster.party_id
-      AND cm.user_id = auth.uid()
-      AND cm.role IN ('admin', 'officer', 'member')
-    )
-  );
-
-CREATE POLICY "Officers can manage roster"
-  ON party_roster FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM parties p
-      JOIN clan_members cm ON cm.clan_id = p.clan_id
-      WHERE p.id = party_roster.party_id
-      AND cm.user_id = auth.uid()
-      AND cm.role IN ('admin', 'officer')
-    )
-  );
+-- NOTE: Policies for parties and party_roster will be created in 006_fix_rls_recursion with SECURITY DEFINER
 
 -- =====================================================
 -- RECRUITMENT & PUBLIC PROFILES
 -- =====================================================
 
--- Add public/recruitment fields to clans
-ALTER TABLE clans ADD COLUMN is_public BOOLEAN DEFAULT false;
-ALTER TABLE clans ADD COLUMN recruitment_open BOOLEAN DEFAULT false;
-ALTER TABLE clans ADD COLUMN recruitment_message TEXT;
-ALTER TABLE clans ADD COLUMN public_description TEXT;
-ALTER TABLE clans ADD COLUMN banner_url TEXT;
+-- Add public/recruitment fields to groups
+ALTER TABLE groups ADD COLUMN is_public BOOLEAN DEFAULT false;
+ALTER TABLE groups ADD COLUMN recruitment_open BOOLEAN DEFAULT false;
+ALTER TABLE groups ADD COLUMN recruitment_message TEXT;
+ALTER TABLE groups ADD COLUMN public_description TEXT;
+ALTER TABLE groups ADD COLUMN banner_url TEXT;
 
 -- Recruitment applications
 CREATE TABLE recruitment_applications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id),
   -- Application data
   discord_username TEXT NOT NULL,
@@ -608,7 +558,7 @@ CREATE TABLE recruitment_applications (
 );
 
 -- Index for applications
-CREATE INDEX idx_applications_clan ON recruitment_applications(clan_id);
+CREATE INDEX idx_applications_group ON recruitment_applications(group_id);
 CREATE INDEX idx_applications_status ON recruitment_applications(status);
 
 -- RLS for applications
@@ -624,31 +574,20 @@ CREATE POLICY "Officers can manage applications"
   ON recruitment_applications FOR SELECT
   USING (
     EXISTS (
-      SELECT 1 FROM clan_members cm
-      WHERE cm.clan_id = recruitment_applications.clan_id
+      SELECT 1 FROM group_members cm
+      WHERE cm.group_id = recruitment_applications.group_id
       AND cm.user_id = auth.uid()
       AND cm.role IN ('admin', 'officer')
     )
     OR user_id = auth.uid()
   );
 
-CREATE POLICY "Officers can update applications"
-  ON recruitment_applications FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM clan_members cm
-      WHERE cm.clan_id = recruitment_applications.clan_id
-      AND cm.user_id = auth.uid()
-      AND cm.role IN ('admin', 'officer')
-    )
-  );
-
 -- Public clan view (for non-members)
-CREATE POLICY "Public clans are viewable"
-  ON clans FOR SELECT
+CREATE POLICY "Public groups are viewable"
+  ON groups FOR SELECT
   USING (is_public = true OR EXISTS (
-    SELECT 1 FROM clan_members cm
-    WHERE cm.clan_id = clans.id
+    SELECT 1 FROM group_members cm
+    WHERE cm.group_id = groups.id
     AND cm.user_id = auth.uid()
   ));
 
@@ -662,38 +601,31 @@ INSERT INTO migration_history (filename) VALUES ('005_parties.sql');
 -- =====================================================
 -- SOURCE: 006_fix_rls_recursion.sql
 -- =====================================================
-
 -- =====================================================
--- Fix infinite recursion in clan_members RLS policies
+-- Fix infinite recursion in group_members RLS policies
 -- AND optimize parties/events policies to use SECURITY DEFINER
 -- =====================================================
 
 -- =====================================================
--- CLAN_MEMBERS POLICIES (fix recursion)
+-- group_members POLICIES (fix recursion)
 -- =====================================================
 
--- Drop ALL existing policies on clan_members to start fresh
-DROP POLICY IF EXISTS "Users can view own membership" ON clan_members;
-DROP POLICY IF EXISTS "Clan managers can view members" ON clan_members;
-DROP POLICY IF EXISTS "Anyone can apply to clan" ON clan_members;
-DROP POLICY IF EXISTS "Creator becomes admin" ON clan_members;
-DROP POLICY IF EXISTS "Admin/Officer manage memberships" ON clan_members;
-DROP POLICY IF EXISTS "Admin can remove or user can leave" ON clan_members;
+-- Drop ALL existing policies on group_members to start fresh
+DROP POLICY IF EXISTS "Users can view own membership" ON group_members;
+DROP POLICY IF EXISTS "group managers can view members" ON group_members;
+DROP POLICY IF EXISTS "Creator becomes admin" ON group_members;
+DROP POLICY IF EXISTS "Admin/Officer manage memberships" ON group_members;
+DROP POLICY IF EXISTS "Admin can remove or user can leave" ON group_members;
 -- New policy names
-DROP POLICY IF EXISTS "clan_members_select" ON clan_members;
-DROP POLICY IF EXISTS "clan_members_insert_pending" ON clan_members;
-DROP POLICY IF EXISTS "clan_members_insert_creator" ON clan_members;
-DROP POLICY IF EXISTS "clan_members_update" ON clan_members;
-DROP POLICY IF EXISTS "clan_members_delete" ON clan_members;
 
--- SELECT: Anyone can view clan_members (public visibility)
+-- SELECT: Anyone can view group_members (public visibility)
 CREATE POLICY "clan_members_select"
-ON clan_members FOR SELECT
+ON group_members FOR SELECT
 USING (true);
 
 -- INSERT: Authenticated users can insert their own membership as pending
 CREATE POLICY "clan_members_insert_pending"
-ON clan_members FOR INSERT
+ON group_members FOR INSERT
 WITH CHECK (
   auth.uid() IS NOT NULL 
   AND user_id = auth.uid() 
@@ -702,7 +634,7 @@ WITH CHECK (
 
 -- INSERT: Allow creator to become admin when creating a clan
 CREATE POLICY "clan_members_insert_creator"
-ON clan_members FOR INSERT
+ON group_members FOR INSERT
 WITH CHECK (
   auth.uid() IS NOT NULL 
   AND user_id = auth.uid() 
@@ -712,55 +644,53 @@ WITH CHECK (
 
 -- UPDATE: Use SECURITY DEFINER function (bypasses RLS)
 CREATE POLICY "clan_members_update"
-ON clan_members FOR UPDATE
+ON group_members FOR UPDATE
 USING (
-  user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+  user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
 );
 
 -- DELETE: Users can leave, admins can remove
 CREATE POLICY "clan_members_delete"
-ON clan_members FOR DELETE
+ON group_members FOR DELETE
 USING (
   user_id = auth.uid()
-  OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin'])
+  OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin'])
 );
 
 -- =====================================================
 -- PARTIES POLICIES (optimize using SECURITY DEFINER)
 -- =====================================================
 
-DROP POLICY IF EXISTS "Clan members can view parties" ON parties;
 DROP POLICY IF EXISTS "Officers can manage parties" ON parties;
 
--- SELECT: Use SECURITY DEFINER function (bypasses RLS on clan_members)
-CREATE POLICY "Clan members can view parties"
+-- SELECT: Use SECURITY DEFINER function (bypasses RLS on group_members)
+CREATE POLICY "Group members can view parties"
 ON parties FOR SELECT
 USING (
-  user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+  user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
 );
 
 -- ALL: Officers+ can manage
 CREATE POLICY "Officers can manage parties"
 ON parties FOR ALL
 USING (
-  user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+  user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
 );
 
 -- =====================================================
 -- PARTY_ROSTER POLICIES (optimize using SECURITY DEFINER)
 -- =====================================================
 
-DROP POLICY IF EXISTS "Clan members can view roster" ON party_roster;
 DROP POLICY IF EXISTS "Officers can manage roster" ON party_roster;
 
 -- SELECT: Use SECURITY DEFINER via parties join
-CREATE POLICY "Clan members can view roster"
+CREATE POLICY "Group members can view roster"
 ON party_roster FOR SELECT
 USING (
-  EXISTS (
-    SELECT 1 FROM parties p
-    WHERE p.id = party_roster.party_id
-    AND user_has_clan_role(p.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+  user_has_clan_role(
+    (SELECT group_id FROM parties WHERE id = party_roster.party_id),
+    auth.uid(),
+    ARRAY['admin', 'officer', 'member']
   )
 );
 
@@ -768,10 +698,10 @@ USING (
 CREATE POLICY "Officers can manage roster"
 ON party_roster FOR ALL
 USING (
-  EXISTS (
-    SELECT 1 FROM parties p
-    WHERE p.id = party_roster.party_id
-    AND user_has_clan_role(p.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+  user_has_clan_role(
+    (SELECT group_id FROM parties WHERE id = party_roster.party_id),
+    auth.uid(),
+    ARRAY['admin', 'officer']
   )
 );
 
@@ -783,10 +713,10 @@ DROP POLICY IF EXISTS "Officers can manage applications" ON recruitment_applicat
 DROP POLICY IF EXISTS "Officers can update applications" ON recruitment_applications;
 
 -- SELECT: Officers can manage OR own applications
-CREATE POLICY "Officers can manage applications"
+CREATE POLICY "Officers can view applications"
 ON recruitment_applications FOR SELECT
 USING (
-  user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+  user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   OR user_id = auth.uid()
 );
 
@@ -794,26 +724,22 @@ USING (
 CREATE POLICY "Officers can update applications"
 ON recruitment_applications FOR UPDATE
 USING (
-  user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+  user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
 );
-
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('006_fix_rls_recursion.sql');
 
 -- =====================================================
 -- SOURCE: 007_guild_icon.sql
 -- =====================================================
-
--- Migration: Add guild_icon_url to clans table
-ALTER TABLE clans ADD COLUMN IF NOT EXISTS guild_icon_url TEXT;
+-- Migration: Add group_icon_url to groups table
+ALTER TABLE groups ADD COLUMN IF NOT EXISTS group_icon_url TEXT;
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('007_guild_icon.sql');
-
 -- =====================================================
 -- SOURCE: 008_node_citizenship.sql
 -- =====================================================
-
 -- =====================================================
 -- 007_node_citizenship.sql - Node Citizenship Tracking
 -- Track where guild members are citizens in the world
@@ -858,14 +784,14 @@ CREATE INDEX IF NOT EXISTS idx_node_citizenships_node_type ON node_citizenships(
 
 ALTER TABLE node_citizenships ENABLE ROW LEVEL SECURITY;
 
--- Clan members can view citizenships of their clan's characters
-CREATE POLICY "Clan members can view citizenships"
+-- group members can view citizenships of their clan's characters
+CREATE POLICY "Group members can view citizenships"
   ON node_citizenships FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM members m
       WHERE m.id = node_citizenships.character_id
-      AND user_has_clan_role(m.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(m.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -887,7 +813,7 @@ CREATE POLICY "Officers can manage clan citizenships"
     EXISTS (
       SELECT 1 FROM members m
       WHERE m.id = node_citizenships.character_id
-      AND user_has_clan_role(m.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(m.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -897,7 +823,7 @@ CREATE POLICY "Officers can manage clan citizenships"
 
 CREATE OR REPLACE VIEW node_distribution AS
 SELECT 
-  m.clan_id,
+  m.group_id,
   nc.node_name,
   nc.node_type,
   nc.node_stage,
@@ -906,7 +832,7 @@ SELECT
   ARRAY_AGG(m.name ORDER BY m.name) as citizen_names
 FROM node_citizenships nc
 JOIN members m ON m.id = nc.character_id
-GROUP BY m.clan_id, nc.node_name, nc.node_type, nc.node_stage;
+GROUP BY m.group_id, nc.node_name, nc.node_type, nc.node_stage;
 
 -- Comments
 COMMENT ON TABLE node_citizenships IS 'Tracks which node each character is a citizen of';
@@ -919,7 +845,6 @@ INSERT INTO migration_history (filename) VALUES ('008_node_citizenship.sql');
 -- =====================================================
 -- SOURCE: 009_siege_rosters.sql
 -- =====================================================
-
 -- =====================================================
 -- 008_siege_rosters.sql - Castle/Node Siege Management
 -- Large-scale PvP event organization (250v250)
@@ -966,7 +891,7 @@ END $$;
 -- Siege events table
 CREATE TABLE IF NOT EXISTS siege_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Event details
   title VARCHAR(100) NOT NULL,
   description TEXT,
@@ -1015,7 +940,7 @@ CREATE TABLE IF NOT EXISTS siege_roster (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_siege_events_clan ON siege_events(clan_id);
+CREATE INDEX IF NOT EXISTS idx_siege_events_group ON siege_events(group_id);
 CREATE INDEX IF NOT EXISTS idx_siege_events_starts_at ON siege_events(starts_at);
 CREATE INDEX IF NOT EXISTS idx_siege_events_type ON siege_events(siege_type);
 CREATE INDEX IF NOT EXISTS idx_siege_roster_siege ON siege_roster(siege_id);
@@ -1030,33 +955,23 @@ ALTER TABLE siege_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE siege_roster ENABLE ROW LEVEL SECURITY;
 
 -- Siege events: clan members can view
-CREATE POLICY "Clan members can view sieges"
+CREATE POLICY "Group members can view sieges"
   ON siege_events FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Officers can manage siege events
 CREATE POLICY "Officers can manage sieges"
   ON siege_events FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Roster: clan members can view
-CREATE POLICY "Clan members can view roster"
-  ON siege_roster FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM siege_events se
-      WHERE se.id = siege_roster.siege_id
-      AND user_has_clan_role(se.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
-    )
-  );
-
 -- Members can sign up their own characters
 CREATE POLICY "Members can sign up own characters"
   ON siege_roster FOR INSERT
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM members m
-      JOIN siege_events se ON se.clan_id = m.clan_id
+      JOIN siege_events se ON se.group_id = m.group_id
       WHERE m.id = siege_roster.character_id
       AND se.id = siege_roster.siege_id
       AND m.user_id = auth.uid()
@@ -1076,7 +991,7 @@ CREATE POLICY "Members can withdraw or officers manage"
     OR EXISTS (
       SELECT 1 FROM siege_events se
       WHERE se.id = siege_roster.siege_id
-      AND user_has_clan_role(se.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(se.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -1105,7 +1020,6 @@ INSERT INTO migration_history (filename) VALUES ('009_siege_rosters.sql');
 -- =====================================================
 -- SOURCE: 010_loot_dkp.sql
 -- =====================================================
-
 -- =====================================================
 -- 009_loot_dkp.sql - Loot Distribution & DKP System
 -- Fair loot distribution with multiple system support
@@ -1141,7 +1055,7 @@ END $$;
 -- Loot system configuration per clan
 CREATE TABLE IF NOT EXISTS loot_systems (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- System configuration
   system_type loot_system_type DEFAULT 'dkp',
   name VARCHAR(100) NOT NULL DEFAULT 'Default',
@@ -1162,8 +1076,8 @@ CREATE TABLE IF NOT EXISTS loot_systems (
 );
 
 -- Partial unique index: only one active system per clan
-CREATE UNIQUE INDEX IF NOT EXISTS idx_loot_systems_active_per_clan 
-  ON loot_systems(clan_id) WHERE is_active = TRUE;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_loot_systems_active_per_group 
+  ON loot_systems(group_id) WHERE is_active = TRUE;
 
 -- Character DKP points
 CREATE TABLE IF NOT EXISTS dkp_points (
@@ -1231,7 +1145,7 @@ CREATE TABLE IF NOT EXISTS dkp_transactions (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_loot_systems_clan ON loot_systems(clan_id);
+CREATE INDEX IF NOT EXISTS idx_loot_systems_group ON loot_systems(group_id);
 CREATE INDEX IF NOT EXISTS idx_dkp_points_system ON dkp_points(loot_system_id);
 CREATE INDEX IF NOT EXISTS idx_dkp_points_character ON dkp_points(character_id);
 CREATE INDEX IF NOT EXISTS idx_loot_history_system ON loot_history(loot_system_id);
@@ -1250,23 +1164,23 @@ ALTER TABLE loot_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE dkp_transactions ENABLE ROW LEVEL SECURITY;
 
 -- Loot systems: clan members can view
-CREATE POLICY "Clan members can view loot systems"
+CREATE POLICY "Group members can view loot systems"
   ON loot_systems FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Only officers can manage loot systems
 CREATE POLICY "Officers can manage loot systems"
   ON loot_systems FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- DKP points: visible to clan members
-CREATE POLICY "Clan members can view DKP"
+CREATE POLICY "Group members can view DKP"
   ON dkp_points FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM loot_systems ls
       WHERE ls.id = dkp_points.loot_system_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1277,18 +1191,18 @@ CREATE POLICY "Officers can manage DKP"
     EXISTS (
       SELECT 1 FROM loot_systems ls
       WHERE ls.id = dkp_points.loot_system_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
 -- Loot history: visible to clan members
-CREATE POLICY "Clan members can view loot history"
+CREATE POLICY "Group members can view loot history"
   ON loot_history FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM loot_systems ls
       WHERE ls.id = loot_history.loot_system_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1299,19 +1213,19 @@ CREATE POLICY "Officers can manage loot history"
     EXISTS (
       SELECT 1 FROM loot_systems ls
       WHERE ls.id = loot_history.loot_system_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
 -- Transactions: same as loot history
-CREATE POLICY "Clan members can view transactions"
+CREATE POLICY "Group members can view transactions"
   ON dkp_transactions FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM dkp_points dp
       JOIN loot_systems ls ON ls.id = dp.loot_system_id
       WHERE dp.id = dkp_transactions.dkp_points_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1322,7 +1236,7 @@ CREATE POLICY "Officers can manage transactions"
       SELECT 1 FROM dkp_points dp
       JOIN loot_systems ls ON ls.id = dp.loot_system_id
       WHERE dp.id = dkp_transactions.dkp_points_id
-      AND user_has_clan_role(ls.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(ls.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -1335,7 +1249,7 @@ SELECT
   dp.loot_system_id,
   dp.character_id,
   m.name as character_name,
-  m.clan_id,
+  m.group_id,
   dp.current_points,
   dp.earned_total,
   dp.spent_total,
@@ -1358,18 +1272,17 @@ INSERT INTO migration_history (filename) VALUES ('010_loot_dkp.sql');
 -- =====================================================
 -- SOURCE: 011_add_trial_role.sql
 -- =====================================================
-
--- Add trial role to clan_members
+-- Add trial role to group_members
 -- Migration to introduce the trial membership level between member and pending
 
 BEGIN;
 
 -- Update the CHECK constraint to include 'trial'
-ALTER TABLE clan_members 
-DROP CONSTRAINT clan_members_role_check;
+ALTER TABLE group_members 
+DROP CONSTRAINT group_members_role_check;
 
-ALTER TABLE clan_members
-ADD CONSTRAINT clan_members_role_check 
+ALTER TABLE group_members
+ADD CONSTRAINT group_members_role_check 
   CHECK (role IN ('admin', 'officer', 'member', 'trial', 'pending'));
 
 -- Record this migration as applied
@@ -1380,7 +1293,6 @@ COMMIT;
 -- =====================================================
 -- SOURCE: 012_guild_bank.sql
 -- =====================================================
-
 -- =====================================================
 -- 010_guild_bank.sql - Guild Bank & Resource Tracker
 -- Track shared guild resources and materials
@@ -1421,7 +1333,7 @@ END $$;
 -- Guild bank configuration
 CREATE TABLE IF NOT EXISTS guild_banks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Settings
   name VARCHAR(100) DEFAULT 'Guild Bank',
   description TEXT,
@@ -1434,7 +1346,7 @@ CREATE TABLE IF NOT EXISTS guild_banks (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   -- One bank per clan
-  UNIQUE(clan_id)
+  UNIQUE(group_id)
 );
 
 -- Resource catalog (what items exist)
@@ -1510,7 +1422,7 @@ CREATE TABLE IF NOT EXISTS resource_requests (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_guild_banks_clan ON guild_banks(clan_id);
+CREATE INDEX IF NOT EXISTS idx_guild_banks_group ON guild_banks(group_id);
 CREATE INDEX IF NOT EXISTS idx_resource_catalog_category ON resource_catalog(category);
 CREATE INDEX IF NOT EXISTS idx_bank_inventory_bank ON bank_inventory(bank_id);
 CREATE INDEX IF NOT EXISTS idx_bank_inventory_resource ON bank_inventory(resource_id);
@@ -1530,14 +1442,14 @@ ALTER TABLE bank_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE resource_requests ENABLE ROW LEVEL SECURITY;
 
 -- Guild banks: clan members can view
-CREATE POLICY "Clan members can view bank"
+CREATE POLICY "Group members can view bank"
   ON guild_banks FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Only officers can manage bank settings
 CREATE POLICY "Officers can manage bank"
   ON guild_banks FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Resource catalog: everyone can view (global)
 CREATE POLICY "Everyone can view resources"
@@ -1550,13 +1462,13 @@ CREATE POLICY "System can manage catalog"
   USING (false);
 
 -- Inventory: clan members can view
-CREATE POLICY "Clan members can view inventory"
+CREATE POLICY "Group members can view inventory"
   ON bank_inventory FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = bank_inventory.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1567,21 +1479,11 @@ CREATE POLICY "Officers can manage inventory"
     EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = bank_inventory.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
 -- Transactions: clan members can view
-CREATE POLICY "Clan members can view transactions"
-  ON bank_transactions FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM guild_banks gb
-      WHERE gb.id = bank_transactions.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
-    )
-  );
-
 -- Members can create transactions (deposits)
 CREATE POLICY "Members can create transactions"
   ON bank_transactions FOR INSERT
@@ -1589,7 +1491,7 @@ CREATE POLICY "Members can create transactions"
     EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = bank_transactions.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1601,7 +1503,7 @@ CREATE POLICY "Users can view own requests or officers all"
     OR EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = resource_requests.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -1613,7 +1515,7 @@ CREATE POLICY "Members can create requests"
     AND EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = resource_requests.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1624,7 +1526,7 @@ CREATE POLICY "Officers can review requests"
     EXISTS (
       SELECT 1 FROM guild_banks gb
       WHERE gb.id = resource_requests.bank_id
-      AND user_has_clan_role(gb.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(gb.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -1680,7 +1582,6 @@ INSERT INTO migration_history (filename) VALUES ('012_guild_bank.sql');
 -- =====================================================
 -- SOURCE: 013_freeholds.sql
 -- =====================================================
-
 -- =====================================================
 -- 011_freeholds.sql - Freehold Registry
 -- Track guild member freeholds and their buildings
@@ -1727,7 +1628,7 @@ END $$;
 -- Freeholds table
 CREATE TABLE IF NOT EXISTS freeholds (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Owner
   owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   owner_character_id UUID REFERENCES members(id) ON DELETE SET NULL,
@@ -1776,7 +1677,7 @@ CREATE TABLE IF NOT EXISTS freehold_schedules (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_freeholds_clan ON freeholds(clan_id);
+CREATE INDEX IF NOT EXISTS idx_freeholds_group ON freeholds(group_id);
 CREATE INDEX IF NOT EXISTS idx_freeholds_owner ON freeholds(owner_id);
 CREATE INDEX IF NOT EXISTS idx_freeholds_node ON freeholds(node_name);
 CREATE INDEX IF NOT EXISTS idx_freehold_buildings_freehold ON freehold_buildings(freehold_id);
@@ -1792,9 +1693,9 @@ ALTER TABLE freehold_buildings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE freehold_schedules ENABLE ROW LEVEL SECURITY;
 
 -- Freeholds: clan members can view
-CREATE POLICY "Clan members can view freeholds"
+CREATE POLICY "Group members can view freeholds"
   ON freeholds FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Owners can manage their freeholds
 CREATE POLICY "Owners can manage own freeholds"
@@ -1804,16 +1705,16 @@ CREATE POLICY "Owners can manage own freeholds"
 -- Officers can manage all freeholds
 CREATE POLICY "Officers can manage all freeholds"
   ON freeholds FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Buildings: same as freeholds
-CREATE POLICY "Clan members can view buildings"
+CREATE POLICY "Group members can view buildings"
   ON freehold_buildings FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM freeholds f
       WHERE f.id = freehold_buildings.freehold_id
-      AND user_has_clan_role(f.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(f.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1828,13 +1729,13 @@ CREATE POLICY "Freehold owners can manage buildings"
   );
 
 -- Schedules: same pattern
-CREATE POLICY "Clan members can view schedules"
+CREATE POLICY "Group members can view schedules"
   ON freehold_schedules FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM freeholds f
       WHERE f.id = freehold_schedules.freehold_id
-      AND user_has_clan_role(f.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(f.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -1859,7 +1760,6 @@ INSERT INTO migration_history (filename) VALUES ('013_freeholds.sql');
 -- =====================================================
 -- SOURCE: 014_caravans.sql
 -- =====================================================
-
 -- =====================================================
 -- 012_caravans.sql - Caravan Coordination System
 -- Plan and coordinate guild caravan runs
@@ -1895,7 +1795,7 @@ END $$;
 -- Caravan events table
 CREATE TABLE IF NOT EXISTS caravan_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Organizer
   created_by UUID REFERENCES users(id) ON DELETE SET NULL,
   owner_character_id UUID REFERENCES members(id) ON DELETE SET NULL,
@@ -1962,7 +1862,7 @@ CREATE TABLE IF NOT EXISTS caravan_waypoints (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_caravan_events_clan ON caravan_events(clan_id);
+CREATE INDEX IF NOT EXISTS idx_caravan_events_group ON caravan_events(group_id);
 CREATE INDEX IF NOT EXISTS idx_caravan_events_status ON caravan_events(status);
 CREATE INDEX IF NOT EXISTS idx_caravan_events_departure ON caravan_events(departure_at);
 CREATE INDEX IF NOT EXISTS idx_caravan_escorts_caravan ON caravan_escorts(caravan_id);
@@ -1978,21 +1878,21 @@ ALTER TABLE caravan_escorts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE caravan_waypoints ENABLE ROW LEVEL SECURITY;
 
 -- Caravan events: clan members can view
-CREATE POLICY "Clan members can view caravans"
+CREATE POLICY "Group members can view caravans"
   ON caravan_events FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Members can create caravans
 CREATE POLICY "Members can create caravans"
   ON caravan_events FOR INSERT
-  WITH CHECK (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+  WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- Creators and officers can update
 CREATE POLICY "Creators and officers can update caravans"
   ON caravan_events FOR UPDATE
   USING (
     created_by = auth.uid()
-    OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Creators and officers can delete
@@ -2000,17 +1900,17 @@ CREATE POLICY "Creators and officers can delete caravans"
   ON caravan_events FOR DELETE
   USING (
     created_by = auth.uid()
-    OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Escorts: clan members can view
-CREATE POLICY "Clan members can view escorts"
+CREATE POLICY "Group members can view escorts"
   ON caravan_escorts FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM caravan_events ce
       WHERE ce.id = caravan_escorts.caravan_id
-      AND user_has_clan_role(ce.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(ce.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -2020,7 +1920,7 @@ CREATE POLICY "Members can sign up for escort"
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM members m
-      JOIN caravan_events ce ON ce.clan_id = m.clan_id
+      JOIN caravan_events ce ON ce.group_id = m.group_id
       WHERE m.id = caravan_escorts.character_id
       AND ce.id = caravan_escorts.caravan_id
       AND m.user_id = auth.uid()
@@ -2040,18 +1940,18 @@ CREATE POLICY "Members can withdraw from escort"
     OR EXISTS (
       SELECT 1 FROM caravan_events ce
       WHERE ce.id = caravan_escorts.caravan_id
-      AND user_has_clan_role(ce.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(ce.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
 -- Waypoints: clan members can view
-CREATE POLICY "Clan members can view waypoints"
+CREATE POLICY "Group members can view waypoints"
   ON caravan_waypoints FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM caravan_events ce
       WHERE ce.id = caravan_waypoints.caravan_id
-      AND user_has_clan_role(ce.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+      AND user_has_clan_role(ce.group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
     )
   );
 
@@ -2062,7 +1962,7 @@ CREATE POLICY "Creators can manage waypoints"
     EXISTS (
       SELECT 1 FROM caravan_events ce
       WHERE ce.id = caravan_waypoints.caravan_id
-      AND (ce.created_by = auth.uid() OR user_has_clan_role(ce.clan_id, auth.uid(), ARRAY['admin', 'officer']))
+      AND (ce.created_by = auth.uid() OR user_has_clan_role(ce.group_id, auth.uid(), ARRAY['admin', 'officer']))
     )
   );
 
@@ -2077,7 +1977,6 @@ INSERT INTO migration_history (filename) VALUES ('014_caravans.sql');
 -- =====================================================
 -- SOURCE: 015_alliances.sql
 -- =====================================================
-
 -- =====================================================
 -- 013_alliances.sql - Alliance Management System
 -- Cross-guild coordination and diplomacy
@@ -2102,7 +2001,7 @@ CREATE TABLE IF NOT EXISTS alliances (
   name VARCHAR(100) NOT NULL,
   description TEXT,
   -- Leadership
-  leader_clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  leader_group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Settings
   is_public BOOLEAN DEFAULT FALSE, -- Public alliance page
   max_guilds INTEGER DEFAULT 10,
@@ -2115,7 +2014,7 @@ CREATE TABLE IF NOT EXISTS alliances (
 CREATE TABLE IF NOT EXISTS alliance_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   alliance_id UUID NOT NULL REFERENCES alliances(id) ON DELETE CASCADE,
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Status
   status alliance_status DEFAULT 'pending',
   -- Role in alliance
@@ -2123,13 +2022,13 @@ CREATE TABLE IF NOT EXISTS alliance_members (
   can_invite BOOLEAN DEFAULT FALSE,
   can_create_events BOOLEAN DEFAULT FALSE,
   -- When joined
-  invited_by UUID REFERENCES clans(id),
+  invited_by UUID REFERENCES groups(id),
   joined_at TIMESTAMPTZ,
   left_at TIMESTAMPTZ,
   -- Metadata
   created_at TIMESTAMPTZ DEFAULT NOW(),
   -- One membership per clan per alliance
-  UNIQUE(alliance_id, clan_id)
+  UNIQUE(alliance_id, group_id)
 );
 
 -- Shared alliance events
@@ -2144,7 +2043,7 @@ CREATE TABLE IF NOT EXISTS alliance_events (
   starts_at TIMESTAMPTZ NOT NULL,
   duration_minutes INTEGER DEFAULT 120,
   -- Created by
-  created_by_clan UUID REFERENCES clans(id) ON DELETE SET NULL,
+  created_by_group UUID REFERENCES groups(id) ON DELETE SET NULL,
   created_by_user UUID REFERENCES users(id) ON DELETE SET NULL,
   -- Status
   is_cancelled BOOLEAN DEFAULT FALSE,
@@ -2156,19 +2055,19 @@ CREATE TABLE IF NOT EXISTS alliance_events (
 CREATE TABLE IF NOT EXISTS alliance_event_participation (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES alliance_events(id) ON DELETE CASCADE,
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   -- Commitment
   confirmed_count INTEGER DEFAULT 0,
   notes TEXT,
   -- Metadata
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(event_id, clan_id)
+  UNIQUE(event_id, group_id)
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_alliances_leader ON alliances(leader_clan_id);
+CREATE INDEX IF NOT EXISTS idx_alliances_leader ON alliances(leader_group_id);
 CREATE INDEX IF NOT EXISTS idx_alliance_members_alliance ON alliance_members(alliance_id);
-CREATE INDEX IF NOT EXISTS idx_alliance_members_clan ON alliance_members(clan_id);
+CREATE INDEX IF NOT EXISTS idx_alliance_members_group ON alliance_members(group_id);
 CREATE INDEX IF NOT EXISTS idx_alliance_members_status ON alliance_members(status);
 CREATE INDEX IF NOT EXISTS idx_alliance_events_alliance ON alliance_events(alliance_id);
 CREATE INDEX IF NOT EXISTS idx_alliance_events_starts ON alliance_events(starts_at);
@@ -2188,7 +2087,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 FROM alliance_members am
-    JOIN clan_members cm ON cm.clan_id = am.clan_id
+    JOIN group_members cm ON cm.group_id = am.group_id
     WHERE am.alliance_id = p_alliance_id
     AND am.status = 'active'
     AND cm.user_id = p_user_id
@@ -2204,7 +2103,7 @@ CREATE POLICY "Alliance members can view"
 -- Leader clan officers can manage
 CREATE POLICY "Leader can manage alliance"
   ON alliances FOR ALL
-  USING (user_has_clan_role(leader_clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(leader_group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Alliance members: alliance members can view
 CREATE POLICY "Members can view alliance memberships"
@@ -2218,7 +2117,7 @@ CREATE POLICY "Leader can manage memberships"
     EXISTS (
       SELECT 1 FROM alliances a
       WHERE a.id = alliance_members.alliance_id
-      AND user_has_clan_role(a.leader_clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(a.leader_group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -2233,7 +2132,7 @@ CREATE POLICY "Authorized members can manage events"
   USING (
     EXISTS (
       SELECT 1 FROM alliance_members am
-      JOIN clan_members cm ON cm.clan_id = am.clan_id
+      JOIN group_members cm ON cm.group_id = am.group_id
       WHERE am.alliance_id = alliance_events.alliance_id
       AND am.can_create_events = TRUE
       AND cm.user_id = auth.uid()
@@ -2251,10 +2150,10 @@ CREATE POLICY "Alliance members can view participation"
     )
   );
 
--- Clan officers can update own participation
+-- Group officers can update own participation
 CREATE POLICY "Clan officers can update participation"
   ON alliance_event_participation FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Comments
 COMMENT ON TABLE alliances IS 'Cross-guild alliances for coordination';
@@ -2268,7 +2167,6 @@ INSERT INTO migration_history (filename) VALUES ('015_alliances.sql');
 -- =====================================================
 -- SOURCE: 016_activity.sql
 -- =====================================================
-
 -- =====================================================
 -- 014_activity.sql - Activity Tracker
 -- Track member participation and identify inactive players
@@ -2295,7 +2193,7 @@ END $$;
 -- Activity log
 CREATE TABLE IF NOT EXISTS activity_log (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE SET NULL,
   character_id UUID REFERENCES members(id) ON DELETE SET NULL,
   -- Activity details
@@ -2312,7 +2210,7 @@ CREATE TABLE IF NOT EXISTS activity_log (
 -- Member activity summary (materialized for performance)
 CREATE TABLE IF NOT EXISTS member_activity_summary (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   -- Activity counts (rolling 30 days)
   last_login_at TIMESTAMPTZ,
@@ -2331,13 +2229,13 @@ CREATE TABLE IF NOT EXISTS member_activity_summary (
   -- Metadata
   last_calculated_at TIMESTAMPTZ DEFAULT NOW(),
   -- Unique per user per clan
-  UNIQUE(clan_id, user_id)
+  UNIQUE(group_id, user_id)
 );
 
 -- Inactivity alerts
 CREATE TABLE IF NOT EXISTS inactivity_alerts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   -- Alert details
   days_inactive INTEGER NOT NULL,
@@ -2351,13 +2249,13 @@ CREATE TABLE IF NOT EXISTS inactivity_alerts (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_activity_log_clan ON activity_log(clan_id);
+CREATE INDEX IF NOT EXISTS idx_activity_log_group ON activity_log(group_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_user ON activity_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_activity_log_type ON activity_log(activity_type);
 CREATE INDEX IF NOT EXISTS idx_activity_log_created ON activity_log(created_at);
-CREATE INDEX IF NOT EXISTS idx_member_activity_clan ON member_activity_summary(clan_id);
+CREATE INDEX IF NOT EXISTS idx_member_activity_group ON member_activity_summary(group_id);
 CREATE INDEX IF NOT EXISTS idx_member_activity_inactive ON member_activity_summary(is_inactive);
-CREATE INDEX IF NOT EXISTS idx_inactivity_alerts_clan ON inactivity_alerts(clan_id);
+CREATE INDEX IF NOT EXISTS idx_inactivity_alerts_group ON inactivity_alerts(group_id);
 CREATE INDEX IF NOT EXISTS idx_inactivity_alerts_ack ON inactivity_alerts(is_acknowledged);
 
 -- =====================================================
@@ -2371,20 +2269,20 @@ ALTER TABLE inactivity_alerts ENABLE ROW LEVEL SECURITY;
 -- Activity log: officers can view
 CREATE POLICY "Officers can view activity log"
   ON activity_log FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- System can insert (or members for their own)
 CREATE POLICY "Can log own activity"
   ON activity_log FOR INSERT
   WITH CHECK (
     user_id = auth.uid()
-    OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Activity summary: officers can view
 CREATE POLICY "Officers can view activity summary"
   ON member_activity_summary FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Members can view own summary
 CREATE POLICY "Members can view own summary"
@@ -2394,16 +2292,16 @@ CREATE POLICY "Members can view own summary"
 -- System manages summaries
 CREATE POLICY "System manages summaries"
   ON member_activity_summary FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Inactivity alerts: officers
 CREATE POLICY "Officers can view alerts"
   ON inactivity_alerts FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers can manage alerts"
   ON inactivity_alerts FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Comments
 COMMENT ON TABLE activity_log IS 'Raw activity tracking for members';
@@ -2416,7 +2314,6 @@ INSERT INTO migration_history (filename) VALUES ('016_activity.sql');
 -- =====================================================
 -- SOURCE: 017_achievements.sql
 -- =====================================================
-
 -- =====================================================
 -- 015_achievements.sql - Guild Achievements System
 -- Track and celebrate guild milestones
@@ -2455,10 +2352,10 @@ CREATE TABLE IF NOT EXISTS achievement_definitions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Clan achievements (unlocked)
-CREATE TABLE IF NOT EXISTS clan_achievements (
+-- Group achievements (unlocked)
+CREATE TABLE IF NOT EXISTS group_achievements (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   achievement_id UUID NOT NULL REFERENCES achievement_definitions(id) ON DELETE CASCADE,
   -- Progress
   current_value INTEGER DEFAULT 0,
@@ -2470,13 +2367,13 @@ CREATE TABLE IF NOT EXISTS clan_achievements (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   -- One per clan per achievement
-  UNIQUE(clan_id, achievement_id)
+  UNIQUE(group_id, achievement_id)
 );
 
 -- Achievement notifications (to send to Discord etc)
 CREATE TABLE IF NOT EXISTS achievement_notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   achievement_id UUID NOT NULL REFERENCES achievement_definitions(id) ON DELETE CASCADE,
   -- Notification status
   is_sent BOOLEAN DEFAULT FALSE,
@@ -2487,9 +2384,9 @@ CREATE TABLE IF NOT EXISTS achievement_notifications (
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_achievement_definitions_category ON achievement_definitions(category);
-CREATE INDEX IF NOT EXISTS idx_clan_achievements_clan ON clan_achievements(clan_id);
-CREATE INDEX IF NOT EXISTS idx_clan_achievements_unlocked ON clan_achievements(is_unlocked);
-CREATE INDEX IF NOT EXISTS idx_achievement_notifications_clan ON achievement_notifications(clan_id);
+CREATE INDEX IF NOT EXISTS idx_clan_achievements_group ON group_achievements(group_id);
+CREATE INDEX IF NOT EXISTS idx_clan_achievements_unlocked ON group_achievements(is_unlocked);
+CREATE INDEX IF NOT EXISTS idx_achievement_notifications_group ON achievement_notifications(group_id);
 CREATE INDEX IF NOT EXISTS idx_achievement_notifications_sent ON achievement_notifications(is_sent);
 
 -- =====================================================
@@ -2497,7 +2394,7 @@ CREATE INDEX IF NOT EXISTS idx_achievement_notifications_sent ON achievement_not
 -- =====================================================
 
 ALTER TABLE achievement_definitions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE clan_achievements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE group_achievements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE achievement_notifications ENABLE ROW LEVEL SECURITY;
 
 -- Definitions: everyone can view
@@ -2505,24 +2402,24 @@ CREATE POLICY "Everyone can view achievement definitions"
   ON achievement_definitions FOR SELECT
   USING (true);
 
--- Clan achievements: clan members can view
-CREATE POLICY "Clan members can view achievements"
-  ON clan_achievements FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
+-- Group achievements: clan members can view
+CREATE POLICY "Group members can view achievements"
+  ON group_achievements FOR SELECT
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']));
 
 -- System manages achievements
 CREATE POLICY "System manages achievements"
-  ON clan_achievements FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  ON group_achievements FOR ALL
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- Notifications: officers
 CREATE POLICY "Officers can view notifications"
   ON achievement_notifications FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 CREATE POLICY "Officers can manage notifications"
   ON achievement_notifications FOR ALL
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer']));
+  USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer']));
 
 -- =====================================================
 -- SEED: Default Achievements
@@ -2549,7 +2446,7 @@ ON CONFLICT DO NOTHING;
 
 -- Comments
 COMMENT ON TABLE achievement_definitions IS 'Achievement templates and requirements';
-COMMENT ON TABLE clan_achievements IS 'Clan progress and unlocks for achievements';
+COMMENT ON TABLE group_achievements IS 'Clan progress and unlocks for achievements';
 COMMENT ON TABLE achievement_notifications IS 'Queue for achievement unlock notifications';
 
 -- Record this migration as applied
@@ -2558,7 +2455,6 @@ INSERT INTO migration_history (filename) VALUES ('017_achievements.sql');
 -- =====================================================
 -- SOURCE: 018_builds.sql
 -- =====================================================
-
 -- =====================================================
 -- 016_builds.sql - Character Build Planner
 -- Share and save character builds with skills/augments
@@ -2580,7 +2476,7 @@ CREATE TABLE IF NOT EXISTS builds (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   -- Creator
   created_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  clan_id UUID REFERENCES clans(id) ON DELETE SET NULL, -- Optional guild association
+  group_id UUID REFERENCES groups(id) ON DELETE SET NULL, -- Optional guild association
   -- Build info
   name VARCHAR(100) NOT NULL,
   description TEXT,
@@ -2654,7 +2550,7 @@ CREATE TABLE IF NOT EXISTS augment_definitions (
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_builds_creator ON builds(created_by);
-CREATE INDEX IF NOT EXISTS idx_builds_clan ON builds(clan_id);
+CREATE INDEX IF NOT EXISTS idx_builds_group ON builds(group_id);
 CREATE INDEX IF NOT EXISTS idx_builds_visibility ON builds(visibility);
 CREATE INDEX IF NOT EXISTS idx_builds_archetype ON builds(primary_archetype);
 CREATE INDEX IF NOT EXISTS idx_builds_tags ON builds USING GIN(tags);
@@ -2678,7 +2574,7 @@ CREATE POLICY "View builds based on visibility"
   USING (
     visibility = 'public'
     OR created_by = auth.uid()
-    OR (visibility = 'guild' AND clan_id IS NOT NULL AND user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']))
+    OR (visibility = 'guild' AND group_id IS NOT NULL AND user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member']))
   );
 
 -- Owners can manage their builds
@@ -2705,7 +2601,7 @@ CREATE POLICY "Comments visible with build"
       AND (
         b.visibility = 'public'
         OR b.created_by = auth.uid()
-        OR (b.visibility = 'guild' AND b.clan_id IS NOT NULL AND user_has_clan_role(b.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member']))
+        OR (b.visibility = 'guild' AND b.group_id IS NOT NULL AND user_has_clan_role(b.group_id, auth.uid(), ARRAY['admin', 'officer', 'member']))
       )
     )
   );
@@ -2736,7 +2632,6 @@ INSERT INTO migration_history (filename) VALUES ('018_builds.sql');
 -- =====================================================
 -- SOURCE: 019_character_linking.sql
 -- =====================================================
-
 -- =====================================================
 -- Character Linking Migration (Deprecated)
 -- =====================================================
@@ -2757,7 +2652,6 @@ INSERT INTO migration_history (filename) VALUES ('019_character_linking.sql');
 -- =====================================================
 -- SOURCE: 020_enforce_single_main.sql
 -- =====================================================
-
 -- =====================================================
 -- Enforce Single Main Character Per User
 -- Ensures only one character per user can be marked as main
@@ -2781,7 +2675,6 @@ INSERT INTO migration_history (filename) VALUES ('020_enforce_single_main.sql');
 -- =====================================================
 -- SOURCE: 021_backfill_user_ids.sql
 -- =====================================================
-
 -- =====================================================
 -- Backfill user_id for existing characters
 -- Links characters to their creator based on clan membership
@@ -2791,23 +2684,23 @@ INSERT INTO migration_history (filename) VALUES ('020_enforce_single_main.sql');
 -- This matches characters with clan members who have edit permissions
 UPDATE members m
 SET user_id = cm.user_id
-FROM clan_members cm
-WHERE m.clan_id = cm.clan_id
+FROM group_members cm
+WHERE m.group_id = cm.group_id
   AND m.user_id IS NULL
   AND cm.role IN ('admin', 'officer', 'member')
-  AND cm.clan_id IN (
-    -- Only update for clans where there's a single non-pending member
+  AND cm.group_id IN (
+    -- Only update for groups where there's a single non-pending member
     -- to avoid ambiguity
-    SELECT clan_id 
-    FROM clan_members 
+    SELECT group_id 
+    FROM group_members 
     WHERE role IN ('admin', 'officer', 'member')
-    GROUP BY clan_id 
+    GROUP BY group_id 
     HAVING COUNT(*) = 1
   );
 
--- For clans with multiple members, you'll need to manually assign characters
+-- For groups with multiple members, you'll need to manually assign characters
 -- or let users edit their characters to automatically claim them
-COMMENT ON TABLE members IS 'Characters in clans. user_id links characters to their owner for automatic main/alt detection.';
+COMMENT ON TABLE members IS 'Characters in groups. user_id links characters to their owner for automatic main/alt detection.';
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('021_backfill_user_ids.sql');
@@ -2815,7 +2708,6 @@ INSERT INTO migration_history (filename) VALUES ('021_backfill_user_ids.sql');
 -- =====================================================
 -- SOURCE: 022_detailed_artisan_tracking.sql
 -- =====================================================
-
 -- =====================================================
 -- Add Detailed Artisan Skill Tracking
 -- Adds level (0-50) and quality fields for precise profession tracking
@@ -2860,7 +2752,6 @@ INSERT INTO migration_history (filename) VALUES ('022_detailed_artisan_tracking.
 -- =====================================================
 -- SOURCE: 023_allow_members_add_characters.sql
 -- =====================================================
-
 -- =====================================================
 -- Allow Regular Members to Add Characters
 -- Updates RLS policies so all approved clan members can add characters
@@ -2872,7 +2763,7 @@ DROP POLICY IF EXISTS "Admin/Officer manage members" ON members;
 -- Create new policy that allows any approved member to insert characters
 CREATE POLICY "Approved members can add characters" ON members
   FOR INSERT WITH CHECK (
-    user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
+    user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer', 'member'])
   );
 
 -- Also update the member_professions policy to allow members to manage their own character's professions
@@ -2884,7 +2775,7 @@ CREATE POLICY "Members can modify own character professions" ON member_professio
     member_id IN (
       SELECT m.id FROM members m
       WHERE m.user_id = auth.uid() 
-         OR user_has_clan_role(m.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+         OR user_has_clan_role(m.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -2893,7 +2784,7 @@ DROP POLICY IF EXISTS "Admin/Officer update members" ON members;
 
 CREATE POLICY "Members can update own characters" ON members
   FOR UPDATE USING (
-    user_id = auth.uid() OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_id = auth.uid() OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Delete policy: members can delete their own characters, officers/admins can delete all
@@ -2901,7 +2792,7 @@ DROP POLICY IF EXISTS "Admin/Officer delete members" ON members;
 
 CREATE POLICY "Members can delete own characters" ON members
   FOR DELETE USING (
-    user_id = auth.uid() OR user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer'])
+    user_id = auth.uid() OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin', 'officer'])
   );
 
 -- Record this migration as applied
@@ -2910,7 +2801,6 @@ INSERT INTO migration_history (filename) VALUES ('023_allow_members_add_characte
 -- =====================================================
 -- SOURCE: 024_fix_quality_constraint.sql
 -- =====================================================
-
 -- =====================================================
 -- Fix Quality Score Constraint
 -- Removes the old 0-100 constraint and ensures unlimited quality values
@@ -2934,17 +2824,16 @@ INSERT INTO migration_history (filename) VALUES ('024_fix_quality_constraint.sql
 -- =====================================================
 -- SOURCE: 025_discord_role_ping.sql
 -- =====================================================
-
 -- =====================================================
 -- Add Discord Role Ping for Announcements
 -- Allows pinging a specific Discord role when announcements are posted
 -- =====================================================
 
--- Add role ID field to clans table
-ALTER TABLE clans ADD COLUMN IF NOT EXISTS discord_announcement_role_id TEXT;
+-- Add role ID field to groups table
+ALTER TABLE groups ADD COLUMN IF NOT EXISTS discord_announcement_role_id TEXT;
 
 -- Add comment
-COMMENT ON COLUMN clans.discord_announcement_role_id IS 'Discord role ID to ping when posting announcements (numeric ID only)';
+COMMENT ON COLUMN groups.discord_announcement_role_id IS 'Discord role ID to ping when posting announcements (numeric ID only)';
 
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('025_discord_role_ping.sql');
@@ -2952,7 +2841,6 @@ INSERT INTO migration_history (filename) VALUES ('025_discord_role_ping.sql');
 -- =====================================================
 -- SOURCE: 026_add_farming_event_types.sql
 -- =====================================================
-
 -- Add new farming event types to the event_type ENUM
 -- Migration: 024_add_farming_event_types
 -- Purpose: Add farming_glint, farming_materials, farming_gear, farming_other to event_type enum
@@ -2972,7 +2860,6 @@ INSERT INTO migration_history (filename) VALUES ('026_add_farming_event_types.sq
 -- =====================================================
 -- SOURCE: 027_event_role_requirements.sql
 -- =====================================================
-
 -- Migration 025: Add role-based requirements to events
 -- Purpose: Allow events to have role requirements like parties
 -- and track which role users are RSVPing for
@@ -3003,7 +2890,6 @@ INSERT INTO migration_history (filename) VALUES ('027_event_role_requirements.sq
 -- =====================================================
 -- SOURCE: 028_update_role_system.sql
 -- =====================================================
-
 -- Migration 026: Update role system to use specific roles
 -- Purpose: Replace generic role system with specific roles: tank, cleric, bard, ranged_dps, melee_dps
 -- This affects both parties and events
@@ -3082,17 +2968,16 @@ INSERT INTO migration_history (filename) VALUES ('028_update_role_system.sql');
 -- =====================================================
 -- SOURCE: 029_clan_permission_overrides.sql
 -- =====================================================
-
 -- Migration 027: Add clan permission overrides table
--- Purpose: Store custom role-based permission overrides for clans
+-- Purpose: Store custom role-based permission overrides for groups
 -- Allows admins to customize which permissions each role has
 
 BEGIN;
 
 -- Create table for storing custom role permission overrides
-CREATE TABLE clan_permission_overrides (
+CREATE TABLE group_permission_overrides (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clan_id UUID NOT NULL REFERENCES clans(id) ON DELETE CASCADE,
+  group_id UUID NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
   role TEXT NOT NULL CHECK (role IN ('admin', 'officer', 'member', 'trial', 'pending')),
   
   -- Character management permissions
@@ -3146,41 +3031,41 @@ CREATE TABLE clan_permission_overrides (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
-  UNIQUE(clan_id, role)
+  UNIQUE(group_id, role)
 );
 
 -- Create index for faster lookups by clan and role
 CREATE INDEX idx_clan_permission_overrides_clan_role 
-  ON clan_permission_overrides(clan_id, role);
+  ON group_permission_overrides(group_id, role);
 
 -- Enable RLS
-ALTER TABLE clan_permission_overrides ENABLE ROW LEVEL SECURITY;
+ALTER TABLE group_permission_overrides ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policy: admins can view and modify permissions for their clan
-CREATE POLICY "clan_admins_can_manage_permissions" ON clan_permission_overrides
+CREATE POLICY "clan_admins_can_manage_permissions" ON group_permission_overrides
   FOR ALL
   USING (
     auth.uid() IN (
-      SELECT user_id FROM clan_members 
-      WHERE clan_id = clan_permission_overrides.clan_id 
+      SELECT user_id FROM group_members 
+      WHERE group_id = group_permission_overrides.group_id 
       AND role = 'admin'
     )
   )
   WITH CHECK (
     auth.uid() IN (
-      SELECT user_id FROM clan_members 
-      WHERE clan_id = clan_permission_overrides.clan_id 
+      SELECT user_id FROM group_members 
+      WHERE group_id = group_permission_overrides.group_id 
       AND role = 'admin'
     )
   );
 
 -- Create RLS policy: members can view their own clan's permission structure
-CREATE POLICY "clan_members_can_view_permissions" ON clan_permission_overrides
+CREATE POLICY "clan_members_can_view_permissions" ON group_permission_overrides
   FOR SELECT
   USING (
     auth.uid() IN (
-      SELECT user_id FROM clan_members 
-      WHERE clan_id = clan_permission_overrides.clan_id
+      SELECT user_id FROM group_members 
+      WHERE group_id = group_permission_overrides.group_id
     )
   );
 
@@ -3192,7 +3077,6 @@ COMMIT;
 -- =====================================================
 -- SOURCE: 030_crafting_achievements.sql
 -- =====================================================
-
 -- =====================================================
 -- 028_crafting_achievements.sql - Crafting & Gathering Achievements
 -- Add achievements for profession mastery across the guild
@@ -3226,18 +3110,16 @@ INSERT INTO migration_history (filename) VALUES ('030_crafting_achievements.sql'
 -- =====================================================
 -- SOURCE: 031_add_discord_welcome_webhook_url.sql
 -- =====================================================
+-- Migration: Add group_welcome_webhook_url to groups table
+ALTER TABLE groups ADD COLUMN IF NOT EXISTS group_welcome_webhook_url TEXT;
 
--- Migration: Add discord_welcome_webhook_url to clans table
-ALTER TABLE clans ADD COLUMN IF NOT EXISTS discord_welcome_webhook_url TEXT;
-
-COMMENT ON COLUMN clans.discord_welcome_webhook_url IS 'Discord webhook URL for welcome messages (optional, falls back to main webhook if not set)';
+COMMENT ON COLUMN groups.group_welcome_webhook_url IS 'Discord webhook URL for welcome messages (optional, falls back to main webhook if not set)';
 
 INSERT INTO migration_history (filename) VALUES ('031_add_discord_welcome_webhook_url.sql');
 
 -- =====================================================
 -- SOURCE: 032_role_minimums_not_caps.sql
 -- =====================================================
-
 -- Migration: Change role requirements from caps to minimums
 -- Change field names to reflect they are minimums, not caps
 -- This allows unlimited signups while still tracking minimum requirements
@@ -3268,7 +3150,6 @@ INSERT INTO migration_history (filename) VALUES ('032_role_minimums_not_caps.sql
 -- =====================================================
 -- SOURCE: 033_add_role_max_caps.sql
 -- =====================================================
-
 -- Migration: Add optional maximum caps for each role
 -- Defaults to NULL (unlimited) but allows setting a cap if needed
 
@@ -3298,117 +3179,54 @@ INSERT INTO migration_history (filename) VALUES ('033_add_role_max_caps.sql');
 -- =====================================================
 -- SOURCE: 034_fix_events_rls_include_trial.sql
 -- =====================================================
-
 -- Migration: Fix event RLS policies to include trial members
 -- Purpose: Trial members should be able to view events and RSVP, just like regular members
 
 -- Drop and recreate the "Clan members can view events" policy
-DROP POLICY IF EXISTS "Clan members can view events" ON events;
-CREATE POLICY "Clan members can view events"
-  ON events FOR SELECT
-  USING (user_has_clan_role(clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial']));
-
 -- Drop and recreate the "Clan members can view RSVPs" policy
-DROP POLICY IF EXISTS "Clan members can view RSVPs" ON event_rsvps;
-CREATE POLICY "Clan members can view RSVPs"
-  ON event_rsvps FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM events e 
-      WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
-    )
-  );
-
 -- Drop and recreate the "Members can RSVP" policy
 DROP POLICY IF EXISTS "Members can RSVP" ON event_rsvps;
-CREATE POLICY "Members can RSVP"
-  ON event_rsvps FOR INSERT
-  WITH CHECK (
-    auth.uid() = user_id AND
-    EXISTS (
-      SELECT 1 FROM events e 
-      WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
-    )
-  );
-
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('034_fix_events_rls_include_trial.sql');
 
 -- =====================================================
 -- SOURCE: 035_allow_admin_rsvp_on_behalf.sql
 -- =====================================================
-
 -- Migration: Allow admins and officers to RSVP on behalf of members
 -- Purpose: Enable event organizers to register members who can't respond themselves
 
 -- Drop and recreate the "Members can RSVP" policy to allow admins to RSVP for others
 DROP POLICY IF EXISTS "Members can RSVP" ON event_rsvps;
-CREATE POLICY "Members can RSVP"
-  ON event_rsvps FOR INSERT
-  WITH CHECK (
-    (
-      -- Users can RSVP for themselves
-      auth.uid() = user_id AND
-      EXISTS (
-        SELECT 1 FROM events e 
-        WHERE e.id = event_id 
-        AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer', 'member', 'trial'])
-      )
-    ) OR (
-      -- Admins/Officers can RSVP on behalf of members
-      EXISTS (
-        SELECT 1 FROM events e 
-        WHERE e.id = event_id 
-        AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
-        AND user_has_clan_role(e.clan_id, user_id, ARRAY['admin', 'officer', 'member', 'trial'])
-      )
-    )
-  );
-
 -- Also update the UPDATE policy to allow admins to update RSVPs for members
 DROP POLICY IF EXISTS "Users can update own RSVP" ON event_rsvps;
-CREATE POLICY "Users can update own RSVP"
-  ON event_rsvps FOR UPDATE
-  USING (
-    auth.uid() = user_id OR
-    EXISTS (
-      SELECT 1 FROM events e 
-      WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
-    )
-  );
-
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('035_allow_admin_rsvp_on_behalf.sql');
 
 -- =====================================================
 -- SOURCE: 036_allow_allied_clan_event_participation.sql
 -- =====================================================
-
--- Migration: Allow allied clan members to view and RSVP to clan events
--- Purpose: Enable members from allied clans to participate in events, even if not in the system
+-- Migration: Allow Allied group members to view and RSVP to clan events
+-- Purpose: Enable members from allied groups to participate in events, even if not in the system
 
 -- =====================================================
 -- HELPER FUNCTION
 -- =====================================================
 
--- Function to check if user is in the event's clan OR in an allied clan
-CREATE OR REPLACE FUNCTION user_in_clan_or_allied_clan(check_clan_id UUID, check_user_id UUID)
+-- Function to check if user is in the event's clan OR in an Allied group
+CREATE OR REPLACE FUNCTION user_in_group_or_allied_group(check_group_id UUID, check_user_id UUID)
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
     -- User is in the event's clan
-    SELECT 1 FROM clan_members 
-    WHERE clan_id = check_clan_id 
+    SELECT 1 FROM group_members 
+    WHERE group_id = check_group_id 
     AND user_id = check_user_id
   ) OR EXISTS (
     -- User is in a clan allied with the event's clan
-    SELECT 1 FROM clan_members cm
-    INNER JOIN alliance_members am ON cm.clan_id = am.clan_id
+    SELECT 1 FROM group_members cm
+    INNER JOIN alliance_members am ON cm.group_id = am.group_id
     INNER JOIN alliance_members am2 ON am.alliance_id = am2.alliance_id
-    WHERE am2.clan_id = check_clan_id
+    WHERE am2.group_id = check_group_id
     AND cm.user_id = check_user_id
     AND am.status = 'active'
     AND am2.status = 'active'
@@ -3420,68 +3238,18 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- UPDATE RLS POLICIES
 -- =====================================================
 
--- Update "Clan members can view events" to include allied clan members
-DROP POLICY IF EXISTS "Clan members can view events" ON events;
-CREATE POLICY "Clan members can view events"
-  ON events FOR SELECT
-  USING (user_in_clan_or_allied_clan(clan_id, auth.uid()));
-
--- Update "Clan members can view RSVPs" to include allied clan members
-DROP POLICY IF EXISTS "Clan members can view RSVPs" ON event_rsvps;
-CREATE POLICY "Clan members can view RSVPs"
-  ON event_rsvps FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM events e 
-      WHERE e.id = event_id 
-      AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
-    )
-  );
-
--- Update "Members can RSVP" to include allied clan members
+-- Update "Clan members can view events" to include Allied group members
+-- Update "Clan members can view RSVPs" to include Allied group members
+-- Update "Members can RSVP" to include Allied group members
 DROP POLICY IF EXISTS "Members can RSVP" ON event_rsvps;
-CREATE POLICY "Members can RSVP"
-  ON event_rsvps FOR INSERT
-  WITH CHECK (
-    (
-      -- Users can RSVP for themselves if they're in the clan or an allied clan
-      auth.uid() = user_id AND
-      EXISTS (
-        SELECT 1 FROM events e 
-        WHERE e.id = event_id 
-        AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
-      )
-    ) OR (
-      -- Admins/Officers of the event's clan can RSVP on behalf of members
-      EXISTS (
-        SELECT 1 FROM events e 
-        WHERE e.id = event_id 
-        AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
-        AND user_has_clan_role(e.clan_id, user_id, ARRAY['admin', 'officer', 'member', 'trial'])
-      )
-    )
-  );
-
 -- Update "Users can update own RSVP" to include allied members
 DROP POLICY IF EXISTS "Users can update own RSVP" ON event_rsvps;
-CREATE POLICY "Users can update own RSVP"
-  ON event_rsvps FOR UPDATE
-  USING (
-    auth.uid() = user_id OR
-    EXISTS (
-      SELECT 1 FROM events e 
-      WHERE e.id = event_id 
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
-    )
-  );
-
 -- Record this migration as applied
 INSERT INTO migration_history (filename) VALUES ('036_allow_allied_clan_event_participation.sql');
 
 -- =====================================================
 -- SOURCE: 037_add_combined_dps_option.sql
 -- =====================================================
-
 -- Migration: Add combined DPS option to events
 -- Purpose: Allow event creators to set a combined ranged+melee DPS max instead of separate limits
 
@@ -3499,14 +3267,13 @@ INSERT INTO migration_history (filename) VALUES ('037_add_combined_dps_option.sq
 -- =====================================================
 -- SOURCE: 038_guest_event_rsvps.sql
 -- =====================================================
-
 -- Migration: Guest RSVP table for allies not yet in the system
--- Purpose: Allow allied clan members to RSVP without having an account
+-- Purpose: Allow Allied group members to RSVP without having an account
 
 CREATE TABLE guest_event_rsvps (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-  allied_clan_id UUID NOT NULL REFERENCES clans(id),
+  allied_group_id UUID NOT NULL REFERENCES groups(id),
   guest_name VARCHAR(255) NOT NULL,
   class_id UUID,
   role VARCHAR(20) NOT NULL,
@@ -3514,12 +3281,12 @@ CREATE TABLE guest_event_rsvps (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
   -- Ensure one RSVP per guest per event
-  UNIQUE(event_id, allied_clan_id, guest_name)
+  UNIQUE(event_id, allied_group_id, guest_name)
 );
 
 -- Create index for faster queries
 CREATE INDEX idx_guest_event_rsvps_event ON guest_event_rsvps(event_id);
-CREATE INDEX idx_guest_event_rsvps_allied_clan ON guest_event_rsvps(allied_clan_id);
+CREATE INDEX idx_guest_event_rsvps_allied_group ON guest_event_rsvps(allied_group_id);
 
 -- Enable RLS
 ALTER TABLE guest_event_rsvps ENABLE ROW LEVEL SECURITY;
@@ -3531,7 +3298,7 @@ CREATE POLICY "Members can view guest RSVPs"
     EXISTS (
       SELECT 1 FROM events e
       WHERE e.id = event_id
-      AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
+      AND user_in_group_or_allied_group(e.group_id, auth.uid())
     )
   );
 
@@ -3548,7 +3315,7 @@ CREATE POLICY "Admins can manage guest RSVPs"
     EXISTS (
       SELECT 1 FROM events e
       WHERE e.id = event_id
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(e.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -3559,7 +3326,7 @@ CREATE POLICY "Admins can delete guest RSVPs"
     EXISTS (
       SELECT 1 FROM events e
       WHERE e.id = event_id
-      AND user_has_clan_role(e.clan_id, auth.uid(), ARRAY['admin', 'officer'])
+      AND user_has_clan_role(e.group_id, auth.uid(), ARRAY['admin', 'officer'])
     )
   );
 
@@ -3569,18 +3336,17 @@ INSERT INTO migration_history (filename) VALUES ('038_guest_event_rsvps.sql');
 -- =====================================================
 -- SOURCE: 039_add_check_clans_allied_function.sql
 -- =====================================================
-
--- Migration: Add helper function to check if clans are allied
+-- Migration: Add helper function to check if groups are allied
 -- Purpose: Validate that guest's clan is allied with event's clan
 
-CREATE OR REPLACE FUNCTION check_clans_allied(clan_a UUID, clan_b UUID)
+CREATE OR REPLACE FUNCTION check_groups_allied(group_a UUID, group_b UUID)
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 FROM alliance_members am1
     INNER JOIN alliance_members am2 ON am1.alliance_id = am2.alliance_id
-    WHERE am1.clan_id = clan_a
-    AND am2.clan_id = clan_b
+    WHERE am1.group_id = group_a
+    AND am2.group_id = group_b
     AND am1.status = 'active'
     AND am2.status = 'active'
   );
@@ -3588,14 +3354,13 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Record this migration as applied
-INSERT INTO migration_history (filename) VALUES ('039_add_check_clans_allied_function.sql');
+INSERT INTO migration_history (filename) VALUES ('039_add_check_groups_allied_function.sql');
 
 -- =====================================================
 -- SOURCE: 040_add_public_events.sql
 -- =====================================================
-
 -- Migration: Add public event support
--- Purpose: Allow clans to mark events as public for unauthenticated guest access
+-- Purpose: Allow groups to mark events as public for unauthenticated guest access
 
 -- =====================================================
 -- ADD PUBLIC FLAG TO EVENTS
@@ -3618,12 +3383,11 @@ ADD CONSTRAINT guest_rsvp_unique_anonymous UNIQUE NULLS NOT DISTINCT (event_id, 
 -- =====================================================
 
 -- Allow anonymous users to view public events
-DROP POLICY IF EXISTS "Clan members can view events" ON events;
-CREATE POLICY "Clan members and public can view events"
+CREATE POLICY "Group members and public can view events"
   ON events FOR SELECT
   USING (
     is_public = TRUE
-    OR user_in_clan_or_allied_clan(clan_id, auth.uid())
+    OR user_in_group_or_allied_group(group_id, auth.uid())
   );
 
 -- Allow anonymous users to insert guest RSVPs on public events
@@ -3638,14 +3402,14 @@ CREATE POLICY "Anyone can RSVP to public events as guest"
     )
   );
 
--- Keep view access for authenticated users via allied clans
+-- Keep view access for authenticated users via allied groups
 CREATE POLICY "Allied members can view guest RSVPs"
   ON guest_event_rsvps FOR SELECT
   USING (
     EXISTS (
       SELECT 1 FROM events e
       WHERE e.id = guest_event_rsvps.event_id
-      AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
+      AND user_in_group_or_allied_group(e.group_id, auth.uid())
     )
   );
 
@@ -3655,7 +3419,6 @@ INSERT INTO migration_history (filename) VALUES ('040_add_public_events.sql');
 -- =====================================================
 -- SOURCE: 041_add_allied_signup_control.sql
 -- =====================================================
-
 -- Migration: Add allied member signup control
 -- Purpose: Allow event creators to control whether allied members can sign up for events
 
@@ -3669,16 +3432,16 @@ ALTER TABLE events ADD COLUMN allow_allied_signups BOOLEAN DEFAULT TRUE;
 -- UPDATE RLS POLICIES FOR ALLIED SIGNUP CONTROL
 -- =====================================================
 
--- Update allied clan RSVP policy to check the allow_allied_signups flag
-DROP POLICY IF EXISTS "Allied clan members can RSVP to events" ON event_rsvps;
-CREATE POLICY "Allied clan members can RSVP to events"
+-- Update Allied group RSVP policy to check the allow_allied_signups flag
+DROP POLICY IF EXISTS "Allied group members can RSVP to events" ON event_rsvps;
+CREATE POLICY "Allied group members can RSVP to events"
   ON event_rsvps FOR INSERT
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM events e
       WHERE e.id = event_rsvps.event_id
       AND e.allow_allied_signups = TRUE
-      AND user_in_clan_or_allied_clan(e.clan_id, auth.uid())
+      AND user_in_group_or_allied_group(e.group_id, auth.uid())
     )
   );
 
@@ -3688,7 +3451,6 @@ INSERT INTO migration_history (filename) VALUES ('041_add_allied_signup_control.
 -- =====================================================
 -- SOURCE: 042_allow_public_event_rsvp_view.sql
 -- =====================================================
-
 -- Migration: Allow public viewing of RSVPs on public events
 -- Purpose: Allow unauthenticated users to see attendance counts for public events
 
@@ -3713,27 +3475,26 @@ INSERT INTO migration_history (filename) VALUES ('042_allow_public_event_rsvp_vi
 -- =====================================================
 -- SOURCE: 043_fix_guest_rsvp_policies.sql
 -- =====================================================
-
 -- Migration: Fix guest RSVP for public events
--- Purpose: Allow public guests to RSVP without an allied clan
+-- Purpose: Allow public guests to RSVP without an Allied group
 
 -- =====================================================
--- MAKE ALLIED_CLAN_ID NULLABLE FOR PUBLIC GUESTS
+-- MAKE allied_group_id NULLABLE FOR PUBLIC GUESTS
 -- =====================================================
 
--- Make allied_clan_id nullable so public guests can sign up without a clan
-ALTER TABLE guest_event_rsvps ALTER COLUMN allied_clan_id DROP NOT NULL;
+-- Make allied_group_id nullable so public guests can sign up without a clan
+ALTER TABLE guest_event_rsvps ALTER COLUMN allied_group_id DROP NOT NULL;
 
 -- Drop the foreign key constraint and recreate it as deferrable
-ALTER TABLE guest_event_rsvps DROP CONSTRAINT guest_event_rsvps_allied_clan_id_fkey;
+ALTER TABLE guest_event_rsvps DROP CONSTRAINT guest_event_rsvps_allied_group_id_fkey;
 ALTER TABLE guest_event_rsvps 
-ADD CONSTRAINT guest_event_rsvps_allied_clan_id_fkey 
-FOREIGN KEY (allied_clan_id) REFERENCES clans(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ADD CONSTRAINT guest_event_rsvps_allied_group_id_fkey 
+FOREIGN KEY (allied_group_id) REFERENCES groups(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
--- Update unique constraint to allow NULL allied_clan_id for public guests
+-- Update unique constraint to allow NULL allied_group_id for public guests
 ALTER TABLE guest_event_rsvps DROP CONSTRAINT guest_rsvp_unique_anonymous;
 ALTER TABLE guest_event_rsvps 
-ADD CONSTRAINT guest_rsvp_unique_anonymous UNIQUE NULLS NOT DISTINCT (event_id, guest_email, allied_clan_id);
+ADD CONSTRAINT guest_rsvp_unique_anonymous UNIQUE NULLS NOT DISTINCT (event_id, guest_email, allied_group_id);
 
 -- =====================================================
 -- DISABLE RLS (validation happens at application layer)
@@ -3755,7 +3516,6 @@ INSERT INTO migration_history (filename) VALUES ('043_fix_guest_rsvp_policies.sq
 -- =====================================================
 -- SOURCE: 044_add_guest_rsvp_status.sql
 -- =====================================================
-
 -- Migration: Add status to guest RSVPs
 -- Purpose: Track confirmation status (attending/maybe) for guest signups
 
@@ -3769,17 +3529,16 @@ INSERT INTO migration_history (filename) VALUES ('044_add_guest_rsvp_status.sql'
 -- =====================================================
 -- SOURCE: 045_add_game_support.sql
 -- =====================================================
-
 -- =====================================================
 -- Add Multi-Game Support
 -- =====================================================
 -- Migration: 034_add_game_support
 
--- Add game column to clans table
-ALTER TABLE clans ADD COLUMN game VARCHAR(50) DEFAULT 'aoc' NOT NULL;
+-- Add game column to groups table
+ALTER TABLE groups ADD COLUMN game VARCHAR(50) DEFAULT 'aoc' NOT NULL;
 
 -- Add constraint for valid games
-ALTER TABLE clans ADD CONSTRAINT valid_game CHECK (game IN ('aoc', 'starcitizen'));
+ALTER TABLE groups ADD CONSTRAINT valid_game CHECK (game IN ('aoc', 'starcitizen'));
 
 -- Create game types enum equivalent
 CREATE TABLE IF NOT EXISTS game_types (
@@ -3808,430 +3567,13 @@ CREATE TABLE IF NOT EXISTS user_games (
 CREATE INDEX idx_user_games_user_id ON user_games(user_id);
 CREATE INDEX idx_user_games_game ON user_games(game);
 
--- Create index on clans.game for faster filtering
-CREATE INDEX idx_clans_game ON clans(game);
+-- Create index on groups.game for faster filtering
+CREATE INDEX idx_groups_game ON groups(game);
 
 INSERT INTO migration_history (filename) VALUES ('045_add_game_support.sql');
-
--- =====================================================
--- SOURCE: 046_comprehensive_clans_to_groups_migration.sql
--- =====================================================
-
--- Comprehensive migration: Rename all clan references to group
--- This single migration handles:
--- 1. Table renames (clans -> groups, clan_members -> group_members, etc.)
--- 2. Column renames (clan_id -> group_id, etc.)
--- 3. Index renames
--- 4. Foreign key constraint updates
--- 5. Function recreation for group terminology
--- This replaces migrations 046-050
-
--- ============================================================================
--- PHASE 1: Rename main tables and columns
--- ============================================================================
-
--- 1. Rename clans table to groups
-ALTER TABLE clans RENAME TO groups;
-
--- 2. Rename clan_members to group_members
-ALTER TABLE clan_members RENAME TO group_members;
-
--- 3. Rename clan_achievements to group_achievements
-ALTER TABLE clan_achievements RENAME TO group_achievements;
-
--- 4. Update column names in groups table
-ALTER TABLE groups RENAME COLUMN guild_icon_url TO group_icon_url;
-ALTER TABLE groups RENAME COLUMN discord_webhook_url TO group_webhook_url;
-ALTER TABLE groups RENAME COLUMN discord_welcome_webhook_url TO group_welcome_webhook_url;
-
--- 5. Update foreign key columns in group_members
-ALTER TABLE group_members RENAME COLUMN clan_id TO group_id;
-
--- 5b. Update foreign key columns in members table
-ALTER TABLE members RENAME COLUMN clan_id TO group_id;
-
--- 6. Update foreign key columns in group_achievements
-ALTER TABLE group_achievements RENAME COLUMN clan_id TO group_id;
-
--- 7. Rename indexes
-ALTER INDEX idx_clans_game RENAME TO idx_groups_game;
-ALTER INDEX idx_clan_members_user_id RENAME TO idx_group_members_user_id;
-ALTER INDEX idx_clan_members_clan_id RENAME TO idx_group_members_group_id;
-ALTER INDEX idx_clan_achievements_clan RENAME TO idx_group_achievements_group;
-ALTER INDEX idx_members_clan_id RENAME TO idx_members_group_id;
-
--- 8. Rename clan_permission_overrides table to group_permission_overrides
-ALTER TABLE clan_permission_overrides RENAME TO group_permission_overrides;
-
--- 9. Update foreign key columns in other tables that reference clans
--- Only rename clan_id in tables that actually have this column
--- (verified by checking each table's CREATE TABLE definition)
--- Note: clan_achievements, clan_members, members already handled in steps 3, 5, 5b, 6
-ALTER TABLE achievement_notifications RENAME COLUMN clan_id TO group_id;
-ALTER TABLE activity_log RENAME COLUMN clan_id TO group_id;
-ALTER TABLE alliance_event_participation RENAME COLUMN clan_id TO group_id;
-ALTER TABLE alliance_members RENAME COLUMN clan_id TO group_id;
-ALTER TABLE alliances RENAME COLUMN leader_clan_id TO leader_group_id;
-ALTER TABLE announcements RENAME COLUMN clan_id TO group_id;
-ALTER TABLE builds RENAME COLUMN clan_id TO group_id;
-ALTER TABLE caravan_events RENAME COLUMN clan_id TO group_id;
-ALTER TABLE events RENAME COLUMN clan_id TO group_id;
-ALTER TABLE freeholds RENAME COLUMN clan_id TO group_id;
-ALTER TABLE group_permission_overrides RENAME COLUMN clan_id TO group_id;
-ALTER TABLE guild_banks RENAME COLUMN clan_id TO group_id;
-ALTER TABLE inactivity_alerts RENAME COLUMN clan_id TO group_id;
-ALTER TABLE loot_systems RENAME COLUMN clan_id TO group_id;
-ALTER TABLE member_activity_summary RENAME COLUMN clan_id TO group_id;
-ALTER TABLE parties RENAME COLUMN clan_id TO group_id;
-ALTER TABLE recruitment_applications RENAME COLUMN clan_id TO group_id;
-ALTER TABLE siege_events RENAME COLUMN clan_id TO group_id;
-
--- 10. Update guest_event_rsvps allied_clan_id column
-ALTER TABLE guest_event_rsvps RENAME COLUMN allied_clan_id TO allied_group_id;
-
--- 11. Update constraint references
-ALTER TABLE groups RENAME CONSTRAINT valid_game TO groups_valid_game;
-
--- 12. Fix foreign key constraint for guest_event_rsvps
-ALTER TABLE guest_event_rsvps DROP CONSTRAINT IF EXISTS guest_event_rsvps_allied_clan_id_fkey;
-ALTER TABLE guest_event_rsvps 
-  ADD CONSTRAINT guest_event_rsvps_allied_group_id_fkey 
-  FOREIGN KEY (allied_group_id) REFERENCES groups(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
-
--- ============================================================================
--- PHASE 2: Recreate functions with group terminology
--- ============================================================================
-
--- Drop old functions with CASCADE to handle dependent policies
-DROP FUNCTION IF EXISTS user_in_clan_or_allied_clan(UUID, UUID) CASCADE;
-DROP FUNCTION IF EXISTS check_groups_allied(UUID, UUID) CASCADE;
-DROP FUNCTION IF EXISTS user_has_clan_role(UUID, UUID, text[]) CASCADE;
-
--- Recreate user_in_clan_or_allied_clan function
-CREATE OR REPLACE FUNCTION user_in_clan_or_allied_clan(group_id UUID, user_id UUID)
-RETURNS BOOLEAN AS $$
-  SELECT EXISTS(
-    -- User is a member of the group
-    SELECT 1 FROM group_members
-    WHERE group_id = $1 AND user_id = $2
-  )
-  OR EXISTS(
-    -- User is in an allied group
-    SELECT 1 FROM alliances a
-    JOIN alliance_members am1 ON a.id = am1.alliance_id AND am1.group_id = $1
-    JOIN alliance_members am2 ON a.id = am2.alliance_id AND am2.group_id IN (
-      SELECT group_id FROM group_members WHERE user_id = $2
-    )
-    WHERE am1.status = 'active' AND am2.status = 'active'
-  );
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- Recreate check_groups_allied function
-CREATE OR REPLACE FUNCTION check_groups_allied(group_a UUID, group_b UUID)
-RETURNS BOOLEAN AS $$
-  SELECT EXISTS(
-    SELECT 1 FROM alliances a
-    JOIN alliance_members am1 ON a.id = am1.alliance_id AND am1.group_id = group_a
-    JOIN alliance_members am2 ON a.id = am2.alliance_id AND am2.group_id = group_b
-    WHERE am1.status = 'active' AND am2.status = 'active'
-  );
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- Recreate user_has_clan_role function (critical for all RLS policies)
-CREATE OR REPLACE FUNCTION user_has_clan_role(
-  check_group_id UUID,
-  check_user_id UUID,
-  allowed_roles text[]
-)
-RETURNS BOOLEAN AS $$
-BEGIN
-  RETURN EXISTS (
-    SELECT 1 FROM group_members 
-    WHERE group_id = check_group_id 
-    AND user_id = check_user_id 
-    AND role = ANY(allowed_roles)
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-INSERT INTO migration_history (filename) VALUES ('046_comprehensive_clans_to_groups_migration.sql') ON CONFLICT DO NOTHING;
-
--- =====================================================
--- SOURCE: 047_comprehensive_rls_recreation.sql
--- =====================================================
-
--- Comprehensive RLS policy recreation
--- This migration handles:
--- 1. Adding missing group_id and user_id columns to tables
--- 2. Dropping all existing RLS policies
--- 3. Recreating all RLS policies with correct column references
--- This replaces migration 055
-
-DO $$
-BEGIN
-  -- Add missing group_id columns where needed (idempotent)
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='bank_transactions' AND column_name='group_id') THEN
-    ALTER TABLE bank_transactions ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='bank_inventory' AND column_name='group_id') THEN
-    ALTER TABLE bank_inventory ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='dkp_points' AND column_name='group_id') THEN
-    ALTER TABLE dkp_points ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='dkp_transactions' AND column_name='group_id') THEN
-    ALTER TABLE dkp_transactions ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='loot_history' AND column_name='group_id') THEN
-    ALTER TABLE loot_history ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='event_rsvps' AND column_name='group_id') THEN
-    ALTER TABLE event_rsvps ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='guest_event_rsvps' AND column_name='group_id') THEN
-    ALTER TABLE guest_event_rsvps ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='build_comments' AND column_name='group_id') THEN
-    ALTER TABLE build_comments ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='member_professions' AND column_name='group_id') THEN
-    ALTER TABLE member_professions ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='node_citizenships' AND column_name='group_id') THEN
-    ALTER TABLE node_citizenships ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='party_roster' AND column_name='group_id') THEN
-    ALTER TABLE party_roster ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='caravan_escorts' AND column_name='group_id') THEN
-    ALTER TABLE caravan_escorts ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='caravan_waypoints' AND column_name='group_id') THEN
-    ALTER TABLE caravan_waypoints ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='freehold_buildings' AND column_name='group_id') THEN
-    ALTER TABLE freehold_buildings ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='freehold_schedules' AND column_name='group_id') THEN
-    ALTER TABLE freehold_schedules ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='siege_roster' AND column_name='group_id') THEN
-    ALTER TABLE siege_roster ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='resource_requests' AND column_name='group_id') THEN
-    ALTER TABLE resource_requests ADD COLUMN group_id uuid REFERENCES groups(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='guest_event_rsvps' AND column_name='user_id') THEN
-    ALTER TABLE guest_event_rsvps ADD COLUMN user_id uuid REFERENCES auth.users(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='member_professions' AND column_name='user_id') THEN
-    ALTER TABLE member_professions ADD COLUMN user_id uuid REFERENCES auth.users(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='party_roster' AND column_name='user_id') THEN
-    ALTER TABLE party_roster ADD COLUMN user_id uuid REFERENCES auth.users(id);
-  END IF;
-  IF NOT EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='resource_requests' AND column_name='user_id') THEN
-    ALTER TABLE resource_requests ADD COLUMN user_id uuid REFERENCES auth.users(id);
-  END IF;
-END $$;
-
--- Drop all existing RLS policies
-DROP POLICY IF EXISTS "Admin can update groups" ON groups;
-DROP POLICY IF EXISTS "Approved members can add characters" ON members;
-DROP POLICY IF EXISTS "Approved members can view members" ON members;
-DROP POLICY IF EXISTS "Members can update own characters" ON members;
-DROP POLICY IF EXISTS "Members can delete own characters" ON members;
-DROP POLICY IF EXISTS "View professions if can view member" ON member_professions;
-DROP POLICY IF EXISTS "Members can modify own character professions" ON member_professions;
-DROP POLICY IF EXISTS "Officers+ can create events" ON events;
-DROP POLICY IF EXISTS "Officers+ can update events" ON events;
-DROP POLICY IF EXISTS "Officers+ can delete events" ON events;
-DROP POLICY IF EXISTS "Clan members can view announcements" ON announcements;
-DROP POLICY IF EXISTS "Officers+ can create announcements" ON announcements;
-DROP POLICY IF EXISTS "Officers+ can update announcements" ON announcements;
-DROP POLICY IF EXISTS "Officers+ can delete announcements" ON announcements;
-DROP POLICY IF EXISTS "group_members_update" ON group_members;
-DROP POLICY IF EXISTS "group_members_delete" ON group_members;
-DROP POLICY IF EXISTS "Clan members can view parties" ON parties;
-DROP POLICY IF EXISTS "Officers can manage parties" ON parties;
-DROP POLICY IF EXISTS "Clan members can view roster" ON party_roster;
-DROP POLICY IF EXISTS "Officers can manage roster" ON party_roster;
-DROP POLICY IF EXISTS "Officers can manage applications" ON recruitment_applications;
-DROP POLICY IF EXISTS "Officers can update applications" ON recruitment_applications;
-DROP POLICY IF EXISTS "Clan members can view citizenships" ON node_citizenships;
-DROP POLICY IF EXISTS "Officers can manage clan citizenships" ON node_citizenships;
-DROP POLICY IF EXISTS "Clan members can view sieges" ON siege_events;
-DROP POLICY IF EXISTS "Officers can manage sieges" ON siege_events;
-DROP POLICY IF EXISTS "Clan members can view siege roster" ON siege_roster;
-DROP POLICY IF EXISTS "Members can withdraw or officers manage siege roster" ON siege_roster;
-DROP POLICY IF EXISTS "Clan members can view loot systems" ON loot_systems;
-DROP POLICY IF EXISTS "Officers can manage loot systems" ON loot_systems;
-DROP POLICY IF EXISTS "Clan members can view DKP" ON dkp_points;
-DROP POLICY IF EXISTS "Officers can manage DKP" ON dkp_points;
-DROP POLICY IF EXISTS "Clan members can view loot history" ON loot_history;
-DROP POLICY IF EXISTS "Officers can manage loot history" ON loot_history;
-DROP POLICY IF EXISTS "Clan members can view transactions" ON dkp_transactions;
-DROP POLICY IF EXISTS "Officers can manage transactions" ON dkp_transactions;
-DROP POLICY IF EXISTS "Clan members can view bank" ON guild_banks;
-DROP POLICY IF EXISTS "Officers can manage bank" ON guild_banks;
-DROP POLICY IF EXISTS "Clan members can view inventory" ON bank_inventory;
-DROP POLICY IF EXISTS "Officers can manage inventory" ON bank_inventory;
-DROP POLICY IF EXISTS "Clan members can view bank transactions" ON bank_transactions;
-DROP POLICY IF EXISTS "Members can create bank transactions" ON bank_transactions;
-DROP POLICY IF EXISTS "Users can view own requests or officers all" ON resource_requests;
-DROP POLICY IF EXISTS "Members can create requests" ON resource_requests;
-DROP POLICY IF EXISTS "Officers can review requests" ON resource_requests;
-DROP POLICY IF EXISTS "Clan members can view freeholds" ON freeholds;
-DROP POLICY IF EXISTS "Officers can manage all freeholds" ON freeholds;
-DROP POLICY IF EXISTS "Clan members can view buildings" ON freehold_buildings;
-DROP POLICY IF EXISTS "Clan members can view schedules" ON freehold_schedules;
-DROP POLICY IF EXISTS "Clan members can view caravans" ON caravan_events;
-DROP POLICY IF EXISTS "Members can create caravans" ON caravan_events;
-DROP POLICY IF EXISTS "Creators and officers can update caravans" ON caravan_events;
-DROP POLICY IF EXISTS "Creators and officers can delete caravans" ON caravan_events;
-DROP POLICY IF EXISTS "Clan members can view escorts" ON caravan_escorts;
-DROP POLICY IF EXISTS "Members can withdraw from escort" ON caravan_escorts;
-DROP POLICY IF EXISTS "Clan members can view waypoints" ON caravan_waypoints;
-DROP POLICY IF EXISTS "Creators can manage waypoints" ON caravan_waypoints;
-DROP POLICY IF EXISTS "Leader can manage alliance" ON alliances;
-DROP POLICY IF EXISTS "Leader can manage memberships" ON alliance_members;
-DROP POLICY IF EXISTS "Clan officers can update participation" ON alliance_event_participation;
-DROP POLICY IF EXISTS "Officers can view activity log" ON activity_log;
-DROP POLICY IF EXISTS "Can log own activity" ON activity_log;
-DROP POLICY IF EXISTS "Officers can view activity summary" ON member_activity_summary;
-DROP POLICY IF EXISTS "System manages summaries" ON member_activity_summary;
-DROP POLICY IF EXISTS "Officers can view alerts" ON inactivity_alerts;
-DROP POLICY IF EXISTS "Officers can manage alerts" ON inactivity_alerts;
-DROP POLICY IF EXISTS "Clan members can view achievements" ON group_achievements;
-DROP POLICY IF EXISTS "System manages achievements" ON group_achievements;
-DROP POLICY IF EXISTS "Officers can view notifications" ON achievement_notifications;
-DROP POLICY IF EXISTS "Officers can manage notifications" ON achievement_notifications;
-DROP POLICY IF EXISTS "View builds based on visibility" ON builds;
-DROP POLICY IF EXISTS "Comments visible with build" ON build_comments;
-DROP POLICY IF EXISTS "Admins can manage guest RSVPs" ON guest_event_rsvps;
-DROP POLICY IF EXISTS "Admins can delete guest RSVPs" ON guest_event_rsvps;
-DROP POLICY IF EXISTS "Users can update own RSVP" ON event_rsvps;
-
--- Recreate all RLS policies with correct column references
-CREATE POLICY "Admin can update groups" ON groups FOR UPDATE USING (user_has_clan_role(id, auth.uid(), ARRAY['admin'::text]));
-
-CREATE POLICY "Approved members can add characters" ON members FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Approved members can view members" ON members FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Members can update own characters" ON members FOR UPDATE USING ((user_id = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text]));
-CREATE POLICY "Members can delete own characters" ON members FOR DELETE USING ((user_id = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text]));
-
-CREATE POLICY "View professions if can view member" ON member_professions FOR SELECT USING (true);
-CREATE POLICY "Members can modify own character professions" ON member_professions FOR UPDATE USING ((user_id = auth.uid()));
-
-CREATE POLICY "Officers+ can create events" ON events FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers+ can update events" ON events FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers+ can delete events" ON events FOR DELETE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view announcements" ON announcements FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers+ can create announcements" ON announcements FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers+ can update announcements" ON announcements FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers+ can delete announcements" ON announcements FOR DELETE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "group_members_update" ON group_members FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text]));
-CREATE POLICY "group_members_delete" ON group_members FOR DELETE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text]));
-
-CREATE POLICY "Clan members can view parties" ON parties FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage parties" ON parties FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view roster" ON party_roster FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage roster" ON party_roster FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Officers can manage applications" ON recruitment_applications FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers can update applications" ON recruitment_applications FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view citizenships" ON node_citizenships FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage clan citizenships" ON node_citizenships FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view sieges" ON siege_events FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage sieges" ON siege_events FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view siege roster" ON siege_roster FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Members can withdraw or officers manage siege roster" ON siege_roster FOR UPDATE USING ((user_id = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view loot systems" ON loot_systems FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage loot systems" ON loot_systems FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view DKP" ON dkp_points FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage DKP" ON dkp_points FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view loot history" ON loot_history FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage loot history" ON loot_history FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view transactions" ON dkp_transactions FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage transactions" ON dkp_transactions FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view bank" ON guild_banks FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage bank" ON guild_banks FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view inventory" ON bank_inventory FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage inventory" ON bank_inventory FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view bank transactions" ON bank_transactions FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Members can create bank transactions" ON bank_transactions FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Users can view own requests or officers all" ON resource_requests FOR SELECT USING ((user_id = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Members can create requests" ON resource_requests FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can review requests" ON resource_requests FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view freeholds" ON freeholds FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Officers can manage all freeholds" ON freeholds FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view buildings" ON freehold_buildings FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Clan members can view schedules" ON freehold_schedules FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Clan members can view caravans" ON caravan_events FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Members can create caravans" ON caravan_events FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Creators and officers can update caravans" ON caravan_events FOR UPDATE USING ((created_by = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Creators and officers can delete caravans" ON caravan_events FOR DELETE USING ((created_by = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view escorts" ON caravan_escorts FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Members can withdraw from escort" ON caravan_escorts FOR UPDATE USING ((user_id = auth.uid()));
-
-CREATE POLICY "Clan members can view waypoints" ON caravan_waypoints FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "Creators can manage waypoints" ON caravan_waypoints FOR INSERT WITH CHECK ((SELECT created_by FROM caravan_events WHERE id = caravan_id) = auth.uid());
-
-CREATE POLICY "Leader can manage alliance" ON alliances FOR UPDATE USING (user_has_clan_role(leader_group_id, auth.uid(), ARRAY['admin'::text]));
-
-CREATE POLICY "Leader can manage memberships" ON alliance_members FOR INSERT WITH CHECK (user_has_clan_role((SELECT leader_group_id FROM alliances WHERE id = alliance_id), auth.uid(), ARRAY['admin'::text]));
-
-CREATE POLICY "Clan officers can update participation" ON alliance_event_participation FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Officers can view activity log" ON activity_log FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Can log own activity" ON activity_log FOR INSERT WITH CHECK (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Officers can view activity summary" ON member_activity_summary FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "System manages summaries" ON member_activity_summary FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Officers can view alerts" ON inactivity_alerts FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers can manage alerts" ON inactivity_alerts FOR UPDATE USING (user_has_clan_role(group_id, auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "Clan members can view achievements" ON group_achievements FOR SELECT USING (user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-CREATE POLICY "System manages achievements" ON group_achievements FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Officers can view notifications" ON achievement_notifications FOR SELECT USING (user_has_clan_role((SELECT group_id FROM group_achievements WHERE id = achievement_id), auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-CREATE POLICY "Officers can manage notifications" ON achievement_notifications FOR INSERT WITH CHECK (user_has_clan_role((SELECT group_id FROM group_achievements WHERE id = achievement_id), auth.uid(), ARRAY['officer'::text, 'admin'::text]));
-
-CREATE POLICY "View builds based on visibility" ON builds FOR SELECT USING ((visibility = 'public') OR (created_by = auth.uid()) OR user_has_clan_role(group_id, auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Comments visible with build" ON build_comments FOR SELECT USING ((SELECT visibility FROM builds WHERE id = build_id) = 'public' OR (SELECT created_by FROM builds WHERE id = build_id) = auth.uid() OR user_has_clan_role((SELECT group_id FROM builds WHERE id = build_id), auth.uid(), ARRAY['admin'::text, 'officer'::text, 'member'::text]));
-
-CREATE POLICY "Admins can manage guest RSVPs" ON guest_event_rsvps FOR INSERT WITH CHECK (user_has_clan_role((SELECT group_id FROM events WHERE id = event_id), auth.uid(), ARRAY['admin'::text]));
-CREATE POLICY "Admins can delete guest RSVPs" ON guest_event_rsvps FOR DELETE USING (user_has_clan_role((SELECT group_id FROM events WHERE id = event_id), auth.uid(), ARRAY['admin'::text]));
-
-CREATE POLICY "Users can update own RSVP" ON event_rsvps FOR UPDATE USING ((user_id = auth.uid()));
-
-INSERT INTO migration_history (filename) VALUES ('047_comprehensive_rls_recreation.sql') ON CONFLICT DO NOTHING;
-
 -- =====================================================
 -- SOURCE: 048_create_group_games_table.sql
 -- =====================================================
-
 -- Create group_games table to store which games are enabled for each group
 CREATE TABLE IF NOT EXISTS group_games (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -4277,7 +3619,6 @@ INSERT INTO migration_history (filename) VALUES ('048_create_group_games_table.s
 -- =====================================================
 -- SOURCE: 049_add_game_to_characters.sql
 -- =====================================================
-
 -- Add game_slug column to members table for game-specific characters
 ALTER TABLE members ADD COLUMN IF NOT EXISTS game_slug TEXT NOT NULL DEFAULT 'aoc';
 
@@ -4293,7 +3634,6 @@ INSERT INTO migration_history (filename) VALUES ('049_add_game_to_characters.sql
 -- =====================================================
 -- SOURCE: 050_add_game_to_events.sql
 -- =====================================================
-
 -- Add game_slug column to events table for game-specific events
 ALTER TABLE events ADD COLUMN IF NOT EXISTS game_slug TEXT NOT NULL DEFAULT 'aoc';
 
@@ -4309,7 +3649,6 @@ INSERT INTO migration_history (filename) VALUES ('050_add_game_to_events.sql') O
 -- =====================================================
 -- SOURCE: 051_add_preferred_role_to_members.sql
 -- =====================================================
-
 -- Add preferred_role column to members table for game-specific role tracking
 -- Roles are defined in src/config/games/[game].json instead of database for easier updates
 ALTER TABLE members ADD COLUMN IF NOT EXISTS preferred_role TEXT;
@@ -4320,7 +3659,6 @@ INSERT INTO migration_history (filename) VALUES ('051_add_preferred_role_to_memb
 -- =====================================================
 -- SOURCE: 052_add_guild_rank_to_members.sql
 -- =====================================================
-
 -- Add guild_rank column to group_members table for game-specific rank assignment
 -- Ranks are assigned per-user (like role), and defined in src/config/games/[game].json
 ALTER TABLE group_members ADD COLUMN IF NOT EXISTS guild_rank TEXT;
@@ -4331,7 +3669,6 @@ INSERT INTO migration_history (filename) VALUES ('052_add_guild_rank_to_members.
 -- =====================================================
 -- SOURCE: 053_add_character_ships.sql
 -- =====================================================
-
 -- Add ship ownership tracking for Star Citizen characters
 -- A character can own multiple ships with different ownership types
 
@@ -4414,7 +3751,6 @@ INSERT INTO migration_history (filename) VALUES ('053_add_character_ships.sql') 
 -- =====================================================
 -- SOURCE: 054_add_game_specific_roles.sql
 -- =====================================================
-
 -- Add game-specific role and channel support for announcements/events
 -- Supports separate announcement channels and roles for different games (e.g., Star Citizen)
 
@@ -4429,11 +3765,9 @@ COMMENT ON COLUMN groups.sc_events_role_id IS 'Star Citizen: Discord role ID to 
 
 -- Track this migration
 INSERT INTO migration_history (filename) VALUES ('054_add_game_specific_roles.sql') ON CONFLICT DO NOTHING;
-
 -- =====================================================
 -- SOURCE: 055_add_game_specific_webhooks.sql
 -- =====================================================
-
 -- Add game-specific Discord webhook URLs to groups table
 -- Allows different games to have different notification webhooks
 
@@ -4460,7 +3794,6 @@ INSERT INTO migration_history (filename) VALUES ('055_add_game_specific_webhooks
 -- =====================================================
 -- SOURCE: 056_add_ship_role_permissions.sql
 -- =====================================================
-
 -- Add role-based permissions for ship management
 -- Allows restricting who can add/edit/delete ships based on their group role
 
@@ -4536,7 +3869,6 @@ INSERT INTO migration_history (filename) VALUES ('056_add_ship_role_permissions.
 -- =====================================================
 -- SOURCE: 057_add_welcome_message_toggles.sql
 -- =====================================================
-
 -- Add per-game welcome message toggles
 -- Allows enabling/disabling welcome messages independently for each game
 
@@ -4553,7 +3885,6 @@ INSERT INTO migration_history (filename) VALUES ('057_add_welcome_message_toggle
 -- =====================================================
 -- SOURCE: 058_add_ship_permissions.sql
 -- =====================================================
-
 -- Migration 058: Add ship management permissions
 -- Purpose: Add permissions for managing ships (Star Citizen)
 -- Allows role-based control over who can add/edit/delete ships
@@ -4615,7 +3946,6 @@ INSERT INTO migration_history (filename) VALUES ('058_add_ship_permissions.sql')
 -- =====================================================
 -- SOURCE: 059_add_ror_to_games.sql
 -- =====================================================
-
 -- =====================================================
 -- Add Return of Reckoning to Games Support
 -- =====================================================
@@ -4635,7 +3965,6 @@ INSERT INTO migration_history (filename) VALUES ('059_add_ror_to_games.sql') ON 
 -- =====================================================
 -- SOURCE: 060_standardize_starcitizen_slug.sql
 -- =====================================================
-
 -- =====================================================
 -- Standardize Star Citizen Game Slug
 -- =====================================================
@@ -4674,7 +4003,6 @@ INSERT INTO migration_history (filename) VALUES ('060_standardize_starcitizen_sl
 -- =====================================================
 -- SOURCE: 061_ror_event_role_requirements.sql
 -- =====================================================
-
 -- =====================================================
 -- Add RoR Event Role Requirements
 -- =====================================================
@@ -4703,7 +4031,6 @@ INSERT INTO migration_history (filename) VALUES ('061_ror_event_role_requirement
 -- =====================================================
 -- SOURCE: 062_ror_discord_webhooks_and_roles.sql
 -- =====================================================
-
 -- =====================================================
 -- Add RoR Discord Webhooks and Game-Specific Roles
 -- =====================================================
@@ -4716,8 +4043,6 @@ ALTER TABLE groups ADD COLUMN IF NOT EXISTS ror_events_webhook_url TEXT;
 -- Add game-specific role IDs for announcements and events
 ALTER TABLE groups ADD COLUMN IF NOT EXISTS aoc_announcement_role_id TEXT;
 ALTER TABLE groups ADD COLUMN IF NOT EXISTS aoc_events_role_id TEXT;
-ALTER TABLE groups ADD COLUMN IF NOT EXISTS sc_announcement_role_id TEXT;
-ALTER TABLE groups ADD COLUMN IF NOT EXISTS sc_events_role_id TEXT;
 ALTER TABLE groups ADD COLUMN IF NOT EXISTS ror_announcement_role_id TEXT;
 ALTER TABLE groups ADD COLUMN IF NOT EXISTS ror_events_role_id TEXT;
 
@@ -4746,7 +4071,6 @@ INSERT INTO migration_history (filename) VALUES ('062_ror_discord_webhooks_and_r
 -- =====================================================
 -- SOURCE: 063_add_star_citizen_subscriber_support.sql
 -- =====================================================
-
 -- Add subscriber tier support to Star Citizen characters
 -- Allows tracking subscriber status and auto-assigning ships
 -- Also fixes missing columns from previous migrations
@@ -4784,11 +4108,9 @@ COMMENT ON COLUMN members.ror_class IS 'Return of Reckoning class ID.';
 
 -- Track this migration
 INSERT INTO migration_history (filename) VALUES ('063_add_star_citizen_subscriber_support.sql') ON CONFLICT DO NOTHING;
-
 -- =====================================================
 -- SOURCE: 064_main_character_per_game.sql
 -- =====================================================
-
 -- Allow one main character per user per game per group
 -- Replaces global-per-user uniqueness with per-game, per-group constraint
 
@@ -4806,7 +4128,6 @@ INSERT INTO migration_history (filename) VALUES ('064_main_character_per_game.sq
 -- =====================================================
 -- SOURCE: 065_add_subscriber_ownership_type.sql
 -- =====================================================
-
 -- Add subscriber ownership type for monthly subscriber perks
 -- This allows explicit tracking of subscriber-exclusive ships
 
@@ -4823,7 +4144,6 @@ INSERT INTO migration_history (filename) VALUES ('065_add_subscriber_ownership_t
 -- =====================================================
 -- SOURCE: 066_sync_existing_subscriber_ships.sql
 -- =====================================================
-
 -- Migration to sync subscriber ships for existing characters with subscriber tiers
 -- This is a one-time migration to add subscriber ships to characters that already have subscriber_tier set
 -- Ships are based on the February 2026 promotion:
@@ -4888,11 +4208,9 @@ END $$;
 
 -- Track this migration
 INSERT INTO migration_history (filename) VALUES ('066_sync_existing_subscriber_ships.sql') ON CONFLICT DO NOTHING;
-
 -- =====================================================
 -- SOURCE: 067_add_group_games_archived.sql
 -- =====================================================
-
 -- Add archived column to group_games table
 -- This allows groups to archive games without deleting any data
 
@@ -4906,7 +4224,6 @@ INSERT INTO migration_history (filename) VALUES ('067_add_group_games_archived.s
 -- =====================================================
 -- SOURCE: 068_change_preferred_role_to_array.sql
 -- =====================================================
-
 -- Change preferred_role from TEXT to TEXT[] to support multiple role selection
 -- This allows characters to have multiple preferred roles (e.g., pilot AND gunner)
 
@@ -4924,7 +4241,6 @@ INSERT INTO migration_history (filename) VALUES ('068_change_preferred_role_to_a
 -- =====================================================
 -- SOURCE: 069_add_sc_loaner_matrix.sql
 -- =====================================================
-
 -- Add loaner ship matrix table for Star Citizen
 -- Stores the official loaner ship mappings from RSI
 
@@ -5041,7 +4357,6 @@ COMMIT;
 -- =====================================================
 -- SOURCE: 070_populate_sc_loaner_matrix.sql
 -- =====================================================
-
 -- Auto-populated loaner ship matrix from RSI Support
 -- Source: https://support.robertsspaceindustries.com/hc/en-us/articles/360003093114-Loaner-Ship-Matrix
 -- Last Updated: November 26th, 2025 | 4.4.0-live.10733565
@@ -5277,36 +4592,5 @@ INSERT INTO sc_loaner_matrix (pledged_ship, loaner_ship, loaner_type) VALUES ('X
 
 -- Zeus Mk II MR
 INSERT INTO sc_loaner_matrix (pledged_ship, loaner_ship, loaner_type) VALUES ('Zeus Mk II MR', 'Zeus Mk II ES', 'primary');
-
-COMMIT;
-
--- =====================================================
--- SOURCE: 071_fix_groups_rls_policies.sql
--- =====================================================
-
--- Fix missing RLS policies for groups table
--- The INSERT and SELECT policies were not recreated after migration 047
-
-BEGIN;
-
--- Allow anyone authenticated to view groups (needed for group search, public pages, etc.)
-CREATE POLICY "Anyone can view groups" 
-  ON groups 
-  FOR SELECT 
-  TO authenticated
-  USING (true);
-
--- Allow anyone authenticated to create a new group
-CREATE POLICY "Anyone can create group" 
-  ON groups 
-  FOR INSERT 
-  TO authenticated
-  WITH CHECK (created_by = auth.uid());
-
--- Allow group admins to delete their groups
-CREATE POLICY "Admin can delete group" 
-  ON groups 
-  FOR DELETE 
-  USING (user_has_clan_role(id, auth.uid(), ARRAY['admin'::text]));
 
 COMMIT;
