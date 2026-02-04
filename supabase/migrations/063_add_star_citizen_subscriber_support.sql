@@ -12,6 +12,9 @@ ALTER TABLE members ADD COLUMN IF NOT EXISTS subscriber_since TIMESTAMPTZ;
 ALTER TABLE members ADD COLUMN IF NOT EXISTS subscriber_ships_month VARCHAR(7);
 -- Format: 'YYYY-MM' e.g., '2026-01'
 
+-- Fix: Add missing rank column (migration 052 had wrong table name)
+ALTER TABLE members ADD COLUMN IF NOT EXISTS rank TEXT;
+
 -- Create index for efficient subscriber queries
 CREATE INDEX IF NOT EXISTS idx_members_subscriber_tier 
   ON members(subscriber_tier) 
@@ -21,6 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_members_subscriber_tier
 COMMENT ON COLUMN members.subscriber_tier IS 'Subscriber tier: centurion or imperator. NULL if not a subscriber.';
 COMMENT ON COLUMN members.subscriber_since IS 'When the subscriber tier was first set.';
 COMMENT ON COLUMN members.subscriber_ships_month IS 'Which month (YYYY-MM) of subscriber ships have been added.';
+COMMENT ON COLUMN members.rank IS 'Guild rank assigned to this member/character. Values defined per-game in config.';
 
 -- Track this migration
 INSERT INTO migration_history (filename) VALUES ('063_add_star_citizen_subscriber_support.sql') ON CONFLICT DO NOTHING;

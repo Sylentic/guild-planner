@@ -17,6 +17,7 @@ import { ROR_FACTIONS, ROR_CLASSES, ROR_ROLE_CONFIG, getClassesByFaction, RORRol
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getGameConfig } from '@/config';
 import ShipSelector from './ShipSelector';
+import { SUBSCRIBER_TIERS, SUBSCRIBER_COLORS } from '@/games/starcitizen/config/subscriber-ships';
 
 interface CharacterFormData {
   name: string;
@@ -29,6 +30,7 @@ interface CharacterFormData {
   rank?: string | null;
   ror_faction?: string | null;
   ror_class?: string | null;
+  subscriber_tier?: 'centurion' | 'imperator' | null;
   ships?: Array<{
     ship_id: string;
     ownership_type: 'owned-pledge' | 'owned-auec' | 'concept-pledge' | 'loaner';
@@ -67,6 +69,7 @@ export function CharacterForm({
     rank: initialData?.rank || null,
     ror_faction: (initialData as any)?.ror_faction || null,
     ror_class: (initialData as any)?.ror_class || null,
+    subscriber_tier: (initialData as any)?.subscriber_tier || null,
     ships: initialData?.ships || [],
     vehicles: initialData?.vehicles || [],
   });
@@ -401,31 +404,68 @@ export function CharacterForm({
           {isStarCitizen && (
             <>
               <div>
-                <button
-                  type="button"
-                  onClick={() => setShowVehiclesSection(!showVehiclesSection)}
-                  className="w-full flex items-center justify-between p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <Truck className="w-5 h-5 text-amber-400" />
-                    <span className="font-medium text-white">Ground Vehicles</span>
-                    {formData.vehicles && formData.vehicles.length > 0 && (
-                      <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs rounded">
-                        {formData.vehicles.length}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-slate-400">{showVehiclesSection ? '−' : '+'}</span>
-                </button>
-                
-                {showVehiclesSection && (
-                  <div className="mt-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-                    <ShipSelector
-                      selectedShips={formData.vehicles || []}
-                      onChange={(vehicles) => setFormData({ ...formData, vehicles })}
-                      includeVehicles={true}
-                    />
-                  </div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Subscriber Tier</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {/* None */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, subscriber_tier: null })}
+                    className={`px-4 py-3 rounded-lg font-medium transition-all cursor-pointer border-2 ${
+                      formData.subscriber_tier === null
+                        ? 'border-slate-400 bg-slate-700 text-white'
+                        : 'border-slate-600 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:border-slate-500'
+                    }`}
+                  >
+                    None
+                  </button>
+
+                  {/* Centurion */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, subscriber_tier: 'centurion' })}
+                    className={`px-4 py-3 rounded-lg font-medium transition-all cursor-pointer border-2 ${
+                      formData.subscriber_tier === 'centurion'
+                        ? 'text-white'
+                        : 'border-slate-600 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:border-slate-500'
+                    }`}
+                    style={formData.subscriber_tier === 'centurion' ? {
+                      borderColor: SUBSCRIBER_COLORS.centurion.primary,
+                      backgroundColor: SUBSCRIBER_COLORS.centurion.bg,
+                      color: SUBSCRIBER_COLORS.centurion.primary
+                    } : undefined}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <span>{SUBSCRIBER_TIERS.centurion.icon}</span>
+                      <span className="text-xs">{SUBSCRIBER_TIERS.centurion.label}</span>
+                    </div>
+                  </button>
+
+                  {/* Imperator */}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, subscriber_tier: 'imperator' })}
+                    className={`px-4 py-3 rounded-lg font-medium transition-all cursor-pointer border-2 ${
+                      formData.subscriber_tier === 'imperator'
+                        ? 'text-white'
+                        : 'border-slate-600 bg-slate-800 text-slate-400 hover:bg-slate-700 hover:border-slate-500'
+                    }`}
+                    style={formData.subscriber_tier === 'imperator' ? {
+                      borderColor: SUBSCRIBER_COLORS.imperator.primary,
+                      backgroundColor: SUBSCRIBER_COLORS.imperator.bg,
+                      color: SUBSCRIBER_COLORS.imperator.primary
+                    } : undefined}
+                  >
+                    <div className="flex flex-col items-center gap-1">
+                      <span>{SUBSCRIBER_TIERS.imperator.icon}</span>
+                      <span className="text-xs">{SUBSCRIBER_TIERS.imperator.label}</span>
+                    </div>
+                  </button>
+                </div>
+                {formData.subscriber_tier && (
+                  <p className="mt-2 text-xs text-slate-400">
+                    {SUBSCRIBER_TIERS[formData.subscriber_tier].shipsPerMonth} ship(s)/month · 
+                    {SUBSCRIBER_TIERS[formData.subscriber_tier].insurance} insurance
+                  </p>
                 )}
               </div>
             </>
