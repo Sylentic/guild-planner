@@ -1,5 +1,10 @@
 import { supabase } from '@/lib/supabase';
 
+export interface GroupGameInfo {
+  game_slug: string;
+  archived: boolean;
+}
+
 /**
  * Get all enabled games for a group (excludes archived games by default)
  * Returns all available games if none have been explicitly configured
@@ -26,6 +31,26 @@ export async function getGroupGames(groupId: string, includeArchived = false): P
   } catch (err) {
     console.error('Error fetching group games:', err);
     return []; // Return empty array, let caller decide default behavior
+  }
+}
+
+/**
+ * Get all games with their archived status for a group
+ */
+export async function getGroupGamesWithStatus(groupId: string): Promise<GroupGameInfo[]> {
+  try {
+    const { data, error } = await supabase
+      .from('group_games')
+      .select('game_slug, archived')
+      .eq('group_id', groupId)
+      .order('created_at');
+
+    if (error) throw error;
+    
+    return data || [];
+  } catch (err) {
+    console.error('Error fetching group games with status:', err);
+    return [];
   }
 }
 

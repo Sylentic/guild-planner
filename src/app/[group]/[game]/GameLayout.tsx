@@ -1,6 +1,6 @@
 'use client';
 
-import { use, ReactNode } from 'react';
+import { use, ReactNode, useState, useEffect } from 'react';
 import { Tab } from '@/components/tabs';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -18,6 +18,7 @@ import { InlineFooter } from '@/components/Footer';
 import { DynamicFavicon } from '@/components/DynamicFavicon';
 import { Users, Clock, UserPlus, Loader2 } from 'lucide-react';
 import { getAllGames } from '@/lib/games';
+import { getGroupGamesWithStatus } from '@/lib/group-games';
 
 interface GameLayoutProps {
   params: Promise<{ group: string; game: string }>;
@@ -48,8 +49,36 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
 
   const { hasPermission } = usePermissions(group?.id || undefined);
 
+  const [enabledGames, setEnabledGames] = useState<Array<{ slug: string; name: string; icon: string; archived: boolean }>>([]);
+
   const displayName = profile?.display_name || user?.email || 'User';
   const guildIconUrl = group?.group_icon_url || undefined;
+
+  // Fetch game status info
+  useEffect(() => {
+    async function fetchGames() {
+      if (!group?.id) return;
+      
+      const gameStatuses = await getGroupGamesWithStatus(group.id);
+      const allGames = getAllGames();
+      
+      const gamesWithStatus = allGames
+        .map(game => {
+          const status = gameStatuses.find(gs => gs.game_slug === game.id);
+          return {
+            slug: game.id,
+            name: game.name,
+            icon: game.icon,
+            archived: status?.archived || false
+          };
+        })
+        .filter(game => gameStatuses.some(gs => gs.game_slug === game.slug)); // Only show games that are enabled
+      
+      setEnabledGames(gamesWithStatus);
+    }
+    
+    fetchGames();
+  }, [group?.id]);
 
   if (authLoading || groupLoading || membershipLoading) {
     return <ClanLoadingScreen />;
@@ -133,12 +162,6 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
       />
     );
   }
-
-  const enabledGames = getAllGames().map(game => ({
-    slug: game.id,
-    name: game.name,
-    icon: game.icon
-  }));
 
   const resolvedCharacterCount = characterCount ?? characters.length;
 
