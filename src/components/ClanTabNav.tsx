@@ -25,7 +25,8 @@ export function ClanTabNav({ canManage, initialTab = 'characters', gameSlug = 'a
     if (pathname.includes('/achievements')) return 'achievements';
     if (pathname.includes('/alliances')) return 'alliances';
     if (pathname.includes('/builds')) return 'builds';
-    if (pathname.includes('/ships') || pathname.includes('/hangar')) return 'matrix'; // Reuse matrix slot for ships/hangar
+    if (pathname.includes('/hangar')) return 'matrix'; // My Hangar uses matrix tab
+    if (pathname.includes('/ships')) return 'ships'; // Guild Ships gets its own tab
     if (pathname.includes('/more')) return 'more';
     return initialTab;
   };

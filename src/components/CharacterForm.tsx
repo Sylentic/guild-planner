@@ -472,22 +472,27 @@ export function CharacterForm({
                   </p>
                 )}
               </div>
-              {(formData.subscriber_since || formData.subscriber_ships_month) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-400">
-                  {formData.subscriber_since && (
-                    <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
-                      <div className="text-slate-500">Subscriber Since</div>
-                      <div className="text-slate-200">
-                        {new Date(formData.subscriber_since).toLocaleDateString('en-GB')}
-                      </div>
-                    </div>
-                  )}
-                  {formData.subscriber_ships_month && (
-                    <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
-                      <div className="text-slate-500">Ships Synced For</div>
-                      <div className="text-slate-200">{formData.subscriber_ships_month}</div>
-                    </div>
-                  )}
+              {formData.subscriber_tier && (
+                <div>
+                  <label htmlFor="subscriber-since" className="block text-sm font-medium text-slate-300 mb-2">
+                    Subscriber Since
+                  </label>
+                  <input
+                    id="subscriber-since"
+                    type="date"
+                    value={formData.subscriber_since ? formData.subscriber_since.split('T')[0] : ''}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      subscriber_since: e.target.value ? new Date(e.target.value).toISOString() : null 
+                    })}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+              )}
+              {formData.subscriber_ships_month && (
+                <div className="bg-slate-800/50 rounded-lg border border-slate-700 px-3 py-2">
+                  <div className="text-xs text-slate-500">Ships Synced For</div>
+                  <div className="text-sm text-slate-200">{formData.subscriber_ships_month}</div>
                 </div>
               )}
             </>
