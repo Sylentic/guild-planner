@@ -18,7 +18,7 @@ export default function PartiesPage({ params }: { params: Promise<{ group: strin
   }
 
   return (
-    <GameLayout params={params} activeTab="parties">
+    <GameLayout params={params} activeTab="parties" characterCount={characters.length}>
       <PartiesTab
         groupId={group.id}
         characters={characters}

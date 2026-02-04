@@ -20,7 +20,7 @@ export default function FleetPage({ params }: { params: Promise<{ group: string;
   }
 
   return (
-    <GameLayout params={params} activeTab="fleet">
+    <GameLayout params={params} activeTab="fleet" characterCount={characters.length}>
       <FleetView
         characters={characters}
         userId={user.id}

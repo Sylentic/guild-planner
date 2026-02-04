@@ -16,7 +16,7 @@ export default function SiegePage({ params }: { params: Promise<{ group: string;
   }
 
   return (
-    <GameLayout params={params} activeTab="siege">
+    <GameLayout params={params} activeTab="siege" characterCount={characters.length}>
       <SiegeTab groupId={group.id} characters={characters} userId={user.id} />
     </GameLayout>
   );

@@ -10,7 +10,7 @@ import { AlliancesTab } from '../tabs/AlliancesTab';
 export default function AlliancesPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
   const { user } = useAuthContext();
-  const { group } = useGroupData(groupSlug, gameSlug);
+  const { group, characters } = useGroupData(groupSlug, gameSlug);
   const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
 
   if (!group || !user) {
@@ -18,7 +18,7 @@ export default function AlliancesPage({ params }: { params: Promise<{ group: str
   }
 
   return (
-    <GameLayout params={params} activeTab="alliances">
+    <GameLayout params={params} activeTab="alliances" characterCount={characters.length}>
       <AlliancesTab groupId={group.id} isOfficer={canManageMembers} />
     </GameLayout>
   );

@@ -10,7 +10,7 @@ import { AchievementsTab } from '../tabs/AchievementsTab';
 export default function AchievementsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
   const { group: groupSlug, game: gameSlug } = use(params);
   const { user } = useAuthContext();
-  const { group } = useGroupData(groupSlug, gameSlug);
+  const { group, characters } = useGroupData(groupSlug, gameSlug);
   const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
 
   if (!group || !user) {
@@ -18,7 +18,7 @@ export default function AchievementsPage({ params }: { params: Promise<{ group: 
   }
 
   return (
-    <GameLayout params={params} activeTab="achievements">
+    <GameLayout params={params} activeTab="achievements" characterCount={characters.length}>
       <AchievementsTab groupId={group.id} isOfficer={canManageMembers} />
     </GameLayout>
   );
