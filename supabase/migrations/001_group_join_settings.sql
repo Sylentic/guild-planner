@@ -22,6 +22,16 @@ CREATE POLICY "clan_members_insert_auto_approved"
     )
   );
 
+-- Add unique constraint to migration_history if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'migration_history_filename_key'
+  ) THEN
+    ALTER TABLE migration_history ADD CONSTRAINT migration_history_filename_key UNIQUE (filename);
+  END IF;
+END $$;
+
 -- Record migration
 INSERT INTO migration_history (filename) VALUES ('001_group_join_settings.sql')
   ON CONFLICT (filename) DO NOTHING;
