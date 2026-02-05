@@ -4679,11 +4679,11 @@ CREATE POLICY "Authenticated users can upload guild icons"
   WITH CHECK (
     bucket_id = 'aoc-guild-icons'
     AND (storage.foldername(name))[1] IN (
-      -- Only allow uploads to folders matching group IDs where user is admin or officer
+      -- Only allow uploads to folders matching group IDs where user is a member
       SELECT group_id::text 
       FROM group_members 
       WHERE user_id = auth.uid() 
-        AND role IN ('admin', 'officer')
+        AND role IN ('admin', 'officer', 'member')
     )
   );
 
@@ -4697,8 +4697,9 @@ CREATE POLICY "Authenticated users can update guild icons"
       SELECT group_id::text 
       FROM group_members 
       WHERE user_id = auth.uid() 
-        AND role IN ('admin', 'officer')
+        AND role IN ('admin', 'officer', 'member')
     )
+  );
   );
 
 -- Policy: Group admins/officers can delete guild icons
