@@ -4,6 +4,14 @@ ALTER TABLE groups
   ADD COLUMN IF NOT EXISTS default_role VARCHAR(20) NOT NULL DEFAULT 'trial'
     CHECK (default_role IN ('trial', 'member'));
 
+-- Update group_members to allow 'trial' role
+ALTER TABLE group_members 
+  DROP CONSTRAINT IF EXISTS group_members_role_check;
+
+ALTER TABLE group_members 
+  ADD CONSTRAINT group_members_role_check 
+  CHECK (role IN ('admin', 'officer', 'member', 'trial', 'pending'));
+
 -- Allow auto-approved joins when approval is disabled
 -- The role must match the group's configured default_role
 DROP POLICY IF EXISTS "clan_members_insert_auto_approved" ON group_members;

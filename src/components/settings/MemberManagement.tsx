@@ -98,8 +98,9 @@ export function MemberManagement({
   const canEditMemberRole = (memberId: string, memberRole: string | null): boolean => {
     if (memberId === currentUserId) return false;
     
-    const currentHierarchy = getRoleHierarchy(currentUserRole);
-    const targetHierarchy = getRoleHierarchy(memberRole as GroupRole);
+    const hierarchy = getRoleHierarchy();
+    const currentHierarchy = hierarchy[currentUserRole];
+    const targetHierarchy = hierarchy[memberRole as GroupRole] || 0;
     
     return currentHierarchy > targetHierarchy;
   };
@@ -109,9 +110,10 @@ export function MemberManagement({
       return [];
     }
     
-    const currentHierarchy = getRoleHierarchy(currentUserRole);
+    const hierarchy = getRoleHierarchy();
+    const currentHierarchy = hierarchy[currentUserRole];
     return Object.entries(ROLE_CONFIG)
-      .filter(([_, config]) => config.hierarchy < currentHierarchy)
+      .filter(([role]) => hierarchy[role as GroupRole] < currentHierarchy)
       .map(([role]) => role as GroupRole);
   };
 
