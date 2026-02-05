@@ -25,6 +25,7 @@ interface MemberManagementProps {
   onRemove?: (id: string) => Promise<void>;
   currentUserId: string;
   currentUserRole: GroupRole;
+  currentUserIsCreator: boolean;
 }
 
 export function MemberManagement({
@@ -36,6 +37,7 @@ export function MemberManagement({
   onRemove,
   currentUserId,
   currentUserRole,
+  currentUserIsCreator,
 }: MemberManagementProps) {
   const [processing, setProcessing] = useState<Set<string>>(new Set());
 
@@ -97,6 +99,8 @@ export function MemberManagement({
 
   const canEditMemberRole = (memberId: string, memberRole: string | null): boolean => {
     if (memberId === currentUserId) return false;
+
+    if (currentUserIsCreator) return true;
     
     const hierarchy = getRoleHierarchy();
     const currentHierarchy = hierarchy[currentUserRole];
@@ -108,6 +112,12 @@ export function MemberManagement({
   const getAvailableRoles = (memberId: string): GroupRole[] => {
     if (!canEditMemberRole(memberId, members.find(m => m.id === memberId)?.role || null)) {
       return [];
+    }
+
+    if (currentUserIsCreator) {
+      return Object.keys(ROLE_CONFIG)
+        .filter((role) => role !== 'pending')
+        .map((role) => role as GroupRole);
     }
     
     const hierarchy = getRoleHierarchy();
