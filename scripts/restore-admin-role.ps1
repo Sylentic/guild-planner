@@ -97,7 +97,7 @@ try {
     role = "admin"
   } | ConvertTo-Json
   
-  $updateResponse = Invoke-RestMethod `
+  $null = Invoke-RestMethod `
     -Uri "$supabaseUrl/rest/v1/group_members?user_id=eq.$userId&group_id=eq.$groupId" `
     -Headers $headers `
     -Method PATCH `
