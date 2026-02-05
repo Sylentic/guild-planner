@@ -135,17 +135,6 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
             </div>
           )}
 
-          {/* Permissions Settings */}
-          {canEditPermissions && (
-            <PermissionsSettings groupId={group.id} userRole={membership.role || 'member'} />
-          )}
-
-          {/* Recruitment Settings */}
-          <RecruitmentSettings groupId={group.id} groupSlug={groupSlug} />
-
-          {/* Game Management */}
-          <GameManagement groupId={group.id} />
-
           {/* Member Management */}
           <MemberManagement
             members={members}
@@ -157,6 +146,17 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
             currentUserId={user.id}
             currentUserRole={membership.role || 'member'}
           />
+
+          {/* Permissions Settings */}
+          {canEditPermissions && (
+            <PermissionsSettings groupId={group.id} userRole={membership.role || 'member'} />
+          )}
+
+          {/* Recruitment Settings */}
+          <RecruitmentSettings groupId={group.id} groupSlug={groupSlug} />
+
+          {/* Game Management */}
+          <GameManagement groupId={group.id} />
         </div>
       </main>
     </div>
