@@ -14,6 +14,8 @@
 
 * New joins auto-approve with group-configured role when approval is disabled.
 * Manual approval now assigns the group-configured starting role.
-* Split settings into Group Settings (recruitment, permissions, games, icon) and Game Settings (member management, webhooks).
+* Split settings into Group Settings (recruitment, permissions, games, icon, membership) and Game Settings (game-specific rank management, webhooks).
+* Moved member management (accepting/rejecting, role updates, removal) to Group Settings.
+* Game-specific settings pages now only show rank management for that game's members.
 * Game-specific settings pages now link to Group Settings for group-wide configuration.
 * Added `approval_required` and `default_role` flags on groups.

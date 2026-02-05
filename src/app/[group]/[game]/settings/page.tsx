@@ -7,7 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
-import { ManageTab } from '../tabs/ManageTab';
+import { RankManagement } from '@/components/settings/RankManagement';
 import { ClanSettings } from '@/components/settings/ClanSettings';
 import { getGroupBySlug } from '@/lib/auth';
 import Link from 'next/link';
@@ -22,14 +22,8 @@ export default function GameSettingsPage({ params }: { params: Promise<{ group: 
   const {
     membership,
     members,
-    pendingMembers,
     canManageMembers,
-    canManageRoles,
-    acceptMember,
-    rejectMember,
-    updateRole,
     updateRank,
-    removeMember,
   } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
 
   const { hasPermission } = usePermissions(group?.id || undefined);
@@ -49,7 +43,7 @@ export default function GameSettingsPage({ params }: { params: Promise<{ group: 
               <div>
                 <h3 className="text-sm font-medium text-white mb-1">Group-Wide Settings</h3>
                 <p className="text-xs text-slate-400">
-                  Manage recruitment, permissions, games, and group icon
+                  Manage recruitment, permissions, games, member roles, and group icon
                 </p>
               </div>
               <Link
@@ -63,20 +57,16 @@ export default function GameSettingsPage({ params }: { params: Promise<{ group: 
           </div>
         )}
 
-        {/* Member Management */}
-        <ManageTab
-          members={members}
-          pendingMembers={pendingMembers}
-          onAccept={acceptMember}
-          onReject={rejectMember}
-          onUpdateRole={canManageRoles ? updateRole : undefined}
-          onUpdateRank={canManageMembers ? updateRank : undefined}
-          onRemove={canManageRoles ? removeMember : undefined}
-          currentUserId={user.id}
-          currentUserRole={membership.role || 'member'}
-          gameSlug={gameSlug}
-          t={t}
-        />
+        {/* Game-Specific Rank Management */}
+        {canManageMembers && (
+          <RankManagement
+            members={members}
+            onUpdateRank={updateRank}
+            currentUserId={user.id}
+            currentUserRole={membership.role || 'member'}
+            gameSlug={gameSlug}
+          />
+        )}
 
         {/* Game-Specific Webhooks & Notifications */}
         {canEditSettings && group && (

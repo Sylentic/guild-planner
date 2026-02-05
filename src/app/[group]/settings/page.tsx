@@ -12,6 +12,7 @@ import { GuildIconUploaderWrapper } from '../[game]/GuildIconUploaderWrapper';
 import { PermissionsSettings } from '@/components/settings/PermissionsSettings';
 import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
 import { GameManagement } from '@/components/settings/GameManagement';
+import { MemberManagement } from '@/components/settings/MemberManagement';
 import { getGroupBySlug } from '@/lib/auth';
 import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
 
@@ -21,7 +22,16 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
   const { t } = useLanguage();
 
   const { group } = useGroupData(groupSlug);
-  const { membership, loading: membershipLoading } = useGroupMembership(group?.id || null, user?.id || null);
+  const {
+    membership,
+    members,
+    pendingMembers,
+    acceptMember,
+    rejectMember,
+    updateRole,
+    removeMember,
+    loading: membershipLoading
+  } = useGroupMembership(group?.id || null, user?.id || null);
 
   const { hasPermission } = usePermissions(group?.id || undefined);
   const canViewPermissions = hasPermission('settings_view_permissions');
@@ -135,6 +145,18 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
 
           {/* Game Management */}
           <GameManagement groupId={group.id} />
+
+          {/* Member Management */}
+          <MemberManagement
+            members={members}
+            pendingMembers={pendingMembers}
+            onAccept={acceptMember}
+            onReject={rejectMember}
+            onUpdateRole={updateRole}
+            onRemove={removeMember}
+            currentUserId={user.id}
+            currentUserRole={membership.role || 'member'}
+          />
         </div>
       </main>
     </div>
