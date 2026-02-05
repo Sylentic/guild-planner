@@ -42,18 +42,17 @@ if ($dumpDir -and -not (Test-Path $dumpDir)) {
 
 Write-Host "Dumping prod data to $DumpFile..." -ForegroundColor Cyan
 
-if ($prodRef) {
-  # Use project ref method
-  npx supabase db dump --project-ref $prodRef --data-only | Out-File -FilePath $DumpFile -Encoding utf8
-} elseif ($prodDbUrl -and $prodDbUrl -notmatch '\[YOUR-PASSWORD\]') {
-  # Use psql method
-  if (-not (Get-Command pg_dump -ErrorAction SilentlyContinue)) {
-    throw "pg_dump not found. Install PostgreSQL client tools or add SUPABASE_PROJECT_REF to .env.local.prod"
-  }
-  pg_dump $prodDbUrl --data-only | Out-File -FilePath $DumpFile -Encoding utf8
-} else {
-  throw "Neither SUPABASE_PROJECT_REF nor valid DATABASE_URL found in .env.local.prod"
+# Always use pg_dump directly - NEVER use supabase CLI --linked as it uses the currently linked project,
+# not the environment we just loaded. This prevents dumping from the wrong database.
+if (-not ($prodDbUrl -and $prodDbUrl -notmatch '\[YOUR-PASSWORD\]')) {
+  throw "DATABASE_URL not configured or invalid in .env.local.prod"
 }
+
+if (-not (Get-Command pg_dump -ErrorAction SilentlyContinue)) {
+  throw "pg_dump not found. Install PostgreSQL client tools."
+}
+
+pg_dump $prodDbUrl --data-only | Out-File -FilePath $DumpFile -Encoding utf8
 
 # 2) Load dev env and restore
 Write-Host "Loading dev environment..." -ForegroundColor Cyan
@@ -64,33 +63,23 @@ $devDbUrl = [Environment]::GetEnvironmentVariable("DATABASE_URL", "Process")
 
 if ($ResetDev) {
   Write-Host "Resetting dev database..." -ForegroundColor Yellow
-  if ($devRef) {
-    npx supabase db reset --project-ref $devRef --yes
-  } else {
-    Write-Host "Warning: No project ref, attempting reset with linked project..." -ForegroundColor Yellow
-    npx supabase db reset --linked --yes
+  # Use supabase CLI to reset - this applies all migrations
+  if (-not (Get-Command npx -ErrorAction SilentlyContinue)) {
+    throw "npx not found. Install Node.js"
   }
+  npx supabase db reset --linked --yes
 }
 
 Write-Host "Restoring data into dev..." -ForegroundColor Cyan
 
-if ($UsePsql -and $devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]') {
-  # Use psql method
-  if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
-    throw "psql not found. Install PostgreSQL client tools."
-  }
-  psql $devDbUrl -f $DumpFile
-} elseif ($devRef) {
-  # Use Supabase CLI method
-  Get-Content $DumpFile | npx supabase db execute --project-ref $devRef
-} elseif ($devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]') {
-  # Fallback to psql
-  if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
-    throw "psql not found and no SUPABASE_PROJECT_REF. Install PostgreSQL client tools or add project ref to .env.local.dev"
-  }
-  psql $devDbUrl -f $DumpFile
-} else {
-  throw "Neither SUPABASE_PROJECT_REF nor valid DATABASE_URL found in .env.local.dev"
+if (-not ($devDbUrl -and $devDbUrl -notmatch '\[YOUR-PASSWORD\]')) {
+  throw "DATABASE_URL not configured or invalid in .env.local.dev"
 }
+
+if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
+  throw "psql not found. Install PostgreSQL client tools."
+}
+
+psql $devDbUrl -f $DumpFile
 
 Write-Host "Data sync complete." -ForegroundColor Green

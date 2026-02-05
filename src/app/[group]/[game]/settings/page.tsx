@@ -36,7 +36,7 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
 
   const { hasPermission } = usePermissions(group?.id || undefined);
   const canViewPermissions = hasPermission('settings_view_permissions');
-  const canEditPermissions = hasPermission('settings_edit_permissions');
+  const canEditPermissions = hasPermission('settings_edit_roles');
   const canEditSettings = hasPermission('settings_edit');
 
   const [guildIconUrl, setGuildIconUrl] = useState(group?.group_icon_url || '');

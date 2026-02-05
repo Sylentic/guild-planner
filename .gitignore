@@ -46,4 +46,8 @@ build-output.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database sync temp files
+.tmp
+.backups
 supabase/.temp
