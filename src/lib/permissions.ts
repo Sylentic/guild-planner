@@ -380,8 +380,8 @@ export function canManageRole(userRole: GroupRole, targetRole: GroupRole): boole
 export const ROLE_CONFIG: Record<GroupRole, { label: string; color: string; borderColor: string; description: string }> = {
   admin: {
     label: 'Admin',
-    color: 'text-amber-400', // legendary
-    borderColor: 'border-amber-400',
+    color: 'text-orange-400', // legendary
+    borderColor: 'border-orange-400',
     description: 'Full permissions to manage clan',
   },
   officer: {

@@ -19,3 +19,7 @@
 * Game-specific settings pages now only show rank management for that game's members.
 * Game-specific settings pages now link to Group Settings for group-wide configuration.
 * Added `approval_required` and `default_role` flags on groups.
+
+### Fixed
+
+* Restored role colors and creator-first member sorting in member management lists.

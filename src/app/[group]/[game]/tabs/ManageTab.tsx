@@ -133,7 +133,7 @@ export function ManageTab({
         </h2>
         <div className="space-y-2">
           {(() => {
-            // Sort members by role (using role hierarchy) then display name
+            // Sort members by creator status, role hierarchy, then display name
             const getRoleRank = (role: string | null) => {
               const hierarchy = {
                 admin: 4,
@@ -142,49 +142,54 @@ export function ManageTab({
                 trial: 1,
                 pending: 0,
               };
-              return role && hierarchy.hasOwnProperty(role) ? hierarchy[role as keyof typeof hierarchy] : -1;
+              return role && Object.prototype.hasOwnProperty.call(hierarchy, role)
+                ? hierarchy[role as keyof typeof hierarchy]
+                : -1;
             };
+
+            const getMemberRank = (member: { role: string | null; is_creator: boolean }) =>
+              member.is_creator ? 5 : getRoleRank(member.role);
+
+            const getMemberRoleConfig = (member: { role: string | null; is_creator: boolean }) => {
+              if (member.is_creator) return ROLE_CONFIG.admin;
+              const validRole = (role: string | null): role is GroupRole =>
+                role !== null && Object.prototype.hasOwnProperty.call(ROLE_CONFIG, role);
+              const roleKey: GroupRole = validRole(member.role) ? member.role : 'member';
+              return ROLE_CONFIG[roleKey];
+            };
+
             return members
               .slice()
               .sort((a, b) => {
-                const roleDiff = getRoleRank(b.role) - getRoleRank(a.role);
+                const roleDiff = getMemberRank(b) - getMemberRank(a);
                 if (roleDiff !== 0) return roleDiff;
                 const nameA = (a.user?.display_name || a.user?.discord_username || '').toLowerCase();
                 const nameB = (b.user?.display_name || b.user?.discord_username || '').toLowerCase();
                 return nameA.localeCompare(nameB);
               })
-              .map((member) => (
-                <div
-                  key={member.id}
-                  className={[
-                    "bg-slate-900/80",
-                    "backdrop-blur-sm",
-                    "rounded-lg",
-                    "border",
-                    (() => {
-                      const validRole = (role: string | null): role is GroupRole =>
-                        role !== null && Object.prototype.hasOwnProperty.call(ROLE_CONFIG, role);
-                      const roleKey: GroupRole = validRole(member.role) ? member.role : 'member';
-                      return ROLE_CONFIG[roleKey].borderColor;
-                    })(),
-                    "transition-all",
-                    "duration-300",
-                    "hover:border-slate-600",
-                    "p-4",
-                    "flex",
-                    "items-center",
-                    "justify-between"
-                  ].join(' ')}
-                >
-                  <div className="flex items-center gap-3">
-                    {/* Colored dot for role */}
-                    {(() => {
-                      const validRole = (role: string | null): role is GroupRole =>
-                        role !== null && Object.prototype.hasOwnProperty.call(ROLE_CONFIG, role);
-                      const roleKey: GroupRole = validRole(member.role) ? member.role : 'member';
-                      const config = ROLE_CONFIG[roleKey];
-                      return <span className={config.color}>{String.fromCharCode(9679)}</span>;
-                    })()}
+              .map((member) => {
+                const roleConfig = getMemberRoleConfig(member);
+                return (
+                  <div
+                    key={member.id}
+                    className={[
+                      "bg-slate-900/80",
+                      "backdrop-blur-sm",
+                      "rounded-lg",
+                      "border",
+                      roleConfig.borderColor,
+                      "transition-all",
+                      "duration-300",
+                      "hover:border-slate-600",
+                      "p-4",
+                      "flex",
+                      "items-center",
+                      "justify-between"
+                    ].join(' ')}
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Colored dot for role */}
+                      <span className={roleConfig.color}>{String.fromCharCode(9679)}</span>
                     {member.user?.discord_avatar ? (
                       <img
                         src={member.user.discord_avatar}
@@ -198,7 +203,9 @@ export function ManageTab({
                       <span className="text-white">
                         {member.user?.display_name || member.user?.discord_username || 'Unknown'}
                       </span>
-                      <span className={`ml-2 text-sm ${ROLE_CONFIG[member.role as GroupRole]?.color || 'text-slate-400'}`}> {member.role}{member.is_creator && ' (creator)'}</span>
+                      <span className={`ml-2 text-sm ${roleConfig.color}`}>
+                        {member.role}{member.is_creator && ' (creator)'}
+                      </span>
                     </div>
                   </div>
                   {onUpdateRole && member.user_id !== currentUserId && (
@@ -277,7 +284,7 @@ export function ManageTab({
                     </div>
                   )}
                 </div>
-              ));
+              )});
           })()}
         </div>
       </div>
