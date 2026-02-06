@@ -1,3 +1,4 @@
 [
-  "000_baseline.sql"
+  "000_baseline.sql",
+  "001_group_join_settings.sql"
 ]

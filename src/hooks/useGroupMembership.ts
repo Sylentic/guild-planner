@@ -60,7 +60,6 @@ export function useGroupMembership(groupId: string | null, userId: string | null
   }, [groupId, userId]);
 
   const fetchMembership = useCallback(async () => {
-    console.log('[DEBUG] useGroupMembership: groupId', groupId, 'userId', userId);
     if (!groupId || !userId) {
       setMembership(null);
       setLoading(false);
@@ -69,7 +68,6 @@ export function useGroupMembership(groupId: string | null, userId: string | null
 
     try {
       const data = await getGroupMembership(groupId, userId);
-      console.log('[DEBUG] getGroupMembership returned:', data);
       if (data) {
         setMembership({
           role: data.role as UserRole,

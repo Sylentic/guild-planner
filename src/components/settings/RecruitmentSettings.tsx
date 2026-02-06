@@ -34,7 +34,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       if (!isMounted) return;
       setError(null);
       try {
-        console.log('[RecruitmentSettings] Fetching clan settings for:', groupId);
         // Fetch clan settings
         const { data: clanData, error: clanError } = await supabase
           .from('groups')
@@ -47,7 +46,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (clanData) {
-          console.log('[RecruitmentSettings] Clan data:', clanData);
           setIsPublic(clanData.is_public || false);
           setRecruitmentOpen(clanData.recruitment_open || false);
           setApprovalRequired(clanData.approval_required ?? true);
@@ -57,7 +55,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         // Fetch applications
-        console.log('[RecruitmentSettings] Fetching applications...');
         const { data: appsData, error: appsError } = await supabase
           .from('recruitment_applications')
           .select('*')
@@ -71,7 +68,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (appsData) {
-          console.log('[RecruitmentSettings] Applications:', appsData.length);
           setApplications(appsData);
         }
       } catch (err) {
@@ -100,7 +96,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   const handleSave = async () => {
     setSaving(true);
     setError(null);
-    console.log('[RecruitmentSettings] Saving settings...');
     
     try {
       const updateData = {
@@ -111,7 +106,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         recruitment_message: recruitmentMessage.trim() || null,
         public_description: publicDescription.trim() || null,
       };
-      console.log('[RecruitmentSettings] Update data:', updateData);
 
       const { error: updateError } = await supabase
         .from('groups')
@@ -124,8 +118,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         setError(updateError.message);
         return;
       }
-      
-      console.log('[RecruitmentSettings] Save successful');
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {

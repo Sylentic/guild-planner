@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
         ignoreAttribute: ["className", "style", "type", "id", "name", "data-", "aria-", "role", "key", "href", "src", "alt"],
         ignore: ["^[A-Z_]+$", "^\\d+$"], // Ignore all-caps constants and numbers
       }],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
   // Override default ignores of eslint-config-next.
@@ -27,6 +29,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scripts are utility tools with different standards
+    "scripts/**",
   ]),
 ]);
 

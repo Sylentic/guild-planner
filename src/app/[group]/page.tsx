@@ -42,7 +42,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   // Fetch group data
   useEffect(() => {
     async function checkGroup() {
-      console.log('GroupOverviewPage: checking group', groupSlug);
       setCheckError(null);
       setLoading(true);
       try {
@@ -55,8 +54,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           getGroupBySlug(groupSlug),
           timeoutPromise
         ]) as any | null;
-
-        console.log('GroupOverviewPage: group result', group);
         if (group) {
           setGroupId(group.id);
           setGroupData(group);
@@ -200,9 +197,9 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="text-center max-w-md mx-auto p-6">
           <Plus className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Create "{groupSlug}"?</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">Create &quot;{groupSlug}&quot;?</h2>
           <p className="text-slate-400 mb-6">
-            This group doesn't exist yet. Would you like to create it?
+            This group doesn&apos;t exist yet. Would you like to create it?
           </p>
           
           {createError && (
@@ -336,7 +333,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
-            <p className="text-slate-400 text-sm">Click on a game to view your group's information for that game.</p>
+            <p className="text-slate-400 text-sm">Click on a game to view your group&apos;s information for that game.</p>
           </div>
           {canEditSettings && (
             <button

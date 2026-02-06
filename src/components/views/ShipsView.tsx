@@ -203,11 +203,8 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
             },
           });
 
-          console.log('Ships overview API response status:', response.status);
-
           if (response.ok) {
             const result = await response.json();
-            console.log('Ships overview API result:', result);
             const overviewCharacters = (result.characters || []) as CharacterWithProfessions[];
             const overviewShips = (result.ships || []) as CharacterShip[];
 
@@ -241,15 +238,11 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
         shipsByCharacter[char.id] = [];
       });
 
-      console.log('Loading ships for character IDs:', characters.map(c => c.id));
-
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
           .select('*')
           .in('character_id', characters.map(c => c.id));
-
-        console.log('Character ships query result:', { data, fetchError });
 
         if (fetchError) {
           console.error('Error loading ships:', fetchError);
@@ -257,7 +250,6 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
         }
 
         if (data) {
-          console.log('Found ships:', data);
           data.forEach(ship => {
             if (shipsByCharacter[ship.character_id]) {
               shipsByCharacter[ship.character_id].push(ship);
@@ -278,7 +270,6 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
 
   // Load character ships
   useEffect(() => {
-    console.log('ShipsView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
   }, [groupId, characters, gameSlug]);
 

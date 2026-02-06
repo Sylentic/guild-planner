@@ -221,7 +221,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   }, [showAddForm, selectedCharacter, playerCharacters]);
 
   useEffect(() => {
-    console.log('FleetView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
   }, [groupId, characters]);
 
@@ -234,15 +233,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
         shipsByCharacter[char.id] = [];
       });
 
-      console.log('Loading ships for character IDs:', characters.map(c => c.id));
-
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
           .select('*')
           .in('character_id', characters.map(c => c.id));
-
-        console.log('Character ships query result:', { data, fetchError });
 
         if (fetchError) {
           console.error('Error loading ships:', fetchError);
@@ -250,7 +245,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
         }
 
         if (data) {
-          console.log('Found ships:', data);
           data.forEach(ship => {
             if (shipsByCharacter[ship.character_id]) {
               shipsByCharacter[ship.character_id].push(ship);
@@ -258,8 +252,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
           });
         }
       }
-
-      console.log('Final characterShips state:', shipsByCharacter);
       setCharacterShips(shipsByCharacter);
     } catch (err) {
       console.error('Failed to load ships:', err);

@@ -29,10 +29,8 @@ export function RecruitmentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[RecruitmentForm] Form submitted');
     
     if (!discordUsername.trim()) {
-      console.log('[RecruitmentForm] No discord username');
       return;
     }
 
@@ -48,8 +46,6 @@ export function RecruitmentForm({
       availability: availability.trim() || null,
       message: message.trim() || null,
     };
-    
-    console.log('[RecruitmentForm] Submitting application:', applicationData);
 
     try {
       const { error: submitError, data } = await supabase
@@ -57,14 +53,10 @@ export function RecruitmentForm({
         .insert(applicationData)
         .select();
 
-      console.log('[RecruitmentForm] Response:', { data, error: submitError });
-
       if (submitError) {
         console.error('[RecruitmentForm] Submit error:', submitError);
         throw submitError;
       }
-      
-      console.log('[RecruitmentForm] Success!');
       onSuccess();
     } catch (err) {
       console.error('[RecruitmentForm] Error:', err);

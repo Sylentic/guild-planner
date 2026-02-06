@@ -175,8 +175,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
     if (targetGameSlug === 'starcitizen' && data.subscriber_tier && insertedData && insertedData.length > 0) {
       try {
         const characterId = insertedData[0].id;
-        console.log(`New subscriber character created with tier: ${data.subscriber_tier}`);
-        
+
         const { getCurrentMonthKey } = await import('@/games/starcitizen/config/subscriber-ships');
         const currentMonth = getCurrentMonthKey();
         
@@ -333,8 +332,6 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       const oldTier = (freshCharacter as any)?.subscriber_tier;
       const newTier = data.subscriber_tier as 'centurion' | 'imperator' | null | undefined;
 
-      console.log(`[Subscriber Sync] oldTier=${oldTier}, newTier=${newTier}, inUpdate=${'subscriber_tier' in data}`);
-
       if (newTier && newTier !== oldTier) {
         // User selected a subscriber tier
         try {
@@ -343,11 +340,9 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
           if (oldTier) {
             // Tier changed
-            console.log(`Subscriber tier changed from ${oldTier} to ${newTier}`);
             await updateSubscriberTier(supabase, id, oldTier as any, newTier);
           } else {
             // New tier assignment
-            console.log(`Subscriber tier set to ${newTier}`);
             await syncSubscriberShips(supabase, id, newTier);
           }
 
@@ -363,7 +358,6 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       } else if (!newTier && oldTier) {
         // Tier was removed - remove subscriber ships
         try {
-          console.log(`Subscriber tier removed (was ${oldTier})`);
           const { getSubscriberShips } = await import('@/games/starcitizen/config/subscriber-ships');
           const { removeSubscriberShips } = await import('@/lib/subscriberShips');
           const shipsToRemove = getSubscriberShips(oldTier);
