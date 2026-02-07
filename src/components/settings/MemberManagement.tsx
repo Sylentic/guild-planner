@@ -5,6 +5,7 @@ import { ROLE_CONFIG, GroupRole, getRoleHierarchy } from '@/lib/permissions';
 import { useState } from 'react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useProcessingSet } from '@/hooks/useProcessingSet';
 
 interface MemberManagementProps {
   members: Array<{
@@ -41,48 +42,36 @@ export function MemberManagement({
   currentUserRole,
   currentUserIsCreator,
 }: MemberManagementProps) {
-  const [processing, setProcessing] = useState<Set<string>>(new Set());
+  const { processing, add, remove } = useProcessingSet();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [memberIdToRemove, setMemberIdToRemove] = useState<string | null>(null);
   const { t } = useLanguage();
 
   const handleAccept = async (memberId: string) => {
-    setProcessing(prev => new Set(prev).add(memberId));
+    add(memberId);
     try {
       await onAccept(memberId);
     } finally {
-      setProcessing(prev => {
-        const next = new Set(prev);
-        next.delete(memberId);
-        return next;
-      });
+      remove(memberId);
     }
   };
 
   const handleReject = async (memberId: string) => {
-    setProcessing(prev => new Set(prev).add(memberId));
+    add(memberId);
     try {
       await onReject(memberId);
     } finally {
-      setProcessing(prev => {
-        const next = new Set(prev);
-        next.delete(memberId);
-        return next;
-      });
+      remove(memberId);
     }
   };
 
   const handleRoleUpdate = async (memberId: string, newRole: GroupRole) => {
     if (!onUpdateRole) return;
-    setProcessing(prev => new Set(prev).add(memberId));
+    add(memberId);
     try {
       await onUpdateRole(memberId, newRole);
     } finally {
-      setProcessing(prev => {
-        const next = new Set(prev);
-        next.delete(memberId);
-        return next;
-      });
+      remove(memberId);
     }
   };
 
@@ -95,15 +84,11 @@ export function MemberManagement({
     if (!memberIdToRemove || !onRemove) return;
     
     setDeleteConfirmOpen(false);
-    setProcessing(prev => new Set(prev).add(memberIdToRemove));
+    add(memberIdToRemove);
     try {
       await onRemove(memberIdToRemove);
     } finally {
-      setProcessing(prev => {
-        const next = new Set(prev);
-        next.delete(memberIdToRemove);
-        return next;
-      });
+      remove(memberIdToRemove);
       setMemberIdToRemove(null);
     }
   };
