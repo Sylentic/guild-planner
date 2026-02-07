@@ -10,9 +10,15 @@
 * Separate Group Settings page accessible from group root (`/[group]/settings`).
 * Settings button in group header for admins to access group-wide settings.
 * **Testing infrastructure with Jest and React Testing Library**
-* Comprehensive test suite for permission system (51+ tests)
-* Test coverage for utility functions and game validation
-* Documentation for writing and running tests (`docs/TESTING.md`)
+* **Phase 1 authentication and permission system test suite: 133 passing tests**
+  * Permission system tests (30 tests, 100% coverage)
+  * Utility function tests (9 tests, 100% coverage)
+  * Game validation tests (8 tests)
+  * Authentication system tests (42 tests) - OAuth flows, user profiles, group membership, role management
+  * usePermissions hook tests (40 tests) - permission checking, role management, custom overrides, security
+* Test patterns for mocking Supabase, React hooks, and async operations
+* Testing documentation: TESTING.md, TESTING\_QUICK\_REFERENCE.md, TESTING\_ROADMAP.md
+* npm test scripts (test, test:watch, test:coverage) with 50% coverage thresholds
 * Missing `guild_bank_manage` permission definition
 
 ### Changed
