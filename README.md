@@ -59,6 +59,29 @@ See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for full instructions.
 
 ## Development
 
+### Testing
+
+We use **Jest** and **React Testing Library** for comprehensive test coverage.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode (auto-rerun on changes)
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+**Documentation**:
+
+* [TESTING.md](./docs/TESTING.md) - How to write and run tests
+* [TESTING\_ROADMAP.md](./docs/TESTING_ROADMAP.md) - Testing improvement plan
+* [TESTING\_QUICK\_REFERENCE.md](./docs/TESTING_QUICK_REFERENCE.md) - Quick checklist for developers
+
+**Current Coverage**: 51 tests covering permission system, utilities, and game validation.
+
 ### For AI Agents & Contributors
 
 * **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - Quick reference for code patterns, version management, and logging (start here!)

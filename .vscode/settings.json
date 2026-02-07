@@ -26,7 +26,8 @@
             "approve": true,
             "matchCommandLine": true
         },
-        ".\\switch-env.ps1": true
+        ".\\switch-env.ps1": true,
+        "npm install": true
     },
     "codeQL.githubDatabase.download": "never"
 }
