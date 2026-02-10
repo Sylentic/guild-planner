@@ -1,6 +1,6 @@
 # Testing Improvement Roadmap
 
-This document outlines the phased approach to expanding test coverage across the Guild Planner application.
+This document outlines the phased approach to expanding test coverage across the Group Planner application.
 
 ## Current Status ✅
 
@@ -73,7 +73,7 @@ This document outlines the phased approach to expanding test coverage across the
 * \[ ] Character management endpoints
 * \[ ] Group membership endpoints
 * \[ ] Role update endpoints
-* \[ ] Guild bank endpoints
+* \[ ] Group bank endpoints
 
 **Why**: API routes are the enforcement point for server-side security.
 
@@ -181,7 +181,7 @@ This document outlines the phased approach to expanding test coverage across the
 
 * \[ ] Auth + Permission flow (login → check permission → perform action)
 * \[ ] Group creation + member invitation + role assignment
-* \[ ] Character creation + profession selection + guild bank
+* \[ ] Character creation + profession selection + group bank
 * \[ ] Multi-game scenarios
 
 **Why**: Integration tests catch issues between modules.
