@@ -5,7 +5,7 @@ This document outlines the phased approach to expanding test coverage across the
 ## Current Status ✅ | Phase 1.3 in Progress
 
 **Test Suites**: 17 (13 hook suites, 4 lib suites)\
-**Tests**: 321 passing  
+**Tests**: 321 passing\
 **Coverage**: Statements: 32.85% | Branches: 65.39% | Functions: 49.35% | Lines: 32.85%\
 **Phase 1 Status**: 1.1 (Auth) ✅ Complete | 1.2 (Permissions) ✅ Complete | 1.3 (API routes) 🟡 In Progress\
 **Coverage Areas**: Permission system (99-100%), auth (99%), utilities (100%), game validation (63%), permissions hook (100%), data hooks (44-100%), API routes scaffolded
@@ -69,7 +69,7 @@ This document outlines the phased approach to expanding test coverage across the
 **Status**: 🟡 **In Progress - Specifications Documented, Framework Selection Pending**
 
 **Test Specifications Created (7 routes, 70+ test cases)**\
-📖 **See [API_TESTING_GUIDE.md](./API_TESTING_GUIDE.md) for comprehensive test specifications and implementation options**
+📖 **See [API\_TESTING\_GUIDE.md](./API_TESTING_GUIDE.md) for comprehensive test specifications and implementation options**
 
 1. ✔️ `/api/group/permissions` - Core permission system (GET/POST)
 2. ✔️ `/api/discord` - Discord webhook proxy (POST)
@@ -81,12 +81,13 @@ This document outlines the phased approach to expanding test coverage across the
 
 #### Implementation Path: Choose One
 
-**📌 See [API_TESTING_GUIDE.md](./API_TESTING_GUIDE.md) for**:
-- Complete test specifications for all 7 routes (70+ test cases documented)
-- Supertest integration template (easiest option)
-- E2E/Playwright guidance
-- Jest/Next.js incompatibility explanation
-- Step-by-step implementation checklist
+**📌 See [API\_TESTING\_GUIDE.md](./API_TESTING_GUIDE.md) for**:
+
+* Complete test specifications for all 7 routes (70+ test cases documented)
+* Supertest integration template (easiest option)
+* E2E/Playwright guidance
+* Jest/Next.js incompatibility explanation
+* Step-by-step implementation checklist
 
 **Why Phase 1.3 is Critical**: API routes are the server-side gateway for authentication, authorization, and data integrity. Bugs directly impact security and data consistency.
 
