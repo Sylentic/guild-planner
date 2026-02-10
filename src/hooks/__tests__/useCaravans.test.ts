@@ -131,7 +131,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
       expect(result.current.caravans).toHaveLength(2);
       expect(result.current.caravans[0].title).toBe('Desert Supply Run');
       expect(result.current.caravans[0].escorts).toHaveLength(1);
-      expect(result.current.caravans[0].escorts[0].character.name).toBe('Warrior One');
+      expect(result.current.caravans[0]?.escorts[0]?.character?.name).toBe('Warrior One');
       expect(result.current.caravans[0].waypoints).toHaveLength(1);
     });
 
@@ -231,7 +231,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
       await act(async () => {
         caravanId = await result.current.createCaravan({
           title: 'New Caravan',
-          caravan_type: 'supply',
+          caravan_type: 'escort',
           origin_node: 'Start',
           destination_node: 'End',
           departure_at: new Date().toISOString(),
@@ -255,7 +255,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         try {
           await result.current.createCaravan({
             title: 'Test',
-            caravan_type: 'supply',
+            caravan_type: 'guild',
             origin_node: 'A',
             destination_node: 'B',
             departure_at: new Date().toISOString(),

@@ -289,7 +289,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
 
       try {
         await act(async () => {
-          const promise = result.current.setProfessionRank('char-id', 'mining', '2', 1, 50);
+          const promise = result.current.setProfessionRank('char-id', 'mining', null, 1, 50);
           if (promise) await promise.catch(() => {});
         });
       } catch (e) {

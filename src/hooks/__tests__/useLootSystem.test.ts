@@ -170,7 +170,7 @@ describe('useLootSystem Hook - Phase 2 Sprint 9', () => {
       expect(result.current.lootSystem).toEqual(mockSystem);
       expect(result.current.leaderboard).toHaveLength(2);
       expect(result.current.leaderboard[0].rank).toBe(1);
-      expect(result.current.leaderboard[0].character.name).toBe('Warrior One');
+      expect(result.current.leaderboard[0]?.character?.name).toBe('Warrior One');
     });
 
     it('handles fetch error gracefully', async () => {

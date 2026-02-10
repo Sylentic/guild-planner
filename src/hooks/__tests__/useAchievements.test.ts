@@ -25,7 +25,7 @@ const mockDefinitions = [
     id: 'achieve-1',
     name: 'First Steps',
     description: 'Complete first task',
-    category: 'gameplay',
+    category: 'guild',
     points: 10,
     requirement_value: 1,
     sort_order: 1,
@@ -34,7 +34,7 @@ const mockDefinitions = [
     id: 'achieve-2',
     name: 'Master Miner',
     description: 'Mine 1000 ore',
-    category: 'professions',
+    category: 'economy',
     points: 50,
     requirement_value: 1000,
     sort_order: 2,
@@ -43,7 +43,7 @@ const mockDefinitions = [
     id: 'achieve-3',
     name: 'Collector',
     description: 'Unlock 10 achievements',
-    category: 'gameplay',
+    category: 'community',
     points: 100,
     requirement_value: 10,
     sort_order: 3,
@@ -361,13 +361,13 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const gameplayAchievements = result.current.getByCategory('gameplay');
-      expect(gameplayAchievements).toHaveLength(2); // achieve-1 and achieve-3
-      expect(gameplayAchievements.every((a) => a.definition.category === 'gameplay')).toBe(true);
+      const guildAchievements = result.current.getByCategory('guild');
+      expect(guildAchievements).toHaveLength(1); // achieve-1
+      expect(guildAchievements.every((a) => a.definition.category === 'guild')).toBe(true);
 
-      const professionAchievements = result.current.getByCategory('professions');
-      expect(professionAchievements).toHaveLength(1); // achieve-2
-      expect(professionAchievements[0].definition.category).toBe('professions');
+      const economyAchievements = result.current.getByCategory('economy');
+      expect(economyAchievements).toHaveLength(1); // achieve-2
+      expect(economyAchievements[0].definition.category).toBe('economy');
     });
 
     it('returns empty array for non-existent category', async () => {
@@ -392,8 +392,8 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const socialAchievements = result.current.getByCategory('social');
-      expect(socialAchievements).toHaveLength(0);
+      const communityAchievements = result.current.getByCategory('community');
+      expect(communityAchievements).toHaveLength(1);
     });
   });
 

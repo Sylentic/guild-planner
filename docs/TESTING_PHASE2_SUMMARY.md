@@ -16,18 +16,22 @@ Completed Phase 2 rapid sprint testing + Sprint 9 bonus with 9 consecutive hook 
 
 ## Phase 2 Sprint Completion Summary
 
-| Sprint | Hook | Tests | Status | Complexity | Notes |
-|--------|------|-------|--------|------------|-------|
-| 1 | useActivity | 15 | ✅ Pass | Medium | Activity aggregation, inactivity alerts |
-| 2 | useEvents | 4 | ✅ Pass | Low | Event/RSVP + Discord notification |
-| 3 | useGroupData | 17 | ✅ Pass | High | Character CRUD, permission checks |
-| 4 | useAchievements | 18 | ✅ Pass | High | Unlock logic, category filtering |
-| 5 | useBuilds | 15 | ✅ Pass | Medium | Visibility filtering, likes/comments |
-| 6 | useCaravans | 17 | ✅ Pass | Medium | Nested joins, escort management |
-| 7 | useGuildBank | 16 | ✅ Pass | Very High | 5-table join, simplified mocks |
-| 8 | useFreeholds | 15 | ✅ Pass | Medium | Freehold + building management |
-| 9 | useLootSystem | 15 | ✅ Pass | Very High | DKP leaderboard, loot distribution |
-| **TOTAL** | **9 Hooks** | **132 tests** | **14/14 suites** | **265/265 total** | **Target +15 bonus!** |
+<!-- markdownlint-disable MD060 -->
+
+| Sprint | Hook            | Tests | Status | Complexity | Notes                                    |
+|--------|-----------------|-------|--------|------------|------------------------------------------|
+| 1      | useActivity     | 15    | PASS   | Medium     | Activity aggregation, inactivity alerts  |
+| 2      | useEvents       | 4     | PASS   | Low        | Event/RSVP + Discord notification       |
+| 3      | useGroupData    | 17    | PASS   | High       | Character CRUD, permission checks       |
+| 4      | useAchievements | 18    | PASS   | High       | Unlock logic, category filtering        |
+| 5      | useBuilds       | 15    | PASS   | Medium     | Visibility filtering, likes/comments    |
+| 6      | useCaravans     | 17    | PASS   | Medium     | Nested joins, escort management         |
+| 7      | useGuildBank    | 16    | PASS   | Very High  | 5-table join, simplified mocks          |
+| 8      | useFreeholds    | 15    | PASS   | Medium     | Freehold + building management          |
+| 9      | useLootSystem   | 15    | PASS   | Very High  | DKP leaderboard, lout distribution      |
+| TOTAL  | 9 Hooks         | 132   | PASS   | 14/14      | 265/265 total - Target +15 bonus!       |
+
+<!-- markdownlint-enable MD060 -->
 
 ### Testing Patterns Established
 
@@ -37,7 +41,7 @@ Completed Phase 2 rapid sprint testing + Sprint 9 bonus with 9 consecutive hook 
 
 ***
 
-## Phase 2 Sprint 9: useLootSystem Hook Tests
+## Sprint 9: useLootSystem Hook Tests
 
 ### Overview - DKP Loot Management System
 
@@ -58,7 +62,7 @@ Unlike earlier hooks, useLootSystem requires coordinated fetches:
 2. **DKP Points** table with members join (for leaderboard ranking)
 3. **Loot History** table with dual joins (character + user transforms)
 
-### Test Coverage: 15 Tests
+### Loot System Test Coverage: 15 Tests
 
 #### 1. Hook Initialization (3 tests)
 

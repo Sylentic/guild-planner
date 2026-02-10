@@ -122,8 +122,8 @@ describe('useFreeholds Hook - Phase 2 Sprint 8', () => {
       expect(result.current.freeholds).toHaveLength(2);
       expect(result.current.freeholds[0].name).toBe('Crimson Hold');
       expect(result.current.freeholds[0].buildings).toHaveLength(1);
-      expect(result.current.freeholds[0].owner.display_name).toBe('PlayerOne');
-      expect(result.current.freeholds[0].owner_character.name).toBe('Lord Crimson');
+      expect(result.current.freeholds[0]?.owner?.display_name).toBe('PlayerOne');
+      expect(result.current.freeholds[0]?.owner_character?.name).toBe('Lord Crimson');
     });
 
     it('handles fetch error gracefully', async () => {
