@@ -1,16 +1,16 @@
 # Phase 2 Testing - Data Hooks Rapid Sprint Summary
 
 **Date**: February 10, 2026\
-**Status**: ✅ PHASE 2 EXTENDED (Through Sprint 11)\
-**Sprint Duration**: Single coordinated session (Sprints 1-11)\
-**Total Tests Created**: 173 new tests\
-**Test Suite Total**: 306 tests (up from 133 baseline)\
-**All Tests**: ✅ Passing (3.485s execution time)\
-**Target**: 250+ ✅ **EXCEEDED (+56 bonus tests)**
+**Status**: ✅ PHASE 2 EXTENDED (Through Sprint 12)\
+**Sprint Duration**: Single coordinated session (Sprints 1-12)\
+**Total Tests Created**: 188 new tests\
+**Test Suite Total**: 321 tests (up from 133 baseline)\
+**All Tests**: ✅ Passing (3.226s execution time)\
+**Target**: 250+ ✅ **EXCEEDED (+71 bonus tests)**
 
 ## Executive Summary
 
-Completed Phase 2 rapid sprint testing through Sprint 11 with 11 consecutive test suites (10 data hooks + 1 utility hook). Achieved 306 total tests across 16 suites with zero failures, establishing production-ready test coverage for core data management layer including party/roster coordination and processing state management utilities.
+Completed Phase 2 rapid sprint testing through Sprint 12 with 12 consecutive test suites (11 data hooks + 1 utility hook). Achieved 321 total tests across 17 suites with zero failures, establishing production-ready test coverage for core data management layer including party/roster coordination, siege warfare event management, and processing state management utilities.
 
 ***
 
@@ -18,20 +18,21 @@ Completed Phase 2 rapid sprint testing through Sprint 11 with 11 consecutive tes
 
 <!-- markdownlint-disable MD060 -->
 
-| Sprint | Hook               | Tests | Status | Complexity | Notes                                    |
-|--------|--------------------|-------|--------|------------|------------------------------------------|
-| 1      | useActivity        | 15    | PASS   | Medium     | Activity aggregation, inactivity alerts  |
-| 2      | useEvents          | 4     | PASS   | Low        | Event/RSVP + Discord notification       |
-| 3      | useGroupData       | 17    | PASS   | High       | Character CRUD, permission checks       |
-| 4      | useAchievements    | 18    | PASS   | High       | Unlock logic, category filtering        |
-| 5      | useBuilds          | 15    | PASS   | Medium     | Visibility filtering, likes/comments    |
-| 6      | useCaravans        | 17    | PASS   | Medium     | Nested joins, escort management         |
-| 7      | useGuildBank       | 16    | PASS   | Very High  | 5-table join, simplified mocks          |
-| 8      | useFreeholds       | 15    | PASS   | Medium     | Freehold + building management          |
-| 9      | useLootSystem      | 15    | PASS   | Very High  | DKP leaderboard, lout distribution      |
-| 10     | useParties         | 17    | PASS   | Medium     | Party/roster coordination               |
-| 11     | useProcessingSet   | 24    | PASS   | Low        | Utility hook - Set state management     |
-| TOTAL  | 11 Hooks           | 173   | PASS   | 16/16      | 306/306 total - Target +56 bonus!       |
+| Sprint | Hook               | Tests | Status | Complexity  | Notes                                    |
+|--------|--------------------|-------|--------|-------------|------------------------------------------|
+| 1      | useActivity        | 15    | PASS   | Medium      | Activity aggregation, inactivity alerts  |
+| 2      | useEvents          | 4     | PASS   | Low         | Event/RSVP + Discord notification       |
+| 3      | useGroupData       | 17    | PASS   | High        | Character CRUD, permission checks       |
+| 4      | useAchievements    | 18    | PASS   | High        | Unlock logic, category filtering        |
+| 5      | useBuilds          | 15    | PASS   | Medium      | Visibility filtering, likes/comments    |
+| 6      | useCaravans        | 17    | PASS   | Medium      | Nested joins, escort management         |
+| 7      | useGuildBank       | 16    | PASS   | Very High   | 5-table join, simplified mocks          |
+| 8      | useFreeholds       | 15    | PASS   | Medium      | Freehold + building management          |
+| 9      | useLootSystem      | 15    | PASS   | Very High   | DKP leaderboard, lout distribution      |
+| 10     | useParties         | 17    | PASS   | Medium      | Party/roster coordination               |
+| 11     | useProcessingSet   | 24    | PASS   | Low         | Utility hook - Set state management     |
+| 12     | useSiegeEvents     | 15    | PASS   | Medium-High | 2-table join, auth integration          |
+| TOTAL  | 12 Hooks           | 188   | PASS   | 17/17       | 321/321 total - Target +71 bonus!       |
 
 <!-- markdownlint-enable MD060 -->
 
@@ -280,15 +281,154 @@ Unlike Sprints 1-10 (data hooks), Sprint 11 required a **simpler test approach**
 
 **Test simplicity**: Average 5 lines per test vs. 15-20 for data hooks
 
-### Remaining Hooks: Sprints 12-14
+### Remaining Hooks: Sprints 13-14
 
-**Pipeline Ready** (3 remaining data hooks):
+**Pipeline Ready** (2 remaining data hooks):
 
-* Sprint 12: useSiegeEvents (~15 tests)
 * Sprint 13: useAlliances (~15 tests)
 * Sprint 14: useNodeCitizenships (~15 tests)
 
 **Projected: 350-360 tests total** with all 14 sprints complete
+
+<!-- markdownlint-enable MD024 -->
+
+***
+
+<!-- markdownlint-disable MD024 -->
+
+## Sprint 12: useSiegeEvents Hook Tests
+
+### Overview - Siege Warfare Event Management
+
+Implemented test suite for the `useSiegeEvents` hook - **resuming data hook testing** after Sprint 11's utility hook. This hook manages large-scale PvP siege warfare events and character roster signups with role assignments:
+
+* Siege event CRUD operations (create, update, cancel, setSiegeResult)
+* Roster management (signUp, withdraw, updateRosterStatus)
+* 2-table join with character enrichment
+* Auth integration for user tracking
+* Computed upcomingSieges filter
+
+**Hook Type**: Data (complex multi-table join)\
+**Pattern**: 2-table join (siege\_events + siege\_roster with members)\
+**Complexity**: Medium-High (8 operations + auth integration)\
+**Use Case**: Guild siege coordination in Ashes of Creation
+
+### Architecture: 2-Table Join with Auth Integration
+
+useSiegeEvents manages coordinated siege event and roster data:
+
+1. **Siege Events** table (filtered by group\_id, ordered by starts\_at)
+2. **Siege Roster** table with members join (character enrichment)
+3. **Auth integration** via supabase.auth.getUser() for roster tracking
+
+### Siege Events Test Coverage: 15 Tests
+
+#### 1. Hook Initialisation (3 tests)
+
+* ✅ Initialises with empty sieges + loading=true on mount
+* ✅ Returns early (no fetch) when groupId is null
+* ✅ Exposes all 12 required methods/properties
+
+#### 2. Data Fetching (3 tests)
+
+* ✅ Fetches sieges with nested roster + character data (2-table join)
+* ✅ Transforms roster data with character enrichment (Tank Warrior with frontline role)
+* ✅ Handles fetch errors gracefully (database connection failed scenario)
+
+#### 3. Siege Event Management (4 tests)
+
+* ✅ createSiege: Inserts new siege event with group\_id + role requirements
+* ✅ updateSiege: Updates event title field + refetches data
+* ✅ cancelSiege: Sets is\_cancelled=true + refetches
+* ✅ setSiegeResult: Sets result='victory' + refetches
+
+#### 4. Roster Management (3 tests)
+
+* ✅ signUp: Upserts roster entry with character\_id + role + note + user\_id from auth
+* ✅ withdraw: Deletes roster entry by siege\_id + character\_id
+* ✅ updateRosterStatus: Updates status='checked\_in' with checked\_in\_at timestamp
+
+#### 5. Upcoming Sieges Filter (1 test)
+
+* ✅ Filters future non-cancelled sieges (siege-1 included, siege-2 past date excluded)
+
+#### 6. Refresh Functionality (1 test)
+
+* ✅ Refresh re-fetches all siege + roster data
+
+### Key Implementation: Nested Data Transformation
+
+Siege events fetch with nested roster and character enrichment:
+
+```typescript
+const { data: siegeData } = await supabase
+  .from('siege_events')
+  .select(`*, siege_roster (*, members (id, name, ...))`)
+  .eq('group_id', groupId)
+  .order('starts_at', { ascending: true });
+
+// Transform: siege.clan_id → group_id, roster enrichment
+const transformedSieges = siegeData.map(siege => ({
+  ...siege,
+  group_id: siege.clan_id,
+  roster: siege.siege_roster.map(r => ({
+    ...r,
+    character: r.members ? { ...r.members, professions: [] } : undefined
+  }))
+}));
+```
+
+### Auth Integration: User Tracking
+
+The `signUp` operation captures the current authenticated user:
+
+```typescript
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) throw new Error('User not authenticated');
+
+await supabase.from('siege_roster').upsert({
+  siege_id: siegeId,
+  character_id: data.character_id,
+  user_id: user.id,  // Auth user ID
+  role: data.role,
+  note: data.note
+}, { onConflict: 'siege_id,character_id' });
+```
+
+### Computed Filter: Upcoming Sieges
+
+The hook provides a derived `upcomingSieges` property:
+
+```typescript
+const upcomingSieges = useMemo(() => 
+  sieges.filter(s => 
+    new Date(s.starts_at) > new Date() && !s.is_cancelled
+  ),
+  [sieges]
+);
+```
+
+Expected behaviour: Only future, non-cancelled sieges returned
+
+### Pattern Evolution: Return to Data Hooks
+
+Sprint 12 marks **resumption of data hook testing** after Sprint 11's utility hook:
+
+**Similarities to Sprints 1-10**:
+
+* Supabase mock chains required
+* Async `waitFor()` for data operations
+* Nested data transformation testing
+* Error handling scenarios
+
+**New complexity**:
+
+* Auth integration (supabase.auth.getUser mocking)
+* 2-table join with character enrichment
+* Roster upsert with onConflict handling
+* Computed filter validation
+
+**Test execution**: 2.521s individual, 3.226s full suite (321/321 tests passing)
 
 <!-- markdownlint-enable MD024 -->
 
