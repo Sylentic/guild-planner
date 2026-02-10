@@ -3,7 +3,6 @@
  * Tests for bank management, inventory transactions, and resource requests
  */
 
-// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useGuildBank } from '../useGuildBank';
 

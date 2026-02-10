@@ -2,7 +2,6 @@
  * Phase 2 Tests: Data Fetching Hooks
  * Tests for event and announcement management logic
  */
-// @ts-nocheck
 
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useEvents } from '../useEvents';

@@ -2,7 +2,6 @@
  * Phase 2 Tests: useAchievements Hook - Sprint 4
  * Tests for achievement tracking, unlock conditions, and progress tracking
  */
-// @ts-nocheck
 
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useAchievements } from '../useAchievements';

@@ -2,7 +2,6 @@
  * Phase 2 Tests: useGroupData Hook - Sprint 3
  * Focused tests for complex group and character data management
  */
-// @ts-nocheck
 
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useGroupData } from '../useGroupData';

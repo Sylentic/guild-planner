@@ -3,7 +3,6 @@
  * Tests for party management, roster assignment, and role tracking
  */
 
-// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useParties } from '../useParties';
 
