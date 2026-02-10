@@ -2,13 +2,17 @@
 
 import Link from 'next/link';
 import { Home, LogOut, User, Settings, Loader2 } from 'lucide-react';
-import { PublicEventsView } from '@/components/views/PublicEventsView';
 import { InlineFooter } from '@/components/layout/Footer';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { GameSwitcher } from '@/components/common/GameSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ReactNode } from 'react';
 
-export default function PublicEventsPage() {
+interface PublicEventsPageWrapperProps {
+  children: ReactNode;
+}
+
+export function PublicEventsPageWrapper({ children }: PublicEventsPageWrapperProps) {
   const { user, profile, loading, signIn, signOut } = useAuthContext();
   const { t } = useLanguage();
   const displayName = profile?.display_name || profile?.discord_username || 'User';
@@ -79,7 +83,7 @@ export default function PublicEventsPage() {
       {/* Main scrollable content */}
       <main className="flex-1 overflow-y-auto text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-          <PublicEventsView />
+          {children}
         </div>
       </main>
 
@@ -90,4 +94,3 @@ export default function PublicEventsPage() {
     </div>
   );
 }
-

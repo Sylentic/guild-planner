@@ -212,7 +212,7 @@ export default function GameLayout({
   return (
     <ArchiveStatusProvider isGameArchived={isGameArchived}>
       <GameLayoutProvider value={contextValue}>
-        <div className="h-screen flex flex-col overflow-hidden">
+        <div className="h-screen flex flex-col overflow-hidden bg-grid-pattern">
           <DynamicFavicon iconUrl={guildIconUrl} />
           {isGameArchived && <ArchivedGameBanner gameName={gameName} />}
           
