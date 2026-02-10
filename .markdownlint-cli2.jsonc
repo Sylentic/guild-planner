@@ -1,0 +1,11 @@
+{
+  "configFile": ".markdownlint.json",
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    ".next/**",
+    "**/.next/**",
+    "coverage/**",
+    "**/coverage/**"
+  ]
+}

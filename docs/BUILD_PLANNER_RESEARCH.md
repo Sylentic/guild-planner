@@ -46,8 +46,8 @@ Need to research:
 
 ## Data Sources
 
-* https://ashescodex.com/ - Primary source
-* https://ashesofcreation.wiki - Official wiki
+* <https://ashescodex.com/> - Primary source
+* <https://ashesofcreation.wiki/> - Official wiki
 
 ## Implementation Notes
 

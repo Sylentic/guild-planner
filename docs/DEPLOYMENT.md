@@ -52,7 +52,7 @@
 5. Copy **Client ID** and **Client Secret**
 6. Add redirect URI:
 
-   ```
+   ```text
    https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback
    ```
 
@@ -134,7 +134,7 @@ After initial setup:
 
 ## Authentication Flow
 
-```
+```text
 User visits /my-clan
        ↓
 Not logged in? → Redirect to /login → Discord OAuth

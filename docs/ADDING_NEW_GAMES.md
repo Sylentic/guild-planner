@@ -47,11 +47,12 @@ Before you start implementing, answer these questions about your game:
 ### Discord Integration
 
 1. **Will this game have Discord notifications?**
-  * If yes, each game gets separate webhook URLs and role IDs in the database
-  * Groups can configure per-game Discord channels
-  * Each game can have separate channels for announcements vs. events
 
-2. **Does the game need role requirements for events?**
+* If yes, each game gets separate webhook URLs and role IDs in the database
+* Groups can configure per-game Discord channels
+* Each game can have separate channels for announcements vs. events
+
+1. **Does the game need role requirements for events?**
    * Examples: AoC uses 5-role system (Tank, Cleric, Bard, Ranged DPS, Melee DPS)
    * RoR uses 3-role system (Tank, Healer, DPS) with 2/2/2 default composition
    * This affects the EventForm component and database schema
