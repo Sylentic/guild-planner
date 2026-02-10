@@ -51,7 +51,7 @@ const mockBuilds = [
   },
   {
     id: 'build-3',
-    name: 'Guild Healer',
+    name: 'Group Healer',
     description: 'Healing spec',
     created_by: 'user-2',
     group_id: 'group-1',
@@ -143,7 +143,7 @@ describe('useBuilds Hook - Phase 2 Sprint 5', () => {
       expect(result.current.publicBuilds[0].visibility).toBe('public');
     });
 
-    it('filters guild builds by group id', async () => {
+    it('filters group builds by group id', async () => {
       const buildsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),

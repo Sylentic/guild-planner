@@ -99,7 +99,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
 
   describe('Data Fetching', () => {
     it('fetches group and characters data on mount', async () => {
-      const mockGroup = { id: 'group-1', slug: 'test-group', name: 'Test Guild' };
+      const mockGroup = { id: 'group-1', slug: 'test-group', name: 'Test Group' };
       
       const mockFrom = jest.fn();
       mockFrom

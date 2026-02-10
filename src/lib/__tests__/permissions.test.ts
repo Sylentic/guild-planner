@@ -295,7 +295,7 @@ describe('Permission System', () => {
   });
 
   describe('Permission Security Tests', () => {
-    it('should NOT allow trial members to manage guild bank', () => {
+    it('should NOT allow trial members to manage group bank', () => {
       expect(roleHasPermission('trial', 'guild_bank_withdraw')).toBe(false);
       expect(roleHasPermission('trial', 'guild_bank_deposit')).toBe(false);
     });
