@@ -17,8 +17,8 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-const { supabase } = require('@/lib/supabase');
-const { notifyNewEvent } = require('@/lib/discord');
+import { supabase } from '@/lib/supabase';
+import { notifyNewEvent } from '@/lib/discord';
 
 const buildEventsQuery = (data: any, error: any = null) => ({
   select: jest.fn().mockReturnValue({

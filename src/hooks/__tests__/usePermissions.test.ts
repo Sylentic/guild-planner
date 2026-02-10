@@ -27,6 +27,7 @@ jest.mock('@/lib/supabase', () => ({
 
 import { useAuth } from '../useAuth';
 import { useGroupMembership } from '../useGroupMembership';
+import { supabase } from '@/lib/supabase';
 
 describe('usePermissions Hook', () => {
   // Setup: Common mocked values
@@ -191,8 +192,7 @@ describe('usePermissions Hook', () => {
         data: { session: mockSession },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       const { result } = renderHook(() => usePermissions('group-123'));
 
@@ -219,8 +219,7 @@ describe('usePermissions Hook', () => {
         data: { session: mockSession },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
@@ -245,8 +244,7 @@ describe('usePermissions Hook', () => {
         data: { session: null },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       global.fetch = jest.fn();
 
@@ -274,8 +272,7 @@ describe('usePermissions Hook', () => {
         data: { session: mockSession },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       const { result } = renderHook(() => usePermissions('group-123'));
 
@@ -296,8 +293,7 @@ describe('usePermissions Hook', () => {
         data: { session: mockSession },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       renderHook(() => usePermissions('group-123'));
 
@@ -706,8 +702,7 @@ describe('usePermissions Hook', () => {
         data: { session: mockSession },
       });
 
-      const supabaseMock = require('@/lib/supabase');
-      supabaseMock.supabase.auth.getSession = mockGetSession;
+      jest.mocked(supabase).auth.getSession = mockGetSession;
 
       const { result } = renderHook(() => usePermissions('group-123'));
 

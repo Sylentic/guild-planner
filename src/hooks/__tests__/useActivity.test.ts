@@ -28,7 +28,7 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-const { supabase } = require('@/lib/supabase');
+import { supabase } from '@/lib/supabase';
 
 describe('useActivity Hook - Phase 2', () => {
   beforeEach(() => {

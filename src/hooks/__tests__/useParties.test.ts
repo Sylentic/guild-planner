@@ -12,7 +12,7 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-const { supabase } = require('@/lib/supabase');
+import { supabase } from '@/lib/supabase';
 
 const mockCharacters = [
   {

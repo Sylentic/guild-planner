@@ -4,6 +4,7 @@
 
 import { validateClanGame, getClanGame } from '../gameValidation';
 import type { GameId } from '../games';
+import { supabase } from '../supabase';
 
 // Mock Supabase
 jest.mock('../supabase', () => ({
@@ -25,13 +26,12 @@ describe('Game Validation', () => {
 
   describe('validateClanGame', () => {
     it('should return true when clan game matches expected game', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: { game: 'aoc' },
         error: null,
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -45,13 +45,12 @@ describe('Game Validation', () => {
     });
 
     it('should return false when clan game does not match expected game', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: { game: 'starcitizen' },
         error: null,
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -64,13 +63,12 @@ describe('Game Validation', () => {
     });
 
     it('should return false on database error', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: null,
         error: new Error('Database error'),
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -83,13 +81,12 @@ describe('Game Validation', () => {
     });
 
     it('should return false when no data found', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: null,
         error: null,
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -104,13 +101,12 @@ describe('Game Validation', () => {
 
   describe('getClanGame', () => {
     it('should return game ID when clan exists', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: { game: 'starcitizen' },
         error: null,
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -123,13 +119,12 @@ describe('Game Validation', () => {
     });
 
     it('should return null on error', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: null,
         error: new Error('Not found'),
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
@@ -142,13 +137,12 @@ describe('Game Validation', () => {
     });
 
     it('should return null when no data found', async () => {
-      const { supabase } = require('../supabase');
       const mockSingle = jest.fn().mockResolvedValue({
         data: null,
         error: null,
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,

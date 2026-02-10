@@ -5,6 +5,8 @@
 
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useGroupData } from '../useGroupData';
+import { canEditCharacter, canDeleteCharacter } from '@/lib/character-permissions';
+import { syncSubscriberShips } from '@/lib/subscriberShips';
 
 jest.mock('@/lib/character-permissions', () => ({
   canEditCharacter: jest.fn(() => true),
@@ -39,7 +41,7 @@ jest.mock('@/lib/supabase', () => ({
   },
 }));
 
-const { supabase } = require('@/lib/supabase');
+import { supabase } from '@/lib/supabase';
 
 describe('useGroupData Hook - Phase 2 Sprint 3', () => {
   beforeEach(() => {
@@ -404,8 +406,6 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
     });
 
     it('mocks character permission functions', async () => {
-      const { canEditCharacter, canDeleteCharacter } = require('@/lib/character-permissions');
-      
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
       await waitFor(() => {
@@ -418,8 +418,6 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
     });
 
     it('mocks Star Citizen subscriber ship sync', async () => {
-      const { syncSubscriberShips } = require('@/lib/subscriberShips');
-      
       const { result } = renderHook(() => useGroupData('test-group', 'starcitizen'));
 
       await waitFor(() => {
