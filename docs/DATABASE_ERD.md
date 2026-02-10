@@ -1,6 +1,6 @@
 # Database Entity Relationship Diagram
 
-This ERD shows the structure of the guild planner database after applying all migrations.
+This ERD shows the structure of the group planner database after applying all migrations.
 
 ```mermaid
 erDiagram
@@ -385,7 +385,7 @@ erDiagram
 
 ### Core Structure
 
-* **groups** (formerly clans) - The central entity representing guilds/clans
+* **groups** (formerly clans) - The central entity representing groups/clans
 * **users** - Application users (account holders)
 * **group\_members** - Junction table linking users to groups with roles
 * **members** - Game characters belonging to groups

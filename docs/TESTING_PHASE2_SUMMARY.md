@@ -50,7 +50,7 @@ Completed Phase 2 rapid sprint testing through Sprint 12 with 12 consecutive tes
 
 ### Overview - DKP Loot Management System
 
-Implemented test suite for the `useLootSystem` hook, handling raiding guild loot distribution via DKP (Dragon Kill Points):
+Implemented test suite for the `useLootSystem` hook, handling raiding group loot distribution via DKP (Dragon Kill Points):
 
 * Loot system CRUD operations (create, update, read active systems)
 * DKP leaderboard with automatic rank calculation (idx + 1)
@@ -126,7 +126,7 @@ Expected output: First character rank=1, second=2, etc.
 
 ### Overview - Party & Roster Management
 
-Implemented test suite for the `useParties` hook, handling guild party creation and member roster assignments:
+Implemented test suite for the `useParties` hook, handling group party creation and member roster assignments:
 
 * Party CRUD operations (create, update, delete)
 * Roster assignment with character enrichment
@@ -311,7 +311,7 @@ Implemented test suite for the `useSiegeEvents` hook - **resuming data hook test
 **Hook Type**: Data (complex multi-table join)\
 **Pattern**: 2-table join (siege\_events + siege\_roster with members)\
 **Complexity**: Medium-High (8 operations + auth integration)\
-**Use Case**: Guild siege coordination in Ashes of Creation
+**Use Case**: Group siege coordination in Ashes of Creation
 
 ### Architecture: 2-Table Join with Auth Integration
 
@@ -640,7 +640,7 @@ npm test
 
 ### Medium-term (Phase 2 Sprint 4+)
 
-1. Complete remaining data hooks (achievements, builds, caravans, guild bank)
+1. Complete remaining data hooks (achievements, builds, caravans, group bank)
 2. Achieve 160-180 total tests by end of Phase 2
 3. Review Phase 1 Sprint 3 (API routes) with lessons learned
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The application has been successfully scaffolded to support multiple games (Ashes of Creation, Star Citizen, and more). Users now select a game after login and can manage organizations/guilds for that game.
+The application has been successfully scaffolded to support multiple games (Ashes of Creation, Star Citizen, and more). Users now select a game after login and can manage organizations/groups for that game.
 
 ## What Was Created
 
@@ -167,7 +167,7 @@ src/
 
 ## Discord Integration (Multi-Game Support)
 
-Guild admins can now configure separate Discord channels and roles for each game:
+Group admins can now configure separate Discord channels and roles for each game:
 
 ### Database Setup
 
@@ -256,7 +256,7 @@ No component changes needed when adding a new game!
 * `src/contexts/GameContext.tsx`
 * `src/components/GameSelector.tsx`
 * `src/components/GameSwitcher.tsx`
-* `src/components/DynamicFavicon.tsx` - Guild icon as favicon
+* `src/components/DynamicFavicon.tsx` - Group icon as favicon
 * `supabase/migrations/034_add_game_support.sql`
 * `supabase/migrations/059_ror_game_constraints.sql`
 * `supabase/migrations/060_standardize_starcitizen_slug.sql`

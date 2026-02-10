@@ -1,4 +1,4 @@
-# Adding a New Game to the Guild Profession Planner
+# Adding a New Game to the Group Profession Planner
 
 This guide walks through the process of adding a new game to the multi-game architecture. We'll use generic placeholders that you can customise for your game.
 
@@ -10,7 +10,7 @@ Before you start implementing, answer these questions about your game:
 
 1. **What is the game name?** (e.g., "Ashes of Creation", "Star Citizen", "Return of Reckoning")
 2. **What is the game slug/ID?** (e.g., "aoc", "starcitizen", "ror" - used in URLs and code)
-3. **What is a short description?** (e.g., "View members, events, and manage guild operations")
+3. **What is a short description?** (e.g., "View members, events, and manage group operations")
 
 ### Structural Organisation
 
@@ -47,9 +47,9 @@ Before you start implementing, answer these questions about your game:
 ### Discord Integration
 
 1. **Will this game have Discord notifications?**
-   * If yes, each game gets separate webhook URLs and role IDs in the database
-   * Guilds can configure per-game Discord channels
-   * Each game can have separate channels for announcements vs. events
+  * If yes, each game gets separate webhook URLs and role IDs in the database
+  * Groups can configure per-game Discord channels
+  * Each game can have separate channels for announcements vs. events
 
 2. **Does the game need role requirements for events?**
    * Examples: AoC uses 5-role system (Tank, Cleric, Bard, Ranged DPS, Melee DPS)
@@ -183,7 +183,7 @@ If you want custom tab names, add to `GAME_TAB_CUSTOMIZATION`:
 export const GAME_TAB_CUSTOMIZATION: Record<GameId, Partial<Record<Tab, string>>> = {
   starcitizen: {
     fleet: 'My Hangar',
-    ships: 'Guild Ships'
+    ships: 'Group Ships'
   },
   {GAME_SLUG}: {
     // Custom names here
@@ -335,7 +335,7 @@ export const NEWWORLD_CONFIG: GameConfig = {
 
 **`en.json` & `es.json`**: Add newworld translation section
 
-Done! New World is now available in your guild planner.
+Done! New World is now available in your group planner.
 
 ***
 
@@ -350,7 +350,7 @@ Each game can have independent Discord webhook URLs and role IDs for:
 * **Announcement role** - Optional role mention for announcements (e.g., `@announcements`)
 * **Events role** - Optional role mention for events (e.g., `@events`)
 
-This allows guilds to:
+This allows groups to:
 
 * Send AoC announcements to one channel and RoR announcements to another
 * Mention different roles per game (important when managing multiple communities)
@@ -422,7 +422,7 @@ await notifyEventReminderForGame('wow', groupData, event, clanName, minutesUntil
 
 #### 4. Settings Page Updates (Automatic)
 
-The `ClanSettings.tsx` component automatically displays webhook and role configuration sections for all games in your registry. Once you add your new game to `GAMES`, guild admins will see a configuration card for it with fields for:
+The `ClanSettings.tsx` component automatically displays webhook and role configuration sections for all games in your registry. Once you add your new game to `GAMES`, group admins will see a configuration card for it with fields for:
 
 * General webhook URL
 * Events webhook URL

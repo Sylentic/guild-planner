@@ -42,7 +42,7 @@ import professions from './professions.json';
 export const WOW_CONFIG = {
   id: 'worldofwarcraft',
   name: 'World of Warcraft',
-  description: 'Guild coordination and raid management',
+  description: 'Group coordination and raid management',
   icon: '🐉',
   features: {
     classes: true,
@@ -88,7 +88,7 @@ Create `supabase/migrations/[number]_add_worldofwarcraft_game.sql`:
 ```sql
 -- Update game types
 INSERT INTO game_types (id, name, description, icon) VALUES
-  ('worldofwarcraft', 'World of Warcraft', 'Guild coordination and raid management', '🐉')
+  ('worldofwarcraft', 'World of Warcraft', 'Group coordination and raid management', '🐉')
 ON CONFLICT (id) DO UPDATE SET 
   name = EXCLUDED.name,
   description = EXCLUDED.description,
@@ -261,8 +261,8 @@ SELECT game FROM user_games WHERE user_id = 'user-id';
 const { data } = await supabase
   .from('clans')
   .insert({
-    name: 'My Guild',
-    slug: 'my-guild',
+    name: 'My Group',
+    slug: 'my-group',
     game: 'aoc',  // ← Tag with game
     created_by: userId,
   });
