@@ -54,8 +54,8 @@
     "alliances": "Allianties",
     "matrix": "Matrix",
     "fleet": "Mijn Hangaar",
-    "ships": "Guild Schepen",
-    "guild-ships": "Guild Schepen",
+    "ships": "Groep Schepen",
+    "guild-ships": "Groep Schepen",
     "manage": "Beheer",
     "siege": "Belegering",
     "economy": "Economie",
@@ -66,8 +66,8 @@
   "auth": {
     "signInWithDiscord": "Log in met Discord",
     "signingIn": "Aan het inloggen...",
-    "signInDescription": "Log in met je Discord account om de skill matrix van je guild te beheren, evenementen aan te maken en groepen te organiseren.",
-    "welcome": "Welkom bij Guild Planner",
+    "signInDescription": "Log in met je Discord account om de skill matrix van je groep te beheren, evenementen aan te maken en groepen te organiseren.",
+    "welcome": "Welkom bij Groep Planner",
     "pleaseSignIn": "Log in om toegang te krijgen tot instellingen",
     "goToLogin": "Ga naar Login",
     "signedInAs": "Ingelogd als"
@@ -82,7 +82,7 @@
     "pendingApproval": "Je aanmelding om lid te worden van {{name}} wordt beoordeeld door een beheerder of officier.",
     "accessAfterApproval": "Je krijgt toegang tot clan gegevens zodra je bent goedgekeurd.",
     "charactersCount": "{{count}} personages",
-    "noCharacters": "Nog geen personages. Voeg hierboven je eerste guild personage toe!",
+    "noCharacters": "Nog geen personages. Voeg hierboven je eerste groep personage toe!",
     "noCharactersMatch": "Geen personages komen overeen met je filters.",
     "viewPublicPage": "Bekijk openbare pagina",
     "admin": "beheerder",
@@ -176,7 +176,7 @@
   "recruitment": {
     "settings": "Werving instellingen",
     "publicProfile": "Openbaar profiel",
-    "publicProfileDesc": "Sta iedereen toe om de openbare pagina van je guild te bekijken",
+    "publicProfileDesc": "Sta iedereen toe om de openbare pagina van je groep te bekijken",
     "openRecruitment": "Open werving",
     "openRecruitmentDesc": "Sta spelers toe om aanmeldingen in te dienen",
     "publicDescription": "Openbare beschrijving",
@@ -283,22 +283,22 @@
     "clanNotFound": "Clan niet gevonden",
     "clanNotFoundDesc": "Deze clan bestaat niet of is niet openbaar.",
     "goHome": "Ga naar Home",
-    "ashesOfCreationGuild": "Ashes of Creation Guild",
+    "ashesOfCreationGuild": "Ashes of Creation Groep",
     "memberLogin": "Leden login",
-    "joinOurGuild": "Word lid van onze Guild",
+    "joinOurGuild": "Word lid van onze Groep",
     "aboutUs": "Over ons",
-    "guildStats": "Guild statistieken",
+    "guildStats": "Groep statistieken",
     "members": "Leden",
     "professionCoverage": "Beroepen dekking",
     "characters": "Personages",
     "upcomingEvents": "Komende evenementen",
     "applyToJoin": "Aanmelden om lid te worden",
     "recruitmentClosed": "Werving is momenteel gesloten",
-    "guildNotPublic": "Dit guild profiel is niet openbaar",
+    "guildNotPublic": "Dit groep profiel is niet openbaar",
     "weLookingFor": "We zoeken naar",
-    "joinOurGuildTitle": "Word lid van onze Guild!",
-    "poweredBy": "Mogelijk gemaakt door AoC Guild Profession Planner",
-    "createOwnPage": "Maak je eigen guild pagina →"
+    "joinOurGuildTitle": "Word lid van onze Groep!",
+    "poweredBy": "Mogelijk gemaakt door AoC Groep Profession Planner",
+    "createOwnPage": "Maak je eigen groep pagina →"
   },
   "filters": {
     "title": "Filters",
@@ -378,8 +378,8 @@
     "allRightsReserved": "Alle rechten voorbehouden"
   },
   "home": {
-    "title": "Multi-Game Guild Planner",
-    "subtitle": "Beheer je guild in elke game - Ashes of Creation, Star Citizen en meer",
+    "title": "Multi-Game Groep Planner",
+    "subtitle": "Beheer je groep in elke game - Ashes of Creation, Star Citizen en meer",
     "enterClanPlaceholder": "Voer je clan naam in...",
     "loggedInHint": "Je kunt deze clan aanmaken of lid worden",
     "notLoggedInHint": "Log in met Discord om clans aan te maken of lid te worden",
@@ -388,9 +388,9 @@
     "featureMemberTitle": "Leden beheer",
     "featureMemberDesc": "Volg leden, rollen en rechten binnen je organisatie",
     "featureSyncTitle": "Real-time synchronisatie",
-    "featureSyncDesc": "Alle wijzigingen worden direct gesynchroniseerd in je hele guild",
+    "featureSyncDesc": "Alle wijzigingen worden direct gesynchroniseerd in je hele groep",
     "featureInsightsTitle": "Inzichten & rapporten",
-    "featureInsightsDesc": "Krijg bruikbare inzichten over de activiteit van je guild"
+    "featureInsightsDesc": "Krijg bruikbare inzichten over de activiteit van je groep"
   },
   "nodes": {
     "title": "Node burgerschap",
@@ -407,9 +407,9 @@
     "regionPlaceholder": "bijv. Noordelijke bergen",
     "mayor": "Burgemeester",
     "councilMember": "Raadslid",
-    "hasMayor": "Heeft guild burgemeester",
+    "hasMayor": "Heeft groep burgemeester",
     "noCitizenships": "Geen burgerschap ingesteld",
-    "noCitizenshipsDesc": "Voeg burgerschap informatie toe aan personages om de node verdeling van de guild te zien.",
+    "noCitizenshipsDesc": "Voeg burgerschap informatie toe aan personages om de node verdeling van de groep te zien.",
     "unassignedMembers": "{{count}} leden hebben geen burgerschap toegewezen",
     "totalNodes": "{{count}} nodes",
     "membersAssigned": "leden toegewezen",
@@ -524,7 +524,7 @@
     }
   },
   "bank": {
-    "title": "Guild bank",
+    "title": "Groep bank",
     "gold": "Goud",
     "inventory": "Inventaris",
     "transactions": "Transacties",
@@ -535,7 +535,7 @@
     "searchResources": "Zoek grondstoffen...",
     "allCategories": "Alle categorieën",
     "emptyInventory": "Bank is leeg",
-    "emptyInventoryDesc": "Stort grondstoffen om de inventaris van je guild bij te houden.",
+    "emptyInventoryDesc": "Stort grondstoffen om de inventaris van je groep bij te houden.",
     "noTransactions": "Nog geen transacties",
     "reserved": "gereserveerd",
     "system": "Systeem",
@@ -548,7 +548,7 @@
     "denyRequest": "Afwijzen",
     "fulfillRequest": "Uitvoeren",
     "depositNotesPlaceholder": "bijv. Raid drops van Dragon Keep",
-    "withdrawNotesPlaceholder": "bijv. Voor guild ambachtsproject",
+    "withdrawNotesPlaceholder": "bijv. Voor groep ambachtsproject",
     "errorSelectResource": "Selecteer een grondstof",
     "errorInvalidQuantity": "Voer een geldige hoeveelheid in",
     "errorInsufficientResources": "Onvoldoende grondstoffen in bank",
@@ -576,16 +576,16 @@
     "small": "Klein (8x8)",
     "medium": "Middel (16x16)",
     "large": "Groot (32x32)",
-    "isPublic": "Openbaar voor guild",
+    "isPublic": "Openbaar voor groep",
     "buildings": "Gebouwen",
     "addBuilding": "Gebouw toevoegen",
     "buildingType": "Gebouw type",
     "tier": "Niveau",
-    "guildAccessible": "Guild toegang",
+    "guildAccessible": "Groep toegang",
     "usageFee": "Gebruikskosten",
     "schedule": "Beschikbaarheidsschema",
     "noFreeholds": "Geen freeholds geregistreerd",
-    "noFreeholdsDesc": "Registreer je freehold om gebouwen te delen met je guild.",
+    "noFreeholdsDesc": "Registreer je freehold om gebouwen te delen met je groep.",
     "buildingTypes": {
       "smelter": "Smelter",
       "lumbermill": "Lumber Mill",
@@ -643,7 +643,7 @@
     "errorDepartureRequired": "Vertrektijd is verplicht",
     "types": {
       "personal": "Persoonlijk",
-      "guild": "Guild",
+      "guild": "Groep",
       "trade_route": "Handelsroute",
       "escort": "Escorte missie"
     },
@@ -667,36 +667,36 @@
     "description": "Beschrijving",
     "descriptionPlaceholder": "Beschrijf het doel van deze alliantie...",
     "descriptionHint": "Leg het type alliantie uit (commercieel, militair, wederzijdse verdediging, etc.)",
-    "memberGuilds": "Lid guilds",
-    "isLeader": "Leider guild",
+    "memberGuilds": "Lid groepen",
+    "isLeader": "Leider groep",
     "canInvite": "Kan uitnodigen",
     "canCreateEvents": "Kan evenementen aanmaken",
-    "inviteGuild": "Guild uitnodigen",
+    "inviteGuild": "Groep uitnodigen",
     "leaveAlliance": "Alliantie verlaten",
     "dissolveAlliance": "Alliantie ontbinden",
     "sharedEvents": "Alliantie evenementen",
     "noAlliances": "Geen allianties",
-    "noAlliancesDesc": "Maak of sluit je aan bij een alliantie om te coördineren met andere guilds.",
+    "noAlliancesDesc": "Maak of sluit je aan bij een alliantie om te coördineren met andere groepen.",
     "publicAlliance": "Openbare alliantie",
     "privateAlliance": "Privé alliantie",
-    "publicDesc": "Elke guild kan zien en verzoeken om lid te worden",
-    "privateDesc": "Alleen uitgenodigde guilds kunnen lid worden",
+    "publicDesc": "Elke groep kan zien en verzoeken om lid te worden",
+    "privateDesc": "Alleen uitgenodigde groepen kunnen lid worden",
     "makePublic": "Alliantie openbaar maken",
     "makePrivate": "Alliantie privé maken",
-    "maxGuilds": "Maximum guilds",
-    "guilds": "guilds",
-    "searchClan": "Zoek naar een guild...",
-    "searchClanToInvite": "Zoek naar een guild om uit te nodigen...",
-    "noClanResults": "Geen guilds gevonden die overeenkomen met je zoekopdracht",
-    "inviteClansOnCreate": "Guilds uitnodigen (optioneel)",
-    "inviteClansHint": "Je kunt guilds nu of later uitnodigen vanaf de alliantie pagina",
-    "inviteToAlliance": "Nodig een guild uit om lid te worden van {{alliance}}",
-    "selectClan": "Selecteer guild",
+    "maxGuilds": "Maximum groepen",
+    "guilds": "groepen",
+    "searchClan": "Zoek naar een groep...",
+    "searchClanToInvite": "Zoek naar een groep om uit te nodigen...",
+    "noClanResults": "Geen groepen gevonden die overeenkomen met je zoekopdracht",
+    "inviteClansOnCreate": "Groepen uitnodigen (optioneel)",
+    "inviteClansHint": "Je kunt groepen nu of later uitnodigen vanaf de alliantie pagina",
+    "inviteToAlliance": "Nodig een groep uit om lid te worden van {{alliance}}",
+    "selectClan": "Selecteer groep",
     "inviteMessage": "Uitnodigingsbericht",
     "inviteMessagePlaceholder": "Voeg een persoonlijk bericht toe aan de uitnodiging...",
     "sendInvite": "Uitnodiging versturen",
     "errorNameRequired": "Alliantie naam is verplicht",
-    "errorSelectClan": "Selecteer een guild om uit te nodigen",
+    "errorSelectClan": "Selecteer een groep om uit te nodigen",
     "statuses": {
       "pending": "In afwachting",
       "active": "Actief",
@@ -727,7 +727,7 @@
     "critical": "Kritiek",
     "daysInactive": "dagen inactief",
     "noInactiveMembers": "Geen inactieve leden",
-    "noInactiveMembersDesc": "Alle guild leden zijn recentelijk actief geweest!",
+    "noInactiveMembersDesc": "Alle groep leden zijn recentelijk actief geweest!",
     "inactivityAlerts": "Inactiviteit meldingen",
     "pendingAlerts": "Openstaande meldingen",
     "acknowledge": "Bevestigen",
@@ -766,8 +766,8 @@
     "migrationMessage": "De schepen tracking functie vereist een database migratie. Voer de laatste migraties uit om deze functie in te schakelen."
   },
   "ships": {
-    "title": "Guild schepen",
-    "subtitle": "Guild schepen per type en rol",
+    "title": "Groep schepen",
+    "subtitle": "Groep schepen per type en rol",
     "overview": "Schepen overzicht",
     "totalShips": "Totaal schepen",
     "shipsSection": "Schepen",
@@ -787,7 +787,7 @@
   },
   "achievements": {
     "title": "Prestaties",
-    "guildAchievements": "Guild prestaties",
+    "guildAchievements": "Groep prestaties",
     "unlocked": "Ontgrendeld",
     "locked": "Vergrendeld",
     "progress": "Voortgang",
@@ -795,7 +795,7 @@
     "points": "ptn",
     "totalPoints": "Totaal punten",
     "categories": {
-      "guild": "Guild",
+      "guild": "Groep",
       "pvp": "PvP",
       "economy": "Economie",
       "community": "Community",
@@ -824,7 +824,7 @@
     "role": "Rol",
     "visibility": "Zichtbaarheid",
     "private": "Privé",
-    "guild": "Alleen guild",
+    "guild": "Alleen groep",
     "public": "Openbaar",
     "views": "Weergaven",
     "likes": "Likes",
@@ -868,12 +868,12 @@
       "description": "Personages van andere leden verwijderen"
     },
     "guild_bank_withdraw": {
-      "name": "Opnemen uit guild bank",
-      "description": "Items opnemen uit de guild bank"
+      "name": "Opnemen uit groep bank",
+      "description": "Items opnemen uit de groep bank"
     },
     "guild_bank_deposit": {
-      "name": "Storten in guild bank",
-      "description": "Items storten in de guild bank"
+      "name": "Storten in groep bank",
+      "description": "Items storten in de groep bank"
     },
     "guild_bank_view_history": {
       "name": "Bank geschiedenis bekijken",
@@ -960,8 +960,8 @@
       "description": "Wervingsaanmeldingen en berichten beheren"
     },
     "settings_edit": {
-      "name": "Guild instellingen bewerken",
-      "description": "Algemene guild instellingen bewerken"
+      "name": "Groep instellingen bewerken",
+      "description": "Algemene groep instellingen bewerken"
     },
     "settings_edit_roles": {
       "name": "Rollen beheren",
@@ -969,7 +969,7 @@
     },
     "settings_view_permissions": {
       "name": "Rechten bekijken",
-      "description": "De rechtenstructuur van de guild bekijken"
+      "description": "De rechtenstructuur van de groep bekijken"
     },
     "ships_create": {
       "name": "Schip aanmaken",

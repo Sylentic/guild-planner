@@ -1,8 +1,8 @@
-# Guild Planner
+# Group Planner
 
-A comprehensive guild management and planning tool supporting multiple MMOs.
+A comprehensive group management and planning tool supporting multiple MMOs.
 
-> **Inspired by** the original [AoC Guild Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
+> **Inspired by** the original [AoC Group Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
 
 ## Supported Games
 
@@ -13,9 +13,9 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 ## Features
 
 * 🎮 Multi-game support with game-specific features
-* 👥 Guild/Squadron/Warband management with role-based permissions
-* 📊 Guild coverage matrix (AoC) and fleet overview (Star Citizen)
-* 🛢️ Guild bank, caravan, and economy tracking
+* 👥 Group/Squadron/Warband management with role-based permissions
+* 📊 Group coverage matrix (AoC) and fleet overview (Star Citizen)
+* 🛢️ Group bank, caravan, and economy tracking
 * 📅 Event scheduling with RSVP system
 * 🔐 Customizable role-based permissions per group
 * ⚙️ Discord integration for notifications and recruitment
