@@ -1,25 +1,14 @@
 'use client';
 
-import { use } from 'react';
-import { GameLayout } from '../GameLayout';
-import { useAuthContext } from '@/components/auth/AuthProvider';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { AlliancesTab } from '../tabs/AlliancesTab';
 
-export default function AlliancesPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
-  const { group, characters } = useGroupData(groupSlug, gameSlug);
-  const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
+export default function AlliancesPage() {
+  const { group, userId, canManageMembers } = useGameLayoutContext();
 
-  if (!group || !user) {
-    return <GameLayout params={params} activeTab="alliances"><div /></GameLayout>;
+  if (!group || !userId) {
+    return null;
   }
 
-  return (
-    <GameLayout params={params} activeTab="alliances" characterCount={characters.length}>
-      <AlliancesTab groupId={group.id} isOfficer={canManageMembers} />
-    </GameLayout>
-  );
+  return <AlliancesTab groupId={group.id} isOfficer={canManageMembers} />;
 }

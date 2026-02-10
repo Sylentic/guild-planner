@@ -17,30 +17,38 @@ export function ClanErrorScreen({
   homeLabel?: string;
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center max-w-md mx-auto p-6">
-        <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-white mb-2">{title}</h2>
-        <p className="text-slate-400 mb-6">{message}</p>
+    <div className="min-h-screen flex items-center justify-center bg-grid-pattern px-4">
+      {/* Background glow */}
+      <div className="absolute inset-0 overflow-hidden -z-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-red-500/10 rounded-full blur-[100px]" />
+      </div>
+      <div className="text-center max-w-md mx-auto">
+        <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+          <AlertCircle className="w-7 h-7 text-red-400" />
+        </div>
+        <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3">{title}</h2>
+        <p className="text-slate-400 mb-6 text-sm sm:text-base">{message}</p>
         {error && (
-          <div className="bg-slate-800/50 rounded p-4 mb-6 font-mono text-xs text-red-300 text-left overflow-auto max-h-32">
+          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-xl p-4 mb-6 font-mono text-xs text-red-300 text-left overflow-auto max-h-32">
             {error}
           </div>
         )}
-        {onRetry && (
-          <button
-            onClick={onRetry}
-            className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className="px-6 py-3 bg-slate-800/60 hover:bg-slate-700/60 backdrop-blur-sm border border-slate-700/50 text-white font-medium rounded-xl transition-all cursor-pointer"
+            >
+              {retryLabel || 'Retry'}
+            </button>
+          )}
+          <Link
+            href="/"
+            className="px-6 py-3 text-slate-400 hover:text-white transition-colors text-sm sm:text-base"
           >
-            {retryLabel || 'Retry'}
-          </button>
-        )}
-        <Link
-          href="/"
-          className="block mt-4 text-slate-400 hover:text-white transition-colors"
-        >
-          {homeLabel || 'Return Home'}
-        </Link>
+            {homeLabel || 'Return Home'}
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PublicClanEventsView } from '@/components/views/PublicClanEventsView';
+import { PublicEventsPageWrapper } from '@/components/views/PublicEventsPageWrapper';
 
 interface PageProps {
   params: Promise<{ group: string }>;
@@ -34,11 +35,9 @@ export default async function PublicGroupEventsPage(props: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-900 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <PublicClanEventsView groupId={group.id} groupName={group.name} />
-      </div>
-    </main>
+    <PublicEventsPageWrapper>
+      <PublicClanEventsView groupId={group.id} groupName={group.name} groupSlug={group.slug} />
+    </PublicEventsPageWrapper>
   );
 }
 

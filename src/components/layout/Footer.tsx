@@ -15,7 +15,7 @@ export function InlineFooter({ variant = 'default' }: { variant?: 'default' | 'm
     : undefined;
   
   const className = variant === 'default' 
-    ? 'border-slate-800 bg-slate-950/95'
+    ? 'border-t border-slate-800/50 bg-slate-950/80 backdrop-blur-sm'
     : '';
 
   const buildDate = new Date(BUILD_TIMESTAMP).toLocaleDateString('en-GB', {
@@ -28,17 +28,17 @@ export function InlineFooter({ variant = 'default' }: { variant?: 'default' | 'm
 
   return (
     <footer className={className} style={style}>
-      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2 text-[10px] md:text-xs text-slate-400 py-4">
+      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-2 text-[10px] md:text-xs text-slate-500 py-4">
         <div className="flex items-center gap-3 justify-center flex-wrap">
           <a
             href="https://github.com/pandamonium-gaming"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-orange-400 hover:text-orange-300 transition-colors inline-flex items-center gap-1"
+            className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1.5"
           >
             <span>Pandamonium Gaming</span>
             <svg
-              className="w-3 h-3"
+              className="w-3.5 h-3.5"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -50,10 +50,12 @@ export function InlineFooter({ variant = 'default' }: { variant?: 'default' | 'm
               />
             </svg>
           </a>
+          <span className="text-slate-600">|</span>
           <span>&copy; {new Date().getFullYear()} Some Rights Reserved</span>
-          <span>Based on <a href="https://github.com/igonzalezespi/aoc-guild-profession-planner" target="_blank" className="text-orange-400 hover:text-orange-300 transition-colors inline-flex items-center gap-1" rel="noopener noreferrer">AoC Guild Profession Planner</a> by Iván González Espí</span>
+          <span className="text-slate-600 hidden sm:inline">|</span>
+          <span className="hidden sm:inline">Based on <a href="https://github.com/igonzalezespi/aoc-guild-profession-planner" target="_blank" className="text-indigo-400 hover:text-indigo-300 transition-colors" rel="noopener noreferrer">AoC Guild Profession Planner</a></span>
         </div>
-        <div className="text-[9px] md:text-[10px] text-slate-500 hidden md:block">
+        <div className="text-[9px] md:text-[10px] text-slate-600 hidden md:block">
           <span title={BUILD_TIMESTAMP}>Build: {buildDate}</span>
         </div>
       </div>
