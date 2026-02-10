@@ -1,7 +1,6 @@
 'use client';
 
 import { use, useState } from 'react';
-import { GameLayout } from '../GameLayout';
 import { CharactersTab } from '../tabs/CharactersTab';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useAuthContext } from '@/components/auth/AuthProvider';
@@ -25,11 +24,11 @@ export default function CharactersPage({ params }: { params: Promise<{ group: st
   const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="characters"><div /></GameLayout>;
+    return null;
   }
 
   return (
-    <GameLayout params={params} activeTab="characters" characterCount={characters.length}>
+    <>
       <CharactersTab
         groupId={group.id}
         characters={characters}
@@ -52,6 +51,6 @@ export default function CharactersPage({ params }: { params: Promise<{ group: st
         onCancel={() => setEditingCharacter(null)}
         gameSlug={gameSlug}
       />
-    </GameLayout>
+    </>
   );
 }

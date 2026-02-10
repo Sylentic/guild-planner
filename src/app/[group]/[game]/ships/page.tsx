@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { GameLayout } from '../GameLayout';
 import { ShipsView } from '@/components/views/ShipsView';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useAuthContext } from '@/components/auth/AuthProvider';
@@ -19,18 +18,16 @@ export default function ShipsPage({ params }: { params: Promise<{ group: string;
   const canManage = hasPermission('ships_edit_any');
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="ships"><div /></GameLayout>;
+    return null;
   }
 
   return (
-    <GameLayout params={params} activeTab="ships">
-      <ShipsView
-        characters={[]}
-        userId={user.id}
-        canManage={canManage}
-        groupId={group.id}
-        gameSlug={gameSlug}
-      />
-    </GameLayout>
+    <ShipsView
+      characters={[]}
+      userId={user.id}
+      canManage={canManage}
+      groupId={group.id}
+      gameSlug={gameSlug}
+    />
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { GameLayout } from '../GameLayout';
 import { FleetView } from '@/components/views/FleetView';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useAuthContext } from '@/components/auth/AuthProvider';
@@ -19,17 +18,15 @@ export default function FleetPage({ params }: { params: Promise<{ group: string;
   const canManage = hasPermission('ships_create');
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="matrix"><div /></GameLayout>;
+    return null;
   }
 
   return (
-    <GameLayout params={params} activeTab="fleet" characterCount={characters.length}>
-      <FleetView
-        characters={characters}
-        userId={user.id}
-        canManage={canManage}
-        groupId={group.id}
-      />
-    </GameLayout>
+    <FleetView
+      characters={characters}
+      userId={user.id}
+      canManage={canManage}
+      groupId={group.id}
+    />
   );
 }

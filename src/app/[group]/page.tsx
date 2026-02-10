@@ -354,25 +354,26 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
             return (
             <div
               key={game.slug}
-              className="group relative overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-sm p-5 sm:p-6 text-left hover:border-indigo-500/30 transition-all duration-300"
+              className="group relative overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/40 backdrop-blur-sm text-left hover:border-indigo-500/30 transition-all duration-300"
             >
               {/* Background gradient on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
               {/* Archived badge */}
               {isArchived && (
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 bg-amber-900/40 border border-amber-700/50 rounded-full">
+                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 bg-amber-900/40 border border-amber-700/50 rounded-full z-10">
                   <Archive className="w-3.5 h-3.5 text-amber-400" />
                   <span className="text-xs font-medium text-amber-300">Archived</span>
                 </div>
               )}
 
-              {/* Content */}
-              <div className="relative flex items-center gap-3 sm:gap-4">
-                <button
-                  onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                  className="shrink-0 group/icon cursor-pointer"
-                >
+              {/* Main clickable Link */}
+              <Link
+                href={`/${groupSlug}/${game.slug}`}
+                prefetch={true}
+                className="relative flex items-center gap-3 sm:gap-4 p-5 sm:p-6"
+              >
+                <div className="shrink-0 group/icon">
                   <GameIcon 
                     icon={game.icon}
                     iconUrl={game.iconUrl}
@@ -380,34 +381,28 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                     size={80}
                     className="group-hover/icon:scale-105 transition-transform sm:w-24 sm:h-24"
                   />
-                </button>
+                </div>
                 
-                <button
-                  onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                  className="flex-1 text-left cursor-pointer min-w-0"
-                >
-                  <h3 className="text-base sm:text-xl font-semibold text-white hover:text-indigo-300 transition-colors mb-1">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-xl font-semibold text-white group-hover:text-indigo-300 transition-colors mb-1">
                     {game.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 hover:text-slate-300 transition-colors line-clamp-2">
+                  <p className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-300 transition-colors line-clamp-2">
                     {game.description}
                   </p>
-                </button>
+                </div>
 
-                <button
-                  onClick={() => router.push(`/${groupSlug}/${game.slug}`)}
-                  className="shrink-0 text-slate-500 hover:text-indigo-400 transition-all transform group-hover:translate-x-1"
-                >
+                <div className="shrink-0 text-slate-500 group-hover:text-indigo-400 transition-all transform group-hover:translate-x-1">
                   <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-              </div>
+                </div>
+              </Link>
 
               {/* Admin delete button */}
               {canEditSettings && !isArchived && (
                 <button
-                  onClick={() => handleRemoveGame(game.slug)}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveGame(game.slug); }}
                   disabled={removingGame === game.slug}
-                  className="absolute top-3 right-3 p-2 opacity-0 group-hover:opacity-100 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all"
+                  className="absolute top-3 right-3 p-2 opacity-0 group-hover:opacity-100 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all z-10"
                   title="Remove this game from the group"
                 >
                   {removingGame === game.slug ? (

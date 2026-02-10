@@ -111,6 +111,7 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
               key={tab}
               ref={isActive ? activeRef : null}
               href={getTabPath(tab)}
+              prefetch={true}
               className={`
                 relative flex items-center gap-2 px-4 py-2.5 rounded-xl whitespace-nowrap
                 transition-all duration-200 shrink-0

@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { GameLayout } from '../GameLayout';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useGroupData } from '@/hooks/useGroupData';
 import { BuildsTab } from '../tabs/BuildsTab';
@@ -12,12 +11,8 @@ export default function BuildsPage({ params }: { params: Promise<{ group: string
   const { group, characters } = useGroupData(groupSlug, gameSlug);
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="builds"><div /></GameLayout>;
+    return null;
   }
 
-  return (
-    <GameLayout params={params} activeTab="builds" characterCount={characters.length}>
-      <BuildsTab groupId={group.id} />
-    </GameLayout>
-  );
+  return <BuildsTab groupId={group.id} />;
 }

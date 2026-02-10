@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { GameLayout } from '../GameLayout';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useGroupData } from '@/hooks/useGroupData';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
@@ -29,33 +28,31 @@ export default function EventsPage({ params }: { params: Promise<{ group: string
   } = useEvents(group?.id || null, user?.id || null, gameSlug, groupSlug);
 
   if (!group || !user) {
-    return <GameLayout params={params} activeTab="events"><div /></GameLayout>;
+    return null;
   }
 
   return (
-    <GameLayout params={params} activeTab="events">
-      <EventsList
-        events={events}
-        announcements={announcements}
-        timezone={profile?.timezone || 'UTC'}
-        groupId={group.id}
-        groupSlug={groupSlug}
-        gameSlug={gameSlug}
-        userId={user.id}
-        characters={characters}
-        onCreateEvent={async (eventData, sendDiscordNotification) => {
-          await createEvent(eventData, sendDiscordNotification);
-        }}
-        onUpdateEvent={updateEvent}
-        onCancelEvent={cancelEvent}
-        onDeleteEvent={deleteEvent}
-        onRsvp={setRsvp}
-        onCreateAnnouncement={async (announcementData, sendDiscordNotification) => {
-          await createAnnouncement(announcementData, sendDiscordNotification);
-        }}
-        onUpdateAnnouncement={updateAnnouncement}
-        onDeleteAnnouncement={deleteAnnouncement}
-      />
-    </GameLayout>
+    <EventsList
+      events={events}
+      announcements={announcements}
+      timezone={profile?.timezone || 'UTC'}
+      groupId={group.id}
+      groupSlug={groupSlug}
+      gameSlug={gameSlug}
+      userId={user.id}
+      characters={characters}
+      onCreateEvent={async (eventData, sendDiscordNotification) => {
+        await createEvent(eventData, sendDiscordNotification);
+      }}
+      onUpdateEvent={updateEvent}
+      onCancelEvent={cancelEvent}
+      onDeleteEvent={deleteEvent}
+      onRsvp={setRsvp}
+      onCreateAnnouncement={async (announcementData, sendDiscordNotification) => {
+        await createAnnouncement(announcementData, sendDiscordNotification);
+      }}
+      onUpdateAnnouncement={updateAnnouncement}
+      onDeleteAnnouncement={deleteAnnouncement}
+    />
   );
 }
