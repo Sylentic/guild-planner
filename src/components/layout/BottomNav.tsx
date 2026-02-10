@@ -4,7 +4,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useState, useEffect, useRef } from 'react';
 
-import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal, Sword, Trophy, BookOpen, Handshake, Hammer, TrendingUp, Ship } from 'lucide-react';
+import { Users, Calendar, Grid3X3, Settings, Warehouse, MoreHorizontal, Sword, Trophy, BookOpen, Handshake, Hammer, TrendingUp, Ship, ChevronUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 import { Tab, GAME_TAB_EXCLUSIONS } from '@/components/common/tabs';
@@ -16,34 +16,25 @@ interface BottomNavProps {
   groupSlug: string;
 }
 
-// Sub-menu items for "More" grouping
-const MORE_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string }[] = [
+// All available nav items - order matters for display
+const ALL_NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
+  { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
+  { tab: 'events', icon: Calendar, labelKey: 'nav.events' },
+  { tab: 'matrix', icon: Grid3X3, labelKey: 'nav.matrix' },
+  { tab: 'ships', icon: Ship, labelKey: 'nav.guild-ships' },
   { tab: 'parties', icon: Users, labelKey: 'nav.parties' },
   { tab: 'siege', icon: Sword, labelKey: 'nav.siege' },
   { tab: 'achievements', icon: Trophy, labelKey: 'nav.achievements' },
   { tab: 'alliances', icon: Handshake, labelKey: 'nav.alliances' },
   { tab: 'builds', icon: Hammer, labelKey: 'nav.builds' },
   { tab: 'economy', icon: TrendingUp, labelKey: 'nav.economy' },
+  { tab: 'manage', icon: Settings, labelKey: 'nav.manage', requiresManage: true },
 ];
 
 export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }: BottomNavProps) {
   const { t } = useLanguage();
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const moreMenuRef = useRef<HTMLDivElement>(null);
-  
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
-        setShowMoreMenu(false);
-      }
-    };
-
-    if (showMoreMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showMoreMenu]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLAnchorElement>(null);
   
   const getTabPath = (tab: Tab): string => {
     const basePath = `/${groupSlug}/${gameSlug}`;
@@ -63,189 +54,95 @@ export function BottomNav({ activeTab, canManage, gameSlug = 'aoc', groupSlug }:
       default: return `${basePath}/characters`;
     }
   };
-  
-  const NAV_ITEMS: { tab: Tab; icon: React.ElementType; labelKey: string; requiresManage?: boolean }[] = [
-    { tab: 'characters', icon: Users, labelKey: 'nav.characters' },
-    { tab: 'events', icon: Calendar, labelKey: 'nav.events' },
-    { tab: 'matrix', icon: Grid3X3, labelKey: gameSlug === 'starcitizen' ? 'nav.fleet' : 'nav.matrix' },
-    { tab: 'manage', icon: Settings, labelKey: 'nav.manage', requiresManage: true },
-  ];
+
+  // Get custom label for specific game/tab combinations
+  const getTabLabel = (tab: Tab, labelKey: string): string => {
+    if (gameSlug === 'starcitizen' && tab === 'matrix') {
+      return t('nav.fleet');
+    }
+    return t(labelKey);
+  };
   
   const excludedTabs = GAME_TAB_EXCLUSIONS[gameSlug] || [];
-  const visibleItems = NAV_ITEMS.filter(item => {
+  const visibleItems = ALL_NAV_ITEMS.filter(item => {
     if (excludedTabs.includes(item.tab)) return false;
     if (item.requiresManage && !canManage) return false;
     return true;
   });
 
-  // Check if any more items are visible (not excluded)
-  let visibleMoreItems = MORE_ITEMS.filter(item => !excludedTabs.includes(item.tab));
-  // Add Ships Overview for Star Citizen
-  if (gameSlug === 'starcitizen') {
-    visibleMoreItems = [
-      { tab: 'ships' as Tab, icon: Ship, labelKey: 'nav.guild-ships' },
-      ...visibleMoreItems,
-    ];
-  }
-  const isMoreItemActive = visibleMoreItems.some(item => item.tab === activeTab) || activeTab === 'more';
-  
-  // Always show More button, but determine if it's a dropdown or direct link
-  const hasMoreDropdown = visibleMoreItems.length > 0;
-  const showMoreButton = true; // Always show for all games
+  // Scroll active tab into view on mount
+  useEffect(() => {
+    if (activeRef.current && scrollRef.current) {
+      const container = scrollRef.current;
+      const activeEl = activeRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const activeRect = activeEl.getBoundingClientRect();
+      
+      // Center the active item
+      const scrollLeft = activeEl.offsetLeft - (containerRect.width / 2) + (activeRect.width / 2);
+      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    }
+  }, [activeTab]);
   
   return (
     <nav 
-      className="z-50"
+      className="relative z-50"
       style={{ 
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        background: 'rgba(15, 23, 42, 0.98)',
-        backdropFilter: 'blur(12px)',
-        borderTop: '1px solid rgba(71, 85, 105, 0.5)',
+        background: 'rgba(3, 7, 18, 0.95)',
+        backdropFilter: 'blur(20px)',
+        borderTop: '1px solid rgba(99, 102, 241, 0.1)',
       }}
     >
-      <div className="flex items-stretch" style={{ height: '64px' }}>
+      {/* Scrollable tab container */}
+      <div 
+        ref={scrollRef}
+        className="flex items-center justify-center gap-1.5 px-3 py-2.5 overflow-x-auto scrollbar-hide"
+        style={{ 
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
         {visibleItems.map(({ tab, icon: Icon, labelKey }) => {
           const isActive = activeTab === tab;
           return (
             <Link
               key={tab}
+              ref={isActive ? activeRef : null}
               href={getTabPath(tab)}
-              className="relative flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200"
-              style={{
-                color: isActive ? '#fb923c' : '#94a3b8',
-                background: isActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
-              }}
+              className={`
+                relative flex items-center gap-2 px-4 py-2.5 rounded-xl whitespace-nowrap
+                transition-all duration-200 shrink-0
+                ${isActive 
+                  ? 'bg-indigo-500/20 text-indigo-300 shadow-lg shadow-indigo-500/10' 
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }
+              `}
             >
-              {/* Active indicator bar - positioned at top of this button */}
-              {isActive && (
-                <span 
-                  className="absolute top-0 w-10 h-0.5 rounded-full bg-orange-400"
-                  style={{ left: '50%', transform: 'translateX(-50%)' }}
-                />
-              )}
               <Icon 
-                size={24} 
-                strokeWidth={isActive ? 2.5 : 1.8}
-                style={{
-                  filter: isActive ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.4))' : 'none',
-                }}
+                size={18} 
+                strokeWidth={isActive ? 2.5 : 2}
+                className={isActive ? 'text-indigo-400' : ''}
               />
               <span 
-                className="font-medium"
-                style={{ 
-                  fontSize: '10px',
-                  letterSpacing: '0.02em',
-                  opacity: isActive ? 1 : 0.8,
-                }}
+                className={`text-sm font-medium ${isActive ? 'text-indigo-300' : ''}`}
               >
-                {t(labelKey)}
+                {getTabLabel(tab, labelKey)}
               </span>
+              
+              {/* Active indicator dot */}
+              {isActive && (
+                <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-indigo-400" />
+              )}
             </Link>
           );
         })}
-
-        {/* "More" menu button */}
-        {showMoreButton && (
-          <div ref={moreMenuRef} className="relative flex-1">
-            {hasMoreDropdown ? (
-              <button
-                onClick={() => setShowMoreMenu(!showMoreMenu)}
-                className="relative w-full h-full flex flex-col items-center justify-center gap-1 transition-all duration-200"
-              style={{
-                color: isMoreItemActive ? '#fb923c' : '#94a3b8',
-                background: isMoreItemActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
-              }}
-            >
-              {/* Active indicator bar */}
-              {isMoreItemActive && (
-                <span 
-                  className="absolute top-0 w-10 h-0.5 rounded-full bg-orange-400"
-                  style={{ left: '50%', transform: 'translateX(-50%)' }}
-                />
-              )}
-              <MoreHorizontal 
-                size={24} 
-                strokeWidth={isMoreItemActive ? 2.5 : 1.8}
-                style={{
-                  filter: isMoreItemActive ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.4))' : 'none',
-                }}
-              />
-              <span 
-                className="font-medium"
-                style={{ 
-                  fontSize: '10px',
-                  letterSpacing: '0.02em',
-                  opacity: isMoreItemActive ? 1 : 0.8,
-                }}
-              >
-                {t('nav.more')}
-              </span>
-            </button>
-            ) : (
-              <Link
-                href={getTabPath('more')}
-                className="relative w-full h-full flex flex-col items-center justify-center gap-1 transition-all duration-200"
-                style={{
-                  color: isMoreItemActive ? '#fb923c' : '#94a3b8',
-                  background: isMoreItemActive ? 'rgba(251, 146, 60, 0.1)' : 'transparent',
-                }}
-              >
-                {/* Active indicator bar */}
-                {isMoreItemActive && (
-                  <span 
-                    className="absolute top-0 w-10 h-0.5 rounded-full bg-orange-400"
-                    style={{ left: '50%', transform: 'translateX(-50%)' }}
-                  />
-                )}
-                <MoreHorizontal 
-                  size={24} 
-                  strokeWidth={isMoreItemActive ? 2.5 : 1.8}
-                  style={{
-                    filter: isMoreItemActive ? 'drop-shadow(0 0 4px rgba(251, 146, 60, 0.4))' : 'none',
-                  }}
-                />
-                <span 
-                  className="font-medium"
-                  style={{ 
-                    fontSize: '10px',
-                    letterSpacing: '0.02em',
-                    opacity: isMoreItemActive ? 1 : 0.8,
-                  }}
-                >
-                  {t('nav.more')}
-                </span>
-              </Link>
-            )}
-
-            {/* Dropdown menu for more items */}
-            {hasMoreDropdown && showMoreMenu && (
-              <div 
-                className="absolute bottom-full left-0 right-0 mb-2 bg-slate-900 border border-slate-700 rounded-lg shadow-xl overflow-hidden z-50"
-              >
-                {visibleMoreItems.map(({ tab, icon: Icon, labelKey }) => {
-                  const isActive = activeTab === tab;
-                  return (
-                    <Link
-                      key={tab}
-                      href={getTabPath(tab)}
-                      onClick={() => setShowMoreMenu(false)}
-                      className="flex items-center gap-3 px-4 py-3 transition-colors"
-                      style={{
-                        background: isActive ? 'rgba(251, 146, 60, 0.2)' : 'transparent',
-                        color: isActive ? '#fb923c' : '#94a3b8',
-                        borderLeft: isActive ? '3px solid #fb923c' : '3px solid transparent',
-                      }}
-                    >
-                      <Icon size={18} />
-                      <span className="text-sm font-medium">{t(labelKey)}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
       </div>
+      
+      {/* Gradient fade indicators for scroll */}
+      <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-slate-950/90 to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-slate-950/90 to-transparent pointer-events-none" />
     </nav>
   );
 }

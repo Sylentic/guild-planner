@@ -98,26 +98,28 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-slate-950">
+    <div className="h-screen flex flex-col overflow-hidden bg-grid-pattern">
       {/* Header */}
-      <header className="shrink-0 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm z-10">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
+      <header className="shrink-0 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link 
             href="/"
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-lg transition-all"
           >
             <ArrowLeft size={20} />
           </Link>
-          <h1 className="text-xl font-bold text-white">{t('settings.title')}</h1>
+          <h1 className="text-base sm:text-lg font-semibold text-white">{t('settings.title')}</h1>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-5 sm:space-y-6">
         {/* Profile Section */}
-        <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-orange-400" />
+        <section className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-5 sm:p-6 space-y-5">
+          <h2 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+              <User className="w-4 h-4 text-indigo-400" />
+            </div>
             {t('settings.profile')}
           </h2>
 
@@ -131,36 +133,38 @@ export default function SettingsPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder={t('settings.displayName')}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-3 bg-slate-800/60 border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all"
             />
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-2">
               {t('settings.displayNameHint')}
             </p>
           </div>
         </section>
 
         {/* Language Section */}
-        <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-            <Languages className="w-5 h-5 text-orange-400" />
+        <section className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-5 sm:p-6 space-y-5">
+          <h2 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+              <Languages className="w-4 h-4 text-indigo-400" />
+            </div>
             {t('settings.language')}
           </h2>
 
           {/* Language Selector */}
           <div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {LANGUAGES.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => setLanguage(lang.code)}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border-2 transition-all cursor-pointer ${
                     language === lang.code
-                      ? 'bg-orange-500/20 border-orange-500 text-orange-400'
-                      : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-slate-500'
+                      ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
+                      : 'bg-slate-800/40 border-slate-700/50 text-slate-300 hover:border-slate-600'
                   }`}
                 >
-                  <span className="text-xl">{lang.flag}</span>
-                  <span className="font-medium">{lang.name}</span>
+                  <span className="text-lg sm:text-xl">{lang.flag}</span>
+                  <span className="font-medium text-sm sm:text-base">{lang.name}</span>
                 </button>
               ))}
             </div>
@@ -171,9 +175,11 @@ export default function SettingsPage() {
         </section>
 
         {/* Timezone Section */}
-        <section className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-            <Globe className="w-5 h-5 text-orange-400" />
+        <section className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-5 sm:p-6 space-y-5">
+          <h2 className="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+              <Globe className="w-4 h-4 text-indigo-400" />
+            </div>
             {t('settings.timezone')}
           </h2>
 
@@ -182,11 +188,11 @@ export default function SettingsPage() {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               {t('settings.yourTimezone')}
             </label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
-                className="flex-1 pl-3 pr-10 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer appearance-none"
+                className="flex-1 px-4 py-3 bg-slate-800/60 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer appearance-none"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -202,7 +208,7 @@ export default function SettingsPage() {
               </select>
               <button
                 onClick={detectTimezone}
-                className="shrink-0 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer text-sm"
+                className="shrink-0 px-4 py-3 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-white rounded-xl transition-all cursor-pointer text-sm font-medium"
                 title={t('settings.autoDetect')}
               >
                 {t('settings.autoDetect')}
@@ -211,7 +217,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Preview */}
-          <div className="bg-slate-800/50 rounded-lg p-4">
+          <div className="bg-slate-800/40 rounded-xl p-4 border border-slate-700/30">
             <p className="text-sm text-slate-400 mb-1">{t('settings.currentTime')}</p>
             <p className="text-white font-medium">{currentTime}</p>
           </div>
@@ -219,23 +225,23 @@ export default function SettingsPage() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-red-400">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {/* Save Button */}
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col sm:flex-row justify-end gap-3">
           <Link
             href="/"
-            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors cursor-pointer"
+            className="px-5 py-3 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-white rounded-xl transition-all cursor-pointer text-center"
           >
             {t('common.cancel')}
           </Link>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium rounded-xl transition-all disabled:opacity-50 cursor-pointer shadow-lg shadow-indigo-500/25"
           >
             {saving ? (
               <>{t('common.saving')}</>

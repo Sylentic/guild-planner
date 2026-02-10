@@ -205,7 +205,7 @@ export function GameLayout({ params, children, activeTab, characterCount }: Game
             gameSlug={gameSlug}
             groupSlug={groupSlug}
           />
-          <InlineFooter variant="matching" />
+          <InlineFooter />
         </div>
       </div>
     </ArchiveStatusProvider>
