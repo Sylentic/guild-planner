@@ -66,77 +66,29 @@ This document outlines the phased approach to expanding test coverage across the
 
 **Priority**: 🔴 Critical\
 **Estimated Tests**: 70+\
-**Status**: 🟡 **In Progress - Test Scaffolds Created, Execution Blocker Identified**
+**Status**: 🟡 **In Progress - Specifications Documented, Framework Selection Pending**
 
-#### Test Files Created (7 routes, 70+ test cases)
+**Test Specifications Created (7 routes, 70+ test cases)**\
+📖 **See [API_TESTING_GUIDE.md](./API_TESTING_GUIDE.md) for comprehensive test specifications and implementation options**
 
-1. ✔️ **`GET/POST /api/group/permissions`** (180 test cases)
-   - File: `src/app/api/group/permissions/route.test.ts`
-   - Tests: Auth 401, membership 403, DB errors, successful operations, table-not-found gracefully returns empty
+1. ✔️ `/api/group/permissions` - Core permission system (GET/POST)
+2. ✔️ `/api/discord` - Discord webhook proxy (POST)
+3. ✔️ `/api/auth-redirect` - OAuth redirect passthrough (GET)
+4. ✔️ `/api/migration-status` - Schema migration status (GET)
+5. ✔️ `/api/clan-public` - Public group data (GET)
+6. ✔️ `/api/group/ships-overview` - Character/ship inventory (GET)
+7. ✔️ `/api/group/achievements/sync` - Achievement calculator (POST)
 
-2. ✔️ **`POST /api/discord`** (14 test cases)
-   - File: `src/app/api/discord/route.test.ts`
-   - Tests: Webhook URL validation, Discord API error responses (400/401/404/500), network errors
+#### Implementation Path: Choose One
 
-3. ✔️ **`GET /api/auth-redirect`** (2 test cases)
-   - File: `src/app/api/auth-redirect/route.test.ts`
-   - Tests: OAuth redirect passthrough (307 response)
+**📌 See [API_TESTING_GUIDE.md](./API_TESTING_GUIDE.md) for**:
+- Complete test specifications for all 7 routes (70+ test cases documented)
+- Supertest integration template (easiest option)
+- E2E/Playwright guidance
+- Jest/Next.js incompatibility explanation
+- Step-by-step implementation checklist
 
-4. ✔️ **`GET /api/migration-status`** (5 test cases)
-   - File: `src/app/api/migration-status/route.test.ts`
-   - Tests: Applied/unapplied migration filtering, database errors
-
-5. ✔️ **`GET /api/clan-public`** (7 test cases)
-   - File: `src/app/api/clan-public/route.test.ts`
-   - Tests: Slug validation, is_public flag checks, count aggregation
-
-6. ✔️ **`GET /api/group/ships-overview`** (8 test cases)
-   - File: `src/app/api/group/ships-overview/route.test.ts`
-   - Tests: Auth header validation, membership verification, default game_slug handling
-
-7. ✔️ **`POST /api/group/achievements/sync`** (10 test cases)
-   - File: `src/app/api/group/achievements/sync/route.test.ts`
-   - Tests: Bearer token parsing, admin/officer role verification
-
-#### Implementation Blocker & Recommended Resolution
-
-**Problem**: Jest cannot execute these tests due to Next.js Edge Runtime incompatibility
-- **Error**: `ReferenceError: Request is not defined` when importing from `next/server`
-- **Root Cause**: Jest runs in Node.js; Next.js API routes use Web API `Request` object (only available in Edge Runtime)
-- **Impact**: All 7 route test files fail to execute; 17 existing tests (321 total) still pass
-
-**Test File Status**:
-- Files are **structurally complete** and serve as documentation of intended test coverage
-- Mock structures show auth flow, validation, error scenarios
-- Ready for migration to compatible test framework
-
-**Recommended Solutions** (choose one):
-
-1. **HTTP Integration Testing (Supertest)** ⭐ Recommended
-   - Add `supertest` package (~30KB)
-   - Reuse test scaffolds with real HTTP requests
-   - Runs in CI pipeline alongside Jest
-   - Effort: Low (1-2 hours)
-
-2. **E2E Testing (Playwright)**
-   - Tests real API with browser client
-   - Catches full-stack integration issues
-   - Slower but highest fidelity
-   - Effort: Moderate (requires new test infrastructure)
-
-3. **Skip API Route Unit Tests**
-   - Keep scaffolds as documentation
-   - Validate API routes via production monitoring
-   - Fastest option, no added complexity
-   - Effort: None
-
-4. **Production Monitoring**
-   - Rely on @/lib/logging for error detection
-   - Identify bugs in production metrics
-   - Riskiest but simplest
-   - Effort: Already have infrastructure
-
-**Why These Routes Are Critical**: API routes are the server-side enforcement point for authentication, authorization, and data integrity. Bugs impact security and data consistency.
+**Why Phase 1.3 is Critical**: API routes are the server-side gateway for authentication, authorization, and data integrity. Bugs directly impact security and data consistency.
 
 ***
 
