@@ -30,7 +30,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const [groupExists, setGroupExists] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enabledGames, setEnabledGames] = useState<string[]>(ALL_AVAILABLE_GAMES.map(g => g.slug)); // Default to all games
+  const [enabledGames, setEnabledGames] = useState<string[]>([]); // Start empty, load from database
   const [gamesWithStatus, setGamesWithStatus] = useState<Array<{ slug: string; archived: boolean }>>([]);
   const [showAddGame, setShowAddGame] = useState(false);
   const [loadingGames, setLoadingGames] = useState(false);
@@ -42,7 +42,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   // Fetch group data
   useEffect(() => {
     async function checkGroup() {
-      console.log('GroupOverviewPage: checking group', groupSlug);
       setCheckError(null);
       setLoading(true);
       try {
@@ -55,8 +54,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           getGroupBySlug(groupSlug),
           timeoutPromise
         ]) as any | null;
-
-        console.log('GroupOverviewPage: group result', group);
         if (group) {
           setGroupId(group.id);
           setGroupData(group);
@@ -82,19 +79,12 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
     setLoadingGames(true);
     try {
       const gamesStatus = await getGroupGamesWithStatus(gid);
-      // If games are configured, use them; otherwise show all available games
-      if (gamesStatus.length > 0) {
-        setEnabledGames(gamesStatus.map(g => g.game_slug));
-        setGamesWithStatus(gamesStatus.map(g => ({ slug: g.game_slug, archived: g.archived })));
-      } else {
-        setEnabledGames(ALL_AVAILABLE_GAMES.map(g => g.slug));
-        setGamesWithStatus(ALL_AVAILABLE_GAMES.map(g => ({ slug: g.slug, archived: false })));
-      }
+      setEnabledGames(gamesStatus.map(g => g.game_slug));
+      setGamesWithStatus(gamesStatus.map(g => ({ slug: g.game_slug, archived: g.archived })));
     } catch (err) {
       console.error('Error loading group games:', err);
-      // On error, show all games by default
-      setEnabledGames(ALL_AVAILABLE_GAMES.map(g => g.slug));
-      setGamesWithStatus(ALL_AVAILABLE_GAMES.map(g => ({ slug: g.slug, archived: false })));
+      setEnabledGames([]);
+      setGamesWithStatus([]);
     } finally {
       setLoadingGames(false);
     }
@@ -139,6 +129,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   const {
     membership,
     loading: membershipLoading,
+    apply,
   } = useGroupMembership(groupId, user?.id || null);
 
   const { hasPermission } = usePermissions(groupId || undefined);
@@ -203,18 +194,12 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
   // Group doesn't exist - offer to create it
   if (!groupExists) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-grid-pattern px-4">
-        {/* Background glow */}
-        <div className="absolute inset-0 overflow-hidden -z-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px]" />
-        </div>
-        <div className="text-center max-w-md mx-auto">
-          <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-            <Plus className="w-7 h-7 text-indigo-400" />
-          </div>
-          <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3">Create "{groupSlug}"?</h2>
-          <p className="text-slate-400 mb-6 text-sm sm:text-base">
-            This group doesn't exist yet. Would you like to create it?
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="text-center max-w-md mx-auto p-6">
+          <Plus className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-white mb-2">Create &quot;{groupSlug}&quot;?</h2>
+          <p className="text-slate-400 mb-6">
+            This group doesn&apos;t exist yet. Would you like to create it?
           </p>
           
           {createError && (
@@ -276,31 +261,86 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-slate-300 text-sm hidden sm:inline">{displayName}</span>
-            <Link
-              href="/settings"
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-lg transition-all cursor-pointer"
-              title="Settings"
-            >
-              <Settings className="w-[18px] h-[18px]" />
-            </Link>
+            {!membershipLoading && membership?.role === 'admin' && (
+              <Link
+                href={`/${groupSlug}/settings`}
+                className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
+                title="Group Settings"
+              >
+                <Shield className="w-5 h-5" />
+                <span className="hidden sm:inline text-sm">Settings</span>
+              </Link>
+            )}
             <button
               onClick={() => signOut()}
-              className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors cursor-pointer"
               title="Sign out"
             >
-              <LogOut className="w-[18px] h-[18px]" />
+              <LogOut className="w-5 h-5" />
+              <span className="hidden sm:inline text-sm">{displayName}</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
-        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Not a member - show apply button */}
+      {!membershipLoading && !membership && (
+        <main className="max-w-2xl mx-auto px-4 py-16">
+          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
+            <Shield className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-3">Join {groupData?.name || groupSlug}</h2>
+            <p className="text-slate-400 mb-6">
+              Apply to join this group to access games and participate in activities.
+            </p>
+            <button
+              onClick={apply}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
+            >
+              <Plus className="w-5 h-5" />
+              Apply to Join
+            </button>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Return Home
+              </Link>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* Pending approval */}
+      {!membershipLoading && membership?.role === 'pending' && (
+        <main className="max-w-2xl mx-auto px-4 py-16">
+          <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-8 text-center">
+            <Loader className="w-16 h-16 text-yellow-400 mx-auto mb-4 animate-spin" />
+            <h2 className="text-2xl font-bold text-white mb-3">Application Pending</h2>
+            <p className="text-slate-400 mb-6">
+              Your application to join {groupData?.name || groupSlug} is pending approval by an admin.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Return Home
+              </Link>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* Member - show games */}
+      {!membershipLoading && membership && membership.role !== 'pending' && (
+        <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h2 className="text-base sm:text-lg font-semibold text-white mb-1 sm:mb-2">Available Games</h2>
-            <p className="text-slate-400 text-xs sm:text-sm">Click on a game to view your group's information for that game.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
+            <p className="text-slate-400 text-sm">Click on a game to view your group&apos;s information for that game.</p>
           </div>
           {canEditSettings && (
             <button
@@ -418,20 +458,28 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         </div>
 
         {enabledGames.length === 0 && (
-          <div className="text-center py-12 sm:py-16">
-            <p className="text-slate-400 mb-4 text-sm sm:text-base">No games enabled for this group yet.</p>
-            {canEditSettings && (
-              <button
-                onClick={() => setShowAddGame(true)}
-                className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/25"
-              >
-                <Plus className="w-5 h-5" />
-                Add a Game
-              </button>
-            )}
+          <div className="text-center py-16 px-4">
+            <div className="max-w-md mx-auto bg-slate-800/50 border border-slate-700 rounded-lg p-8">
+              <h3 className="text-xl font-semibold text-white mb-3">{t('group.getStarted')}</h3>
+              <p className="text-slate-400 mb-6">
+                {canEditSettings 
+                  ? t('group.addGameToStart') 
+                  : t('group.noGamesContactAdmin')}
+              </p>
+              {canEditSettings && (
+                <button
+                  onClick={() => setShowAddGame(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors shadow-lg hover:shadow-xl"
+                >
+                  <Plus className="w-5 h-5" />
+                  {t('group.addYourFirstGame')}
+                </button>
+              )}
+            </div>
           </div>
         )}
       </main>
+      )}
 
       {/* Footer */}
       <div className="shrink-0">

@@ -19,7 +19,7 @@ export async function updateClanIconUrl(groupId: string, url: string) {
 import { supabase } from './supabase';
 import { getURL } from './url';
 
-export type UserRole = 'admin' | 'officer' | 'member' | 'pending' | null;
+export type UserRole = 'admin' | 'officer' | 'member' | 'trial' | 'pending' | null;
 
 export interface UserProfile {
   id: string;
@@ -41,15 +41,8 @@ export interface ClanMembership {
  * Sign in with Discord OAuth
  */
 export async function signInWithDiscord(redirectTo?: string) {
-  // Detect if user is on dev domain and route through intermediary
-  const isDev = typeof window !== 'undefined' && 
-                window.location.hostname === 'dev.gp.pandamonium-gaming.com';
-  
-  // Always use production callback URL (since that's what Supabase is configured for)
-  // The API redirect route will handle routing back to dev if needed
-  const callbackUrl = isDev 
-    ? 'https://aoc.pandamonium-gaming.com/api/auth-redirect?dev=true'
-    : 'https://aoc.pandamonium-gaming.com/auth/callback';
+  const baseUrl = getURL();
+  const callbackUrl = `${baseUrl}auth/callback`;
   
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'discord',
@@ -160,15 +153,25 @@ export async function getGroupMembership(groupId: string, userId: string): Promi
  * Apply to join a clan (creates pending membership)
  */
 export async function applyToGroup(groupId: string, userId: string) {
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('approval_required, default_role')
+    .eq('id', groupId)
+    .maybeSingle();
+
+  if (groupError) throw groupError;
+
+  const approvalRequired = group?.approval_required ?? true;
+  const defaultRole = group?.default_role || 'trial';
+  const insertPayload = approvalRequired
+    ? { group_id: groupId, user_id: userId, role: 'pending' }
+    : { group_id: groupId, user_id: userId, role: defaultRole, approved_at: new Date().toISOString() };
+
   const { error } = await supabase
     .from('group_members')
-    .insert({
-      group_id: groupId,
-      user_id: userId,
-      role: 'pending',
-    })
+    .insert(insertPayload)
     .select();
-  
+
   if (error) throw error;
 }
 
@@ -225,7 +228,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
     .insert({ slug, name, created_by: userId })
     .select()
     .single();
-  
+
   if (clanError) throw clanError;
   
   // Add creator as admin
@@ -240,7 +243,7 @@ export async function createGroup(slug: string, name: string, userId: string) {
       approved_by: userId,
     })
     .select();
-  
+
   if (memberError) throw memberError;
   
   return clan;

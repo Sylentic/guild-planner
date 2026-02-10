@@ -71,6 +71,12 @@ export const PERMISSIONS = {
     name: 'View Bank History',
     description: 'View bank transaction history'
   },
+  'guild_bank_manage': {
+    id: 'guild_bank_manage',
+    category: 'guild_bank' as PermissionCategory,
+    name: 'Manage Guild Bank',
+    description: 'Full management of guild bank including settings'
+  },
 
   // Events
   'events_create': {
@@ -380,8 +386,8 @@ export function canManageRole(userRole: GroupRole, targetRole: GroupRole): boole
 export const ROLE_CONFIG: Record<GroupRole, { label: string; color: string; borderColor: string; description: string }> = {
   admin: {
     label: 'Admin',
-    color: 'text-amber-400', // legendary
-    borderColor: 'border-amber-400',
+    color: 'text-orange-400', // legendary
+    borderColor: 'border-orange-400',
     description: 'Full permissions to manage clan',
   },
   officer: {

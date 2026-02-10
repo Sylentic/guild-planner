@@ -19,7 +19,7 @@ import { InlineFooter } from '@/components/layout/Footer';
 import { ArchivedGameBanner } from '@/components/common/ArchivedGameBanner';
 import { ArchiveStatusProvider } from '@/contexts/ArchiveStatusContext';
 import { DynamicFavicon } from '@/components/common/DynamicFavicon';
-import { Users, Clock, UserPlus, Loader2 } from 'lucide-react';
+import { Users, Clock, UserPlus } from 'lucide-react';
 import { getAllGames } from '@/lib/games';
 import { getGroupGamesWithStatus } from '@/lib/group-games';
 

@@ -57,6 +57,49 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 
 See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for full instructions.
 
+## Development
+
+### Testing
+
+We use **Jest** and **React Testing Library** for comprehensive test coverage.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode (auto-rerun on changes)
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+**Documentation**:
+
+* [TESTING.md](./docs/TESTING.md) - How to write and run tests
+* [TESTING\_ROADMAP.md](./docs/TESTING_ROADMAP.md) - Testing improvement plan
+* [TESTING\_QUICK\_REFERENCE.md](./docs/TESTING_QUICK_REFERENCE.md) - Quick checklist for developers
+
+**Current Coverage**: 133 tests passing with 100% coverage on tested modules (permissions 30, utils 9, gameValidation 8, auth 42, usePermissions hook 40)
+
+### For AI Agents & Contributors
+
+* **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - Quick reference for code patterns, version management, and logging (start here!)
+* **[.AI-INSTRUCTIONS.md](./.AI-INSTRUCTIONS.md)** - Comprehensive guide with lessons learned, security considerations, and troubleshooting
+
+These documents cover critical lessons from development, including:
+
+* Permission system specifics (common naming gotchas)
+* Database migration best practices
+* Role hierarchy and permission checks
+* Changelog maintenance
+* Common issues and solutions
+* **PowerShell commands** (preferred over Unix-style commands)
+
+### Development Environment
+
+> This project uses **PowerShell** for command-line operations. Use PowerShell cmdlets instead of Unix commands (e.g., `Get-ChildItem` instead of `ls`, `Remove-Item` instead of `rm`).
+
 ## Tech Stack
 
 * [Next.js 16](https://nextjs.org/) - React framework

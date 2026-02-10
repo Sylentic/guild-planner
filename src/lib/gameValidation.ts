@@ -69,7 +69,9 @@ export async function initializeClanWithGame(
     });
   } catch (err) {
     // User might already be tracked for this game, ignore
-    console.debug('User game tracking info:', err);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('User game tracking info:', err);
+    }
   }
 }
 

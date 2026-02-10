@@ -358,7 +358,7 @@ export function filterCharacters<T extends {
   filters: CharacterFilters
 ): T[] {
   // If there's a search term, we need to include related characters
-  let matchedUserIds = new Set<string>();
+  const matchedUserIds = new Set<string>();
   
   if (filters.search) {
     const searchLower = filters.search.toLowerCase();

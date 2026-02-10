@@ -446,7 +446,7 @@ No additional component changes needed!
 
 ***
 
-## Questions?
+## Questions
 
 If you need to add game-specific features beyond the scope of this guide:
 

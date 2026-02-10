@@ -37,6 +37,7 @@ build-output.log
 .env
 .env.local
 .env.*.local
+.env.local.*
 !.env.example
 
 # vercel
@@ -45,4 +46,8 @@ build-output.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database sync temp files
+.tmp
+.backups
 supabase/.temp

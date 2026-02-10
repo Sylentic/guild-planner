@@ -71,7 +71,6 @@ async function calculateAchievementProgress(
         return Object.values(skillMastery).filter(v => v).length;
       } else {
         const allMastered = Object.values(skillMastery).every(v => v);
-        console.log(`Checked ${tier} tier (rank ${minRank}):`, skillMastery, `Result: ${allMastered ? 1 : 0}`);
         return allMastered ? 1 : 0;
       }
     }
@@ -84,7 +83,6 @@ async function calculateAchievementProgress(
           .from('group_members')
           .select('id', { count: 'exact', head: true })
           .eq('group_id', groupId);
-        console.log(`Calculated member_count: ${count}`);
         return count || 0;
       },
 
@@ -95,7 +93,6 @@ async function calculateAchievementProgress(
           .select('id')
           .eq('group_id', groupId)
           .eq('result', 'win');
-        console.log(`Calculated siege_wins: ${sieges?.length || 0}`);
         return sieges?.length || 0;
       },
 
@@ -109,7 +106,6 @@ async function calculateAchievementProgress(
           .single();
 
         if (!bank) {
-          console.log(`No bank found for clan ${groupId}`);
           return 0;
         }
 
@@ -118,7 +114,6 @@ async function calculateAchievementProgress(
           .select('id', { count: 'exact', head: true })
           .eq('bank_id', bank.id)
           .eq('transaction_type', 'deposit');
-        console.log(`Calculated bank_deposits: ${count}`);
         return count || 0;
       },
 
@@ -128,7 +123,6 @@ async function calculateAchievementProgress(
           .select('id', { count: 'exact', head: true })
           .eq('group_id', groupId)
           .eq('status', 'completed');
-        console.log(`Calculated caravan_complete: ${count}`);
         return count || 0;
       },
 
@@ -155,7 +149,6 @@ async function calculateAchievementProgress(
             }
           }
         }
-        console.log(`Calculated grandmaster_count: ${grandmasters.size}`);
         return grandmasters.size;
       },
 
@@ -165,7 +158,6 @@ async function calculateAchievementProgress(
           .from('events')
           .select('id', { count: 'exact', head: true })
           .eq('group_id', groupId);
-        console.log(`Calculated events_hosted: ${count}`);
         return count || 0;
       },
 
@@ -180,7 +172,6 @@ async function calculateAchievementProgress(
           .gte('created_at', oneWeekAgo.toISOString());
 
         const uniqueUsers = new Set(activities?.map(a => a.user_id) || []);
-        console.log(`Calculated weekly_active: ${uniqueUsers.size}`);
         return uniqueUsers.size;
       },
 

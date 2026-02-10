@@ -41,7 +41,6 @@ export function AchievementAdminPanel({
       }
 
       const result = await response.json();
-      console.log('Achievements synced:', result);
       await onRefresh();
     } catch (err) {
       console.error('Error syncing achievements:', err);

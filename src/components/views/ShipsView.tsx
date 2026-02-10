@@ -12,6 +12,7 @@ import shipsData from '@/config/games/star-citizen-ships.json';
 import { getManufacturerLogo } from '@/config/games/star-citizen-utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SUBSCRIBER_COLORS } from '@/games/starcitizen/config/subscriber-ships';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface ShipData {
   id: string;
@@ -187,6 +188,8 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
   const [guildCharacters, setGuildCharacters] = useState<CharacterWithProfessions[]>(characters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [shipIdToDelete, setShipIdToDelete] = useState<string | null>(null);
 
   const loadCharacterShips = async () => {
     setLoading(true);
@@ -203,11 +206,8 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
             },
           });
 
-          console.log('Ships overview API response status:', response.status);
-
           if (response.ok) {
             const result = await response.json();
-            console.log('Ships overview API result:', result);
             const overviewCharacters = (result.characters || []) as CharacterWithProfessions[];
             const overviewShips = (result.ships || []) as CharacterShip[];
 
@@ -241,15 +241,11 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
         shipsByCharacter[char.id] = [];
       });
 
-      console.log('Loading ships for character IDs:', characters.map(c => c.id));
-
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
           .select('*')
           .in('character_id', characters.map(c => c.id));
-
-        console.log('Character ships query result:', { data, fetchError });
 
         if (fetchError) {
           console.error('Error loading ships:', fetchError);
@@ -257,7 +253,6 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
         }
 
         if (data) {
-          console.log('Found ships:', data);
           data.forEach(ship => {
             if (shipsByCharacter[ship.character_id]) {
               shipsByCharacter[ship.character_id].push(ship);
@@ -278,7 +273,6 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
 
   // Load character ships
   useEffect(() => {
-    console.log('ShipsView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
   }, [groupId, characters, gameSlug]);
 
@@ -287,14 +281,20 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
   };
 
   const handleDeleteShip = async (shipId: string) => {
-    if (!confirm('Remove this ship?')) return;
+    setShipIdToDelete(shipId);
+    setDeleteConfirmOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!shipIdToDelete) return;
+
+    setDeleteConfirmOpen(false);
     setError(null);
     try {
       const { error: deleteError } = await supabase
         .from('character_ships')
         .delete()
-        .eq('id', shipId);
+        .eq('id', shipIdToDelete);
 
       if (deleteError) {
         console.error('Error deleting ship:', deleteError);
@@ -305,6 +305,8 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
     } catch (err) {
       console.error('Failed to delete ship:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete ship');
+    } finally {
+      setShipIdToDelete(null);
     }
   };
 
@@ -577,6 +579,19 @@ export function ShipsView({ characters, userId, canManage, groupId, gameSlug = '
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setShipIdToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Remove Ship"
+        message="Are you sure you want to remove this ship? This action cannot be undone."
+        confirmLabel="Remove"
+        variant="danger"
+      />
     </div>
   );
 }

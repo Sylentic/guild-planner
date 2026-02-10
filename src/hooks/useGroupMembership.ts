@@ -60,7 +60,6 @@ export function useGroupMembership(groupId: string | null, userId: string | null
   }, [groupId, userId]);
 
   const fetchMembership = useCallback(async () => {
-    console.log('[DEBUG] useGroupMembership: groupId', groupId, 'userId', userId);
     if (!groupId || !userId) {
       setMembership(null);
       setLoading(false);
@@ -69,7 +68,6 @@ export function useGroupMembership(groupId: string | null, userId: string | null
 
     try {
       const data = await getGroupMembership(groupId, userId);
-      console.log('[DEBUG] getGroupMembership returned:', data);
       if (data) {
         setMembership({
           role: data.role as UserRole,
@@ -99,7 +97,7 @@ export function useGroupMembership(groupId: string | null, userId: string | null
           is_creator,
           applied_at,
           approved_at,
-          users!clan_members_user_id_fkey(display_name, discord_username, discord_avatar)
+          users!group_members_user_id_fkey(display_name, discord_username, discord_avatar)
         `)
         .eq('group_id', groupId)
         .order('role');
@@ -209,7 +207,7 @@ export function useGroupMembership(groupId: string | null, userId: string | null
     // Get the member info (to get user_id, discord_username, and discord_id for mentions)
     const { data: memberData, error: memberFetchError } = await supabase
       .from('group_members')
-      .select('user_id, group_id, users!clan_members_user_id_fkey(discord_username, discord_id)')
+      .select('user_id, group_id, users!group_members_user_id_fkey(discord_username, discord_id)')
       .eq('id', membershipId)
       .maybeSingle();
     if (memberFetchError || !memberData) throw memberFetchError || new Error('Member not found');
@@ -224,11 +222,19 @@ export function useGroupMembership(groupId: string | null, userId: string | null
       : users?.discord_id;
     const groupIdForWebhook = memberData.group_id;
 
+    // Get the group's default role setting
+    const { data: groupData } = await supabase
+      .from('groups')
+      .select('default_role')
+      .eq('id', groupIdForWebhook)
+      .maybeSingle();
+    const defaultRole = groupData?.default_role || 'trial';
+
     // Update the member's role
     const { error } = await supabase
       .from('group_members')
       .update({
-        role: 'trial',
+        role: defaultRole,
         approved_at: new Date().toISOString(),
         approved_by: userId,
       })

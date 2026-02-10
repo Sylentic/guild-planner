@@ -3,11 +3,12 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Sword, Hammer, Pickaxe, LogOut, User, Shield, Users, Settings, Loader2 } from 'lucide-react';
+import { Sword, Hammer, Pickaxe, LogOut, User, Shield, Users, Settings, Loader2, Globe } from 'lucide-react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { InlineFooter } from '@/components/layout/Footer';
 import { getUserGroups } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 
 import { LandingHero } from '@/components/landing/LandingHero';
 import { LandingClanForm } from '@/components/forms/LandingClanForm';
@@ -25,10 +26,21 @@ interface UserClan {
   group_icon_url?: string;
 }
 
+interface PublicGroup {
+  id: string;
+  slug: string;
+  name: string;
+  group_icon_url?: string | null;
+  public_description?: string | null;
+  recruitment_open?: boolean | null;
+}
+
 export default function Home() {
   const [groupName, setGroupName] = useState('');
   const [userClans, setUserClans] = useState<UserClan[]>([]);
   const [clansLoading, setClansLoading] = useState(false);
+  const [publicGroups, setPublicGroups] = useState<PublicGroup[]>([]);
+  const [publicGroupsLoading, setPublicGroupsLoading] = useState(false);
   const router = useRouter();
   const { user, profile, loading, signIn, signOut } = useAuthContext();
   const { t, isLoading } = useLanguage();
@@ -57,6 +69,42 @@ export default function Home() {
       fetchClans();
     }
   }, [user, loading]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchPublicGroups() {
+      setPublicGroupsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('groups')
+          .select('id, slug, name, group_icon_url, public_description, recruitment_open')
+          .eq('is_public', true)
+          .order('name');
+
+        if (error) throw error;
+
+        if (isMounted) {
+          setPublicGroups((data || []) as PublicGroup[]);
+        }
+      } catch (err) {
+        console.error('Error fetching public groups:', err);
+        if (isMounted) {
+          setPublicGroups([]);
+        }
+      } finally {
+        if (isMounted) {
+          setPublicGroupsLoading(false);
+        }
+      }
+    }
+
+    fetchPublicGroups();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -150,6 +198,57 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center p-8 min-h-full">
           <LandingHero />
           <LandingClanForm groupName={groupName} setGroupName={setGroupName} user={user} />
+
+      <div className="mt-12 w-full max-w-2xl mx-auto">
+        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2 justify-center">
+          <Globe className="w-5 h-5 text-cyan-400" />
+          Public Groups
+        </h2>
+        {publicGroupsLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+          </div>
+        ) : publicGroups.length > 0 ? (
+          <div className="grid gap-3">
+            {publicGroups.map((group) => (
+              <Link
+                key={group.id}
+                href={`/${group.slug}`}
+                className="flex items-center justify-between bg-slate-900/60 hover:bg-slate-800/80 backdrop-blur-sm border border-slate-700 hover:border-slate-600 rounded-lg p-4 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  {group.group_icon_url ? (
+                    <img
+                      src={group.group_icon_url}
+                      alt="Group Icon"
+                      className="w-8 h-8 rounded-full border border-slate-700 bg-slate-800"
+                    />
+                  ) : (
+                    <Users className="w-5 h-5 text-slate-400 group-hover:text-slate-300" />
+                  )}
+                  <div>
+                    <span className="text-white font-medium group-hover:text-orange-300 transition-colors">
+                      {group.name}
+                    </span>
+                    {group.public_description && (
+                      <p className="text-sm text-slate-400 mt-1">
+                        {group.public_description}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="text-sm text-slate-400">
+                  {group.recruitment_open ? 'Open Recruitment' : 'View Group'}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-slate-500 py-4">
+            No public groups yet.
+          </p>
+        )}
+      </div>
 
       {/* User's clans section - show for logged in users */}
       {user && (

@@ -13,6 +13,24 @@
         "Set-Content": true,
         "npx markdownlint-cli2": true,
         "Move-Item": true,
-        "git checkout": true
-}
+        "git checkout": true,
+        "npx supabase": true,
+        "Get-Command": true,
+        "pg_dump": true,
+        "psql": true,
+        ".\\scripts\\sync-prod-to-dev-data.ps1": true,
+        ".": true,
+        "Trim": true,
+        "Out-File": true,
+        "/^Write-Host \"Status check\\.\\.\\.\" -ForegroundColor Yellow\nbash -c \"psql 'postgresql://postgres:AuasATJWHSbl6oMZ@db\\.yrwgqjjwmsryhyvybyqe\\.supabase\\.co:5432/postgres' -t -c 'SELECT count\\(\\*\\) FROM groups;'\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        ".\\switch-env.ps1": true,
+        "npm install": true,
+        "tee": true,
+        "Resolve-Path": true,
+        "Group-Object": true
+    },
+    "codeQL.githubDatabase.download": "never"
 }

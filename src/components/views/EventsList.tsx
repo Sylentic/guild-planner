@@ -89,7 +89,6 @@ export function EventsList({
   const recentAnnouncements = announcements.filter(a => !a.is_pinned).slice(0, 5);
 
   const handleCreateEvent = async (eventData: Omit<import('@/lib/events').Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => {
-    console.log('EventsList.handleCreateEvent called with sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
     await onCreateEvent(eventData, sendDiscordNotification);
     setShowEventForm(false);
   };

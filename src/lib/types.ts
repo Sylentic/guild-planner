@@ -36,6 +36,13 @@ export interface Clan {
   slug: string;
   name: string;
   created_at: string;
+  is_public?: boolean;
+  recruitment_open?: boolean;
+  recruitment_message?: string | null;
+  public_description?: string | null;
+  banner_url?: string | null;
+  approval_required?: boolean;
+  default_role?: 'trial' | 'member';
   group_webhook_url?: string;
   group_welcome_webhook_url?: string;
   aoc_webhook_url?: string;

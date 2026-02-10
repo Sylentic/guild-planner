@@ -11,7 +11,7 @@ the system.
 ### URL Structure
 
 ```text
-https://robertsspaceindustries.com/comm-link/transmission/[ID]-[Month]-[Year]-Subscriber-Promotions
+<https://robertsspaceindustries.com/comm-link/transmission/[ID]-[Month]-[Year]-Subscriber-Promotions>
 ```
 
 **Examples:**

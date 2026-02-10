@@ -8,9 +8,9 @@ import { ManageTab } from '../tabs/ManageTab';
 import { GuildIconUploaderWrapper } from '../GuildIconUploaderWrapper';
 import { PermissionsSettings } from '@/components/settings/PermissionsSettings';
 import { ClanSettings } from '@/components/settings/ClanSettings';
-import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
-import { GameManagement } from '@/components/settings/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
+import Link from 'next/link';
+import { Shield } from 'lucide-react';
 
 export default function SettingsPage() {
   const { group, groupSlug, gameSlug, userId, hasPermission, membership } = useGameLayoutContext();
@@ -19,12 +19,7 @@ export default function SettingsPage() {
   // Settings page needs full membership management functions
   const {
     members,
-    pendingMembers,
     canManageMembers,
-    canManageRoles,
-    acceptMember,
-    rejectMember,
-    updateRole,
     updateRank,
     removeMember,
   } = useGroupMembership(group?.id || null, userId, gameSlug);

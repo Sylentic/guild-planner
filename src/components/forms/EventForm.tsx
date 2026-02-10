@@ -93,7 +93,6 @@ export function EventForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('EventForm handleSubmit called with formData:', formData);
     
     if (!formData.title.trim()) {
       setError('Title is required');
@@ -108,18 +107,6 @@ export function EventForm({
     setError(null);
 
     try {
-      console.log('Parsing role values:',{
-        tanks_min_raw: formData.tanks_min,
-        tanks_min_parsed: parseInt(formData.tanks_min),
-        clerics_min_raw: formData.clerics_min,
-        clerics_min_parsed: parseInt(formData.clerics_min),
-        bards_min_raw: formData.bards_min,
-        bards_min_parsed: parseInt(formData.bards_min),
-        ranged_dps_min_raw: formData.ranged_dps_min,
-        ranged_dps_min_parsed: parseInt(formData.ranged_dps_min),
-        melee_dps_min_raw: formData.melee_dps_min,
-        melee_dps_min_parsed: parseInt(formData.melee_dps_min),
-      });
       const eventData = {
         group_id: groupId,
         created_by: userId,
@@ -153,7 +140,6 @@ export function EventForm({
         is_public: formData.is_public,
         allow_allied_signups: formData.allow_allied_signups,
       };
-      console.log('EventForm submitting eventData:', eventData, 'sendDiscordNotification:', formData.sendDiscordNotification);
       await onSubmit(eventData, formData.sendDiscordNotification);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save event');

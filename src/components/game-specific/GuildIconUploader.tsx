@@ -4,8 +4,8 @@ import { useAuthContext } from '@/components/auth/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { updateClanIconUrl } from '@/lib/auth';
 
-// Use env var for bucket name, fallback to 'guild-icons'
-const GUILD_ICON_BUCKET = process.env.NEXT_PUBLIC_GUILD_ICON_BUCKET || 'guild-icons';
+// Use env var for bucket name, fallback to 'aoc-guild-icons'
+const GUILD_ICON_BUCKET = process.env.NEXT_PUBLIC_GUILD_ICON_BUCKET || 'aoc-guild-icons';
 
 interface GuildIconUploaderProps {
   groupId: string;

@@ -7,7 +7,7 @@
 * Supabase account (free)
 * Discord account (for OAuth)
 
-***
+---
 
 ## Step 1: Create Supabase Project
 
@@ -39,7 +39,7 @@
    * **Project URL**: `https://xxxxx.supabase.co`
    * **anon public key**: `eyJhbGciOiJI...`
 
-***
+---
 
 ## Step 2: Set Up Discord OAuth
 
@@ -52,7 +52,7 @@
 5. Copy **Client ID** and **Client Secret**
 6. Add redirect URI:
 
-   ```text
+   ```
    https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback
    ```
 
@@ -65,7 +65,7 @@
 3. Paste **Client ID** and **Client Secret**
 4. Save
 
-***
+---
 
 ## Step 3: Configure Environment Variables
 
@@ -91,7 +91,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 | `NEXT_PUBLIC_SITE_URL`          | Your Vercel URL (e.g.,             |
 |                                 | <https://aoc-planner.vercel.app>)  |
 
-***
+---
 
 ## Step 4: Deploy to Vercel
 
@@ -119,7 +119,7 @@ After initial setup:
 * Every push to `main` → Production deploy
 * Every pull request → Preview deploy
 
-***
+---
 
 ## Step 5: Verify Deployment
 
@@ -130,11 +130,11 @@ After initial setup:
 5. You should become the Admin of the new clan
 6. Try logging in with another Discord account to test the apply/accept flow
 
-***
+---
 
 ## Authentication Flow
 
-```text
+```
 User visits /my-clan
        ↓
 Not logged in? → Redirect to /login → Discord OAuth
@@ -148,7 +148,7 @@ Pending member? → Wait for Admin/Officer approval
 Approved member → Full access to clan dashboard
 ```
 
-***
+---
 
 ## Troubleshooting
 
@@ -173,7 +173,7 @@ Approved member → Full access to clan dashboard
 * Check browser console for errors
 * Verify RLS policies are created (from schema.sql)
 
-***
+---
 
 ## Security Notes
 

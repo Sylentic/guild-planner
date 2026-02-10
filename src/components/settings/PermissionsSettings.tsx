@@ -160,13 +160,6 @@ export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSe
         groupId,
         rolePermissions,
       };
-      
-      console.log('Sending permissions:', {
-        groupId,
-        roles: Object.keys(rolePermissions),
-        totalPermissions: Object.keys(PERMISSIONS).length,
-        sampleRole: rolePermissions['member'] ? Object.keys(rolePermissions['member']).length + ' perms' : 'none'
-      });
 
       const response = await fetch('/api/group/permissions', {
         method: 'POST',
@@ -184,7 +177,6 @@ export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSe
       }
 
       const result = await response.json();
-      console.log('Permissions saved:', result);
       setMessage({ type: 'success', text: 'Permissions updated successfully!' });
       
       // Call optional callback if provided

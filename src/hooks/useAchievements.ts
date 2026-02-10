@@ -57,17 +57,6 @@ export function useAchievements(groupId: string | null): UseAchievementsReturn {
         throw achieveError;
       }
 
-      console.log('Fetched achievements:', {
-        count: clanAchievements?.length,
-        groupId,
-        data: clanAchievements?.map(a => ({
-          id: a.id,
-          achievement_id: a.achievement_id,
-          is_unlocked: a.is_unlocked,
-          current_value: a.current_value
-        }))
-      });
-
       // Merge with definitions for complete list
       const achievementMap = new Map(
         (clanAchievements || []).map((a) => [a.achievement_id, a])

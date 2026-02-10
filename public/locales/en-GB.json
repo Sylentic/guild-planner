@@ -99,13 +99,23 @@
     "creator": "creator"
   },
   "group": {
+    "joinClan": "Join Group",
+    "applyToJoin": "Apply to Join",
+    "applyDescription": "Apply to join {{name}}. An admin will review your application.",
     "applicationPending": "Application Pending",
     "pendingApproval": "Your application to join {{name}} is pending review by an admin or officer.",
+    "accessAfterApproval": "You'll be able to access group data once approved.",
+    "loginRequired": "Login Required",
+    "signInToAccess": "Sign in with Discord to access {{name}}",
     "notFound": "Group Not Found",
     "doesNotExist": "The group '{{name}}' doesn't exist.",
     "errorLoading": "Error Loading Group",
     "connectionError": "Connection Error",
-    "connectionErrorMessage": "Unable to connect to the group service. This might be due to a slow connection or server issue."
+    "connectionErrorMessage": "Unable to connect to the group service. This might be due to a slow connection or server issue.",
+    "getStarted": "Get Started",
+    "addGameToStart": "Add a game to start organizing your group's content.",
+    "noGamesContactAdmin": "No games have been enabled for this group yet. Contact an admin to add one.",
+    "addYourFirstGame": "Add Your First Game"
   },
   "character": {
     "addCharacter": "Add Character",

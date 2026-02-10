@@ -16,6 +16,8 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   const { loading } = usePermissions(groupId);
   const [isPublic, setIsPublic] = useState(false);
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
+  const [approvalRequired, setApprovalRequired] = useState(true);
+  const [defaultRole, setDefaultRole] = useState<'trial' | 'member'>('trial');
   const [recruitmentMessage, setRecruitmentMessage] = useState('');
   const [publicDescription, setPublicDescription] = useState('');
   const [applications, setApplications] = useState<RecruitmentApplication[]>([]);
@@ -32,11 +34,10 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       if (!isMounted) return;
       setError(null);
       try {
-        console.log('[RecruitmentSettings] Fetching clan settings for:', groupId);
         // Fetch clan settings
         const { data: clanData, error: clanError } = await supabase
           .from('groups')
-          .select('is_public, recruitment_open, recruitment_message, public_description')
+          .select('is_public, recruitment_open, recruitment_message, public_description, approval_required, default_role')
           .eq('id', groupId)
           .single();
         if (!isMounted) return;
@@ -45,15 +46,15 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (clanData) {
-          console.log('[RecruitmentSettings] Clan data:', clanData);
           setIsPublic(clanData.is_public || false);
           setRecruitmentOpen(clanData.recruitment_open || false);
+          setApprovalRequired(clanData.approval_required ?? true);
+          setDefaultRole(clanData.default_role || 'trial');
           setRecruitmentMessage(clanData.recruitment_message || '');
           setPublicDescription(clanData.public_description || '');
         }
 
         // Fetch applications
-        console.log('[RecruitmentSettings] Fetching applications...');
         const { data: appsData, error: appsError } = await supabase
           .from('recruitment_applications')
           .select('*')
@@ -67,7 +68,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (appsData) {
-          console.log('[RecruitmentSettings] Applications:', appsData.length);
           setApplications(appsData);
         }
       } catch (err) {
@@ -96,16 +96,16 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   const handleSave = async () => {
     setSaving(true);
     setError(null);
-    console.log('[RecruitmentSettings] Saving settings...');
     
     try {
       const updateData = {
         is_public: isPublic,
         recruitment_open: recruitmentOpen,
+        approval_required: approvalRequired,
+        default_role: defaultRole,
         recruitment_message: recruitmentMessage.trim() || null,
         public_description: publicDescription.trim() || null,
       };
-      console.log('[RecruitmentSettings] Update data:', updateData);
 
       const { error: updateError } = await supabase
         .from('groups')
@@ -118,8 +118,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         setError(updateError.message);
         return;
       }
-      
-      console.log('[RecruitmentSettings] Save successful');
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -244,6 +242,54 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
               <span className="block w-5 h-5 bg-white rounded-full shadow-md" />
             </button>
           </div>
+        </div>
+
+        <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+          <div>
+            <div className="flex items-center gap-2 text-white font-medium">
+              <CheckCircle size={16} />
+              Approval Required
+            </div>
+            <p className="text-sm text-slate-400 mt-0.5">
+              When off, new members join immediately
+            </p>
+          </div>
+          {/* axe-ignore aria-valid-attr-value */}
+          <button
+            onClick={() => setApprovalRequired(!approvalRequired)}
+            className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
+              approvalRequired
+                ? 'bg-orange-500 justify-end'
+                : 'bg-slate-600 justify-start'
+            }`}
+            role="switch"
+            aria-checked={approvalRequired}
+            aria-label="Toggle approval requirement"
+            title="Toggle approval requirement"
+          >
+            <span className="block w-5 h-5 bg-white rounded-full shadow-md" />
+          </button>
+        </div>
+
+        {/* Starting Role */}
+        <div>
+          <label htmlFor="default-role" className="block text-sm font-medium text-slate-300 mb-1">
+            Starting Role for New Members
+          </label>
+          <select
+            id="default-role"
+            value={defaultRole}
+            onChange={(e) => setDefaultRole(e.target.value as 'trial' | 'member')}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+          >
+            <option value="trial">Trial Member</option>
+            <option value="member">Full Member</option>
+          </select>
+          <p className="text-xs text-slate-400 mt-1">
+            {approvalRequired
+              ? 'Role assigned when applications are approved'
+              : 'Role assigned when members join automatically'}
+          </p>
         </div>
 
         {/* Public Description */}

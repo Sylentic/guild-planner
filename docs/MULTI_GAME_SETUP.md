@@ -89,7 +89,7 @@ The application has been successfully scaffolded to support multiple games (Ashe
 
 ## User Flow
 
-```text
+```
 1. User logs in via Discord
    ↓
 2. Landing page shows GameSelector
@@ -127,7 +127,7 @@ The application has been successfully scaffolded to support multiple games (Ashe
 
 ## Folder Structure Preview
 
-```text
+```
 src/
 ├── games/
 │   ├── aoc/
@@ -173,7 +173,7 @@ Guild admins can now configure separate Discord channels and roles for each game
 
 Each game has dedicated Discord columns in the `groups` table:
 
-```text
+```
 aoc_webhook_url              - General announcements webhook
 aoc_events_webhook_url       - Event notifications webhook
 aoc_announcement_role_id     - Role to mention for announcements
