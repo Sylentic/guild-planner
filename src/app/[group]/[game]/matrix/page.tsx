@@ -1,26 +1,20 @@
 'use client';
 
-import { use } from 'react';
-import { useAuthContext } from '@/components/auth/AuthProvider';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { ClanMatrix } from '@/components/views/ClanMatrix';
 import { ShipsView } from '@/components/views/ShipsView';
 
-export default function MatrixPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
-  const { group, characters } = useGroupData(groupSlug, gameSlug);
-  const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
+export default function MatrixPage() {
+  const { group, characters, userId, canManageMembers, gameSlug } = useGameLayoutContext();
 
-  if (!group || !user) {
+  if (!group || !userId) {
     return null;
   }
 
   return gameSlug === 'starcitizen' ? (
     <ShipsView
       characters={characters}
-      userId={user.id}
+      userId={userId}
       canManage={canManageMembers}
       groupId={group.id}
       gameSlug={gameSlug}

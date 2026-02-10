@@ -17,6 +17,7 @@ import { ClanTabNav } from '@/components/layout/ClanTabNav';
 import { InlineFooter } from '@/components/layout/Footer';
 import { ArchivedGameBanner } from '@/components/common/ArchivedGameBanner';
 import { ArchiveStatusProvider } from '@/contexts/ArchiveStatusContext';
+import { GameLayoutProvider } from '@/contexts/GameLayoutContext';
 import { DynamicFavicon } from '@/components/common/DynamicFavicon';
 import { Users } from 'lucide-react';
 import { getAllGames } from '@/lib/games';
@@ -68,13 +69,21 @@ export default function GameLayout({
     characters,
     loading: groupLoading,
     error: groupError,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
+    setProfessionRank,
+    refresh: refreshGroupData,
+    updateMember,
+    deleteMember,
   } = useGroupData(groupSlug, gameSlug);
 
   const {
     membership,
     loading: membershipLoading,
     apply,
-  } = useGroupMembership(group?.id || null, user?.id || null);
+    canManageMembers,
+  } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
 
   const { hasPermission } = usePermissions(group?.id || undefined);
 
@@ -180,43 +189,65 @@ export default function GameLayout({
   const currentGame = enabledGames.find(g => g.slug === gameSlug);
   const gameName = currentGame?.name || gameSlug;
 
+  // Context value for child pages
+  const contextValue = {
+    group,
+    characters,
+    groupSlug,
+    gameSlug,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
+    setProfessionRank,
+    refreshGroupData,
+    updateMember,
+    deleteMember,
+    membership,
+    canManageMembers,
+    hasPermission,
+    userId: user?.id || null,
+    userTimezone: profile?.timezone || 'UTC',
+  };
+
   return (
     <ArchiveStatusProvider isGameArchived={isGameArchived}>
-      <div className="h-screen flex flex-col overflow-hidden">
-        <DynamicFavicon iconUrl={guildIconUrl} />
-        {isGameArchived && <ArchivedGameBanner gameName={gameName} />}
-        
-        {/* Static Header */}
-        <GroupHeader
-          groupName={group?.name || ''}
-          groupSlug={groupSlug}
-          gameSlug={gameSlug}
-          enabledGames={enabledGames}
-          characterCount={characters.length}
-          role={membership.role || ''}
-          displayName={displayName}
-          onSignOut={signOut}
-          guildIconUrl={guildIconUrl}
-        />
-
-        {/* Dynamic Content Area */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
-            {children}
-          </div>
-        </main>
-
-        {/* Static Bottom Nav + Footer */}
-        <div className="shrink-0">
-          <ClanTabNav
-            canManage={hasPermission('settings_edit')}
-            initialTab={activeTab}
-            gameSlug={gameSlug}
+      <GameLayoutProvider value={contextValue}>
+        <div className="h-screen flex flex-col overflow-hidden">
+          <DynamicFavicon iconUrl={guildIconUrl} />
+          {isGameArchived && <ArchivedGameBanner gameName={gameName} />}
+          
+          {/* Static Header */}
+          <GroupHeader
+            groupName={group?.name || ''}
             groupSlug={groupSlug}
+            gameSlug={gameSlug}
+            enabledGames={enabledGames}
+            characterCount={characters.length}
+            role={membership.role || ''}
+            displayName={displayName}
+            onSignOut={signOut}
+            guildIconUrl={guildIconUrl}
           />
-          <InlineFooter />
+
+          {/* Dynamic Content Area */}
+          <main className="flex-1 overflow-y-auto">
+            <div className="max-w-7xl mx-auto px-4 py-6 pb-4">
+              {children}
+            </div>
+          </main>
+
+          {/* Static Bottom Nav + Footer */}
+          <div className="shrink-0">
+            <ClanTabNav
+              canManage={hasPermission('settings_edit')}
+              initialTab={activeTab}
+              gameSlug={gameSlug}
+              groupSlug={groupSlug}
+            />
+            <InlineFooter />
+          </div>
         </div>
-      </div>
+      </GameLayoutProvider>
     </ArchiveStatusProvider>
   );
 }

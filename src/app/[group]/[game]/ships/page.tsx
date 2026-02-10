@@ -1,30 +1,22 @@
 'use client';
 
-import { use } from 'react';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { ShipsView } from '@/components/views/ShipsView';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useAuthContext } from '@/components/auth/AuthProvider';
-import { useGroupMembership } from '@/hooks/useGroupMembership';
-import { usePermissions } from '@/hooks/usePermissions';
 
-export default function ShipsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
-  const { group, characters } = useGroupData(groupSlug, gameSlug);
-  const { membership } = useGroupMembership(group?.id || null, user?.id || null);
-  const { hasPermission } = usePermissions(group?.id);
+export default function ShipsPage() {
+  const { group, userId, hasPermission, gameSlug } = useGameLayoutContext();
 
   // Check if user can view ships (officers and admins can see all guild ships)
   const canManage = hasPermission('ships_edit_any');
 
-  if (!group || !user) {
+  if (!group || !userId) {
     return null;
   }
 
   return (
     <ShipsView
       characters={[]}
-      userId={user.id}
+      userId={userId}
       canManage={canManage}
       groupId={group.id}
       gameSlug={gameSlug}

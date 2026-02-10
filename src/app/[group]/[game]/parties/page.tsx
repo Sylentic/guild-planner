@@ -1,18 +1,12 @@
 'use client';
 
-import { use } from 'react';
-import { useAuthContext } from '@/components/auth/AuthProvider';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { PartiesTab } from '../tabs/PartiesTab';
 
-export default function PartiesPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
-  const { group, characters } = useGroupData(groupSlug, gameSlug);
-  const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
+export default function PartiesPage() {
+  const { group, characters, userId, canManageMembers } = useGameLayoutContext();
 
-  if (!group || !user) {
+  if (!group || !userId) {
     return null;
   }
 
@@ -20,7 +14,7 @@ export default function PartiesPage({ params }: { params: Promise<{ group: strin
     <PartiesTab
       groupId={group.id}
       characters={characters}
-      userId={user.id}
+      userId={userId}
       canManage={canManageMembers}
     />
   );

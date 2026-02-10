@@ -1,29 +1,28 @@
 'use client';
 
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { CharactersTab } from '../tabs/CharactersTab';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useAuthContext } from '@/components/auth/AuthProvider';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { CharacterEditModal } from '../CharacterEditModal';
 import { CharacterWithProfessions } from '@/lib/types';
 import { DEFAULT_FILTERS, CharacterFilters } from '@/components/characters/CharacterFilters';
 
-export default function CharactersPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
+export default function CharactersPage() {
   const {
     group,
     characters,
+    gameSlug,
     addCharacter,
     updateMember,
     deleteMember,
     updateCharacter,
     setProfessionRank,
-  } = useGroupData(groupSlug, gameSlug);
+  } = useGameLayoutContext();
+  
   const [editingCharacter, setEditingCharacter] = useState<CharacterWithProfessions | null>(null);
   const [characterFilters, setCharacterFilters] = useState<CharacterFilters>(DEFAULT_FILTERS);
 
-  if (!group || !user) {
+  if (!group) {
     return null;
   }
 

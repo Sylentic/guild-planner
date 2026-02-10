@@ -1,11 +1,9 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
-import { useAuthContext } from '@/components/auth/AuthProvider';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useGroupData } from '@/hooks/useGroupData';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
-import { usePermissions } from '@/hooks/usePermissions';
 import { ManageTab } from '../tabs/ManageTab';
 import { GuildIconUploaderWrapper } from '../GuildIconUploaderWrapper';
 import { PermissionsSettings } from '@/components/settings/PermissionsSettings';
@@ -14,14 +12,12 @@ import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
 import { GameManagement } from '@/components/settings/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
 
-export default function SettingsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user } = useAuthContext();
+export default function SettingsPage() {
+  const { group, groupSlug, gameSlug, userId, hasPermission, membership } = useGameLayoutContext();
   const { t } = useLanguage();
 
-  const { group } = useGroupData(groupSlug, gameSlug);
+  // Settings page needs full membership management functions
   const {
-    membership,
     members,
     pendingMembers,
     canManageMembers,
@@ -31,9 +27,8 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
     updateRole,
     updateRank,
     removeMember,
-  } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
+  } = useGroupMembership(group?.id || null, userId, gameSlug);
 
-  const { hasPermission } = usePermissions(group?.id || undefined);
   const canViewPermissions = hasPermission('settings_view_permissions');
   const canEditPermissions = hasPermission('settings_edit_permissions');
   const canEditSettings = hasPermission('settings_edit');
@@ -50,7 +45,7 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
     if (latest?.group_icon_url) setGuildIconUrl(latest.group_icon_url);
   }
 
-  if (!group || !user || !membership) {
+  if (!group || !userId || !membership) {
     return null;
   }
 
@@ -75,7 +70,7 @@ export default function SettingsPage({ params }: { params: Promise<{ group: stri
         onUpdateRole={canManageRoles ? updateRole : undefined}
         onUpdateRank={canManageMembers ? updateRank : undefined}
         onRemove={canManageRoles ? removeMember : undefined}
-        currentUserId={user.id}
+        currentUserId={userId}
         currentUserRole={membership.role || 'member'}
         gameSlug={gameSlug}
         t={t}
