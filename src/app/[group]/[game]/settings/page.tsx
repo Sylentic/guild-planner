@@ -8,9 +8,12 @@ import { ManageTab } from '../tabs/ManageTab';
 import { GuildIconUploaderWrapper } from '../GuildIconUploaderWrapper';
 import { PermissionsSettings } from '@/components/settings/PermissionsSettings';
 import { ClanSettings } from '@/components/settings/ClanSettings';
+import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
+import { GameManagement } from '@/components/settings/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
 import Link from 'next/link';
 import { Shield } from 'lucide-react';
+import type { GroupRole } from '@/lib/permissions';
 
 export default function SettingsPage() {
   const { group, groupSlug, gameSlug, userId, hasPermission, membership } = useGameLayoutContext();
@@ -19,9 +22,14 @@ export default function SettingsPage() {
   // Settings page needs full membership management functions
   const {
     members,
+    pendingMembers,
     canManageMembers,
+    canManageRoles,
     updateRank,
+    updateRole,
     removeMember,
+    acceptMember,
+    rejectMember,
   } = useGroupMembership(group?.id || null, userId, gameSlug);
 
   const canViewPermissions = hasPermission('settings_view_permissions');
@@ -66,13 +74,13 @@ export default function SettingsPage() {
         onUpdateRank={canManageMembers ? updateRank : undefined}
         onRemove={canManageRoles ? removeMember : undefined}
         currentUserId={userId}
-        currentUserRole={membership.role || 'member'}
+        currentUserRole={(membership.role || 'member') as GroupRole}
         gameSlug={gameSlug}
         t={t}
       />
 
       {canEditPermissions && group && (
-        <PermissionsSettings groupId={group.id} userRole={membership.role || 'member'} />
+        <PermissionsSettings groupId={group.id} userRole={(membership.role || 'member') as GroupRole} />
       )}
 
       {canEditSettings && group && (
