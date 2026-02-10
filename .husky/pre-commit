@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1091
 . "$(dirname -- "$0")/_/husky.sh"
 
 echo "🔤 Checking spelling and markdown..."
@@ -9,6 +10,4 @@ npx cspell "**/*.md" || { echo "❌ Spelling errors detected (en-GB). Add words 
 # Run markdownlint on changed markdown files  
 npx markdownlint-cli2 "**/*.md" || { echo "❌ Markdown linting errors detected. Fix and retry."; exit 1; }
 
-echo "✅ Spelling and markdown checks passed!"
-echo ""
-npm test 
+echo "✅ Spelling and markdown checks passed! (Tests run in CI)"

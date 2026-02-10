@@ -160,7 +160,7 @@ All 7 identified API routes are listed below with their intended test coverage. 
 
 **Purpose**: Proxy webhook requests to Discord API\
 **Auth**: Optional Discord webhook URL validation\
-**External API**: Discord API (<https://discord.com/api/webhooks/>)
+**External API**: Discord API (webhooks endpoint pattern: `https://discord.com/api/webhooks/[id]/[token]`)
 
 ### POST /api/discord
 
