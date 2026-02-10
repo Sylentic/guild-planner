@@ -43,6 +43,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 describe('useGroupData Hook - Phase 2 Sprint 3', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -140,7 +142,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
             }),
         });
 
-      supabase.from.mockImplementation(mockFrom);
+      jest.mocked(supabase).from.mockImplementation(mockFrom);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 

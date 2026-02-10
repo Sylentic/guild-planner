@@ -20,6 +20,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 const mockBuilds = [
   {
     id: 'build-1',

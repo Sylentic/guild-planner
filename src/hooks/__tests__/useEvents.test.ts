@@ -44,6 +44,8 @@ const buildAnnouncementsQuery = (data: any, error: any = null) => ({
   }),
 });
 
+const mockSupabase = jest.mocked(supabase);
+
 describe('useEvents Hook - Phase 2', () => {
   beforeEach(() => {
     jest.clearAllMocks();

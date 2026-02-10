@@ -30,6 +30,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 describe('useActivity Hook - Phase 2', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -56,7 +58,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       });
 
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: mockSelect,
       });
 

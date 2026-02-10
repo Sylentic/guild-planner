@@ -20,6 +20,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 const mockDefinitions = [
   {
     id: 'achieve-1',
@@ -82,7 +84,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      supabase.from.mockReturnValue({
+      jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
       });
@@ -552,14 +554,14 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const initialCount = supabase.from.mock.calls.length;
+      const initialCount = jest.mocked(supabase).from.mock.calls.length;
 
       await act(async () => {
         await result.current.refresh();
       });
 
       // Should have called from() twice more (definitions + clan achievements)
-      expect(supabase.from.mock.calls.length).toBeGreaterThan(initialCount);
+      expect(jest.mocked(supabase).from.mock.calls.length).toBeGreaterThan(initialCount);
     });
   });
 
