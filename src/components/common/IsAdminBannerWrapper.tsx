@@ -11,14 +11,12 @@ export function IsAdminBannerWrapper() {
   useEffect(() => {
     let isActive = true;
 
-    if (!user) {
-      setIsAdmin(false);
-      return () => {
-        isActive = false;
-      };
-    }
+    const fetchAdminStatus = async () => {
+      if (!user) {
+        if (isActive) setIsAdmin(false);
+        return;
+      }
 
-    const checkAdmin = async () => {
       const { data, error } = await supabase
         .from('group_members')
         .select('id')
@@ -37,7 +35,7 @@ export function IsAdminBannerWrapper() {
       setIsAdmin(Boolean(data?.length));
     };
 
-    checkAdmin();
+    fetchAdminStatus();
 
     return () => {
       isActive = false;

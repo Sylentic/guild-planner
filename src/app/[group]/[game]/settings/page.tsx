@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
@@ -37,9 +37,15 @@ export default function SettingsPage() {
   const canEditSettings = hasPermission('settings_edit');
 
   const [guildIconUrl, setGuildIconUrl] = useState(group?.group_icon_url || '');
+  const prevIconUrlRef = useRef<string | undefined>(group?.group_icon_url);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    setGuildIconUrl(group?.group_icon_url || '');
+    const newUrl = group?.group_icon_url || '';
+    if (prevIconUrlRef.current !== newUrl) {
+      prevIconUrlRef.current = newUrl;
+      setGuildIconUrl(newUrl);
+    }
   }, [group?.group_icon_url]);
 
   async function refreshGuildIcon() {
