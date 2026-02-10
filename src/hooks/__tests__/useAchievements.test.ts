@@ -84,7 +84,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      jest.mocked(supabase).from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
       });
@@ -106,7 +106,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('exposes all required API methods', () => {
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
       });
@@ -134,7 +134,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -146,13 +146,13 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
       expect(result.current.definitions).toHaveLength(3);
       expect(result.current.achievements).toHaveLength(3);
-      expect(supabase.from).toHaveBeenCalledWith('achievement_definitions');
-      expect(supabase.from).toHaveBeenCalledWith('group_achievements');
+      expect(mockSupabase.from).toHaveBeenCalledWith('achievement_definitions');
+      expect(mockSupabase.from).toHaveBeenCalledWith('group_achievements');
     });
 
     it('handles definition fetch error', async () => {
       const errorMsg = 'Database error';
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: null, error: new Error(errorMsg) }),
       });
@@ -182,7 +182,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -209,7 +209,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -254,7 +254,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -280,7 +280,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -325,7 +325,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: allUnlockedAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -353,7 +353,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -384,7 +384,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -416,7 +416,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         upsert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery)
         .mockReturnValueOnce(upsertQuery)
@@ -459,7 +459,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         upsert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery)
         .mockReturnValueOnce(upsertQuery)
@@ -508,7 +508,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 
@@ -542,7 +542,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery)
         .mockReturnValueOnce(definitionsQuery)  // refresh
@@ -554,14 +554,14 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const initialCount = jest.mocked(supabase).from.mock.calls.length;
+      const initialCount = mockSupabase.from.mock.calls.length;
 
       await act(async () => {
         await result.current.refresh();
       });
 
       // Should have called from() twice more (definitions + clan achievements)
-      expect(jest.mocked(supabase).from.mock.calls.length).toBeGreaterThan(initialCount);
+      expect(mockSupabase.from.mock.calls.length).toBeGreaterThan(initialCount);
     });
   });
 
@@ -578,7 +578,7 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(definitionsQuery)
         .mockReturnValueOnce(clanAchievementsQuery);
 

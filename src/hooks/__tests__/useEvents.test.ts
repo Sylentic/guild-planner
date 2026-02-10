@@ -70,7 +70,7 @@ describe('useEvents Hook - Phase 2', () => {
       { id: 'ann-1', group_id: 'group-123', title: 'Announcement' },
     ];
 
-    supabase.from
+    mockSupabase.from
       .mockReturnValueOnce(buildEventsQuery(eventsData))
       .mockReturnValueOnce(buildAnnouncementsQuery(announcementsData));
 
@@ -157,7 +157,7 @@ describe('useEvents Hook - Phase 2', () => {
       }),
     };
 
-    supabase.from
+    mockSupabase.from
       .mockReturnValueOnce(eventsFetchQuery)
       .mockReturnValueOnce(announcementsQuery)
       .mockReturnValueOnce(eventsInsertQuery)
@@ -226,7 +226,7 @@ describe('useEvents Hook - Phase 2', () => {
       }),
     };
 
-    supabase.from
+    mockSupabase.from
       .mockReturnValueOnce(eventsFetchQuery)
       .mockReturnValueOnce(announcementsQuery)
       .mockReturnValueOnce(rsvpQuery)
@@ -243,7 +243,7 @@ describe('useEvents Hook - Phase 2', () => {
     });
 
     expect(rsvpQuery.upsert).toHaveBeenCalled();
-    expect(supabase.from).toHaveBeenCalledWith('event_rsvps');
+    expect(mockSupabase.from).toHaveBeenCalledWith('event_rsvps');
   });
 
   it('removes RSVP and refreshes events', async () => {
@@ -260,7 +260,7 @@ describe('useEvents Hook - Phase 2', () => {
       }),
     };
 
-    supabase.from
+    mockSupabase.from
       .mockReturnValueOnce(eventsFetchQuery)
       .mockReturnValueOnce(announcementsQuery)
       .mockReturnValueOnce(deleteQuery)
@@ -277,6 +277,6 @@ describe('useEvents Hook - Phase 2', () => {
     });
 
     expect(deleteQuery.delete).toHaveBeenCalled();
-    expect(supabase.from).toHaveBeenCalledWith('event_rsvps');
+    expect(mockSupabase.from).toHaveBeenCalledWith('event_rsvps');
   });
 });

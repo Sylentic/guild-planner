@@ -20,6 +20,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 const mockCaravans = [
   {
     id: 'caravan-1',
@@ -68,7 +70,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -87,11 +89,11 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
 
       expect(result.current.caravans).toEqual([]);
       expect(result.current.loading).toBe(false);
-      expect(supabase.from).not.toHaveBeenCalled();
+      expect(mockSupabase.from).not.toHaveBeenCalled();
     });
 
     it('exposes all required API methods', () => {
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -120,7 +122,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         order: jest.fn().mockResolvedValue({ data: mockCaravans, error: null }),
       };
 
-      supabase.from.mockReturnValueOnce(caravansQuery);
+      mockSupabase.from.mockReturnValueOnce(caravansQuery);
 
       const { result } = renderHook(() => useCaravans('group-1'));
 
@@ -137,7 +139,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
 
     it('handles fetch error gracefully', async () => {
       const errorMsg = 'Database error';
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: null, error: new Error(errorMsg) }),
@@ -162,7 +164,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         order: jest.fn().mockResolvedValue({ data: mockCaravans, error: null }),
       };
 
-      supabase.from.mockReturnValueOnce(caravansQuery);
+      mockSupabase.from.mockReturnValueOnce(caravansQuery);
 
       const { result } = renderHook(() => useCaravans('group-1'));
 
@@ -182,7 +184,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         { ...mockCaravans[1], id: 'caravan-3', status: 'cancelled' },
       ];
 
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: caravansWithStates, error: null }),
@@ -216,7 +218,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(insertQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -281,7 +283,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         eq: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(updateQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -316,7 +318,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         eq: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(updateQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -351,7 +353,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         insert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(escortQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -393,7 +395,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(deleteQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -423,7 +425,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         eq: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(updateQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -456,7 +458,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         insert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(waypointQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -497,7 +499,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         eq: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(deleteQuery)
         .mockReturnValueOnce(caravansQuery);
@@ -524,7 +526,7 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         order: jest.fn().mockResolvedValue({ data: mockCaravans, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(caravansQuery)
         .mockReturnValueOnce(caravansQuery);
 
@@ -534,13 +536,13 @@ describe('useCaravans Hook - Phase 2 Sprint 6', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const initialCallCount = supabase.from.mock.calls.length;
+      const initialCallCount = mockSupabase.from.mock.calls.length;
 
       await act(async () => {
         await result.current.refresh();
       });
 
-      expect(supabase.from.mock.calls.length).toBeGreaterThan(initialCallCount);
+      expect(mockSupabase.from.mock.calls.length).toBeGreaterThan(initialCallCount);
     });
   });
 });

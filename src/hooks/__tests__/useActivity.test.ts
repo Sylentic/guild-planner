@@ -58,7 +58,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       });
 
-      jest.mocked(supabase).from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: mockSelect,
       });
 
@@ -115,7 +115,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -161,7 +161,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -203,7 +203,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -260,7 +260,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -302,7 +302,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -341,7 +341,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -378,7 +378,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -417,7 +417,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -435,7 +435,7 @@ describe('useActivity Hook - Phase 2', () => {
 
       expect(result.current.loading).toBe(false);
       expect(result.current.activitySummaries).toEqual([]);
-      expect(supabase.from).not.toHaveBeenCalled();
+      expect(mockSupabase.from).not.toHaveBeenCalled();
     });
   });
 
@@ -465,7 +465,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -504,7 +504,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 
@@ -549,7 +549,7 @@ describe('useActivity Hook - Phase 2', () => {
         }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(mockSummariesQuery)
         .mockReturnValueOnce(mockAlertsQuery);
 

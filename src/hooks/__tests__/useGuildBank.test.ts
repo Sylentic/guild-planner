@@ -20,6 +20,8 @@ jest.mock('@/lib/supabase', () => ({
 
 import { supabase } from '@/lib/supabase';
 
+const mockSupabase = jest.mocked(supabase);
+
 const mockBank = {
   id: 'bank-1',
   group_id: 'group-1',
@@ -92,7 +94,7 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
@@ -114,11 +116,11 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
 
       expect(result.current.bank).toBeNull();
       expect(result.current.loading).toBe(false);
-      expect(supabase.from).not.toHaveBeenCalled();
+      expect(mockSupabase.from).not.toHaveBeenCalled();
     });
 
     it('exposes all required API methods', () => {
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
@@ -180,7 +182,7 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         order: jest.fn().mockResolvedValue({ data: mockRequests, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
         .mockReturnValueOnce(catalogQuery)
         .mockReturnValueOnce(inventoryQuery)
@@ -202,7 +204,7 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
 
     it('handles fetch error gracefully', async () => {
       const errorMsg = 'Database error';
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
@@ -229,12 +231,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -268,12 +270,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -294,12 +296,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -318,12 +320,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -342,12 +344,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -368,12 +370,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -392,12 +394,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -416,12 +418,12 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -442,7 +444,7 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(bankQuery);
+      mockSupabase.from.mockReturnValue(bankQuery);
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -463,14 +465,14 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         maybeSingle: jest.fn().mockResolvedValue({ data: mockBank, error: null }),
       };
 
-      supabase.from
+      mockSupabase.from
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'))
-        .mockReturnValueOnce(supabase.from('bank_inventory'))
-        .mockReturnValueOnce(supabase.from('bank_transactions'))
-        .mockReturnValueOnce(supabase.from('resource_requests'))
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'))
+        .mockReturnValueOnce(mockSupabase.from('bank_inventory'))
+        .mockReturnValueOnce(mockSupabase.from('bank_transactions'))
+        .mockReturnValueOnce(mockSupabase.from('resource_requests'))
         .mockReturnValueOnce(bankQuery)
-        .mockReturnValueOnce(supabase.from('resource_catalog'));
+        .mockReturnValueOnce(mockSupabase.from('resource_catalog'));
 
       const { result } = renderHook(() => useGuildBank('group-1'));
 
@@ -478,13 +480,13 @@ describe('useGuildBank Hook - Phase 2 Sprint 7', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const initialCallCount = supabase.from.mock.calls.length;
+      const initialCallCount = mockSupabase.from.mock.calls.length;
 
       await act(async () => {
         await result.current.refresh();
       });
 
-      expect(supabase.from.mock.calls.length).toBeGreaterThan(initialCallCount);
+      expect(mockSupabase.from.mock.calls.length).toBeGreaterThan(initialCallCount);
     });
   });
 });

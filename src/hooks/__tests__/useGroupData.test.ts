@@ -64,7 +64,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -86,7 +86,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -142,7 +142,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
             }),
         });
 
-      jest.mocked(supabase).from.mockImplementation(mockFrom);
+      mockSupabase.from.mockImplementation(mockFrom);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -169,7 +169,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: new Error(errorMsg) }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -196,7 +196,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
     });
 
     it('addCharacter accepts character data object', async () => {
@@ -207,7 +207,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
       });
 
       try {
-        supabase.from.mockReturnValue({
+        mockSupabase.from.mockReturnValue({
           update: jest
             .fn()
             .mockReturnThis(),
@@ -245,7 +245,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      supabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValue({
         select: jest
           .fn()
           .mockReturnThis(),
@@ -316,7 +316,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
     });
 
     it('addMember is alias for addCharacter', async () => {
@@ -366,7 +366,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
     });
 
     it('returns complete state object', async () => {
@@ -404,7 +404,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
     });
 
     it('mocks character permission functions', async () => {
@@ -458,7 +458,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom);
     });
 
     it('refresh is callable', async () => {
