@@ -1,5 +1,10 @@
 # Group Planner
 
+[![CI](https://github.com/Pandamonium-Gaming/guild-planner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Pandamonium-Gaming/guild-planner/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Pandamonium-Gaming/guild-planner/branch/develop/graph/badge.svg?token=YourCodecovToken)](https://codecov.io/gh/Pandamonium-Gaming/guild-planner)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 A comprehensive group management and planning tool supporting multiple MMOs.
 
 > **Inspired by** the original [AoC Group Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
