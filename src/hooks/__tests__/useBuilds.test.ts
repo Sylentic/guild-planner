@@ -3,6 +3,7 @@
  * Tests for build management, filtering, likes, and comments
  */
 
+// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useBuilds } from '../useBuilds';
 

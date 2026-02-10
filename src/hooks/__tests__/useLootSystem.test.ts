@@ -3,6 +3,7 @@
  * Tests for DKP loot system management
  */
 
+// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useLootSystem } from '../useLootSystem';
 

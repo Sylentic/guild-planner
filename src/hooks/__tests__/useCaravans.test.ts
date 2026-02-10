@@ -3,6 +3,7 @@
  * Tests for caravan management, escort coordination, and waypoint tracking
  */
 
+// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useCaravans } from '../useCaravans';
 

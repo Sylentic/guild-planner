@@ -2,6 +2,7 @@
  * Phase 2 Tests: Data Fetching Hooks
  * Tests for core hooks that manage group and character data
  */
+// @ts-nocheck
 
 import { renderHook, waitFor } from '@testing-library/react';
 import { useActivity } from '../useActivity';

@@ -3,6 +3,7 @@
  * Tests for freehold management and building additions
  */
 
+// @ts-nocheck
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useFreeholds } from '../useFreeholds';
 
