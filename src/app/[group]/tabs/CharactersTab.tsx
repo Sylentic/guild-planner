@@ -1,12 +1,11 @@
 "use client";
 import { AddCharacterButton } from "@/components/characters/AddCharacterButton";
-import { CharacterFiltersBar, filterCharacters, DEFAULT_FILTERS } from "@/components/characters/CharacterFilters";
+import { CharacterFiltersBar, filterCharacters } from "@/components/characters/CharacterFilters";
 import { CharacterCard } from "@/components/characters/MemberCard";
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { roleHasPermission } from '@/lib/permissions';
 import { CharacterWithProfessions } from "@/lib/types";
-import { useState } from "react";
 
 interface CharactersTabProps {
   groupId: string;

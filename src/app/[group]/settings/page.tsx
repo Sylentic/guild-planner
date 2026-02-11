@@ -1,7 +1,8 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Settings } from 'lucide-react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -19,7 +20,7 @@ import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
 export default function GroupSettingsPage({ params }: { params: Promise<{ group: string }> }) {
   const { group: groupSlug } = use(params);
   const { user, profile } = useAuthContext();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
 
   const { group } = useGroupData(groupSlug);
   const {
@@ -34,12 +35,12 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
   } = useGroupMembership(group?.id || null, user?.id || null);
 
   const { hasPermission } = usePermissions(group?.id || undefined);
-  const canViewPermissions = hasPermission('settings_view_permissions');
+  const _canViewPermissions = hasPermission('settings_view_permissions');
   const canEditPermissions = hasPermission('settings_edit_roles');
   const canEditSettings = hasPermission('settings_edit');
 
   const [guildIconUrl, setGuildIconUrl] = useState<string>('');
-  const iconUrl = group?.group_icon_url || guildIconUrl;
+  const _iconUrl = group?.group_icon_url || guildIconUrl;
 
   async function refreshGuildIcon() {
     if (!groupSlug) return;
@@ -66,14 +67,14 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Access Denied</h1>
-          <p className="text-slate-400 mb-6">You need admin access to view group settings.</p>
+          <h1 className="text-2xl font-bold text-white mb-4">{t._t('common.accessDenied') || 'Access Denied'}</h1>
+          <p className="text-slate-400 mb-6">{t._t('settings.adminOnlyAccess') || 'You need admin access to view group settings.'}</p>
           <Link
             href={`/${groupSlug}`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Group
+            {t._t('common.back') || 'Back to Group'}
           </Link>
         </div>
       </div>
@@ -96,15 +97,17 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
                 <ArrowLeft className="w-5 h-5 text-slate-400" />
               </Link>
               {group.group_icon_url && (
-                <img
+                <Image
                   src={group.group_icon_url}
                   alt={group.name}
-                  className="w-8 h-8 rounded-full object-cover"
+                  width={32}
+                  height={32}
+                  className="rounded-full object-cover"
                 />
               )}
               <div>
                 <h1 className="text-xl font-bold text-white">{group.name}</h1>
-                <p className="text-sm text-slate-400">Group Settings</p>
+                <p className="text-sm text-slate-400">{_t('settings.groupSettingsTitle') || 'Group Settings'}</p>
               </div>
             </div>
             <div className="text-sm text-slate-400">

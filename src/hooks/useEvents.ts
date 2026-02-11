@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Event, EventWithRsvps, EventRsvp, RsvpStatus, EventRole, Announcement } from '@/lib/events';
 import { notifyNewEvent, notifyAnnouncement } from '@/lib/discord';
+import { roleHasPermission } from '@/lib/permissions';
 
 interface UseEventsReturn {
   events: EventWithRsvps[];
@@ -225,59 +226,74 @@ export function useEvents(groupId: string | null, userId: string | null, gameSlu
       throw new Error('User not authenticated');
     }
 
-    // Fetch the event first to check ownership and get group_id
-    const { data: event, error: fetchError } = await supabase
-      .from('events')
-      .select('created_by, group_id')
-      .eq('id', id)
-      .single();
+    try {
+      // Fetch the event to check ownership and get group_id
+      const { data: event, error: fetchError } = await supabase
+        .from('events')
+        .select('created_by, group_id')
+        .eq('id', id)
+        .single();
 
-    if (fetchError) {
-      setError(fetchError.message);
-      throw fetchError;
+      if (fetchError) {
+        console.error('Error fetching event:', fetchError);
+        setError('Event not found');
+        throw new Error('Event not found');
+      }
+
+      if (!event) {
+        throw new Error('Event not found');
+      }
+
+      // Get user's role in this group
+      const { data: membership, error: membershipError } = await supabase
+        .from('group_members')
+        .select('role')
+        .eq('group_id', event.group_id)
+        .eq('user_id', userId)
+        .single();
+
+      if (membershipError) {
+        console.error('Error fetching user membership:', membershipError);
+        setError('Failed to check permissions');
+        throw new Error('Failed to check permissions');
+      }
+
+      if (!membership) {
+        throw new Error('User is not a member of this group');
+      }
+
+      const userRole = membership.role;
+      const isOwner = event.created_by === userId;
+
+      // Check permissions based on user's role
+      const canDeleteAny = roleHasPermission(userRole, 'events_delete_any');
+      const canDeleteOwn = roleHasPermission(userRole, 'events_delete_own');
+
+      if (!canDeleteAny && (!canDeleteOwn || !isOwner)) {
+        const errorMsg = 'You do not have permission to delete this event';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      // Proceed with deletion
+      const { error: deleteError } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
+        .select();
+
+      if (deleteError) {
+        console.error('Error deleting event:', deleteError);
+        setError(deleteError.message);
+        throw deleteError;
+      }
+
+      await fetchEvents();
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to delete event';
+      console.error('Error in deleteEvent:', errorMsg);
+      throw err;
     }
-
-    if (!event) {
-      throw new Error('Event not found');
-    }
-
-    // Fetch user's permissions for this group
-    const { data: permissions, error: permError } = await supabase
-      .from('group_member_permissions')
-      .select('events_delete_any, events_delete_own')
-      .eq('group_id', event.group_id)
-      .eq('user_id', userId)
-      .single();
-
-    if (permError && permError.code !== 'PGRST116') { // PGRST116 = no rows returned
-      setError('Failed to check permissions');
-      throw new Error('Failed to check permissions');
-    }
-
-    // Check if user has permission to delete
-    const canDeleteAny = permissions?.events_delete_any || false;
-    const canDeleteOwn = permissions?.events_delete_own || false;
-    const isOwner = event.created_by === userId;
-
-    if (!canDeleteAny && (!canDeleteOwn || !isOwner)) {
-      const errorMsg = 'You do not have permission to delete this event';
-      setError(errorMsg);
-      throw new Error(errorMsg);
-    }
-
-    // Proceed with deletion
-    const { error: deleteError } = await supabase
-      .from('events')
-      .delete()
-      .eq('id', id)
-      .select();
-
-    if (deleteError) {
-      setError(deleteError.message);
-      throw deleteError;
-    }
-
-    await fetchEvents();
   };
 
   // Set RSVP
