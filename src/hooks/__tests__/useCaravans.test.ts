@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: useCaravans Hook - Sprint 6
  * Tests for caravan management, escort coordination, and waypoint tracking

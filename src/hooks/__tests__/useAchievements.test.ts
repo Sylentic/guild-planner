@@ -84,7 +84,6 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      // @ts-ignore
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null } as any),
@@ -107,7 +106,6 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('exposes all required API methods', () => {
-      // @ts-ignore
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null } as any),
@@ -125,13 +123,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Data Fetching', () => {
     it('fetches achievement definitions and clan achievements on mount', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -157,7 +152,6 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
     it('handles definition fetch error', async () => {
       const errorMsg = 'Database error';
-      // @ts-ignore
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: null, error: new Error(errorMsg) } as any),
@@ -174,13 +168,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('handles clan achievements fetch error', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -207,13 +198,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Achievement Merging Logic', () => {
     it('merges clan achievements with definitions', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -255,13 +243,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Computed Values', () => {
     it('calculates unlockedCount correctly', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -284,13 +269,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('calculates totalPoints from unlocked achievements only', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -332,14 +314,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
         },
       ];
 
-      // @ts-ignore
-
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -364,13 +342,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Category Filtering', () => {
     it('filters achievements by category', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -398,13 +373,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('returns empty array for non-existent category', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -429,21 +401,16 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Progress Updates & Unlock Logic', () => {
     it('updates progress to unlocked when requirement met', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
-
-      // @ts-ignore
 
       const upsertQuery = {
         upsert: jest.fn().mockResolvedValue({ data: null, error: null }),
@@ -477,21 +444,16 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('keeps progress unlocked=false when below requirement', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockClanAchievements, error: null }),
       };
-
-      // @ts-ignore
 
       const upsertQuery = {
         upsert: jest.fn().mockResolvedValue({ data: null, error: null }),
@@ -535,13 +497,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
     });
 
     it('throws error if achievement definition not found', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -572,13 +531,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('Refresh Functionality', () => {
     it('refresh re-fetches achievements', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),
@@ -611,13 +567,10 @@ describe('useAchievements Hook - Phase 2 Sprint 4', () => {
 
   describe('State Consistency', () => {
     it('maintains state consistency across operations', async () => {
-      // @ts-ignore
       const definitionsQuery = {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: mockDefinitions, error: null }),
       };
-
-      // @ts-ignore
 
       const clanAchievementsQuery = {
         select: jest.fn().mockReturnThis(),

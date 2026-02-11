@@ -177,8 +177,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -248,8 +246,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -275,8 +271,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -294,8 +288,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -316,8 +308,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -351,8 +341,6 @@ describe('Authentication & User Management', () => {
           }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -375,8 +363,6 @@ describe('Authentication & User Management', () => {
             }),
           }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
@@ -471,8 +457,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelectGroup,
       } as any);
@@ -492,8 +476,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -518,8 +500,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
       } as any);
@@ -539,8 +519,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         delete: mockDelete,
@@ -562,8 +540,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         delete: mockDelete,
       } as any);
@@ -584,8 +560,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
       } as any);
@@ -603,8 +577,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -627,8 +599,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -696,8 +666,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: mockSelectGroup,
@@ -761,8 +729,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -781,8 +747,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
@@ -814,8 +778,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -836,8 +798,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -853,8 +813,6 @@ describe('Authentication & User Management', () => {
           error: null,
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -874,8 +832,6 @@ describe('Authentication & User Management', () => {
           error,
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -920,8 +876,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
@@ -976,8 +930,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -997,8 +949,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
@@ -1020,8 +970,6 @@ describe('Authentication & User Management', () => {
         }),
       });
 
-      // @ts-ignore
-
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
       } as any);
@@ -1039,8 +987,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
@@ -1069,8 +1015,6 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
-
-      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,

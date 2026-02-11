@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: useBuilds Hook - Sprint 5
  * Tests for build management, filtering, likes, and comments

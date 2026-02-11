@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: useLootSystem Hook - Sprint 9
  * Tests for DKP loot system management

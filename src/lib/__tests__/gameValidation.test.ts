@@ -31,8 +31,6 @@ describe('Game Validation', () => {
         error: null,
       });
 
-      // @ts-ignore
-
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -52,8 +50,6 @@ describe('Game Validation', () => {
         error: null,
       });
 
-      // @ts-ignore
-
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -72,8 +68,6 @@ describe('Game Validation', () => {
         error: new Error('Database error'),
       });
 
-      // @ts-ignore
-
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -91,8 +85,6 @@ describe('Game Validation', () => {
         data: null,
         error: null,
       });
-
-      // @ts-ignore
 
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
@@ -114,8 +106,6 @@ describe('Game Validation', () => {
         error: null,
       });
 
-      // @ts-ignore
-
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -134,8 +124,6 @@ describe('Game Validation', () => {
         error: new Error('Not found'),
       });
 
-      // @ts-ignore
-
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -153,8 +141,6 @@ describe('Game Validation', () => {
         data: null,
         error: null,
       });
-
-      // @ts-ignore
 
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
