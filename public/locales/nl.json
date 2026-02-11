@@ -45,7 +45,9 @@
     "clear": "Wissen",
     "confirmDelete": "Bevestig verwijdering",
     "loadingError": "Laad fout",
-    "cancelDelete": "Annuleer verwijdering"
+    "cancelDelete": "Annuleer verwijdering",
+    "selectGame": "Selecteer een spel",
+    "archived": "Gearchiveerd"
   },
   "nav": {
     "characters": "Personages",
@@ -77,6 +79,7 @@
     "createNew": "Nieuwe clan aanmaken",
     "createDescription": "De clan {{name}} bestaat nog niet. Wil je deze aanmaken?",
     "createGroupPrompt": "\"{{name}}\" aanmaken?",
+    "createGroupDescription": "Deze groep bestaat nog niet. Wil je deze aanmaken?",
     "youWillBeAdmin": "Je wordt de beheerder van de clan ",
     "applyToJoin": "Aanmelden om lid te worden",
     "applicationPending": "In afwachting van goedkeuring",
@@ -106,7 +109,16 @@
     "doesNotExist": "De groep '{{name}}' bestaat niet.",
     "errorLoading": "Fout bij laden van groep",
     "connectionError": "Verbindingsfout",
-    "connectionErrorMessage": "Kan geen verbinding maken met de groep service. Dit kan komen door een trage verbinding of serverprobleem."
+    "connectionErrorMessage": "Kan geen verbinding maken met de groep service. Dit kan komen door een trage verbinding of serverprobleem.",
+    "getStarted": "Aan de slag",
+    "addGameToStart": "Voeg een spel toe om de inhoud van je groep te organiseren.",
+    "noGamesContactAdmin": "Er zijn nog geen spellen ingeschakeld voor deze groep. Neem contact op met een beheerder om er een toe te voegen.",
+    "addYourFirstGame": "Voeg je eerste spel toe",
+    "availableGames": "Beschikbare Spellen",
+    "availableGamesDesc": "Klik op een spel om de informatie van je groep voor dat spel te bekijken.",
+    "addGame": "Spel toevoegen",
+    "addGamePrompt": "Voeg een spel toe aan deze groep:",
+    "allGamesEnabled": "Alle beschikbare spellen zijn al ingeschakeld."
   },
   "character": {
     "addCharacter": "Personage toevoegen",

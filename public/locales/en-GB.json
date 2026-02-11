@@ -45,7 +45,9 @@
     "clear": "Clear",
     "confirmDelete": "Confirm Delete",
     "loadingError": "Loading Error",
-    "cancelDelete": "Cancel Deletion"
+    "cancelDelete": "Cancel Deletion",
+    "selectGame": "Select a game",
+    "archived": "Archived"
   },
   "nav": {
     "characters": "Characters",
@@ -77,6 +79,7 @@
     "createNew": "Create New Clan",
     "createDescription": "The clan {{name}} doesn't exist yet. Would you like to create it?",
     "createGroupPrompt": "Create \"{{name}}\"?",
+    "createGroupDescription": "This group doesn't exist yet. Would you like to create it?",
     "youWillBeAdmin": "You will become the clan Admin",
     "applyToJoin": "Apply to Join",
     "applicationPending": "Application Pending",
@@ -116,7 +119,12 @@
     "getStarted": "Get Started",
     "addGameToStart": "Add a game to start organizing your group's content.",
     "noGamesContactAdmin": "No games have been enabled for this group yet. Contact an admin to add one.",
-    "addYourFirstGame": "Add Your First Game"
+    "addYourFirstGame": "Add Your First Game",
+    "availableGames": "Available Games",
+    "availableGamesDesc": "Click on a game to view your group's information for that game.",
+    "addGame": "Add Game",
+    "addGamePrompt": "Add a game to this group:",
+    "allGamesEnabled": "All available games are already enabled."
   },
   "character": {
     "addCharacter": "Add Character",

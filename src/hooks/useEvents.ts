@@ -221,6 +221,51 @@ export function useEvents(groupId: string | null, userId: string | null, gameSlu
 
   // Delete event
   const deleteEvent = async (id: string) => {
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    // Fetch the event first to check ownership and get group_id
+    const { data: event, error: fetchError } = await supabase
+      .from('events')
+      .select('created_by, group_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      setError(fetchError.message);
+      throw fetchError;
+    }
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    // Fetch user's permissions for this group
+    const { data: permissions, error: permError } = await supabase
+      .from('group_member_permissions')
+      .select('events_delete_any, events_delete_own')
+      .eq('group_id', event.group_id)
+      .eq('user_id', userId)
+      .single();
+
+    if (permError && permError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      setError('Failed to check permissions');
+      throw new Error('Failed to check permissions');
+    }
+
+    // Check if user has permission to delete
+    const canDeleteAny = permissions?.events_delete_any || false;
+    const canDeleteOwn = permissions?.events_delete_own || false;
+    const isOwner = event.created_by === userId;
+
+    if (!canDeleteAny && (!canDeleteOwn || !isOwner)) {
+      const errorMsg = 'You do not have permission to delete this event';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    // Proceed with deletion
     const { error: deleteError } = await supabase
       .from('events')
       .delete()

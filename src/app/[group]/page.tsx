@@ -2,6 +2,7 @@
 "use client";
 import { useState, use, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader, Archive } from 'lucide-react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -201,7 +202,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
           <Plus className="w-12 h-12 text-blue-400 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-white mb-2">{t('clan.createGroupPrompt', { name: groupSlug })}</h2>
           <p className="text-slate-400 mb-6">
-            This group doesn&apos;t exist yet. Would you like to create it?
+            {t('clan.createGroupDescription')}
           </p>
           
           {createError && (
@@ -251,15 +252,17 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               <Home className="w-5 h-5" />
             </Link>
             {groupData?.group_icon_url && (
-              <img
+              <Image
                 src={groupData.group_icon_url}
                 alt={groupData.name}
-                className="w-8 h-8 rounded-full ring-2 ring-slate-700"
+                width={32}
+                height={32}
+                className="rounded-full ring-2 ring-slate-700"
               />
             )}
             <div>
               <h1 className="text-base sm:text-lg font-semibold text-white">{groupData?.name || groupSlug}</h1>
-              <p className="text-xs text-slate-400 hidden sm:block">Select a game</p>
+              <p className="text-xs text-slate-400 hidden sm:block">{t('common.selectGame')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -270,7 +273,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                 title="Group Settings"
               >
                 <Shield className="w-5 h-5" />
-                <span className="hidden sm:inline text-sm">Settings</span>
+                <span className="hidden sm:inline text-sm">{t('common.settings')}</span>
               </Link>
             )}
             <button
@@ -290,16 +293,16 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         <main className="max-w-2xl mx-auto px-4 py-16">
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center">
             <Shield className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-3">Join {groupData?.name || groupSlug}</h2>
+            <h2 className="text-2xl font-bold text-white mb-3">{t('clan.joinClan')}</h2>
             <p className="text-slate-400 mb-6">
-              Apply to join this group to access games and participate in activities.
+              {t('clan.applyDescription', { name: groupData?.name || groupSlug })}
             </p>
             <button
               onClick={apply}
               className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors cursor-pointer"
             >
               <Plus className="w-5 h-5" />
-              Apply to Join
+              {t('clan.applyToJoin')}
             </button>
             <div className="mt-6">
               <Link
@@ -307,7 +310,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
                 <Home className="w-4 h-4" />
-                Return Home
+                {t('common.returnHome')}
               </Link>
             </div>
           </div>
@@ -319,9 +322,9 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         <main className="max-w-2xl mx-auto px-4 py-16">
           <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-8 text-center">
             <Loader className="w-16 h-16 text-yellow-400 mx-auto mb-4 animate-spin" />
-            <h2 className="text-2xl font-bold text-white mb-3">Application Pending</h2>
+            <h2 className="text-2xl font-bold text-white mb-3">{t('clan.applicationPending')}</h2>
             <p className="text-slate-400 mb-6">
-              Your application to join {groupData?.name || groupSlug} is pending approval by an admin.
+              {t('clan.pendingApproval', { name: groupData?.name || groupSlug })}
             </p>
             <div className="mt-6">
               <Link
@@ -329,7 +332,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
                 className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
                 <Home className="w-4 h-4" />
-                Return Home
+                {t('common.returnHome')}
               </Link>
             </div>
           </div>
@@ -341,8 +344,8 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-white mb-2">Available Games</h2>
-            <p className="text-slate-400 text-sm">Click on a game to view your group&apos;s information for that game.</p>
+            <h2 className="text-lg font-semibold text-white mb-2">{t('group.availableGames')}</h2>
+            <p className="text-slate-400 text-sm">{t('group.availableGamesDesc')}</p>
           </div>
           {canEditSettings && (
             <button
@@ -351,7 +354,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               title="Add a game to this group"
             >
               <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Add Game</span>
+              <span>{t('group.addGame')}</span>
             </button>
           )}
         </div>
@@ -359,7 +362,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         {/* Add game dialog */}
         {showAddGame && canEditSettings && (
           <div className="mb-6 p-4 sm:p-5 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl">
-            <h3 className="text-white font-semibold mb-4 text-sm sm:text-base">Add a game to this group:</h3>
+            <h3 className="text-white font-semibold mb-4 text-sm sm:text-base">{t('group.addGamePrompt')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               {ALL_AVAILABLE_GAMES.filter(g => !enabledGames.includes(g.slug)).map((game) => (
                 <button
@@ -382,7 +385,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               ))}
             </div>
             {ALL_AVAILABLE_GAMES.every(g => enabledGames.includes(g.slug)) && (
-              <p className="text-slate-400 text-sm">All available games are already enabled.</p>
+              <p className="text-slate-400 text-sm">{t('group.allGamesEnabled')}</p>
             )}
           </div>
         )}
@@ -405,7 +408,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
               {isArchived && (
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 bg-amber-900/40 border border-amber-700/50 rounded-full z-10">
                   <Archive className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-xs font-medium text-amber-300">Archived</span>
+                  <span className="text-xs font-medium text-amber-300">{t('common.archived')}</span>
                 </div>
               )}
 

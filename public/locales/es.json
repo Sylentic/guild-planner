@@ -45,7 +45,9 @@
     "clear": "Limpiar",
     "confirmDelete": "Confirmar Eliminación",
     "loadingError": "Error de Carga",
-    "cancelDelete": "Cancelar Eliminación"
+    "cancelDelete": "Cancelar Eliminación",
+    "selectGame": "Seleccionar un juego",
+    "archived": "Archivado"
   },
   "nav": {
     "characters": "Personajes",
@@ -77,6 +79,7 @@
     "createNew": "Crear Nuevo Clan",
     "createDescription": "El clan {{name}} no existe todavía. ¿Te gustaría crearlo?",
     "createGroupPrompt": "¿Crear \"{{name}}\"?",
+    "createGroupDescription": "Este grupo no existe todavía. ¿Te gustaría crearlo?",
     "youWillBeAdmin": "Serás el Administrador del clan",
     "applyToJoin": "Solicitar unirse",
     "applicationPending": "Solicitud Pendiente",
@@ -116,7 +119,12 @@
     "getStarted": "Comenzar",
     "addGameToStart": "Agrega un juego para comenzar a organizar el contenido de tu grupo.",
     "noGamesContactAdmin": "Aún no se han habilitado juegos para este grupo. Contacta a un administrador para agregar uno.",
-    "addYourFirstGame": "Agregar Tu Primer Juego"
+    "addYourFirstGame": "Agregar Tu Primer Juego",
+    "availableGames": "Juegos Disponibles",
+    "availableGamesDesc": "Haz clic en un juego para ver la información de tu grupo para ese juego.",
+    "addGame": "Añadir Juego",
+    "addGamePrompt": "Añadir un juego a este grupo:",
+    "allGamesEnabled": "Todos los juegos disponibles ya están habilitados."
   },
   "character": {
     "addCharacter": "Añadir Personaje",
