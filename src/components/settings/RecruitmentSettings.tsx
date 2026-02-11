@@ -34,7 +34,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       if (!isMounted) return;
       setError(null);
       try {
-        console.log('[RecruitmentSettings] Fetching clan settings for:', groupId);
         // Fetch clan settings
         const { data: clanData, error: clanError } = await supabase
           .from('groups')
@@ -47,7 +46,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (clanData) {
-          console.log('[RecruitmentSettings] Clan data:', clanData);
           setIsPublic(clanData.is_public || false);
           setRecruitmentOpen(clanData.recruitment_open || false);
           setApprovalRequired(clanData.approval_required ?? true);
@@ -57,7 +55,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         // Fetch applications
-        console.log('[RecruitmentSettings] Fetching applications...');
         const { data: appsData, error: appsError } = await supabase
           .from('recruitment_applications')
           .select('*')
@@ -71,7 +68,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         }
 
         if (appsData) {
-          console.log('[RecruitmentSettings] Applications:', appsData.length);
           setApplications(appsData);
         }
       } catch (err) {
@@ -100,7 +96,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   const handleSave = async () => {
     setSaving(true);
     setError(null);
-    console.log('[RecruitmentSettings] Saving settings...');
     
     try {
       const updateData = {
@@ -111,7 +106,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         recruitment_message: recruitmentMessage.trim() || null,
         public_description: publicDescription.trim() || null,
       };
-      console.log('[RecruitmentSettings] Update data:', updateData);
 
       const { error: updateError } = await supabase
         .from('groups')
@@ -124,8 +118,6 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         setError(updateError.message);
         return;
       }
-      
-      console.log('[RecruitmentSettings] Save successful');
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -211,7 +203,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
               onClick={() => setIsPublic(!isPublic)}
               className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
                 isPublic 
-                  ? 'bg-orange-500 justify-end' 
+                  ? 'bg-indigo-500 justify-end' 
                   : 'bg-slate-600 justify-start'
               }`}
               role="switch"
@@ -267,7 +259,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             onClick={() => setApprovalRequired(!approvalRequired)}
             className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
               approvalRequired
-                ? 'bg-orange-500 justify-end'
+                ? 'bg-indigo-500 justify-end'
                 : 'bg-slate-600 justify-start'
             }`}
             role="switch"
@@ -288,7 +280,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             id="default-role"
             value={defaultRole}
             onChange={(e) => setDefaultRole(e.target.value as 'trial' | 'member')}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
           >
             <option value="trial">Trial Member</option>
             <option value="member">Full Member</option>
@@ -311,7 +303,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             onChange={(e) => setPublicDescription(e.target.value)}
             placeholder="Tell potential recruits about your guild..."
             rows={3}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
           />
         </div>
 
@@ -325,7 +317,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             value={recruitmentMessage}
             onChange={(e) => setRecruitmentMessage(e.target.value)}
             placeholder="e.g., Looking for active raiders for launch!"
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
@@ -344,7 +336,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               {saving ? (
                 <Loader2 size={16} className="animate-spin" />

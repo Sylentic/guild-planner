@@ -92,7 +92,7 @@ export function PartyForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Main Raid Group"
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
               autoFocus
             />
@@ -109,7 +109,7 @@ export function PartyForm({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g., Tuesday/Thursday raids"
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -141,7 +141,7 @@ export function PartyForm({
                       value={value}
                       onChange={(e) => setValue(parseInt(e.target.value) || 0)}
                       aria-label={config.name}
-                      className="w-16 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-16 px-2 py-1 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 );
@@ -164,7 +164,7 @@ export function PartyForm({
             <button
               type="submit"
               disabled={saving || !name.trim() || total === 0}
-              className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               {saving ? 'Saving...' : initialData ? 'Update' : 'Create'}
             </button>

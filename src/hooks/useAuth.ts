@@ -49,12 +49,10 @@ export function useAuth(): UseAuthReturn {
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('useAuth: getSession completed', { hasSession: !!session });
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        console.log('useAuth: fetching profile for', session.user.id);
-        fetchProfile(session.user.id).then(() => console.log('useAuth: profile fetched (initial)'));
+        fetchProfile(session.user.id);
       }
       setLoading(false);
     });
@@ -62,14 +60,11 @@ export function useAuth(): UseAuthReturn {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('useAuth: auth state change', event);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          console.log('useAuth: fetching profile (change)', session.user.id);
           await fetchProfile(session.user.id);
-          console.log('useAuth: profile fetched (change)');
         } else {
           setProfile(null);
         }

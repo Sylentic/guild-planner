@@ -93,7 +93,6 @@ export function EventForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('EventForm handleSubmit called with formData:', formData);
     
     if (!formData.title.trim()) {
       setError('Title is required');
@@ -108,18 +107,6 @@ export function EventForm({
     setError(null);
 
     try {
-      console.log('Parsing role values:',{
-        tanks_min_raw: formData.tanks_min,
-        tanks_min_parsed: parseInt(formData.tanks_min),
-        clerics_min_raw: formData.clerics_min,
-        clerics_min_parsed: parseInt(formData.clerics_min),
-        bards_min_raw: formData.bards_min,
-        bards_min_parsed: parseInt(formData.bards_min),
-        ranged_dps_min_raw: formData.ranged_dps_min,
-        ranged_dps_min_parsed: parseInt(formData.ranged_dps_min),
-        melee_dps_min_raw: formData.melee_dps_min,
-        melee_dps_min_parsed: parseInt(formData.melee_dps_min),
-      });
       const eventData = {
         group_id: groupId,
         created_by: userId,
@@ -153,7 +140,6 @@ export function EventForm({
         is_public: formData.is_public,
         allow_allied_signups: formData.allow_allied_signups,
       };
-      console.log('EventForm submitting eventData:', eventData, 'sendDiscordNotification:', formData.sendDiscordNotification);
       await onSubmit(eventData, formData.sendDiscordNotification);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save event');
@@ -238,7 +224,7 @@ export function EventForm({
               type="datetime-local"
               value={formData.starts_at}
               onChange={(e) => setFormData({ ...formData, starts_at: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -252,7 +238,7 @@ export function EventForm({
               type="datetime-local"
               value={formData.ends_at}
               onChange={(e) => setFormData({ ...formData, ends_at: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -265,7 +251,7 @@ export function EventForm({
               type="text"
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="e.g., Node 5 - Dungeon Entrance"
             />
           </div>
@@ -282,7 +268,7 @@ export function EventForm({
               max="100"
               value={formData.max_attendees}
               onChange={(e) => setFormData({ ...formData, max_attendees: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               placeholder="Leave empty for unlimited"
             />
           </div>
@@ -338,7 +324,7 @@ export function EventForm({
                             ...formData, 
                             [minFieldName]: e.target.value 
                           })}
-                          className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
                       <span className="text-slate-500 pt-5">/</span>
@@ -355,7 +341,7 @@ export function EventForm({
                             [maxFieldName]: e.target.value 
                           })}
                           placeholder="∞"
-                          className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-center placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          className="w-full px-2 py-1.5 bg-slate-800 border border-slate-600 rounded text-white text-center placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
                       </div>
                     </div>
@@ -375,7 +361,7 @@ export function EventForm({
                       allow_combined_dps: e.target.checked,
                       combined_dps_max: ''
                     })}
-                    className="w-4 h-4 text-orange-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-orange-500"
+                    className="w-4 h-4 text-indigo-500 bg-slate-800 border-slate-600 rounded focus:ring-2 focus:ring-indigo-500"
                   />
                   <label htmlFor="allowCombinedDps" className="text-sm text-slate-300 cursor-pointer flex-1">
                     Combine Ranged & Melee DPS limits
@@ -641,7 +627,7 @@ export function EventForm({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Event'}
             </button>

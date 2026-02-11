@@ -1,25 +1,26 @@
 "use client";
 import { AddCharacterButton } from "@/components/characters/AddCharacterButton";
-import { CharacterFiltersBar, filterCharacters, DEFAULT_FILTERS } from "@/components/characters/CharacterFilters";
+import { CharacterFiltersBar, filterCharacters, CharacterFilters } from "@/components/characters/CharacterFilters";
 import { CharacterCard } from "@/components/characters/MemberCard";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useArchiveStatus } from '@/contexts/ArchiveStatusContext';
-import { roleHasPermission, GroupRole } from '@/lib/permissions';
+import { GroupRole } from '@/lib/permissions';
 import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
-import { CharacterWithProfessions } from "@/lib/types";
-import { useState } from "react";
+import { CharacterWithProfessions, RankLevel } from "@/lib/types";
+import { CharacterData } from '@/hooks/useGroupData';
 
 interface CharactersTabProps {
   groupId: string;
   characters: CharacterWithProfessions[];
-  addCharacter: (data: any) => Promise<void>;
+  addCharacter: (data: CharacterData) => Promise<void>;
   updateMember: (id: string, name: string) => Promise<void>;
   deleteMember: (id: string) => Promise<void>;
-  setProfessionRank: (characterId: string, professionId: string, rank: any, level?: number, quality?: number) => Promise<void>;
+  setProfessionRank: (characterId: string, professionId: string, rank: RankLevel | null, level?: number, quality?: number) => Promise<void>;
   setEditingCharacter: (character: CharacterWithProfessions) => void;
-  characterFilters: any;
-  setCharacterFilters: (filters: any) => void;
+  characterFilters: CharacterFilters;
+  setCharacterFilters: (filters: CharacterFilters) => void;
   gameSlug?: string;
 }
 
@@ -37,6 +38,7 @@ export function CharactersTab({
 }: CharactersTabProps) {
   const { user } = useAuthContext();
   const { isGameArchived } = useArchiveStatus();
+  const { t } = useLanguage();
   const clanMembership = useGroupMembership(groupId, user?.id || null);
   const userRole = clanMembership.membership?.role || 'pending';
 
@@ -51,7 +53,6 @@ export function CharactersTab({
 
     // If officer editing another user's character, check that target user is a member
     if (userRole === 'officer' && character.user_id !== user.id) {
-      const targetCharacters = characters.filter(c => c.user_id === character.user_id);
       const targetUser = clanMembership.members.find(m => m.id === character.user_id);
       
       if (targetUser && !canOfficerManageUser(userRole as GroupRole, targetUser.role as GroupRole)) {
@@ -84,12 +85,12 @@ export function CharactersTab({
   };
 
   // Stub function for disabled update
-  const handleUpdateStub = async (id: string, name: string) => {
+  const handleUpdateStub = async (_id: string, _name: string) => {
     throw new Error('You do not have permission to edit this character');
   };
 
   // Stub function for disabled delete
-  const handleDeleteStub = async (id: string) => {
+  const handleDeleteStub = async (_id: string) => {
     throw new Error('You do not have permission to delete this character');
   };
 
@@ -111,9 +112,9 @@ export function CharactersTab({
         />
       )}
       {characters.length === 0 ? (
-        <div className="text-slate-400 text-center py-8">No characters found.</div>
+        <div className="text-slate-400 text-center py-8">{t('clan.noCharacters')}</div>
       ) : filterCharacters(characters, characterFilters).length === 0 ? (
-        <div className="text-slate-400 text-center py-8">No characters match the filters.</div>
+        <div className="text-slate-400 text-center py-8">{t('clan.noCharactersMatch')}</div>
       ) : (
         filterCharacters(characters, characterFilters).map((character) => {
           // Check if user can edit this character

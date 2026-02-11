@@ -29,10 +29,8 @@ export function RecruitmentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[RecruitmentForm] Form submitted');
     
     if (!discordUsername.trim()) {
-      console.log('[RecruitmentForm] No discord username');
       return;
     }
 
@@ -48,8 +46,6 @@ export function RecruitmentForm({
       availability: availability.trim() || null,
       message: message.trim() || null,
     };
-    
-    console.log('[RecruitmentForm] Submitting application:', applicationData);
 
     try {
       const { error: submitError, data } = await supabase
@@ -57,14 +53,10 @@ export function RecruitmentForm({
         .insert(applicationData)
         .select();
 
-      console.log('[RecruitmentForm] Response:', { data, error: submitError });
-
       if (submitError) {
         console.error('[RecruitmentForm] Submit error:', submitError);
         throw submitError;
       }
-      
-      console.log('[RecruitmentForm] Success!');
       onSuccess();
     } catch (err) {
       console.error('[RecruitmentForm] Error:', err);
@@ -104,7 +96,7 @@ export function RecruitmentForm({
               value={discordUsername}
               onChange={(e) => setDiscordUsername(e.target.value)}
               placeholder="username#1234 or @username"
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
             />
           </div>
@@ -119,7 +111,7 @@ export function RecruitmentForm({
               value={characterName}
               onChange={(e) => setCharacterName(e.target.value)}
               placeholder="Your in-game character name"
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -132,7 +124,7 @@ export function RecruitmentForm({
               id="recruit-primary"
               value={primaryClass}
               onChange={(e) => setPrimaryClass(e.target.value as ArchetypeId | '')}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="">Select archetype...</option>
               {Object.entries(ARCHETYPES).map(([id, arch]) => (
@@ -154,7 +146,7 @@ export function RecruitmentForm({
               onChange={(e) => setExperience(e.target.value)}
               placeholder="Tell us about your MMO experience..."
               rows={2}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
             />
           </div>
 
@@ -168,7 +160,7 @@ export function RecruitmentForm({
               value={availability}
               onChange={(e) => setAvailability(e.target.value)}
               placeholder="e.g., Weekday evenings EST, Weekends"
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -183,7 +175,7 @@ export function RecruitmentForm({
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tell us a bit about yourself and why you're interested..."
               rows={3}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+              className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
             />
           </div>
 
@@ -206,7 +198,7 @@ export function RecruitmentForm({
             <button
               type="submit"
               disabled={submitting || !discordUsername.trim()}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               {submitting ? (
                 'Submitting...'

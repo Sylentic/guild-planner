@@ -13,6 +13,7 @@ import { getManufacturerLogo } from '@/config/games/star-citizen-utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SUBSCRIBER_COLORS } from '@/games/starcitizen/config/subscriber-ships';
 import { CenturionStarSVG, ImperatorStarSVG } from '@/components/game-specific/SubscriberIcons';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface ShipData {
   id: string;
@@ -207,6 +208,8 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   const [ownershipType, setOwnershipType] = useState<'pledged' | 'in-game' | 'loaner' | 'subscriber'>('pledged');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [shipIdToDelete, setShipIdToDelete] = useState<string | null>(null);
 
   const playerCharacters = characters.filter(c => c.user_id === userId);
 
@@ -221,7 +224,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   }, [showAddForm, selectedCharacter, playerCharacters]);
 
   useEffect(() => {
-    console.log('FleetView - characters:', characters, 'groupId:', groupId);
     loadCharacterShips();
   }, [groupId, characters]);
 
@@ -234,15 +236,11 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
         shipsByCharacter[char.id] = [];
       });
 
-      console.log('Loading ships for character IDs:', characters.map(c => c.id));
-
       if (characters.length > 0) {
         const { data, error: fetchError } = await supabase
           .from('character_ships')
           .select('*')
           .in('character_id', characters.map(c => c.id));
-
-        console.log('Character ships query result:', { data, fetchError });
 
         if (fetchError) {
           console.error('Error loading ships:', fetchError);
@@ -250,7 +248,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
         }
 
         if (data) {
-          console.log('Found ships:', data);
           data.forEach(ship => {
             if (shipsByCharacter[ship.character_id]) {
               shipsByCharacter[ship.character_id].push(ship);
@@ -258,8 +255,6 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
           });
         }
       }
-
-      console.log('Final characterShips state:', shipsByCharacter);
       setCharacterShips(shipsByCharacter);
     } catch (err) {
       console.error('Failed to load ships:', err);
@@ -305,14 +300,20 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
   };
 
   const handleDeleteShip = async (shipId: string) => {
-    if (!confirm('Remove this ship?')) return;
+    setShipIdToDelete(shipId);
+    setDeleteConfirmOpen(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!shipIdToDelete) return;
+
+    setDeleteConfirmOpen(false);
     setError(null);
     try {
       const { error: deleteError } = await supabase
         .from('character_ships')
         .delete()
-        .eq('id', shipId);
+        .eq('id', shipIdToDelete);
 
       if (deleteError) {
         console.error('Error deleting ship:', deleteError);
@@ -323,6 +324,8 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
     } catch (err) {
       console.error('Failed to delete ship:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete ship');
+    } finally {
+      setShipIdToDelete(null);
     }
   };
 
@@ -731,6 +734,19 @@ export function FleetView({ characters, userId, canManage, groupId }: FleetViewP
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => {
+          setDeleteConfirmOpen(false);
+          setShipIdToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Remove Ship"
+        message="Are you sure you want to remove this ship? This action cannot be undone."
+        confirmLabel="Remove"
+        variant="danger"
+      />
     </div>
   );
 }

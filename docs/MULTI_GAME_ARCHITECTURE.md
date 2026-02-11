@@ -1,10 +1,10 @@
 # Multi-Game Architecture
 
-This document describes the architecture for supporting multiple games in the Guild Planner application.
+This document describes the architecture for supporting multiple games in the Group Planner application.
 
 ## Overview
 
-The application has been refactored to support multiple games (Ashes of Creation, Star Citizen, and more in the future) while maintaining a shared authentication, guild management, and organizational structure.
+The application has been refactored to support multiple games (Ashes of Creation, Star Citizen, and more in the future) while maintaining a shared authentication, group management, and organizational structure.
 
 ## Directory Structure
 
@@ -115,7 +115,7 @@ To add a new game (e.g., "World of Warcraft"):
    export const WOW_CONFIG = {
      id: 'worldofwarcraft',
      name: 'World of Warcraft',
-     description: 'Guild coordination and management',
+     description: 'Group coordination and management',
      icon: '⚔️',
      features: {
        classes: true,
@@ -187,7 +187,7 @@ CREATE TABLE user_games (
 
 ### Ashes of Creation
 
-* **Features**: professions, characters, guilds, economy, events, alliances
+* **Features**: professions, characters, groups, economy, events, alliances
 * **Key entities**: Professions, ranks, items, supply chains
 * **Tracking**: member professions, builds, achievements
 
@@ -214,7 +214,7 @@ const userClans = await getUserClansForGame(userId, 'starcitizen');
 
 ## Discord Integration
 
-Each game has independent Discord webhook and role configuration in the database, allowing guilds to send game-specific notifications to separate Discord channels.
+Each game has independent Discord webhook and role configuration in the database, allowing groups to send game-specific notifications to separate Discord channels.
 
 ### Database Columns
 
@@ -286,7 +286,7 @@ These functions automatically:
 
 ### Settings UI
 
-Guild admins configure per-game Discord webhooks and roles in the **Settings** tab. The `ClanSettings.tsx` component:
+Group admins configure per-game Discord webhooks and roles in the **Settings** tab. The `ClanSettings.tsx` component:
 
 * **Automatically detects all games** from the registry
 * **Dynamically generates** a configuration card for each game

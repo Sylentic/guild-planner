@@ -1,8 +1,13 @@
-# Guild Planner
+# Group Planner
 
-A comprehensive guild management and planning tool supporting multiple MMOs.
+[![CI](https://github.com/Pandamonium-Gaming/guild-planner/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/Pandamonium-Gaming/guild-planner/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Pandamonium-Gaming/guild-planner/branch/develop/graph/badge.svg?token=YourCodecovToken)](https://codecov.io/gh/Pandamonium-Gaming/guild-planner)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> **Inspired by** the original [AoC Guild Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
+A comprehensive group management and planning tool supporting multiple MMOs.
+
+> **Inspired by** the original [AoC Group Profession Planner](https://github.com/igonzalezespi/aoc-guild-profession-planner) by Iván González Espí
 
 ## Supported Games
 
@@ -13,9 +18,9 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 ## Features
 
 * 🎮 Multi-game support with game-specific features
-* 👥 Guild/Squadron/Warband management with role-based permissions
-* 📊 Guild coverage matrix (AoC) and fleet overview (Star Citizen)
-* 🛢️ Guild bank, caravan, and economy tracking
+* 👥 Group/Squadron/Warband management with role-based permissions
+* 📊 Group coverage matrix (AoC) and fleet overview (Star Citizen)
+* 🛢️ Group bank, caravan, and economy tracking
 * 📅 Event scheduling with RSVP system
 * 🔐 Customizable role-based permissions per group
 * ⚙️ Discord integration for notifications and recruitment
@@ -58,6 +63,29 @@ A comprehensive guild management and planning tool supporting multiple MMOs.
 See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for full instructions.
 
 ## Development
+
+### Testing
+
+We use **Jest** and **React Testing Library** for comprehensive test coverage.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode (auto-rerun on changes)
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+**Documentation**:
+
+* [TESTING.md](./docs/TESTING.md) - How to write and run tests
+* [TESTING\_ROADMAP.md](./docs/TESTING_ROADMAP.md) - Testing improvement plan
+* [TESTING\_QUICK\_REFERENCE.md](./docs/TESTING_QUICK_REFERENCE.md) - Quick checklist for developers
+
+**Current Coverage**: 133 tests passing with 100% coverage on tested modules (permissions 30, utils 9, gameValidation 8, auth 42, usePermissions hook 40)
 
 ### For AI Agents & Contributors
 

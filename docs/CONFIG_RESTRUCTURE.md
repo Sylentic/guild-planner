@@ -21,10 +21,9 @@ src/config/
 ```txt
 src/config/
   ├── games/
-  │   ├── aoc.json          → All AoC config (professions, archetypes, races, roles)
+  │   ├── aoc.json          → All AoC config (professions, archetypes, races, roles, supply chain)
   │   └── star-citizen.json → All SC config (roles, etc.)
-  ├── itemRarities.json     → Shared
-  └── supplyChain.json      → AoC-specific (TODO: move to aoc.json)
+  └── itemRarities.json     → Shared
 ```
 
 ## Benefits

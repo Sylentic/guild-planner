@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, Settings, LogOut, Archive } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { GameIcon } from '@/components/common/GameIcon';
@@ -64,20 +65,20 @@ export function GroupHeader({
   };
   
   return (
-    <header className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 shrink-0 z-50">
-      <div className="max-w-7xl mx-auto px-3 md:px-4 py-2 md:py-4">
+    <header className="bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/50 shrink-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Left: Navigation */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="p-1.5 md:p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-lg transition-all cursor-pointer"
               title="Home"
             >
-              <Home className="w-5 h-5 md:w-5 md:h-5" />
+              <Home className="w-5 h-5" />
             </Link>
             {guildIconUrl && (
-              <img src={guildIconUrl} alt="Group Icon" className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800" />
+              <Image src={guildIconUrl} alt="Group Icon" width={32} height={32} className="w-8 h-8 rounded-full ring-2 ring-slate-700" />
             )}
             <Link
               href={`/${groupSlug}`}
@@ -85,15 +86,15 @@ export function GroupHeader({
               title="Return to game selection"
             >
               <div>
-                <h1 className="font-display text-base md:text-xl font-semibold text-white hover:text-cyan-400">
+                <h1 className="font-display text-base sm:text-lg font-semibold text-white hover:text-indigo-300 transition-colors">
                   {groupName || groupSlug}
                 </h1>
-                <p className="text-slate-500 text-xs md:text-sm hidden sm:block">
+                <p className="text-slate-500 text-xs hidden sm:block">
                   {characterCount} characters •
                   <span className={`ml-1 ${
-                    role === 'admin' ? 'text-orange-400' :
+                    role === 'admin' ? 'text-amber-400' :
                     role === 'officer' ? 'text-purple-400' :
-                    'text-cyan-400'
+                    'text-indigo-400'
                   }`}>
                     {role}
                   </span>
@@ -103,15 +104,15 @@ export function GroupHeader({
 
             {/* Game Switcher */}
             {enabledGames.length > 1 && (
-              <div className="hidden sm:flex items-center gap-2 ml-4 pl-4 border-l border-slate-700">
+              <div className="hidden sm:flex items-center gap-2 ml-3 pl-3 border-l border-slate-700/50">
                 {enabledGames.map((game) => (
                   <button
                     key={game.slug}
                     onClick={() => handleGameSwitch(game.slug)}
-                    className={`relative px-2 py-1 rounded text-sm transition-colors flex items-center gap-1.5 ${
+                    className={`relative px-2 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1.5 ${
                       gameSlug === game.slug
-                        ? 'bg-slate-700 text-white'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                        ? 'bg-slate-800/60 text-white ring-1 ring-slate-700/50'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
                     } ${game.archived ? 'opacity-60' : ''}`}
                     title={game.archived ? `${game.name} (Archived)` : game.name}
                   >
@@ -119,11 +120,11 @@ export function GroupHeader({
                       icon={game.icon}
                       iconUrl={game.iconUrl}
                       alt={game.name}
-                      size={32}
+                      size={24}
                     />
                     <span className="hidden md:inline">{game.name}</span>
                     {game.archived && (
-                      <Archive className="inline-block w-3 h-3 ml-1 text-orange-400" />
+                      <Archive className="inline-block w-3 h-3 ml-1 text-amber-400" />
                     )}
                   </button>
                 ))}
@@ -132,21 +133,21 @@ export function GroupHeader({
           </div>
 
           {/* Right: User info */}
-          <div className="flex items-center gap-1 md:gap-3">
+          <div className="flex items-center gap-2">
             <span className="text-slate-300 text-sm hidden sm:inline">{displayName}</span>
             <Link
               href="/settings"
-              className="p-1.5 md:p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-lg transition-all cursor-pointer"
               title="Settings"
             >
-              <Settings className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+              <Settings className="w-[18px] h-[18px]" />
             </Link>
             <button
               onClick={onSignOut}
-              className="p-1.5 md:p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-white transition-colors cursor-pointer"
               title="Sign out"
             >
-              <LogOut className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+              <LogOut className="w-[18px] h-[18px]" />
             </button>
           </div>
         </div>

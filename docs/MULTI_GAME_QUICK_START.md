@@ -2,14 +2,14 @@
 
 ## For End Users
 
-### When you first log in:
+### When you first log in
 
 1. Authenticate with Discord
 2. You'll see the **Game Selector** - choose which game you want to manage
 3. Your choice is saved - you won't need to select again
 4. Use the **Game Switcher** (top-right) to switch between games
 
-### Creating a Clan:
+### Creating a Clan
 
 1. Make sure you've selected your game
 2. Use the "Create Clan" form
@@ -42,7 +42,7 @@ import professions from './professions.json';
 export const WOW_CONFIG = {
   id: 'worldofwarcraft',
   name: 'World of Warcraft',
-  description: 'Guild coordination and raid management',
+  description: 'Group coordination and raid management',
   icon: '🐉',
   features: {
     classes: true,
@@ -88,7 +88,7 @@ Create `supabase/migrations/[number]_add_worldofwarcraft_game.sql`:
 ```sql
 -- Update game types
 INSERT INTO game_types (id, name, description, icon) VALUES
-  ('worldofwarcraft', 'World of Warcraft', 'Guild coordination and raid management', '🐉')
+  ('worldofwarcraft', 'World of Warcraft', 'Group coordination and raid management', '🐉')
 ON CONFLICT (id) DO UPDATE SET 
   name = EXCLUDED.name,
   description = EXCLUDED.description,
@@ -108,7 +108,7 @@ npx supabase db push
 
 ### Using Game-Specific Data
 
-#### Get all games:
+#### Get all games
 
 ```typescript
 import { getAllGames } from '@/lib/games';
@@ -116,7 +116,7 @@ import { getAllGames } from '@/lib/games';
 const games = getAllGames();
 ```
 
-#### Get specific game:
+#### Get specific game
 
 ```typescript
 import { getGame } from '@/lib/games';
@@ -126,7 +126,7 @@ console.log(aocGame.name); // "Ashes of Creation"
 console.log(aocGame.data.professions); // AoC professions
 ```
 
-#### Check feature availability:
+#### Check feature availability
 
 ```typescript
 import { hasFeature } from '@/lib/games';
@@ -136,7 +136,7 @@ if (hasFeature('starcitizen', 'ships')) {
 }
 ```
 
-#### Get user's games:
+#### Get user's games
 
 ```typescript
 import { getUserGames } from '@/lib/gameTracking';
@@ -145,7 +145,7 @@ const userGames = await getUserGames(userId);
 // Returns: ['aoc', 'starcitizen']
 ```
 
-#### Get user's clans for a specific game:
+#### Get user's clans for a specific game
 
 ```typescript
 import { getUserClansForGame } from '@/lib/gameTracking';
@@ -249,7 +249,7 @@ export function GameFeatureSection() {
 SELECT * FROM clans WHERE game = 'aoc';
 ```
 
-### Get user's games
+### Query user's games
 
 ```sql
 SELECT game FROM user_games WHERE user_id = 'user-id';
@@ -261,8 +261,8 @@ SELECT game FROM user_games WHERE user_id = 'user-id';
 const { data } = await supabase
   .from('clans')
   .insert({
-    name: 'My Guild',
-    slug: 'my-guild',
+    name: 'My Group',
+    slug: 'my-group',
     game: 'aoc',  // ← Tag with game
     created_by: userId,
   });
@@ -313,7 +313,7 @@ const { data: clans } = await supabase
 
 ## Architecture Decisions
 
-### Why this structure?
+### Why this structure
 
 1. **Scalability** - Easy to add 10+ games without polluting main codebase
 2. **Type Safety** - GameId type ensures only valid games are used
@@ -321,7 +321,7 @@ const { data: clans } = await supabase
 4. **Data Isolation** - Game data is self-contained in `games/[game]/`
 5. **Database Support** - Games are tracked at DB level for filtering
 
-### Why separate from authentication?
+### Why separate from authentication
 
 Authentication is universal (users log in once), but game selection is per-session and per-user preference. This separation allows:
 

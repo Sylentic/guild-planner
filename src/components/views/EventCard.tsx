@@ -8,6 +8,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { CharacterWithProfessions } from '@/lib/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { AnonymousGuestForm } from '@/components/forms/AnonymousGuestForm';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { 
   EventWithRsvps, 
   RsvpStatus, 
@@ -55,6 +56,7 @@ export function EventCard({
   const [adminMode, setAdminMode] = useState(false);
   const [adminTargetUserId, setAdminTargetUserId] = useState<string | null>(null);
   const [isRsvpLoading, setIsRsvpLoading] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { showToast } = useToast();
   const { t } = useLanguage();
   const { hasPermission } = usePermissions(groupId);
@@ -884,9 +886,7 @@ export function EventCard({
                 <button
                   onClick={(e) => { 
                     e.stopPropagation(); 
-                    if (confirm(t('event.confirmDeleteEvent', { title: event.title }))) {
-                      onDelete();
-                    }
+                    setDeleteConfirmOpen(true);
                   }}
                   className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-sm rounded-lg cursor-pointer flex items-center gap-1"
                   title={t('event.deleteEvent')}
@@ -899,6 +899,19 @@ export function EventCard({
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={() => {
+          setDeleteConfirmOpen(false);
+          if (onDelete) onDelete();
+        }}
+        title="Delete Event"
+        message={t('event.confirmDeleteEvent', { title: event.title })}
+        confirmLabel="Delete"
+        variant="danger"
+      />
     </div>
   );
 }

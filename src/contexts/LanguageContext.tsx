@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-type Language = 'en-GB' | 'es';
+type Language = 'en-GB' | 'es' | 'nl';
 
 interface Translations {
   [key: string]: string | Translations;
@@ -124,5 +124,6 @@ export function useLanguage() {
 export const LANGUAGES = [
   { code: 'en-GB' as Language, name: 'English (UK)', flag: '🇬🇧' },
   { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
+  { code: 'nl' as Language, name: 'Nederlands', flag: '🇳🇱' },
 ];
 

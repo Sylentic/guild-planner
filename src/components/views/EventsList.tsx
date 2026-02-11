@@ -67,6 +67,7 @@ export function EventsList({
   const canCreateEvent = hasPermission('events_create') && !isGameArchived;
   const canEditAnyEvent = hasPermission('events_edit_any') && !isGameArchived;
   const canDeleteAnyEvent = hasPermission('events_delete_any') && !isGameArchived;
+  const canDeleteOwnEvent = hasPermission('events_delete_own') && !isGameArchived;
   const canCreateAnnouncement = hasPermission('announcements_create') && !isGameArchived;
   const canEditAnnouncement = hasPermission('announcements_edit') && !isGameArchived;
   const canDeleteAnnouncement = hasPermission('announcements_delete') && !isGameArchived;
@@ -89,7 +90,6 @@ export function EventsList({
   const recentAnnouncements = announcements.filter(a => !a.is_pinned).slice(0, 5);
 
   const handleCreateEvent = async (eventData: Omit<import('@/lib/events').Event, 'id' | 'created_at' | 'updated_at' | 'is_cancelled'>, sendDiscordNotification: boolean) => {
-    console.log('EventsList.handleCreateEvent called with sendDiscordNotification:', sendDiscordNotification, 'type:', typeof sendDiscordNotification);
     await onCreateEvent(eventData, sendDiscordNotification);
     setShowEventForm(false);
   };
@@ -254,7 +254,7 @@ export function EventsList({
           </button>
           <button
             onClick={() => setShowEventForm(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-orange-500 hover:bg-orange-600 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             title="Create event"
             disabled={loading || !canCreateEvent}
           >
@@ -286,7 +286,7 @@ export function EventsList({
               onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
               onEdit={canEditAnyEvent ? () => setEditingEvent(event) : undefined}
               onCancel={canDeleteAnyEvent ? () => onCancelEvent(event.id) : undefined}
-              onDelete={canDeleteAnyEvent ? () => onDeleteEvent(event.id) : undefined}
+              onDelete={(canDeleteAnyEvent || (canDeleteOwnEvent && event.created_by === userId)) ? () => onDeleteEvent(event.id) : undefined}
               canManage={canEditAnyEvent || canDeleteAnyEvent}
             />
           ))}

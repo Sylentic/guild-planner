@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f97316",
+  themeColor: "#6366f1",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -84,7 +84,7 @@ export default function RootLayout({
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                   navigator.serviceWorker.register('/sw.js')
-                    .catch(err => console.log('SW registration failed:', err));
+                    .catch(err => console.error('SW registration failed:', err));
                 });
               }
             `,

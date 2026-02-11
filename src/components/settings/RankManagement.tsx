@@ -3,7 +3,7 @@
 import { Users } from 'lucide-react';
 import { GroupRole } from '@/lib/permissions';
 import { getGameConfig } from '@/config';
-import { useState } from 'react';
+import { useProcessingSet } from '@/hooks/useProcessingSet';
 
 interface RankManagementProps {
   members: Array<{
@@ -27,21 +27,17 @@ export function RankManagement({
   currentUserRole,
   gameSlug,
 }: RankManagementProps) {
-  const [processing, setProcessing] = useState<Set<string>>(new Set());
+  const { processing, add, remove } = useProcessingSet();
   const gameConfig = getGameConfig(gameSlug);
   const gameRanks = (gameConfig as any)?.ranks || [];
 
   const handleRankUpdate = async (memberId: string, newRank: string) => {
     if (!onUpdateRank) return;
-    setProcessing(prev => new Set(prev).add(memberId));
+    add(memberId);
     try {
       await onUpdateRank(memberId, newRank || null);
     } finally {
-      setProcessing(prev => {
-        const next = new Set(prev);
-        next.delete(memberId);
-        return next;
-      });
+      remove(memberId);
     }
   };
 

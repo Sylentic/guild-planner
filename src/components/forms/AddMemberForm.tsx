@@ -62,14 +62,14 @@ export function AddMemberForm({ onAdd }: AddMemberFormProps) {
           onKeyDown={handleKeyDown}
           placeholder="Member name..."
           aria-label="Member name"
-          className="flex-1 bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          className="flex-1 bg-slate-800 border border-slate-600 rounded px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           autoFocus
           disabled={isSubmitting}
         />
         <button
           type="submit"
           disabled={!name.trim() || isSubmitting}
-          className="p-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="p-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           aria-label="Add member"
           title="Add member"
         >

@@ -1,24 +1,40 @@
+import Image from 'next/image';
 import { Clock, Users } from 'lucide-react';
 import { ROLE_CONFIG, GroupRole } from '@/lib/permissions';
 import { getGameConfig } from '@/config';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+type GameRank = {
+  id: string;
+  name: string;
+  hierarchy?: number;
+};
+
+type GameConfig = {
+  professions?: {
+    ranks?: Record<string, { name: string }>;
+  };
+  ranks?: GameRank[];
+};
+
+type GameUser = {
+  display_name: string | null;
+  discord_username: string | null;
+  discord_avatar: string | null;
+};
+
+type GroupMember = {
+  id: string;
+  user_id: string;
+  role: string | null;
+  guild_rank: string | null;
+  is_creator: boolean;
+  user: GameUser | null;
+};
 
 interface ManageTabProps {
-  members: Array<{
-    id: string;
-    user_id: string;
-    role: string | null;
-    guild_rank: string | null;
-    is_creator: boolean;
-    user: { display_name: string | null; discord_username: string | null; discord_avatar: string | null } | null;
-  }>;
-  pendingMembers: Array<{
-    id: string;
-    user_id: string;
-    role: string | null;
-    guild_rank: string | null;
-    is_creator: boolean;
-    user: { display_name: string | null; discord_username: string | null; discord_avatar: string | null } | null;
-  }>;
+  members: GroupMember[];
+  pendingMembers: GroupMember[];
   onAccept: (id: string) => Promise<void>;
   onReject: (id: string) => Promise<void>;
   onUpdateRole?: (id: string, role: GroupRole) => Promise<void>;
@@ -41,15 +57,33 @@ export function ManageTab({
   currentUserId,
   currentUserRole,
   gameSlug = 'aoc',
-  t,
+  t: tProp,
 }: ManageTabProps) {
-  const gameConfig = getGameConfig(gameSlug);
-  const gameRanks = (gameConfig as any)?.ranks || [];
+  const { t: tContext } = useLanguage();
+  const t = tProp || tContext;
+  const gameConfig = getGameConfig(gameSlug) as GameConfig;
+  
+  // Convert ranks to array format (handle both AoC and Star Citizen structures)
+  let gameRanks: GameRank[] = [];
+  
+  // Star Citizen: ranks is an array
+  if (Array.isArray(gameConfig?.ranks)) {
+    gameRanks = (gameConfig?.ranks || []) as GameRank[];
+  } 
+  // AoC: ranks is in professions.ranks as an object
+  else {
+    const ranksObj = (gameConfig?.professions?.ranks || {}) as Record<string, {name: string}>;
+    gameRanks = Object.entries(ranksObj).map(([id, data]) => ({
+      id,
+      name: data.name,
+      hierarchy: parseInt(id, 10)
+    }));
+  }
   
   // Helper to get rank hierarchy level
   const getRankHierarchy = (rankId: string | null): number => {
     if (!rankId) return 0;
-    const rank = gameRanks.find((r: any) => r.id === rankId);
+    const rank = gameRanks.find((r: GameRank) => r.id === rankId);
     return rank?.hierarchy || 0;
   };
 
@@ -93,10 +127,12 @@ export function ManageTab({
               >
                 <div className="flex items-center gap-3">
                   {member.user?.discord_avatar ? (
-                    <img
+                    <Image
                       src={member.user.discord_avatar}
-                      alt=""
-                      className="w-10 h-10 rounded-full"
+                      alt={member.user.display_name || 'User avatar'}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
                     />
                   ) : (
                     <div className="w-10 h-10 bg-slate-700 rounded-full" />
@@ -191,10 +227,12 @@ export function ManageTab({
                       {/* Colored dot for role */}
                       <span className={roleConfig.color}>{String.fromCharCode(9679)}</span>
                     {member.user?.discord_avatar ? (
-                      <img
+                      <Image
                         src={member.user.discord_avatar}
-                        alt=""
-                        className="w-10 h-10 rounded-full"
+                        alt={member.user.display_name || 'User avatar'}
+                        width={40}
+                        height={40}
+                        className="rounded-full"
                       />
                     ) : (
                       <div className="w-10 h-10 bg-slate-700 rounded-full" />
@@ -243,9 +281,9 @@ export function ManageTab({
                             className="bg-slate-800 border border-slate-600 rounded px-3 py-1 text-white text-sm cursor-pointer"
                             title="Guild Rank"
                           >
-                            <option value="">No Rank</option>
+                            <option value="">{t('members.noRank')}</option>
                             {gameRanks
-                              .filter((rank: any) => {
+                              .filter((rank: GameRank) => {
                                 // Admins can assign any rank
                                 if (currentUserRole === 'admin') return true;
                                 
@@ -258,7 +296,7 @@ export function ManageTab({
                                 
                                 return false;
                               })
-                              .map((rank: any) => (
+                              .map((rank: GameRank) => (
                                 <option key={rank.id} value={rank.id}>
                                   {rank.name}
                                 </option>
@@ -267,8 +305,8 @@ export function ManageTab({
                         ) : (
                           <div className="px-3 py-1 bg-slate-900 border border-slate-700 rounded text-slate-400 text-sm">
                             {member.guild_rank 
-                              ? gameRanks.find((r: any) => r.id === member.guild_rank)?.name || 'Unknown Rank'
-                              : 'No Rank'}
+                              ? gameRanks.find((r: GameRank) => r.id === member.guild_rank)?.name || 'Unknown Rank'
+                              : t('members.noRank')}
                           </div>
                         )
                       )}

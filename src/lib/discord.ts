@@ -6,6 +6,7 @@
  */
 
 import { Event, Announcement, EVENT_TYPES } from './events';
+import { Clan } from './types';
 import {
   getGameEventsWebhookUrl,
   getGameWebhookUrl,
@@ -320,7 +321,7 @@ export async function notifyEventReminder(
  */
 export async function notifyNewEventForGame(
   gameSlug: GameId,
-  groupData: any,
+  groupData: Clan,
   event: Event,
   groupName: string,
   groupSlug: string
@@ -340,7 +341,7 @@ export async function notifyNewEventForGame(
  */
 export async function notifyAnnouncementForGame(
   gameSlug: GameId,
-  groupData: any,
+  groupData: Clan,
   announcement: Announcement,
   groupName: string,
   groupSlug: string
@@ -360,7 +361,7 @@ export async function notifyAnnouncementForGame(
  */
 export async function notifyEventReminderForGame(
   gameSlug: GameId,
-  groupData: any,
+  groupData: Clan,
   event: Event,
   groupName: string,
   minutesUntil: number

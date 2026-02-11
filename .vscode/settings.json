@@ -26,7 +26,17 @@
             "approve": true,
             "matchCommandLine": true
         },
-        ".\\switch-env.ps1": true
+        ".\\switch-env.ps1": true,
+        "npm install": true,
+        "tee": true,
+        "Resolve-Path": true,
+        "Group-Object": true,
+        "Get-Unique": true,
+        "ConvertFrom-String": true,
+        "npx eslint": true,
+        "EventsList\"": true,
+        "FAIL": true,
+        "Test": true
     },
     "codeQL.githubDatabase.download": "never"
 }

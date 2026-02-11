@@ -222,13 +222,6 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    console.log('Saving permissions:', { 
-      groupId, 
-      updateCount: updates.length,
-      roles: updates.map(u => u.role),
-      firstUpdate: updates[0] ? Object.keys(updates[0]).length + ' fields' : 'none'
-    });
-
     let result;
     try {
       result = await supabaseAdmin
@@ -263,7 +256,6 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    console.log('Permissions saved successfully');
     return NextResponse.json({ success: true, saved: updates.length });
   } catch (error) {
     console.error('Error in POST /api/group/permissions:', {

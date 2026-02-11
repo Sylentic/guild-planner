@@ -6,6 +6,7 @@ import { Clan, CharacterWithProfessions, RankLevel, Race, Archetype } from '@/li
 import { canEditCharacter, canDeleteCharacter, canOfficerManageUser } from '@/lib/character-permissions';
 import { GroupRole } from '@/lib/permissions';
 import { syncSubscriberShips, updateSubscriberTier } from '@/lib/subscriberShips';
+import { handleAsyncError } from '@/lib/errorHandling';
 
 // Character data for creating/updating
 export interface CharacterData {
@@ -71,8 +72,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
       return existingClan as Clan | null;
     } catch (err) {
-      console.error('Error fetching clan:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load clan');
+      setError(handleAsyncError(err, 'Failed to load clan', { context: 'fetchClan', groupSlug }));
       return null;
     }
   }, [groupSlug]);
@@ -118,8 +118,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
       setCharacters(charactersWithProfessions);
     } catch (err) {
-      console.error('Error fetching data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load data');
+      setError(handleAsyncError(err, 'Failed to load data', { context: 'fetchData', groupSlug }));
     } finally {
       setLoading(false);
     }
@@ -166,8 +165,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       .select();
 
     if (insertError) {
-      console.error('Error adding character:', insertError);
-      setError(insertError.message);
+      setError(handleAsyncError(insertError, 'Failed to add character', { context: 'addCharacter', gameSlug: targetGameSlug }));
       throw insertError;
     }
 
@@ -175,8 +173,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
     if (targetGameSlug === 'starcitizen' && data.subscriber_tier && insertedData && insertedData.length > 0) {
       try {
         const characterId = insertedData[0].id;
-        console.log(`New subscriber character created with tier: ${data.subscriber_tier}`);
-        
+
         const { getCurrentMonthKey } = await import('@/games/starcitizen/config/subscriber-ships');
         const currentMonth = getCurrentMonthKey();
         
@@ -333,8 +330,6 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       const oldTier = (freshCharacter as any)?.subscriber_tier;
       const newTier = data.subscriber_tier as 'centurion' | 'imperator' | null | undefined;
 
-      console.log(`[Subscriber Sync] oldTier=${oldTier}, newTier=${newTier}, inUpdate=${'subscriber_tier' in data}`);
-
       if (newTier && newTier !== oldTier) {
         // User selected a subscriber tier
         try {
@@ -343,11 +338,9 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
 
           if (oldTier) {
             // Tier changed
-            console.log(`Subscriber tier changed from ${oldTier} to ${newTier}`);
             await updateSubscriberTier(supabase, id, oldTier as any, newTier);
           } else {
             // New tier assignment
-            console.log(`Subscriber tier set to ${newTier}`);
             await syncSubscriberShips(supabase, id, newTier);
           }
 
@@ -363,7 +356,6 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       } else if (!newTier && oldTier) {
         // Tier was removed - remove subscriber ships
         try {
-          console.log(`Subscriber tier removed (was ${oldTier})`);
           const { getSubscriberShips } = await import('@/games/starcitizen/config/subscriber-ships');
           const { removeSubscriberShips } = await import('@/lib/subscriberShips');
           const shipsToRemove = getSubscriberShips(oldTier);
@@ -442,8 +434,7 @@ export function useGroupData(groupSlug: string, gameSlug?: string): UseGroupData
       .select();
 
     if (deleteError) {
-      console.error('Error deleting character:', deleteError);
-      setError(deleteError.message);
+      setError(handleAsyncError(deleteError, 'Failed to delete character', { context: 'deleteCharacter', characterId: id }));
       throw deleteError;
     }
 

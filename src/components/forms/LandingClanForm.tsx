@@ -26,25 +26,27 @@ export function LandingClanForm({ groupName, setGroupName, user }: LandingClanFo
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={groupName}
-          onChange={(e) => setGroupName(e.target.value)}
-          placeholder={t('home.enterClanPlaceholder')}
-          className="flex-1 px-6 py-4 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg"
-          autoFocus
-        />
-        <button
-          type="submit"
-          disabled={!groupName.trim()}
-          className="px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-md hover:from-orange-600 hover:to-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
-        >
-          {t('common.enter')}
-        </button>
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto mt-8">
+      <div className="relative">
+        <div className="flex gap-3 p-2 bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/20">
+          <input
+            type="text"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            placeholder={t('home.enterClanPlaceholder')}
+            className="flex-1 px-5 py-4 bg-transparent text-white placeholder-slate-500 focus:outline-none text-lg"
+            autoFocus
+          />
+          <button
+            type="submit"
+            disabled={!groupName.trim()}
+            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02]"
+          >
+            {t('common.enter')}
+          </button>
+        </div>
       </div>
-      <p className="text-slate-500 text-sm mt-3">
+      <p className="text-slate-500 text-sm mt-4 text-center">
         {user
           ? t('home.loggedInHint')
           : t('home.notLoggedInHint')}

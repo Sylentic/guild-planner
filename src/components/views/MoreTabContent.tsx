@@ -54,17 +54,17 @@ export function MoreTabContent({ groupId, userId, characters, isOfficer, gameSlu
 
   // Always initialize with default available subtab for the game
   const defaultSubTab: MoreSubTab = allowedSubTabs.length > 0 ? allowedSubTabs[0] : 'parties';
-  const [subTab, setSubTab] = useState<MoreSubTab>(defaultSubTab);
-
-  // Sync state with URL parameter on mount and when searchParams changes
-  useEffect(() => {
+  
+  // Initialize state from URL parameter if valid, otherwise use default
+  const getInitialSubTab = (): MoreSubTab => {
     const subTabParam = searchParams?.get('subTab');
     if (subTabParam && allowedSubTabs.includes(subTabParam as MoreSubTab)) {
-      setSubTab(subTabParam as MoreSubTab);
-    } else {
-      setSubTab(defaultSubTab);
+      return subTabParam as MoreSubTab;
     }
-  }, [searchParams, gameSlug]);
+    return defaultSubTab;
+  };
+  
+  const [subTab, setSubTab] = useState<MoreSubTab>(getInitialSubTab);
 
   // Update URL when sub-tab changes
   const handleSubTabChange = (newSubTab: MoreSubTab) => {

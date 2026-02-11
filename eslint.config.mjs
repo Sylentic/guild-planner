@@ -13,20 +13,25 @@ const eslintConfig = defineConfig([
     rules: {
       // Warn about text content that should probably be translated
       "i18next/no-literal-string": ["warn", {
-        // Allow these patterns to not require translation
-        markupOnly: true, // Only check JSX text content, not JS strings
+        markupOnly: true,
         ignoreAttribute: ["className", "style", "type", "id", "name", "data-", "aria-", "role", "key", "href", "src", "alt"],
-        ignore: ["^[A-Z_]+$", "^\\d+$"], // Ignore all-caps constants and numbers
+        ignore: ["^[A-Z_]+$", "^\\d+$"],
+      }],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
       }],
     },
   },
-  // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "scripts/**",
   ]),
 ]);
 

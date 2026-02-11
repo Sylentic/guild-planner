@@ -115,7 +115,7 @@ Some loaners are temporary workarounds for bugs.
 ## Data Source
 
 Official RSI Support:\
-https://support.robertsspaceindustries.com/hc/en-us/articles/360003093114-Loaner-Ship-Matrix
+<https://support.robertsspaceindustries.com/hc/en-us/articles/360003093114-Loaner-Ship-Matrix>
 
 ## Migrations
 

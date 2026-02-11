@@ -71,6 +71,12 @@ export const PERMISSIONS = {
     name: 'View Bank History',
     description: 'View bank transaction history'
   },
+  'guild_bank_manage': {
+    id: 'guild_bank_manage',
+    category: 'guild_bank' as PermissionCategory,
+    name: 'Manage Guild Bank',
+    description: 'Full management of guild bank including settings'
+  },
 
   // Events
   'events_create': {

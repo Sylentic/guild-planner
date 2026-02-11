@@ -1,4 +1,4 @@
-# Deployment Guide - AoC Guild Planner
+# Deployment Guide - AoC Group Planner
 
 ## Prerequisites
 
@@ -47,7 +47,7 @@
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
 2. Click **New Application**
-3. Name it: `AoC Guild Planner`
+3. Name it: `AoC Group Planner`
 4. Go to **OAuth2** → **General**
 5. Copy **Client ID** and **Client Secret**
 6. Add redirect URI:
@@ -126,7 +126,7 @@ After initial setup:
 1. Open your Vercel URL
 2. Click **Login with Discord**
 3. Authorize the app
-4. Enter a clan name (e.g., "my-guild")
+4. Enter a clan name (e.g., "my-group")
 5. You should become the Admin of the new clan
 6. Try logging in with another Discord account to test the apply/accept flow
 

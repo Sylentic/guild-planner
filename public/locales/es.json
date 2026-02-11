@@ -45,7 +45,9 @@
     "clear": "Limpiar",
     "confirmDelete": "Confirmar Eliminación",
     "loadingError": "Error de Carga",
-    "cancelDelete": "Cancelar Eliminación"
+    "cancelDelete": "Cancelar Eliminación",
+    "selectGame": "Seleccionar un juego",
+    "archived": "Archivado"
   },
   "nav": {
     "characters": "Personajes",
@@ -54,8 +56,8 @@
     "alliances": "Alianzas",
     "matrix": "Matriz",
     "fleet": "Mi Hangar",
-    "ships": "Naves del Gremio",
-    "guild-ships": "Naves del Gremio",
+    "ships": "Naves del Grupo",
+    "guild-ships": "Naves del Grupo",
     "manage": "Gestionar",
     "siege": "Asedio",
     "economy": "Economía",
@@ -76,6 +78,8 @@
     "create": "Crear Clan",
     "createNew": "Crear Nuevo Clan",
     "createDescription": "El clan {{name}} no existe todavía. ¿Te gustaría crearlo?",
+    "createGroupPrompt": "¿Crear \"{{name}}\"?",
+    "createGroupDescription": "Este grupo no existe todavía. ¿Te gustaría crearlo?",
     "youWillBeAdmin": "Serás el Administrador del clan",
     "applyToJoin": "Solicitar unirse",
     "applicationPending": "Solicitud Pendiente",
@@ -115,7 +119,12 @@
     "getStarted": "Comenzar",
     "addGameToStart": "Agrega un juego para comenzar a organizar el contenido de tu grupo.",
     "noGamesContactAdmin": "Aún no se han habilitado juegos para este grupo. Contacta a un administrador para agregar uno.",
-    "addYourFirstGame": "Agregar Tu Primer Juego"
+    "addYourFirstGame": "Agregar Tu Primer Juego",
+    "availableGames": "Juegos Disponibles",
+    "availableGamesDesc": "Haz clic en un juego para ver la información de tu grupo para ese juego.",
+    "addGame": "Añadir Juego",
+    "addGamePrompt": "Añadir un juego a este grupo:",
+    "allGamesEnabled": "Todos los juegos disponibles ya están habilitados."
   },
   "character": {
     "addCharacter": "Añadir Personaje",
@@ -218,7 +227,8 @@
     "removeMember": "Eliminar Miembro",
     "memberSince": "Miembro desde",
     "role": "Rol",
-    "changeRole": "Cambiar Rol"
+    "changeRole": "Cambiar Rol",
+    "noRank": "Sin Rango"
   },
   "settings": {
     "title": "Configuración",
@@ -289,22 +299,22 @@
     "clanNotFound": "Clan No Encontrado",
     "clanNotFoundDesc": "Este clan no existe o no es público.",
     "goHome": "Ir a Inicio",
-    "ashesOfCreationGuild": "Guild de Ashes of Creation",
+    "ashesOfCreationGuild": "Grupo de Ashes of Creation",
     "memberLogin": "Inicio de Sesión de Miembros",
-    "joinOurGuild": "Únete a Nuestra Guild",
+    "joinOurGuild": "Únete a Nuestro Grupo",
     "aboutUs": "Sobre Nosotros",
-    "guildStats": "Estadísticas de la Guild",
+    "guildStats": "Estadísticas del Grupo",
     "members": "Miembros",
     "professionCoverage": "Cobertura de Profesiones",
     "characters": "Personajes",
     "upcomingEvents": "Próximos Eventos",
     "applyToJoin": "Solicitar Unirse",
     "recruitmentClosed": "El reclutamiento está cerrado actualmente",
-    "guildNotPublic": "Este perfil de guild no es público",
+    "guildNotPublic": "Este perfil de grupo no es público",
     "weLookingFor": "Estamos Buscando",
-    "joinOurGuildTitle": "¡Únete a Nuestra Guild!",
-    "poweredBy": "Desarrollado por AoC Guild Profession Planner",
-    "createOwnPage": "Crea tu propia página de guild →"
+    "joinOurGuildTitle": "¡Únete a Nuestro Grupo!",
+    "poweredBy": "Desarrollado por AoC Grupo Profession Planner",
+    "createOwnPage": "Crea tu propia página de grupo →"
   },
   "filters": {
     "title": "Filtros",
@@ -690,8 +700,8 @@
     "privateDesc": "Solo los clanes invitados pueden unirse",
     "makePublic": "Hacer alianza pública",
     "makePrivate": "Hacer alianza privada",
-    "maxGuilds": "Máximo de Clanes",
-    "guilds": "clanes",
+    "maxGuilds": "Máximo de Grupos",
+    "guilds": "grupos",
     "searchClan": "Buscar un clan...",
     "searchClanToInvite": "Buscar un clan para invitar...",
     "noClanResults": "No se encontraron clanes con esa búsqueda",
@@ -800,7 +810,7 @@
     "points": "pts",
     "totalPoints": "Puntos Totales",
     "categories": {
-      "guild": "Clan",
+      "guild": "Grupo",
       "pvp": "PvP",
       "economy": "Economía",
       "community": "Comunidad",
@@ -829,7 +839,7 @@
     "role": "Rol",
     "visibility": "Visibilidad",
     "private": "Privado",
-    "guild": "Solo Clan",
+    "guild": "Solo Grupo",
     "public": "Público",
     "views": "Vistas",
     "likes": "Me gusta",

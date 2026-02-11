@@ -38,11 +38,8 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
   const canEditPermissions = hasPermission('settings_edit_roles');
   const canEditSettings = hasPermission('settings_edit');
 
-  const [guildIconUrl, setGuildIconUrl] = useState(group?.group_icon_url || '');
-
-  useEffect(() => {
-    setGuildIconUrl(group?.group_icon_url || '');
-  }, [group?.group_icon_url]);
+  const [guildIconUrl, setGuildIconUrl] = useState<string>('');
+  const iconUrl = group?.group_icon_url || guildIconUrl;
 
   async function refreshGuildIcon() {
     if (!groupSlug) return;

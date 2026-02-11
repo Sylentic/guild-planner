@@ -7,15 +7,15 @@ import { useToast } from '@/contexts/ToastContext';
 import { supabase } from '@/lib/supabase';
 import { EventWithRsvps } from '@/lib/events';
 import { EventCard } from '@/components/views/EventCard';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { ChevronLeft } from 'lucide-react';
+import { Calendar, ChevronLeft, Users } from 'lucide-react';
 
 interface PublicClanEventsViewProps {
   groupId: string;
   groupName: string;
+  groupSlug: string;
 }
 
-export function PublicClanEventsView({ groupId, groupName }: PublicClanEventsViewProps) {
+export function PublicClanEventsView({ groupId, groupName, groupSlug }: PublicClanEventsViewProps) {
   const { t } = useLanguage();
   const { error: showError } = useToast();
   const [events, setEvents] = useState<EventWithRsvps[]>([]);
@@ -107,36 +107,54 @@ export function PublicClanEventsView({ groupId, groupName }: PublicClanEventsVie
   if (loading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-64 w-full" />
+        <div className="h-20 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl animate-pulse" />
+        <div className="h-48 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl animate-pulse" />
+        <div className="h-48 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl animate-pulse" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/events"
-          className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
-        >
-          <ChevronLeft size={18} />
-          <span className="text-sm">All Events</span>
-        </Link>
-      </div>
+      {/* Back link */}
+      <Link
+        href="/events"
+        className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors cursor-pointer group"
+      >
+        <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
+        <span className="text-sm">All Public Events</span>
+      </Link>
 
-      <div>
-        <h1 className="text-2xl font-bold text-white mb-2">{groupName} - Public Events</h1>
-        <p className="text-slate-300">
-          {events.length === 0
-            ? `No public events scheduled for ${groupName}`
-            : `${events.length} public event${events.length !== 1 ? 's' : ''} available`}
-        </p>
+      {/* Page header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <Users className="w-6 h-6 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">{groupName}</h1>
+            <p className="text-slate-400 text-sm">Public Events</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-xl">
+          <Calendar className="w-4 h-4 text-indigo-400" />
+          <span className="text-sm text-slate-300">{events.length} event{events.length !== 1 ? 's' : ''}</span>
+        </div>
       </div>
 
       {events.length === 0 ? (
-        <div className="text-center py-12 bg-slate-800/50 rounded-lg border border-slate-700">
-          <p className="text-slate-300">No public events at the moment.</p>
+        <div className="flex flex-col items-center justify-center py-16 sm:py-24 bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl">
+          <div className="w-16 h-16 mb-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+            <Calendar className="w-8 h-8 text-indigo-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-white mb-2">No Public Events</h2>
+          <p className="text-slate-400 text-center max-w-md">There are currently no public events for {groupName}.</p>
+          <Link
+            href={`/${groupSlug}`}
+            className="mt-6 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white text-sm font-medium rounded-xl transition-all cursor-pointer shadow-lg shadow-indigo-500/25"
+          >
+            Visit Group
+          </Link>
         </div>
       ) : (
         <div className="space-y-4">

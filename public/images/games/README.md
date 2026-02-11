@@ -35,7 +35,7 @@ These icons will be displayed in:
 * Top navigation bar game switcher (20x20px)
 * Add game dialog (32x32px)
 
-## Fallback Behavior
+## Fallback Behaviour
 
 If an icon file is missing or fails to load, the system will automatically fall back to the emoji icon defined in the game config:
 

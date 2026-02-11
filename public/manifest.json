@@ -1,7 +1,7 @@
 {
-  "name": "Guild Planner",
-  "short_name": "Guild Planner",
-  "description": "Manage your guild, coordinate your team, and track everything across multiple games",
+  "name": "Group Planner",
+  "short_name": "Group Planner",
+  "description": "Manage your group, coordinate your team, and track everything across multiple games",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -40,7 +40,7 @@
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Guild Planner Dashboard"
+      "label": "Group Planner Dashboard"
     }
   ],
   "categories": ["games", "productivity"],

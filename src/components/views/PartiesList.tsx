@@ -66,7 +66,7 @@ export function PartiesList({
           ) : (isLeadership() || isAdmin()) ? (
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
             >
               <Plus size={16} />
               New Party

@@ -1,4 +1,4 @@
-# Build Planner Research - AoC Guild Profession Planner
+# Build Planner Research - AoC Group Profession Planner
 
 ## Status: Deferred to Future Phase
 
@@ -23,31 +23,31 @@ The Build Planner feature requires extensive research on Ashes of Creation's cla
 
 Each class has:
 
-- **Active Skills** (8-10 per class to research)
-- **Passive Skills**
-- **Weapon Skills**
+* **Active Skills** (8-10 per class to research)
+* **Passive Skills**
+* **Weapon Skills**
 
 ### 3. Augment System
 
 Secondary class applies **augments** that modify primary skills:
 
-- Fire augments, Ice augments, etc. from Mage
-- Buff augments from Bard
-- Stealth augments from Rogue
-- etc.
+* Fire augments, Ice augments, etc. from Mage
+* Buff augments from Bard
+* Stealth augments from Rogue
+* etc.
 
 ### 4. Equipment Slots
 
 Need to research:
 
-- All equipment slots (head, chest, etc.)
-- Weapon types per class
-- Stats system
+* All equipment slots (head, chest, etc.)
+* Weapon types per class
+* Stats system
 
 ## Data Sources
 
-- https://ashescodex.com/ - Primary source
-- https://ashesofcreation.wiki - Official wiki
+* <https://ashescodex.com/> - Primary source
+* <https://ashesofcreation.wiki/> - Official wiki
 
 ## Implementation Notes
 
@@ -56,10 +56,10 @@ When ready to implement:
 1. Create `src/config/classes.json` with all 64 combinations
 2. Create `src/config/skills.json` with skill trees
 3. Create `BuildEditor.tsx` component with:
-   - Class selector
-   - Skill point allocator
-   - Equipment planner
-   - Stat preview
+   * Class selector
+   * Skill point allocator
+   * Equipment planner
+   * Stat preview
 
 ## Timeline
 

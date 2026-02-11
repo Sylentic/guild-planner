@@ -1,19 +1,11 @@
 'use client';
 
-import { use } from 'react';
-import { GameLayout } from '../GameLayout';
-import { useAuthContext } from '@/components/auth/AuthProvider';
-import { useGroupData } from '@/hooks/useGroupData';
-import { useGroupMembership } from '@/hooks/useGroupMembership';
+import { useGameLayoutContext } from '@/contexts/GameLayoutContext';
 import { useEvents } from '@/hooks/useEvents';
 import { EventsList } from '@/components/views/EventsList';
 
-export default function EventsPage({ params }: { params: Promise<{ group: string; game: string }> }) {
-  const { group: groupSlug, game: gameSlug } = use(params);
-  const { user, profile } = useAuthContext();
-
-  const { group, characters } = useGroupData(groupSlug, gameSlug);
-  const { canManageMembers } = useGroupMembership(group?.id || null, user?.id || null, gameSlug);
+export default function EventsPage() {
+  const { group, characters, groupSlug, gameSlug, userId, userTimezone } = useGameLayoutContext();
 
   const {
     events,
@@ -26,36 +18,34 @@ export default function EventsPage({ params }: { params: Promise<{ group: string
     createAnnouncement,
     updateAnnouncement,
     deleteAnnouncement,
-  } = useEvents(group?.id || null, user?.id || null, gameSlug, groupSlug);
+  } = useEvents(group?.id || null, userId, gameSlug, groupSlug);
 
-  if (!group || !user) {
-    return <GameLayout params={params} activeTab="events"><div /></GameLayout>;
+  if (!group || !userId) {
+    return null;
   }
 
   return (
-    <GameLayout params={params} activeTab="events">
-      <EventsList
-        events={events}
-        announcements={announcements}
-        timezone={profile?.timezone || 'UTC'}
-        groupId={group.id}
-        groupSlug={groupSlug}
-        gameSlug={gameSlug}
-        userId={user.id}
-        characters={characters}
-        onCreateEvent={async (eventData, sendDiscordNotification) => {
-          await createEvent(eventData, sendDiscordNotification);
-        }}
-        onUpdateEvent={updateEvent}
-        onCancelEvent={cancelEvent}
-        onDeleteEvent={deleteEvent}
-        onRsvp={setRsvp}
-        onCreateAnnouncement={async (announcementData, sendDiscordNotification) => {
-          await createAnnouncement(announcementData, sendDiscordNotification);
-        }}
-        onUpdateAnnouncement={updateAnnouncement}
-        onDeleteAnnouncement={deleteAnnouncement}
-      />
-    </GameLayout>
+    <EventsList
+      events={events}
+      announcements={announcements}
+      timezone={userTimezone}
+      groupId={group.id}
+      groupSlug={groupSlug}
+      gameSlug={gameSlug}
+      userId={userId}
+      characters={characters}
+      onCreateEvent={async (eventData, sendDiscordNotification) => {
+        await createEvent(eventData, sendDiscordNotification);
+      }}
+      onUpdateEvent={updateEvent}
+      onCancelEvent={cancelEvent}
+      onDeleteEvent={deleteEvent}
+      onRsvp={setRsvp}
+      onCreateAnnouncement={async (announcementData, sendDiscordNotification) => {
+        await createAnnouncement(announcementData, sendDiscordNotification);
+      }}
+      onUpdateAnnouncement={updateAnnouncement}
+      onDeleteAnnouncement={deleteAnnouncement}
+    />
   );
 }

@@ -45,7 +45,9 @@
     "clear": "Clear",
     "confirmDelete": "Confirm Delete",
     "loadingError": "Loading Error",
-    "cancelDelete": "Cancel Deletion"
+    "cancelDelete": "Cancel Deletion",
+    "selectGame": "Select a game",
+    "archived": "Archived"
   },
   "nav": {
     "characters": "Characters",
@@ -54,8 +56,8 @@
     "alliances": "Alliances",
     "matrix": "Matrix",
     "fleet": "My Hangar",
-    "ships": "Guild Ships",
-    "guild-ships": "Guild Ships",
+    "ships": "Group Ships",
+    "guild-ships": "Group Ships",
     "manage": "Manage",
     "siege": "Siege",
     "economy": "Economy",
@@ -66,8 +68,8 @@
   "auth": {
     "signInWithDiscord": "Sign in with Discord",
     "signingIn": "Signing in...",
-    "signInDescription": "Sign in with your Discord account to manage your guild's profession matrix, create events, and organise parties.",
-    "welcome": "Welcome to Guild Planner",
+    "signInDescription": "Sign in with your Discord account to manage your group's profession matrix, create events, and organise parties.",
+    "welcome": "Welcome to Group Planner",
     "pleaseSignIn": "Please sign in to access settings",
     "goToLogin": "Go to Login",
     "signedInAs": "Signed in as"
@@ -76,13 +78,15 @@
     "create": "Create Clan",
     "createNew": "Create New Clan",
     "createDescription": "The clan {{name}} doesn't exist yet. Would you like to create it?",
+    "createGroupPrompt": "Create \"{{name}}\"?",
+    "createGroupDescription": "This group doesn't exist yet. Would you like to create it?",
     "youWillBeAdmin": "You will become the clan Admin",
     "applyToJoin": "Apply to Join",
     "applicationPending": "Application Pending",
     "pendingApproval": "Your application to join {{name}} is pending review by an admin or officer.",
     "accessAfterApproval": "You'll be able to access clan data once approved.",
     "charactersCount": "{{count}} characters",
-    "noCharacters": "No characters yet. Add your first guild character above!",
+    "noCharacters": "No characters yet. Add your first group character above!",
     "noCharactersMatch": "No characters match your filters.",
     "viewPublicPage": "View Public Page",
     "admin": "admin",
@@ -115,7 +119,12 @@
     "getStarted": "Get Started",
     "addGameToStart": "Add a game to start organizing your group's content.",
     "noGamesContactAdmin": "No games have been enabled for this group yet. Contact an admin to add one.",
-    "addYourFirstGame": "Add Your First Game"
+    "addYourFirstGame": "Add Your First Game",
+    "availableGames": "Available Games",
+    "availableGamesDesc": "Click on a game to view your group's information for that game.",
+    "addGame": "Add Game",
+    "addGamePrompt": "Add a game to this group:",
+    "allGamesEnabled": "All available games are already enabled."
   },
   "character": {
     "addCharacter": "Add Character",
@@ -186,7 +195,7 @@
   "recruitment": {
     "settings": "Recruitment Settings",
     "publicProfile": "Public Profile",
-    "publicProfileDesc": "Allow anyone to view your guild's public page",
+    "publicProfileDesc": "Allow anyone to view your group's public page",
     "openRecruitment": "Open Recruitment",
     "openRecruitmentDesc": "Allow players to submit applications",
     "publicDescription": "Public Description",
@@ -220,7 +229,8 @@
     "removeMember": "Remove Member",
     "memberSince": "Member since",
     "role": "Role",
-    "changeRole": "Change Role"
+    "changeRole": "Change Role",
+    "noRank": "No Rank"
   },
   "settings": {
     "title": "Settings",
@@ -293,22 +303,22 @@
     "clanNotFound": "Clan Not Found",
     "clanNotFoundDesc": "This clan doesn't exist or isn't public.",
     "goHome": "Go Home",
-    "ashesOfCreationGuild": "Ashes of Creation Guild",
+    "ashesOfCreationGuild": "Ashes of Creation Group",
     "memberLogin": "Member Login",
-    "joinOurGuild": "Join Our Guild",
+    "joinOurGuild": "Join Our Group",
     "aboutUs": "About Us",
-    "guildStats": "Guild Stats",
+    "guildStats": "Group Stats",
     "members": "Members",
     "professionCoverage": "Profession Coverage",
     "characters": "Characters",
     "upcomingEvents": "Upcoming Events",
     "applyToJoin": "Apply to Join",
     "recruitmentClosed": "Recruitment is currently closed",
-    "guildNotPublic": "This guild profile is not public",
+    "guildNotPublic": "This group profile is not public",
     "weLookingFor": "We're Looking For",
-    "joinOurGuildTitle": "Join Our Guild!",
-    "poweredBy": "Powered by AoC Guild Profession Planner",
-    "createOwnPage": "Create your own guild page →"
+    "joinOurGuildTitle": "Join Our Group!",
+    "poweredBy": "Powered by AoC Group Profession Planner",
+    "createOwnPage": "Create your own group page →"
   },
   "filters": {
     "title": "Filters",
@@ -388,8 +398,8 @@
     "allRightsReserved": "All Rights Reserved"
   },
   "home": {
-    "title": "Multi-Game Guild Planner",
-    "subtitle": "Manage your guild across any game - Ashes of Creation, Star Citizen, and more",
+    "title": "Multi-Game Group Planner",
+    "subtitle": "Manage your group across any game - Ashes of Creation, Star Citizen, and more",
     "enterClanPlaceholder": "Enter your clan name...",
     "loggedInHint": "You'll be able to create or join this clan",
     "notLoggedInHint": "Login with Discord to create or join clans",
@@ -398,9 +408,9 @@
     "featureMemberTitle": "Member Tracking",
     "featureMemberDesc": "Track members, roles, and permissions across your organization",
     "featureSyncTitle": "Real-time Sync",
-    "featureSyncDesc": "All changes sync instantly across your entire guild",
+    "featureSyncDesc": "All changes sync instantly across your entire group",
     "featureInsightsTitle": "Insights & Reports",
-    "featureInsightsDesc": "Get actionable insights about your guild's activity"
+    "featureInsightsDesc": "Get actionable insights about your group's activity"
   },
   "nodes": {
     "title": "Node Citizenship",
@@ -417,9 +427,9 @@
     "regionPlaceholder": "e.g. Northern Mountains",
     "mayor": "Mayor",
     "councilMember": "Council Member",
-    "hasMayor": "Has guild mayor",
+    "hasMayor": "Has group mayor",
     "noCitizenships": "No Citizenships Set",
-    "noCitizenshipsDesc": "Add citizenship information to characters to see the guild's node distribution.",
+    "noCitizenshipsDesc": "Add citizenship information to characters to see the group's node distribution.",
     "unassignedMembers": "{{count}} members don't have citizenship assigned",
     "totalNodes": "{{count}} nodes",
     "membersAssigned": "members assigned",
@@ -534,7 +544,7 @@
     }
   },
   "bank": {
-    "title": "Guild Bank",
+    "title": "Group Bank",
     "gold": "Gold",
     "inventory": "Inventory",
     "transactions": "Transactions",
@@ -545,7 +555,7 @@
     "searchResources": "Search resources...",
     "allCategories": "All categories",
     "emptyInventory": "Bank is Empty",
-    "emptyInventoryDesc": "Deposit resources to start tracking your guild's inventory.",
+    "emptyInventoryDesc": "Deposit resources to start tracking your group's inventory.",
     "noTransactions": "No transactions yet",
     "reserved": "reserved",
     "system": "System",
@@ -558,7 +568,7 @@
     "denyRequest": "Deny",
     "fulfillRequest": "Fulfill",
     "depositNotesPlaceholder": "e.g. Raid drops from Dragon Keep",
-    "withdrawNotesPlaceholder": "e.g. For guild crafting project",
+    "withdrawNotesPlaceholder": "e.g. For group crafting project",
     "errorSelectResource": "Please select a resource",
     "errorInvalidQuantity": "Please enter a valid quantity",
     "errorInsufficientResources": "Insufficient resources in bank",
@@ -586,16 +596,16 @@
     "small": "Small (8x8)",
     "medium": "Medium (16x16)",
     "large": "Large (32x32)",
-    "isPublic": "Public to Guild",
+    "isPublic": "Public to Group",
     "buildings": "Buildings",
     "addBuilding": "Add Building",
     "buildingType": "Building Type",
     "tier": "Tier",
-    "guildAccessible": "Guild Access",
+    "guildAccessible": "Group Access",
     "usageFee": "Usage Fee",
     "schedule": "Availability Schedule",
     "noFreeholds": "No Freeholds Registered",
-    "noFreeholdsDesc": "Register your freehold to share buildings with your guild.",
+    "noFreeholdsDesc": "Register your freehold to share buildings with your group.",
     "buildingTypes": {
       "smelter": "Smelter",
       "lumbermill": "Lumber Mill",
@@ -653,7 +663,7 @@
     "errorDepartureRequired": "Departure time is required",
     "types": {
       "personal": "Personal",
-      "guild": "Guild",
+      "guild": "Group",
       "trade_route": "Trade Route",
       "escort": "Escort Mission"
     },
@@ -677,36 +687,36 @@
     "description": "Description",
     "descriptionPlaceholder": "Describe the purpose of this alliance...",
     "descriptionHint": "Explain the type of alliance (commercial, military, mutual defense, etc.)",
-    "memberGuilds": "Member Guilds",
-    "isLeader": "Leader Guild",
+    "memberGuilds": "Member Groups",
+    "isLeader": "Leader Group",
     "canInvite": "Can Invite",
     "canCreateEvents": "Can Create Events",
-    "inviteGuild": "Invite Guild",
+    "inviteGuild": "Invite Group",
     "leaveAlliance": "Leave Alliance",
     "dissolveAlliance": "Dissolve Alliance",
     "sharedEvents": "Alliance Events",
     "noAlliances": "No Alliances",
-    "noAlliancesDesc": "Create or join an alliance to coordinate with other guilds.",
+    "noAlliancesDesc": "Create or join an alliance to coordinate with other groups.",
     "publicAlliance": "Public Alliance",
     "privateAlliance": "Private Alliance",
-    "publicDesc": "Any guild can see and request to join",
-    "privateDesc": "Only invited guilds can join",
+    "publicDesc": "Any group can see and request to join",
+    "privateDesc": "Only invited groups can join",
     "makePublic": "Make alliance public",
     "makePrivate": "Make alliance private",
-    "maxGuilds": "Maximum Guilds",
-    "guilds": "guilds",
-    "searchClan": "Search for a guild...",
-    "searchClanToInvite": "Search for a guild to invite...",
-    "noClanResults": "No guilds found matching your search",
-    "inviteClansOnCreate": "Invite Guilds (optional)",
-    "inviteClansHint": "You can invite guilds now or later from the alliance page",
-    "inviteToAlliance": "Invite a guild to join {{alliance}}",
-    "selectClan": "Select Guild",
+    "maxGuilds": "Maximum Groups",
+    "guilds": "groups",
+    "searchClan": "Search for a group...",
+    "searchClanToInvite": "Search for a group to invite...",
+    "noClanResults": "No groups found matching your search",
+    "inviteClansOnCreate": "Invite Groups (optional)",
+    "inviteClansHint": "You can invite groups now or later from the alliance page",
+    "inviteToAlliance": "Invite a group to join {{alliance}}",
+    "selectClan": "Select Group",
     "inviteMessage": "Invitation Message",
     "inviteMessagePlaceholder": "Add a personal message to the invitation...",
     "sendInvite": "Send Invitation",
     "errorNameRequired": "Alliance name is required",
-    "errorSelectClan": "Please select a guild to invite",
+    "errorSelectClan": "Please select a group to invite",
     "statuses": {
       "pending": "Pending",
       "active": "Active",
@@ -737,7 +747,7 @@
     "critical": "Critical",
     "daysInactive": "days inactive",
     "noInactiveMembers": "No Inactive Members",
-    "noInactiveMembersDesc": "All guild members have been active recently!",
+    "noInactiveMembersDesc": "All group members have been active recently!",
     "inactivityAlerts": "Inactivity Alerts",
     "pendingAlerts": "Pending Alerts",
     "acknowledge": "Acknowledge",
@@ -776,8 +786,8 @@
     "migrationMessage": "The ship tracking feature requires a database migration. Please run the latest migrations to enable this feature."
   },
   "ships": {
-    "title": "Guild Ships",
-    "subtitle": "Guild ships by type and role",
+    "title": "Group Ships",
+    "subtitle": "Group ships by type and role",
     "overview": "Ships Overview",
     "totalShips": "Total Ships",
     "shipsSection": "Ships",
@@ -797,7 +807,7 @@
   },
   "achievements": {
     "title": "Achievements",
-    "guildAchievements": "Guild Achievements",
+    "guildAchievements": "Group Achievements",
     "unlocked": "Unlocked",
     "locked": "Locked",
     "progress": "Progress",
@@ -805,7 +815,7 @@
     "points": "pts",
     "totalPoints": "Total Points",
     "categories": {
-      "guild": "Guild",
+      "guild": "Group",
       "pvp": "PvP",
       "economy": "Economy",
       "community": "Community",
@@ -834,7 +844,7 @@
     "role": "Role",
     "visibility": "Visibility",
     "private": "Private",
-    "guild": "Guild Only",
+    "guild": "Group Only",
     "public": "Public",
     "views": "Views",
     "likes": "Likes",
@@ -878,12 +888,12 @@
       "description": "Delete other members' characters"
     },
     "guild_bank_withdraw": {
-      "name": "Withdraw from Guild Bank",
-      "description": "Withdraw items from the guild bank"
+      "name": "Withdraw from Group Bank",
+      "description": "Withdraw items from the group bank"
     },
     "guild_bank_deposit": {
-      "name": "Deposit to Guild Bank",
-      "description": "Deposit items to the guild bank"
+      "name": "Deposit to Group Bank",
+      "description": "Deposit items to the group bank"
     },
     "guild_bank_view_history": {
       "name": "View Bank History",
@@ -970,8 +980,8 @@
       "description": "Manage recruitment applications and messages"
     },
     "settings_edit": {
-      "name": "Edit Guild Settings",
-      "description": "Edit guild general settings"
+      "name": "Edit Group Settings",
+      "description": "Edit group general settings"
     },
     "settings_edit_roles": {
       "name": "Manage Roles",
@@ -979,7 +989,7 @@
     },
     "settings_view_permissions": {
       "name": "View Permissions",
-      "description": "View the guild's permission structure"
+      "description": "View the group's permission structure"
     },
     "ships_create": {
       "name": "Create Ship",
