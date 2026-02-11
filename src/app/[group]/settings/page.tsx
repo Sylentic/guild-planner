@@ -20,7 +20,7 @@ import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
 export default function GroupSettingsPage({ params }: { params: Promise<{ group: string }> }) {
   const { group: groupSlug } = use(params);
   const { user, profile } = useAuthContext();
-  const { t: _t } = useLanguage();
+  const { t } = useLanguage();
 
   const { group } = useGroupData(groupSlug);
   const {
@@ -67,14 +67,14 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">{t._t('common.accessDenied') || 'Access Denied'}</h1>
-          <p className="text-slate-400 mb-6">{t._t('settings.adminOnlyAccess') || 'You need admin access to view group settings.'}</p>
+          <h1 className="text-2xl font-bold text-white mb-4">{t('common.accessDenied') || 'Access Denied'}</h1>
+          <p className="text-slate-400 mb-6">{t('settings.adminOnlyAccess') || 'You need admin access to view group settings.'}</p>
           <Link
             href={`/${groupSlug}`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            {t._t('common.back') || 'Back to Group'}
+            {t('common.back') || 'Back to Group'}
           </Link>
         </div>
       </div>
