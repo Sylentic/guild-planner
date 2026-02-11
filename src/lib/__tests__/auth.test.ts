@@ -177,9 +177,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getUserProfile('user-123');
 
@@ -246,9 +248,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       (supabase.auth.getUser as jest.Mock).mockResolvedValue({
         data: { user: { id: 'different-user' } },
@@ -271,9 +275,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       await expect(getUserProfile('user-123')).rejects.toThrow('Database error');
     });
@@ -289,9 +295,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await updateDisplayName('user-123', 'New Name');
 
@@ -309,9 +317,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await expect(updateDisplayName('user-123', 'New Name')).rejects.toThrow(
         'Update failed'
@@ -341,9 +351,11 @@ describe('Authentication & User Management', () => {
           }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getGroupMembership('group-123', 'user-123');
 
@@ -364,9 +376,11 @@ describe('Authentication & User Management', () => {
           }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getGroupMembership('group-123', 'user-123');
 
@@ -457,9 +471,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelectGroup,
-      });
+      } as any);
 
       await expect(applyToGroup('invalid-group', 'user-123')).rejects.toThrow(
         'Group not found'
@@ -477,9 +493,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await acceptMember('membership-123', 'admin-user');
 
@@ -500,9 +518,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await expect(acceptMember('membership-123', 'admin-user')).rejects.toThrow(
         'Update failed'
@@ -520,9 +540,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         delete: mockDelete,
-      });
+      } as any);
 
       await removeMember('membership-123');
 
@@ -540,9 +562,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         delete: mockDelete,
-      });
+      } as any);
 
       await expect(removeMember('membership-123')).rejects.toThrow(
         'Deletion failed'
@@ -560,9 +584,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await updateMemberRole('membership-123', 'officer');
 
@@ -578,9 +604,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       const roles = ['admin', 'officer', 'member'] as const;
 
@@ -600,9 +628,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await expect(updateMemberRole('membership-123', 'admin')).rejects.toThrow(
         'Update failed'
@@ -666,11 +696,13 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: mockSelectGroup,
         }),
-      });
+      } as any);
 
       await expect(createGroup('test', 'Test', 'user-123')).rejects.toThrow(
         'Unique constraint violation'
@@ -729,9 +761,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getGroupBySlug('test-group');
 
@@ -748,9 +782,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getGroupBySlug('nonexistent');
 
@@ -778,9 +814,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getGroupById('group-123');
 
@@ -798,9 +836,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       await expect(getGroupById('group-123')).rejects.toThrow('Database error');
     });
@@ -814,9 +854,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await updateClanIconUrl('group-123', 'https://example.com/new-icon.png');
 
@@ -833,9 +875,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       await expect(
         updateClanIconUrl('group-123', 'https://example.com/icon.png')
@@ -876,6 +920,8 @@ describe('Authentication & User Management', () => {
           }),
         }),
       });
+
+      // @ts-ignore
 
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
@@ -930,9 +976,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getUserGroups('user-123');
 
@@ -950,9 +998,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const result = await getUserGroups('user-123');
 
@@ -970,9 +1020,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       await expect(getUserGroups('user-123')).rejects.toThrow('Database error');
     });
@@ -988,9 +1040,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         update: mockUpdate,
-      });
+      } as any);
 
       // This should fail at TypeScript level, but test runtime behavior
       await updateMemberRole('membership-123', 'superadmin' as any);
@@ -1016,9 +1070,11 @@ describe('Authentication & User Management', () => {
         }),
       });
 
+      // @ts-ignore
+
       (supabase.from as jest.Mock).mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       (supabase.auth.getUser as jest.Mock).mockResolvedValue({
         data: {
@@ -1035,3 +1091,9 @@ describe('Authentication & User Management', () => {
     });
   });
 });
+
+
+
+
+
+

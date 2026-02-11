@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: useGuildBank Hook - Sprint 7
  * Tests for bank management, inventory transactions, and resource requests

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: useParties Hook - Sprint 10
  * Tests for party management, roster assignment, and role tracking

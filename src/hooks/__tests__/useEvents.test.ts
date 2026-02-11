@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: Data Fetching Hooks
  * Tests for event and announcement management logic

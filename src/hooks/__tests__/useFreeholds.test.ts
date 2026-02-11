@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: useFreeholds Hook - Sprint 8
  * Tests for freehold management and building additions

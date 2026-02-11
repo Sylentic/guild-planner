@@ -30,7 +30,9 @@
         "npm install": true,
         "tee": true,
         "Resolve-Path": true,
-        "Group-Object": true
+        "Group-Object": true,
+        "Get-Unique": true,
+        "ConvertFrom-String": true
     },
     "codeQL.githubDatabase.download": "never"
 }

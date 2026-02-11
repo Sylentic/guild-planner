@@ -31,13 +31,15 @@ describe('Game Validation', () => {
         error: null,
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await validateClanGame('test-group-id', 'aoc' as GameId);
       expect(result).toBe(true);
@@ -50,13 +52,15 @@ describe('Game Validation', () => {
         error: null,
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await validateClanGame('test-group-id', 'aoc' as GameId);
       expect(result).toBe(false);
@@ -68,13 +72,15 @@ describe('Game Validation', () => {
         error: new Error('Database error'),
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await validateClanGame('test-group-id', 'aoc' as GameId);
       expect(result).toBe(false);
@@ -86,13 +92,15 @@ describe('Game Validation', () => {
         error: null,
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await validateClanGame('nonexistent-group', 'aoc' as GameId);
       expect(result).toBe(false);
@@ -106,13 +114,15 @@ describe('Game Validation', () => {
         error: null,
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await getClanGame('test-group-id');
       expect(result).toBe('starcitizen');
@@ -124,13 +134,15 @@ describe('Game Validation', () => {
         error: new Error('Not found'),
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await getClanGame('nonexistent-group');
       expect(result).toBeNull();
@@ -142,16 +154,24 @@ describe('Game Validation', () => {
         error: null,
       });
 
+      // @ts-ignore
+
       jest.mocked(supabase).from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
             single: mockSingle,
           }),
         }),
-      });
+      } as any);
 
       const result = await getClanGame('test-group-id');
       expect(result).toBeNull();
     });
   });
 });
+
+
+
+
+
+

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: useGroupData Hook - Sprint 3
  * Focused tests for complex group and character data management

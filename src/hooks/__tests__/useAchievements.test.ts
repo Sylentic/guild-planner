@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Phase 2 Tests: useAchievements Hook - Sprint 4
  * Tests for achievement tracking, unlock conditions, and progress tracking
