@@ -1,7 +1,6 @@
 
 "use client";
 import { useState, use, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader, Archive } from 'lucide-react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
@@ -10,7 +9,7 @@ import { GameIcon } from '@/components/common/GameIcon';
 import { createGroup, getGroupBySlug } from '@/lib/auth';
 import { useGroupMembership } from '@/hooks/useGroupMembership';
 import { usePermissions } from '@/hooks/usePermissions';
-import { getGroupGames, getGroupGamesWithStatus, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
+import { getGroupGamesWithStatus, addGameToGroup, removeGameFromGroup } from '@/lib/group-games';
 import { getAllGames } from '@/lib/games';
 import { ClanLoadingScreen } from '@/components/screens/ClanLoadingScreen';
 import { ClanErrorScreen } from '@/components/screens/ClanErrorScreen';
@@ -18,22 +17,27 @@ import { ClanLoginScreen } from '@/components/screens/ClanLoginScreen';
 import { InlineFooter } from '@/components/layout/Footer';
 
 
+type GroupData = {
+  id: string;
+  slug: string;
+  name: string;
+  group_icon_url?: string | null;
+};
+
 export default function GroupPage({ params }: { params: Promise<{ group: string }> }) {
   const { group: groupSlug } = use(params);
-  const router = useRouter();
   const { user, profile, loading: authLoading, signIn, signOut } = useAuthContext();
   const { t } = useLanguage();
   const ALL_AVAILABLE_GAMES = getAllGames().map(g => ({ slug: g.id, name: g.name, icon: g.icon, iconUrl: g.iconUrl, description: g.description }));
 
   const [groupId, setGroupId] = useState<string | null>(null);
-  const [groupData, setGroupData] = useState<any>(null);
+  const [groupData, setGroupData] = useState<GroupData | null>(null);
   const [groupExists, setGroupExists] = useState<boolean | null>(null);
   const [checkError, setCheckError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [enabledGames, setEnabledGames] = useState<string[]>([]); // Start empty, load from database
   const [gamesWithStatus, setGamesWithStatus] = useState<Array<{ slug: string; archived: boolean }>>([]);
   const [showAddGame, setShowAddGame] = useState(false);
-  const [loadingGames, setLoadingGames] = useState(false);
   const [addingGame, setAddingGame] = useState<string | null>(null);
   const [removingGame, setRemovingGame] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -53,7 +57,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
         const group = await Promise.race([
           getGroupBySlug(groupSlug),
           timeoutPromise
-        ]) as any | null;
+        ]) as GroupData | null;
         if (group) {
           setGroupId(group.id);
           setGroupData(group);
@@ -76,7 +80,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
 
   // Load group games from database
   const loadGroupGames = async (gid: string) => {
-    setLoadingGames(true);
     try {
       const gamesStatus = await getGroupGamesWithStatus(gid);
       setEnabledGames(gamesStatus.map(g => g.game_slug));
@@ -85,8 +88,6 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
       console.error('Error loading group games:', err);
       setEnabledGames([]);
       setGamesWithStatus([]);
-    } finally {
-      setLoadingGames(false);
     }
   };
 
@@ -148,9 +149,10 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
       const displayGroupName = groupSlug.charAt(0).toUpperCase() + groupSlug.slice(1).replace(/-/g, ' ');
       await createGroup(groupSlug, displayGroupName, user.id);
       window.location.reload();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error creating group:', err);
-      setCreateError(err.code === '23505' ? 'This group name is already taken' : (err.message || 'Failed to create group'));
+      const error = err as { code?: string; message?: string };
+      setCreateError(error.code === '23505' ? 'This group name is already taken' : (error.message || 'Failed to create group'));
     } finally {
       setCreating(false);
     }
@@ -197,7 +199,7 @@ export default function GroupPage({ params }: { params: Promise<{ group: string 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="text-center max-w-md mx-auto p-6">
           <Plus className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-white mb-2">Create &quot;{groupSlug}&quot;?</h2>
+          <h2 className="text-xl font-semibold text-white mb-2">{t('clan.createGroupPrompt', { name: groupSlug })}</h2>
           <p className="text-slate-400 mb-6">
             This group doesn&apos;t exist yet. Would you like to create it?
           </p>

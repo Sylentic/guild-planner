@@ -10,6 +10,13 @@ type GameRank = {
   hierarchy?: number;
 };
 
+type GameConfig = {
+  professions?: {
+    ranks?: Record<string, { name: string }>;
+  };
+  ranks?: GameRank[];
+};
+
 type GameUser = {
   display_name: string | null;
   discord_username: string | null;
@@ -54,18 +61,18 @@ export function ManageTab({
 }: ManageTabProps) {
   const { t: tContext } = useLanguage();
   const t = tProp || tContext;
-  const gameConfig = getGameConfig(gameSlug);
+  const gameConfig = getGameConfig(gameSlug) as GameConfig;
   
   // Convert ranks to array format (handle both AoC and Star Citizen structures)
   let gameRanks: GameRank[] = [];
   
   // Star Citizen: ranks is an array
-  if (Array.isArray((gameConfig as any)?.ranks)) {
-    gameRanks = ((gameConfig as any)?.ranks || []) as GameRank[];
+  if (Array.isArray(gameConfig?.ranks)) {
+    gameRanks = (gameConfig?.ranks || []) as GameRank[];
   } 
   // AoC: ranks is in professions.ranks as an object
   else {
-    const ranksObj = ((gameConfig as any)?.professions?.ranks || {}) as Record<string, {name: string}>;
+    const ranksObj = (gameConfig?.professions?.ranks || {}) as Record<string, {name: string}>;
     gameRanks = Object.entries(ranksObj).map(([id, data]) => ({
       id,
       name: data.name,

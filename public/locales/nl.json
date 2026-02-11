@@ -76,6 +76,7 @@
     "create": "Clan aanmaken",
     "createNew": "Nieuwe clan aanmaken",
     "createDescription": "De clan {{name}} bestaat nog niet. Wil je deze aanmaken?",
+    "createGroupPrompt": "\"{{name}}\" aanmaken?",
     "youWillBeAdmin": "Je wordt de beheerder van de clan ",
     "applyToJoin": "Aanmelden om lid te worden",
     "applicationPending": "In afwachting van goedkeuring",

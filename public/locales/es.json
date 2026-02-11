@@ -76,6 +76,7 @@
     "create": "Crear Clan",
     "createNew": "Crear Nuevo Clan",
     "createDescription": "El clan {{name}} no existe todavía. ¿Te gustaría crearlo?",
+    "createGroupPrompt": "¿Crear \"{{name}}\"?",
     "youWillBeAdmin": "Serás el Administrador del clan",
     "applyToJoin": "Solicitar unirse",
     "applicationPending": "Solicitud Pendiente",
