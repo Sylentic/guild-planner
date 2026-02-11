@@ -4,8 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 
 // Use env vars for Supabase connection
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // Needs service role for RLS bypass
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key' // Needs service role for RLS bypass
 );
 
 export async function GET(req: NextRequest) {
