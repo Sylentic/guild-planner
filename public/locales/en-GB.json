@@ -220,7 +220,8 @@
     "removeMember": "Remove Member",
     "memberSince": "Member since",
     "role": "Role",
-    "changeRole": "Change Role"
+    "changeRole": "Change Role",
+    "noRank": "No Rank"
   },
   "settings": {
     "title": "Settings",

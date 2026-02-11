@@ -218,7 +218,8 @@
     "removeMember": "Eliminar Miembro",
     "memberSince": "Miembro desde",
     "role": "Rol",
-    "changeRole": "Cambiar Rol"
+    "changeRole": "Cambiar Rol",
+    "noRank": "Sin Rango"
   },
   "settings": {
     "title": "Configuración",

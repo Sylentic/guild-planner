@@ -3,7 +3,7 @@
 import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AlertCircle, LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader, Archive, Settings } from 'lucide-react';
+import { LogOut, ChevronRight, Home, Plus, Trash2, Shield, Loader, Archive } from 'lucide-react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { GameIcon } from '@/components/common/GameIcon';

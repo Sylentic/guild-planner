@@ -210,7 +210,8 @@
     "removeMember": "Lid verwijderen",
     "memberSince": "Lid sinds",
     "role": "Rol",
-    "changeRole": "Rol wijzigen"
+    "changeRole": "Rol wijzigen",
+    "noRank": "Geen Rang"
   },
   "settings": {
     "title": "Instellingen",
