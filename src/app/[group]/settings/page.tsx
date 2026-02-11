@@ -107,7 +107,7 @@ export default function GroupSettingsPage({ params }: { params: Promise<{ group:
               )}
               <div>
                 <h1 className="text-xl font-bold text-white">{group.name}</h1>
-                <p className="text-sm text-slate-400">{_t('settings.groupSettingsTitle') || 'Group Settings'}</p>
+                <p className="text-sm text-slate-400">{t('settings.groupSettingsTitle') || 'Group Settings'}</p>
               </div>
             </div>
             <div className="text-sm text-slate-400">
