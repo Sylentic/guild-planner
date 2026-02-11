@@ -79,8 +79,8 @@ export function PartyCard({
     }
   };
 
-  // Determine if the user can manage this party (could be more complex in future)
-  const effectiveCanManage = isLeadership() || isAdmin();
+  // Use the canManage prop passed from parent
+  const effectiveCanManage = canManage;
 
   return (
     <div className="bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-700 overflow-hidden">
