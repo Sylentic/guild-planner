@@ -598,7 +598,7 @@ export function CharacterForm({
             <button
               type="submit"
               disabled={isSubmitting || !formData.name.trim()}
-              className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Character'}
             </button>

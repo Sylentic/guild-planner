@@ -203,7 +203,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
               onClick={() => setIsPublic(!isPublic)}
               className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
                 isPublic 
-                  ? 'bg-orange-500 justify-end' 
+                  ? 'bg-indigo-500 justify-end' 
                   : 'bg-slate-600 justify-start'
               }`}
               role="switch"
@@ -259,7 +259,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             onClick={() => setApprovalRequired(!approvalRequired)}
             className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
               approvalRequired
-                ? 'bg-orange-500 justify-end'
+                ? 'bg-indigo-500 justify-end'
                 : 'bg-slate-600 justify-start'
             }`}
             role="switch"
@@ -280,7 +280,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             id="default-role"
             value={defaultRole}
             onChange={(e) => setDefaultRole(e.target.value as 'trial' | 'member')}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
           >
             <option value="trial">Trial Member</option>
             <option value="member">Full Member</option>
@@ -303,7 +303,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             onChange={(e) => setPublicDescription(e.target.value)}
             placeholder="Tell potential recruits about your guild..."
             rows={3}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
           />
         </div>
 
@@ -317,7 +317,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             value={recruitmentMessage}
             onChange={(e) => setRecruitmentMessage(e.target.value)}
             placeholder="e.g., Looking for active raiders for launch!"
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
@@ -336,7 +336,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
             >
               {saving ? (
                 <Loader2 size={16} className="animate-spin" />

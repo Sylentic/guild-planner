@@ -109,7 +109,7 @@ export function SiegeTabContent({ groupId, characters, userId }: SiegeTabContent
           ) : canCreateSiege && (
             <button
               onClick={() => setShowEventForm(true)}
-              className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors"
+              className="w-full px-4 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium transition-colors"
             >
               + {t('siege.createEvent')}
             </button>

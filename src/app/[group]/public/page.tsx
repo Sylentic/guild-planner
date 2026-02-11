@@ -98,7 +98,7 @@ export default function PublicGroupPage({ params }: { params: Promise<{ group: s
             </div>
             <Link
               href={`/${groupSlug}`}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors"
             >
               <ExternalLink size={16} />
               {t('publicPage.memberLogin')}
@@ -177,7 +177,7 @@ export default function PublicGroupPage({ params }: { params: Promise<{ group: s
               </div>
               <button
                 onClick={() => setShowRecruitmentForm(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-2 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap"
               >
                 {t('publicPage.applyToJoin')}
                 <ChevronRight size={18} />

@@ -254,7 +254,7 @@ export function EventsList({
           </button>
           <button
             onClick={() => setShowEventForm(true)}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-orange-500 hover:bg-orange-600 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-indigo-500 hover:bg-indigo-600 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             title="Create event"
             disabled={loading || !canCreateEvent}
           >

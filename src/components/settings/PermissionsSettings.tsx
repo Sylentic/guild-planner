@@ -329,10 +329,10 @@ export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSe
                           checked={isChecked}
                           onChange={() => togglePermission(selectedRole, perm.id)}
                           disabled={selectedRole === 'admin' || selectedRole === 'pending'}
-                          className="mt-1 w-4 h-4 rounded border-slate-600 accent-orange-500"
+                          className="mt-1 w-4 h-4 rounded border-slate-600 accent-indigo-500"
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-white group-hover:text-orange-400 transition-colors">
+                          <div className="text-sm font-medium text-white group-hover:text-indigo-400 transition-colors">
                             {t(`permissions.${perm.id}.name`)}
                           </div>
                           <div className="text-xs text-slate-400">{t(`permissions.${perm.id}.description`)}</div>
@@ -358,7 +358,7 @@ export function PermissionsSettings({ groupId, userRole, onSave }: PermissionsSe
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/50 text-white font-medium rounded-lg transition-colors cursor-pointer"
+            className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-500/50 text-white font-medium rounded-lg transition-colors cursor-pointer"
           >
             {isSaving ? 'Saving...' : 'Save Permissions'}
           </button>
