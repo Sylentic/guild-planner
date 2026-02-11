@@ -66,6 +66,7 @@ export function EventsList({
   const { loading } = usePermissions(groupId);
   const canCreateEvent = hasPermission('events_create') && !isGameArchived;
   const canEditAnyEvent = hasPermission('events_edit_any') && !isGameArchived;
+  const canEditOwnEvent = hasPermission('events_edit_own') && !isGameArchived;
   const canDeleteAnyEvent = hasPermission('events_delete_any') && !isGameArchived;
   const canDeleteOwnEvent = hasPermission('events_delete_own') && !isGameArchived;
   const canCreateAnnouncement = hasPermission('announcements_create') && !isGameArchived;
@@ -284,7 +285,7 @@ export function EventsList({
               userId={userId}
               characters={characters}
               onRsvp={(status, role, characterId, targetUserId) => onRsvp(event.id, status, role, characterId, targetUserId)}
-              onEdit={canEditAnyEvent ? () => setEditingEvent(event) : undefined}
+              onEdit={(canEditAnyEvent || (canEditOwnEvent && event.created_by === userId)) ? () => setEditingEvent(event) : undefined}
               onCancel={canDeleteAnyEvent ? () => onCancelEvent(event.id) : undefined}
               onDelete={(canDeleteAnyEvent || (canDeleteOwnEvent && event.created_by === userId)) ? () => onDeleteEvent(event.id) : undefined}
               canManage={canEditAnyEvent || canDeleteAnyEvent}

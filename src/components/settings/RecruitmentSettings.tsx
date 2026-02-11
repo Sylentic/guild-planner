@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Globe, UserPlus, Save, Loader2, Check, ExternalLink, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { RecruitmentApplication } from '@/lib/types';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RecruitmentSettingsProps {
   groupId: string;
@@ -13,7 +14,8 @@ interface RecruitmentSettingsProps {
 }
 
 export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsProps) {
-  const { loading } = usePermissions(groupId);
+  const { loading, hasPermission } = usePermissions(groupId);
+  const { t } = useLanguage();
   const [isPublic, setIsPublic] = useState(false);
   const [recruitmentOpen, setRecruitmentOpen] = useState(false);
   const [approvalRequired, setApprovalRequired] = useState(true);
@@ -25,6 +27,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   const [saved, setSaved] = useState(false);
   const [localLoading, setLocalLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const canManageRecruitment = hasPermission('recruitment_manage');
 
   // Fetch current settings and applications
   useEffect(() => {
@@ -73,7 +76,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       } catch (err) {
         console.error('[RecruitmentSettings] Unexpected error:', err);
         if (isMounted) {
-          setError('Failed to load settings');
+          setError(t('recruitment.loadError') || 'Failed to load recruitment settings');
         }
       } finally {
         if (isMounted) {
@@ -94,6 +97,11 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
   }, [groupId]);
 
   const handleSave = async () => {
+    if (!canManageRecruitment) {
+      setError(t('recruitment.noPermission') || 'You do not have permission to manage recruitment settings.');
+      return;
+    }
+
     setSaving(true);
     setError(null);
     
@@ -122,13 +130,16 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
       console.error('[RecruitmentSettings] Unexpected save error:', err);
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : (t('recruitment.saveFailed') || 'Save failed'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleApplicationAction = async (appId: string, action: 'accepted' | 'rejected') => {
+    if (!canManageRecruitment) {
+      return;
+    }
     try {
       const { error } = await supabase
         .from('recruitment_applications')
@@ -170,7 +181,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <UserPlus size={20} className="text-orange-400" />
-            Recruitment Settings
+            {t('recruitment.settings') || 'Recruitment Settings'}
           </h3>
           {isPublic && (
             <a
@@ -179,11 +190,18 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-sm text-orange-400 hover:text-orange-300"
             >
-              View Public Page
+              {t('recruitment.viewPublicPage') || 'View Public Page'}
               <ExternalLink size={14} />
             </a>
           )}
         </div>
+
+        {!canManageRecruitment && (
+          <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-300 text-sm">
+            <XCircle size={16} />
+            {t('recruitment.noPermission') || 'You do not have permission to manage recruitment settings.'}
+          </div>
+        )}
 
         {/* Toggles */}
         <div className="space-y-4">
@@ -192,20 +210,21 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             <div>
               <div className="flex items-center gap-2 text-white font-medium">
                 <Globe size={16} />
-                Public Profile
+                {t('recruitment.publicProfile') || 'Public Profile'}
               </div>
               <p className="text-sm text-slate-400 mt-0.5">
-                Allow anyone to view your guild&apos;s public page
+                {t('recruitment.publicProfileDesc') || "Allow anyone to view your group's public page"}
               </p>
             </div>
             {/* axe-ignore aria-valid-attr-value */}
             <button
-              onClick={() => setIsPublic(!isPublic)}
-              className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
+              onClick={() => canManageRecruitment && setIsPublic(!isPublic)}
+              disabled={!canManageRecruitment}
+              className={`flex items-center shrink-0 w-12 h-7 rounded-full transition-colors p-1 ${
                 isPublic 
                   ? 'bg-indigo-500 justify-end' 
                   : 'bg-slate-600 justify-start'
-              }`}
+              } ${canManageRecruitment ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
               role="switch"
               aria-checked={isPublic}
               aria-label="Toggle public visibility"
@@ -220,20 +239,21 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
             <div>
               <div className="flex items-center gap-2 text-white font-medium">
                 <UserPlus size={16} />
-                Open Recruitment
+                {t('recruitment.openRecruitment') || 'Open Recruitment'}
               </div>
               <p className="text-sm text-slate-400 mt-0.5">
-                Allow players to submit applications
+                {t('recruitment.openRecruitmentDesc') || 'Allow players to submit applications'}
               </p>
             </div>
             {/* axe-ignore aria-valid-attr-value */}
             <button
-              onClick={() => setRecruitmentOpen(!recruitmentOpen)}
-              className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
+              onClick={() => canManageRecruitment && setRecruitmentOpen(!recruitmentOpen)}
+              disabled={!canManageRecruitment}
+              className={`flex items-center shrink-0 w-12 h-7 rounded-full transition-colors p-1 ${
                 recruitmentOpen 
                   ? 'bg-green-500 justify-end' 
                   : 'bg-slate-600 justify-start'
-              }`}
+              } ${canManageRecruitment ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
               role="switch"
               aria-checked={recruitmentOpen}
               aria-label="Toggle recruitment status"
@@ -248,20 +268,21 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
           <div>
             <div className="flex items-center gap-2 text-white font-medium">
               <CheckCircle size={16} />
-              Approval Required
+              {t('recruitment.approvalRequired') || 'Approval Required'}
             </div>
             <p className="text-sm text-slate-400 mt-0.5">
-              When off, new members join immediately
+              {t('recruitment.approvalRequiredDesc') || 'When off, new members join immediately'}
             </p>
           </div>
           {/* axe-ignore aria-valid-attr-value */}
           <button
-            onClick={() => setApprovalRequired(!approvalRequired)}
-            className={`flex items-center shrink-0 w-12 h-7 rounded-full cursor-pointer transition-colors p-1 ${
+            onClick={() => canManageRecruitment && setApprovalRequired(!approvalRequired)}
+            disabled={!canManageRecruitment}
+            className={`flex items-center shrink-0 w-12 h-7 rounded-full transition-colors p-1 ${
               approvalRequired
                 ? 'bg-indigo-500 justify-end'
                 : 'bg-slate-600 justify-start'
-            }`}
+            } ${canManageRecruitment ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
             role="switch"
             aria-checked={approvalRequired}
             aria-label="Toggle approval requirement"
@@ -274,50 +295,53 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
         {/* Starting Role */}
         <div>
           <label htmlFor="default-role" className="block text-sm font-medium text-slate-300 mb-1">
-            Starting Role for New Members
+            {t('recruitment.startingRole') || 'Starting Role for New Members'}
           </label>
           <select
             id="default-role"
             value={defaultRole}
             onChange={(e) => setDefaultRole(e.target.value as 'trial' | 'member')}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+            disabled={!canManageRecruitment}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            <option value="trial">Trial Member</option>
-            <option value="member">Full Member</option>
+            <option value="trial">{t('recruitment.trialMember') || 'Trial Member'}</option>
+            <option value="member">{t('recruitment.fullMember') || 'Full Member'}</option>
           </select>
           <p className="text-xs text-slate-400 mt-1">
             {approvalRequired
-              ? 'Role assigned when applications are approved'
-              : 'Role assigned when members join automatically'}
+              ? (t('recruitment.roleAssignedOnApproval') || 'Role assigned when applications are approved')
+              : (t('recruitment.roleAssignedOnAuto') || 'Role assigned when members join automatically')}
           </p>
         </div>
 
         {/* Public Description */}
         <div>
           <label htmlFor="recruitment-public-description" className="block text-sm font-medium text-slate-300 mb-1">
-            Public Description
+            {t('recruitment.publicDescription') || 'Public Description'}
           </label>
           <textarea
             id="recruitment-public-description"
             value={publicDescription}
             onChange={(e) => setPublicDescription(e.target.value)}
-            placeholder="Tell potential recruits about your guild..."
+            placeholder={t('recruitment.publicDescriptionPlaceholder') || "Tell potential recruits about your group..."}
             rows={3}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            disabled={!canManageRecruitment}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
 
         {/* Recruitment Message */}
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-1">
-            Recruitment Message
+            {t('recruitment.recruitmentMessage') || 'Recruitment Message'}
           </label>
           <input
             type="text"
             value={recruitmentMessage}
             onChange={(e) => setRecruitmentMessage(e.target.value)}
-            placeholder="e.g., Looking for active raiders for launch!"
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder={t('recruitment.recruitmentMessagePlaceholder') || 'e.g., Looking for active raiders for launch!'}
+            disabled={!canManageRecruitment}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -335,8 +359,8 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
           ) : (
             <button
               onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+              disabled={saving || !canManageRecruitment}
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {saving ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -345,7 +369,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
               ) : (
                 <Save size={16} />
               )}
-              {saved ? 'Saved!' : 'Save Settings'}
+              {saved ? (t('common.saved') || 'Saved!') : (t('recruitment.saveSettings') || 'Save Settings')}
             </button>
           )}
         </div>
@@ -355,7 +379,7 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
       {pendingApps.length > 0 && (
         <div className="bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-700 p-6">
           <h3 className="text-lg font-semibold text-white mb-4">
-            Pending Applications ({pendingApps.length})
+            {t('members.pendingApplications') || 'Pending Applications'} ({pendingApps.length})
           </h3>
           <div className="space-y-3">
             {pendingApps.map(app => (
@@ -367,29 +391,41 @@ export function RecruitmentSettings({ groupId, groupSlug }: RecruitmentSettingsP
                   <div>
                     <div className="font-medium text-white">{app.discord_username}</div>
                     {app.character_name && (
-                      <div className="text-sm text-slate-400">Character: {app.character_name}</div>
+                      <div className="text-sm text-slate-400">
+                        {t('recruitment.characterName') || 'Character Name'}: {app.character_name}
+                      </div>
                     )}
                     {app.primary_class && (
-                      <div className="text-sm text-slate-400">Class: {app.primary_class}</div>
+                      <div className="text-sm text-slate-400">
+                        {t('filters.class') || 'Class'}: {app.primary_class}
+                      </div>
                     )}
                     {app.message && (
                       <p className="text-sm text-slate-300 mt-2">{app.message}</p>
                     )}
                     <div className="text-xs text-slate-500 mt-2">
-                      Applied {new Date(app.created_at).toLocaleDateString('en-GB', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}
+                      {t('recruitment.appliedOn', {
+                        date: new Date(app.created_at).toLocaleDateString('en-GB', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })
+                      }) || `Applied ${new Date(app.created_at).toLocaleDateString('en-GB', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}`}
                     </div>
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleApplicationAction(app.id, 'accepted')}
-                      className="p-2 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors cursor-pointer"
-                      title="Accept"                      aria-label="Accept"                    >
+                      onClick={() => canManageRecruitment && handleApplicationAction(app.id, 'accepted')}
+                      disabled={!canManageRecruitment}
+                      className="p-2 text-green-400 hover:bg-green-500/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      title={t('common.accept') || 'Accept'}
+                      aria-label={t('common.accept') || 'Accept'}
+                    >
                       <CheckCircle size={20} />
                     </button>
                     <button
-                      onClick={() => handleApplicationAction(app.id, 'rejected')}
-                      className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors cursor-pointer"
-                      title="Reject"                      aria-label="Reject"                    >
+                      onClick={() => canManageRecruitment && handleApplicationAction(app.id, 'rejected')}
+                      disabled={!canManageRecruitment}
+                      className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      title={t('common.reject') || 'Reject'}
+                      aria-label={t('common.reject') || 'Reject'}
+                    >
                       <XCircle size={20} />
                     </button>
                   </div>
