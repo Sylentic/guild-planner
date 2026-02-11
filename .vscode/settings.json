@@ -32,7 +32,8 @@
         "Resolve-Path": true,
         "Group-Object": true,
         "Get-Unique": true,
-        "ConvertFrom-String": true
+        "ConvertFrom-String": true,
+        "npx eslint": true
     },
     "codeQL.githubDatabase.download": "never"
 }

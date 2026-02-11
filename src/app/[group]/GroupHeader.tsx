@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, Settings, LogOut } from 'lucide-react';
 
 interface GroupHeaderProps {
@@ -34,7 +35,7 @@ export function GroupHeader({
               <Home className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
             {guildIconUrl && (
-              <img src={guildIconUrl} alt="Group Icon" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border border-slate-700/50 bg-slate-800 ring-2 ring-slate-700/30" />
+              <Image src={guildIconUrl} alt="Group Icon" width={40} height={40} className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border border-slate-700/50 bg-slate-800 ring-2 ring-slate-700/30" />
             )}
             <Link
               href="/"

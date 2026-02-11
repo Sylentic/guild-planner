@@ -22,7 +22,7 @@ import { syncSubscriberShips } from '@/lib/subscriberShips';
 import { supabase } from '@/lib/supabase';
 import { CenturionSVG, ImperatorSVG } from '@/components/game-specific/SubscriberIcons';
 
-interface CharacterFormData {
+export interface CharacterFormData {
   name: string;
   race: Race | null;
   primary_archetype: Archetype | null;

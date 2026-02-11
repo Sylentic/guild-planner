@@ -1,10 +1,10 @@
 import { CharacterWithProfessions } from '@/lib/types';
-import { CharacterForm } from '@/components/characters/CharacterForm';
+import { CharacterForm, type CharacterFormData } from '@/components/characters/CharacterForm';
 import React from 'react';
 
 interface CharacterEditModalProps {
   editingCharacter: CharacterWithProfessions | null;
-  onSubmit: (id: string, data: any) => Promise<void>;
+  onSubmit: (id: string, data: CharacterFormData) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -19,13 +19,13 @@ export function CharacterEditModal({ editingCharacter, onSubmit, onCancel }: Cha
         secondary_archetype: editingCharacter.secondary_archetype,
         level: editingCharacter.level,
         is_main: editingCharacter.is_main,
-        subscriber_tier: (editingCharacter as any)?.subscriber_tier || null,
-        subscriber_since: (editingCharacter as any)?.subscriber_since || null,
-        subscriber_ships_month: (editingCharacter as any)?.subscriber_ships_month || null,
-        ror_faction: (editingCharacter as any)?.ror_faction || null,
-        ror_class: (editingCharacter as any)?.ror_class || null,
-        preferred_role: (editingCharacter as any)?.preferred_role || [],
-        rank: (editingCharacter as any)?.rank || null,
+        subscriber_tier: editingCharacter.subscriber_tier || null,
+        subscriber_since: editingCharacter.subscriber_since || null,
+        subscriber_ships_month: editingCharacter.subscriber_ships_month || null,
+        ror_faction: editingCharacter.ror_faction || null,
+        ror_class: editingCharacter.ror_class || null,
+        preferred_role: editingCharacter.preferred_role || [],
+        rank: editingCharacter.rank || null,
       }}
       onSubmit={async (data) => {
         await onSubmit(editingCharacter.id, data);
