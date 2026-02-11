@@ -11,8 +11,6 @@ import { ClanSettings } from '@/components/settings/ClanSettings';
 import { RecruitmentSettings } from '@/components/settings/RecruitmentSettings';
 import { GameManagement } from '@/components/settings/GameManagement';
 import { getGroupBySlug } from '@/lib/auth';
-import Link from 'next/link';
-import { Shield } from 'lucide-react';
 import type { GroupRole } from '@/lib/permissions';
 
 export default function SettingsPage() {
@@ -32,7 +30,6 @@ export default function SettingsPage() {
     rejectMember,
   } = useGroupMembership(group?.id || null, userId, gameSlug);
 
-  const canViewPermissions = hasPermission('settings_view_permissions');
   const canEditPermissions = hasPermission('settings_edit_permissions');
   const canEditSettings = hasPermission('settings_edit');
 
@@ -62,7 +59,7 @@ export default function SettingsPage() {
     <div className="space-y-6">
       {canEditSettings && group && (
         <div>
-          <h3 className="text-lg font-semibold text-white mb-2">Group Icon</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">{t('group_icon')}</h3>
           <GuildIconUploaderWrapper
             groupId={group.id}
             currentUrl={guildIconUrl}

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Home, Settings, LogOut, Archive } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { GameIcon } from '@/components/common/GameIcon';
@@ -77,7 +78,7 @@ export function GroupHeader({
               <Home className="w-5 h-5" />
             </Link>
             {guildIconUrl && (
-              <img src={guildIconUrl} alt="Group Icon" className="w-8 h-8 rounded-full ring-2 ring-slate-700" />
+              <Image src={guildIconUrl} alt="Group Icon" width={32} height={32} className="w-8 h-8 rounded-full ring-2 ring-slate-700" />
             )}
             <Link
               href={`/${groupSlug}`}
