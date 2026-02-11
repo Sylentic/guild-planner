@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: useParties Hook - Sprint 10
  * Tests for party management, roster assignment, and role tracking
@@ -115,7 +114,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
 
   describe('Hook Initialization & Loading State', () => {
     it('initializes with empty state and loading=true', () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -137,7 +136,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
     });
 
     it('exposes all required API methods', async () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -162,7 +161,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
 
   describe('Party Data Fetching', () => {
     it('fetches parties with roster and enriches character data', async () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({
@@ -184,7 +183,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
     });
 
     it('handles empty parties list gracefully', async () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -202,7 +201,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
 
     it('handles fetch error gracefully', async () => {
       const errorMsg = 'Database error';
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: null, error: new Error(errorMsg) }),
@@ -247,7 +246,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(createQuery)
         .mockReturnValueOnce(fetchQuery);
@@ -278,7 +277,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         melee_dps_needed: 1,
       };
 
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         insert: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
@@ -318,7 +317,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(updateQuery)
         .mockReturnValueOnce(fetchQuery);
@@ -337,7 +336,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
     });
 
     it('handles update error', async () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({ data: [], error: null }),
@@ -349,7 +348,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      supabase.from.mockReturnValueOnce({
+      (supabase.from as any).mockReturnValueOnce({
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockResolvedValue({ data: null, error: new Error('Update failed') }),
@@ -380,7 +379,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(deleteQuery);
 
@@ -413,7 +412,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(assignQuery)
         .mockReturnValueOnce(fetchQuery);
@@ -444,7 +443,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(removeQuery);
 
@@ -476,7 +475,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(updateQuery);
 
@@ -506,7 +505,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         select: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(toggleQuery);
 
@@ -532,7 +531,7 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         order: jest.fn().mockResolvedValue({ data: [mockPartiesData], error: null }),
       };
 
-      supabase.from
+      (supabase.from as any)
         .mockReturnValueOnce(fetchQuery)
         .mockReturnValueOnce(fetchQuery);
 
@@ -542,19 +541,19 @@ describe('useParties Hook - Phase 2 Sprint 10', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const initialCallCount = supabase.from.mock.calls.length;
+      const initialCallCount = (supabase.from as any).mock.calls.length;
 
       await act(async () => {
         await result.current.refresh();
       });
 
-      expect(supabase.from.mock.calls.length).toBeGreaterThan(initialCallCount);
+      expect((supabase.from as any).mock.calls.length).toBeGreaterThan(initialCallCount);
     });
   });
 
   describe('Error Handling', () => {
     it('maintains error state on failed operations', async () => {
-      supabase.from.mockReturnValue({
+      (supabase.from as any).mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         order: jest.fn().mockResolvedValue({

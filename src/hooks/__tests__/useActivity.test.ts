@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: Data Fetching Hooks
  * Tests for core hooks that manage group and character data
@@ -61,7 +60,7 @@ describe('useActivity Hook - Phase 2', () => {
 
       mockSupabase.from.mockReturnValue({
         select: mockSelect,
-      });
+      } as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -91,6 +90,7 @@ describe('useActivity Hook - Phase 2', () => {
       ];
 
       // Mock summaries query (1st from() call)
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -103,6 +103,7 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       // Mock alerts query (2nd from() call) 
+      // @ts-ignore
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -117,8 +118,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -138,6 +139,8 @@ describe('useActivity Hook - Phase 2', () => {
         { is_inactive: false },
       ];
 
+      // @ts-ignore
+
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -148,6 +151,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -163,8 +168,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -180,6 +185,8 @@ describe('useActivity Hook - Phase 2', () => {
         { user_id: 'user-3', total_activities_30d: 5 },
       ];
 
+      // @ts-ignore
+
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -190,6 +197,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -205,8 +214,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -237,6 +246,8 @@ describe('useActivity Hook - Phase 2', () => {
         },
       ];
 
+      // @ts-ignore
+
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -247,6 +258,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -262,8 +275,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -279,6 +292,8 @@ describe('useActivity Hook - Phase 2', () => {
         { id: 'alert-3', days_inactive: 60 },
       ];
 
+      // @ts-ignore
+
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -289,6 +304,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -304,8 +321,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -318,6 +335,7 @@ describe('useActivity Hook - Phase 2', () => {
 
   describe('Error Handling', () => {
     it('should handle activity summary fetch errors gracefully', async () => {
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -328,6 +346,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -343,8 +363,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -355,6 +375,7 @@ describe('useActivity Hook - Phase 2', () => {
     });
 
     it('should handle alert fetch errors gracefully', async () => {
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -365,6 +386,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -380,8 +403,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -394,6 +417,8 @@ describe('useActivity Hook - Phase 2', () => {
     it('should set error message on fetch failure', async () => {
       const mockError = new Error('Connection timeout');
       
+      // @ts-ignore
+      
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -404,6 +429,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -419,8 +446,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -442,6 +469,7 @@ describe('useActivity Hook - Phase 2', () => {
 
   describe('Refresh Functionality', () => {
     it('should expose refresh function', async () => {
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -452,6 +480,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -467,8 +497,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -481,6 +511,7 @@ describe('useActivity Hook - Phase 2', () => {
 
   describe('Activity Logging', () => {
     it('should expose logActivity function', async () => {
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -491,6 +522,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -506,8 +539,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 
@@ -526,6 +559,7 @@ describe('useActivity Hook - Phase 2', () => {
 
   describe('Alert Acknowledgment', () => {
     it('should expose acknowledgeAlert function', async () => {
+      // @ts-ignore
       const mockSummariesQuery = {
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
@@ -536,6 +570,8 @@ describe('useActivity Hook - Phase 2', () => {
           }),
         }),
       };
+
+      // @ts-ignore
 
       const mockAlertsQuery = {
         select: jest.fn().mockReturnValue({
@@ -551,8 +587,8 @@ describe('useActivity Hook - Phase 2', () => {
       };
 
       mockSupabase.from
-        .mockReturnValueOnce(mockSummariesQuery)
-        .mockReturnValueOnce(mockAlertsQuery);
+        .mockReturnValueOnce(mockSummariesQuery as any)
+        .mockReturnValueOnce(mockAlertsQuery as any);
 
       const { result } = renderHook(() => useActivity('group-123'));
 

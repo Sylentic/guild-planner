@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Phase 2 Tests: useGroupData Hook - Sprint 3
  * Focused tests for complex group and character data management
@@ -65,7 +64,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -87,7 +86,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -170,7 +169,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: new Error(errorMsg) }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
 
       const { result } = renderHook(() => useGroupData('test-group', 'aoc'));
 
@@ -197,7 +196,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
     });
 
     it('addCharacter accepts character data object', async () => {
@@ -217,7 +216,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
             .mockReturnThis(),
           select: jest
             .fn()
-            .mockResolvedValue({ data: [], error: null }),
+            .mockResolvedValue({ data: [], error: null } as any),
           insert: jest
             .fn()
             .mockReturnValue({
@@ -228,7 +227,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
                   error: null 
                 }),
             }),
-        });
+        } as any);
 
         await act(async () => {
           const promise = result.current.addCharacter({ name: 'Test Character' });
@@ -255,8 +254,8 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockReturnThis(),
         maybeSingle: jest
           .fn()
-          .mockResolvedValue({ data: null, error: null }),
-      });
+          .mockResolvedValue({ data: null, error: null } as any),
+      } as any);
 
       try {
         await act(async () => {
@@ -317,7 +316,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
     });
 
     it('addMember is alias for addCharacter', async () => {
@@ -367,7 +366,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
     });
 
     it('returns complete state object', async () => {
@@ -405,7 +404,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
     });
 
     it('mocks character permission functions', async () => {
@@ -459,7 +458,7 @@ describe('useGroupData Hook - Phase 2 Sprint 3', () => {
           .mockResolvedValue({ data: null, error: null }),
       };
 
-      mockSupabase.from.mockReturnValue(mockFrom);
+      mockSupabase.from.mockReturnValue(mockFrom as any);
     });
 
     it('refresh is callable', async () => {
